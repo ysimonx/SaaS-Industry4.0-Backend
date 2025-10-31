@@ -22,12 +22,16 @@ Routes (Controllers) → Services (Business Logic) → Models → Database
 - ✅ **Task 3**: Create Requirements File (Phase 1) - *Completed*
   - `backend/requirements.txt` with all Python dependencies and pinned versions
   - 89 lines organized into sections: Web Framework, Database & ORM, Authentication, Kafka, S3, Development/Testing
+- ✅ **Task 4**: Create Core Utilities (Phase 1) - *Completed*
+  - `backend/app/utils/responses.py` with standardized JSON response helpers
+  - `backend/app/utils/database.py` with multi-tenant database manager
+  - `backend/app/utils/decorators.py` with JWT and role-based access control decorators
 
 ### In Progress
-- 🔄 **Task 4**: Create Core Utilities (Phase 1) - *Next*
+- 🔄 **Task 5**: Create BaseModel Abstract Class (Phase 2) - *Next*
 
 ### Pending
-- ⏳ Tasks 4-44: Remaining implementation tasks
+- ⏳ Tasks 5-44: Remaining implementation tasks
 
 ---
 
@@ -186,9 +190,10 @@ pip install bcrypt
 
 ---
 
-### Task 4: Create Core Utilities
+### Task 4: Create Core Utilities ✅ COMPLETED
 **Priority**: High
 **Dependencies**: 2
+**Status**: ✅ Completed
 
 **Files to create**:
 
@@ -209,9 +214,32 @@ pip install bcrypt
    - `@role_required(role)` - Role-based access control
 
 **Deliverables**:
-- Standardized JSON response format for all API endpoints
-- Database utility functions for multi-tenant support
-- Security decorators for routes
+- ✅ Standardized JSON response format for all API endpoints
+- ✅ Database utility functions for multi-tenant support
+- ✅ Security decorators for routes
+
+**Completion Notes**:
+- Created `backend/app/utils/responses.py` with comprehensive response helpers:
+  - `success_response()`, `error_response()` for standardized JSON responses
+  - Convenience functions: `ok()`, `created()`, `accepted()`, `no_content()`
+  - Error helpers: `bad_request()`, `unauthorized()`, `forbidden()`, `not_found()`, `conflict()`, `validation_error()`, `internal_error()`, `service_unavailable()`
+  - Consistent response format with `success`, `message`, `data`/`error` fields
+- Created `backend/app/utils/database.py` with `TenantDatabaseManager` class:
+  - Multi-tenant database connection factory with connection pooling
+  - Context manager `tenant_db_session()` for safe tenant database operations
+  - `create_tenant_database()` - dynamically creates PostgreSQL databases
+  - `drop_tenant_database()` - safely drops tenant databases with connection termination
+  - `database_exists()` - checks if tenant database exists
+  - Engine and session factory caching for performance
+  - Global `tenant_db_manager` instance for application-wide use
+- Created `backend/app/utils/decorators.py` with security decorators:
+  - `@jwt_required_custom` - JWT validation with error handling, injects `g.user_id`
+  - `@tenant_required(tenant_id_param)` - validates tenant membership, injects `g.tenant_id` and `g.user_role`
+  - `@role_required(allowed_roles)` - enforces role-based access control
+  - `@admin_required` - convenience decorator for admin-only endpoints
+  - `@rate_limit(limit, per, scope)` - rate limiting placeholder (TODO: implement with Redis)
+  - `@validate_json(required_fields)` - validates JSON request body
+  - Comprehensive logging for security audit trail
 
 ---
 
