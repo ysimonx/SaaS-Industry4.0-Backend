@@ -81,12 +81,11 @@ class User(BaseModel, db.Model):
     )
 
     # Relationships
-    # Note: UserTenantAssociation will be created in Task 8
-    # tenant_associations = relationship(
-    #     'UserTenantAssociation',
-    #     back_populates='user',
-    #     cascade='all, delete-orphan'
-    # )
+    tenant_associations = relationship(
+        'UserTenantAssociation',
+        back_populates='user',
+        cascade='all, delete-orphan'
+    )
 
     # Indexes for performance
     __table_args__ = (
@@ -161,21 +160,14 @@ class User(BaseModel, db.Model):
             >>> for tenant_info in tenants:
             ...     print(f"Tenant: {tenant_info['tenant'].name}, Role: {tenant_info['role']}")
         """
-        # TODO: Implement after UserTenantAssociation model is created
-        # from app.models.user_tenant_association import UserTenantAssociation
-        # from app.models.tenant import Tenant
-        #
-        # associations = UserTenantAssociation.query.filter_by(user_id=self.id).all()
-        # return [
-        #     {
-        #         'tenant': assoc.tenant,
-        #         'role': assoc.role,
-        #         'joined_at': assoc.joined_at
-        #     }
-        #     for assoc in associations
-        # ]
-        logger.warning("get_tenants() not yet implemented - requires UserTenantAssociation model")
-        return []
+        return [
+            {
+                'tenant': assoc.tenant,
+                'role': assoc.role,
+                'joined_at': assoc.joined_at
+            }
+            for assoc in self.tenant_associations
+        ]
 
     def has_access_to_tenant(self, tenant_id: str) -> bool:
         """
@@ -195,16 +187,9 @@ class User(BaseModel, db.Model):
             >>> if user.has_access_to_tenant(tenant_id):
             ...     print('User has access to this tenant')
         """
-        # TODO: Implement after UserTenantAssociation model is created
-        # from app.models.user_tenant_association import UserTenantAssociation
-        #
-        # association = UserTenantAssociation.query.filter_by(
-        #     user_id=self.id,
-        #     tenant_id=tenant_id
-        # ).first()
-        #
-        # return association is not None
-        logger.warning("has_access_to_tenant() not yet implemented - requires UserTenantAssociation model")
+        for assoc in self.tenant_associations:
+            if str(assoc.tenant_id) == str(tenant_id):
+                return True
         return False
 
     def get_role_in_tenant(self, tenant_id: str) -> Optional[str]:
@@ -226,16 +211,9 @@ class User(BaseModel, db.Model):
             >>> if role == 'admin':
             ...     print('User is admin of this tenant')
         """
-        # TODO: Implement after UserTenantAssociation model is created
-        # from app.models.user_tenant_association import UserTenantAssociation
-        #
-        # association = UserTenantAssociation.query.filter_by(
-        #     user_id=self.id,
-        #     tenant_id=tenant_id
-        # ).first()
-        #
-        # return association.role if association else None
-        logger.warning("get_role_in_tenant() not yet implemented - requires UserTenantAssociation model")
+        for assoc in self.tenant_associations:
+            if str(assoc.tenant_id) == str(tenant_id):
+                return assoc.role
         return None
 
     def get_full_name(self) -> str:

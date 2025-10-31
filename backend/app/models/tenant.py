@@ -64,8 +64,11 @@ class Tenant(BaseModel, db.Model):
     is_active = db.Column(Boolean, default=True, nullable=False)
 
     # Relationships
-    # Note: UserTenantAssociation will be defined in Task 8
-    # user_associations = relationship('UserTenantAssociation', back_populates='tenant', cascade='all, delete-orphan')
+    user_associations = relationship(
+        'UserTenantAssociation',
+        back_populates='tenant',
+        cascade='all, delete-orphan'
+    )
 
     # Indexes for common queries
     __table_args__ = (
@@ -254,16 +257,17 @@ class Tenant(BaseModel, db.Model):
         Get all users associated with this tenant.
 
         Returns:
-            List of User objects with their roles in this tenant
-
-        Note:
-            This method will be fully implemented in Task 8 (UserTenantAssociation).
-            For now, it returns an empty list.
+            List of dictionaries with user objects and their roles:
+            [{'user': User, 'role': str, 'joined_at': datetime}, ...]
         """
-        # TODO: Implement after UserTenantAssociation is created (Task 8)
-        # Query: db.session.query(User).join(UserTenantAssociation).filter(UserTenantAssociation.tenant_id == self.id).all()
-        logger.warning(f"get_users() called on tenant {self.id} - UserTenantAssociation not yet implemented")
-        return []
+        return [
+            {
+                'user': assoc.user,
+                'role': assoc.role,
+                'joined_at': assoc.joined_at
+            }
+            for assoc in self.user_associations
+        ]
 
     def get_user_count(self) -> int:
         """
@@ -272,10 +276,7 @@ class Tenant(BaseModel, db.Model):
         Returns:
             Number of users associated with this tenant
         """
-        # TODO: Implement after UserTenantAssociation is created (Task 8)
-        # return db.session.query(UserTenantAssociation).filter_by(tenant_id=self.id).count()
-        logger.warning(f"get_user_count() called on tenant {self.id} - UserTenantAssociation not yet implemented")
-        return 0
+        return len(self.user_associations)
 
     def deactivate(self) -> None:
         """

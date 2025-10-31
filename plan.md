@@ -41,12 +41,20 @@ Routes (Controllers) → Services (Business Logic) → Models → Database
   - Methods: get_connection_string(), get_users(), get_user_count(), deactivate(), activate()
   - Query methods: find_by_name(), find_by_database_name(), get_all_active()
   - Validation: PostgreSQL naming rules, database name uniqueness, prevents name changes after creation
+- ✅ **Task 8**: Create UserTenantAssociation Model (Phase 2) - *Completed*
+  - `backend/app/models/user_tenant_association.py` with many-to-many association model
+  - Composite primary key (user_id, tenant_id) prevents duplicate associations
+  - Role-based access control: admin, user, viewer roles with validation
+  - Methods: create_association(), update_role(), has_permission() with role hierarchy
+  - Query methods: find_by_user_and_tenant(), get_user_tenants(), get_tenant_users()
+  - Bidirectional relationships with User and Tenant models
+  - Updated User and Tenant models with working get_tenants(), get_users(), has_access_to_tenant() methods
 
 ### In Progress
-- 🔄 **Task 8**: Create UserTenantAssociation Model (Phase 2) - *Next*
+- 🔄 **Task 9**: Create File Model (Phase 2) - *Next*
 
 ### Pending
-- ⏳ Tasks 8-44: Remaining implementation tasks
+- ⏳ Tasks 9-44: Remaining implementation tasks
 
 ---
 
@@ -459,9 +467,10 @@ class Tenant(BaseModel, db.Model):
 
 ---
 
-### Task 8: Create UserTenantAssociation Model
+### Task 8: Create UserTenantAssociation Model ✅ COMPLETED
 **Priority**: Critical
 **Dependencies**: 6, 7
+**Status**: ✅ Completed
 
 **File**: `app/models/user_tenant_association.py`
 
@@ -487,9 +496,60 @@ class UserTenantAssociation(db.Model):
 - Cascading delete when user or tenant is removed
 
 **Deliverables**:
-- Association model with role-based access
-- Proper foreign key relationships
-- Role validation
+- ✅ Association model with role-based access
+- ✅ Proper foreign key relationships
+- ✅ Role validation
+
+**Completion Notes**:
+- Created `backend/app/models/user_tenant_association.py` with comprehensive association model (400+ lines):
+  - Composite primary key (user_id, tenant_id) ensures uniqueness
+  - Foreign keys with CASCADE delete to users.id and tenants.id
+  - Role field with CHECK constraint for valid roles: 'admin', 'user', 'viewer'
+  - Automatic joined_at timestamp (UTC)
+  - Indexes on user_id, tenant_id, and role for performance
+
+  Role-based access control:
+  - Three predefined roles with class constants (ROLE_ADMIN, ROLE_USER, ROLE_VIEWER)
+  - Role hierarchy: admin > user > viewer
+  - `has_permission(required_role)` - hierarchical permission checking
+  - `is_admin()`, `is_user()`, `is_viewer()` - convenience role checks
+
+  CRUD methods:
+  - `create_association(user_id, tenant_id, role)` - create new association with validation
+  - `update_role(new_role)` - change user's role in tenant
+  - `remove_association(user_id, tenant_id)` - delete specific association
+  - `remove_all_user_associations(user_id)` - remove all for user
+  - `remove_all_tenant_associations(tenant_id)` - remove all for tenant
+
+  Query methods:
+  - `find_by_user_and_tenant(user_id, tenant_id)` - find specific association
+  - `get_user_tenants(user_id)` - all tenants for a user
+  - `get_tenant_users(tenant_id)` - all users in a tenant
+  - `get_tenant_admins(tenant_id)` - admin users for a tenant
+  - `count_tenant_users(tenant_id)` - count users in tenant
+  - `count_user_tenants(user_id)` - count tenants for user
+  - `user_has_access_to_tenant(user_id, tenant_id)` - check access
+  - `get_user_role_in_tenant(user_id, tenant_id)` - get user's role
+
+  Serialization:
+  - `to_dict()` - JSON-serializable dictionary with UUID/datetime conversion
+
+- Updated `backend/app/models/user.py` to activate bidirectional relationship:
+  - Uncommented `tenant_associations` relationship
+  - Implemented `get_tenants()` - returns list of tenants with roles using relationship
+  - Implemented `has_access_to_tenant(tenant_id)` - checks membership via associations
+  - Implemented `get_role_in_tenant(tenant_id)` - returns user's role in tenant
+
+- Updated `backend/app/models/tenant.py` to activate bidirectional relationship:
+  - Uncommented `user_associations` relationship
+  - Implemented `get_users()` - returns list of users with roles using relationship
+  - Implemented `get_user_count()` - returns count of users via len(associations)
+
+- Updated `backend/app/models/__init__.py` to export UserTenantAssociation model
+
+- Comprehensive logging for audit trail on all association operations
+- All three main models (User, Tenant, UserTenantAssociation) now fully integrated
+- Ready for service layer and API endpoint implementation
 
 ---
 
