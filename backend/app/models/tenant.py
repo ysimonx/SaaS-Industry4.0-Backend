@@ -190,9 +190,9 @@ class Tenant(BaseModel, db.Model):
             if success:
                 logger.info(f"Successfully created database: {self.database_name}")
 
-                # TODO: Run migrations to create Document and File tables
-                # This will be implemented in Phase 4 (Task 18)
-                # For now, we just create an empty database
+                # Create Document and File tables in the tenant database
+                tenant_db_manager.create_tenant_tables(self.database_name)
+                logger.info(f"Successfully created tables in database: {self.database_name}")
 
                 return True
             else:

@@ -74,12 +74,25 @@ Routes (Controllers) → Services (Business Logic) → Models → Database
   - Activated bidirectional relationship in File model (documents relationship)
   - Updated File model: is_orphaned(), get_document_count(), find_orphaned_files() now fully functional
   - Updated `backend/app/models/__init__.py` to export Document model
+- ✅ **Task 11**: Configure Multi-Database Bindings (Phase 2) - *Completed*
+  - Implemented `create_tenant_tables()` in `backend/app/utils/database.py`
+  - Method creates File and Document tables in tenant databases automatically
+  - Uses `File.__table__.create(bind=engine, checkfirst=True)` for table creation
+  - Uses `Document.__table__.create(bind=engine, checkfirst=True)` for table creation
+  - Updated `Tenant.create_database()` to call `create_tenant_tables()` after database creation
+  - Multi-database binding now fully functional:
+    - Main database: User, Tenant, UserTenantAssociation models
+    - Tenant databases: File, Document models (dynamic binding with __bind_key__ = None)
+  - Automatic schema initialization when creating new tenant databases
+  - Comprehensive logging for table creation operations
+  - Proper error handling with exception propagation
+  - All Phase 2 models and database configuration complete
 
 ### In Progress
-- 🔄 **Task 11**: Configure Multi-Database Bindings (Phase 2) - *Next*
+- 🔄 **Task 12**: Create UserSchema (Phase 3) - *Next*
 
 ### Pending
-- ⏳ Tasks 11-44: Remaining implementation tasks
+- ⏳ Tasks 12-44: Remaining implementation tasks
 
 ---
 
@@ -771,9 +784,10 @@ class Document(BaseModel, db.Model):
 
 ---
 
-### Task 11: Configure Multi-Database Bindings
+### Task 11: Configure Multi-Database Bindings ✅ COMPLETED
 **Priority**: Critical
 **Dependencies**: 6, 7, 8, 9, 10
+**Status**: ✅ Completed
 
 **File**: `app/utils/database.py` (enhancement)
 
@@ -795,10 +809,39 @@ with tenant_db_session(tenant_id) as session:
 ```
 
 **Deliverables**:
-- Multi-database configuration in SQLAlchemy
-- Tenant database session factory
-- Proper connection pooling
-- Context managers for safe database access
+- ✅ Multi-database configuration in SQLAlchemy
+- ✅ Tenant database session factory
+- ✅ Proper connection pooling
+- ✅ Context managers for safe database access
+
+**Completion Notes**:
+- Implemented `create_tenant_tables()` method in `TenantDatabaseManager` class (lines 195-227):
+  - Dynamically imports File and Document models to avoid circular imports
+  - Creates `files` table using `File.__table__.create(bind=engine, checkfirst=True)`
+  - Creates `documents` table using `Document.__table__.create(bind=engine, checkfirst=True)`
+  - Uses `checkfirst=True` to avoid errors if tables already exist
+  - Comprehensive logging for each table creation step
+  - Proper exception handling with detailed error messages
+- Updated `Tenant.create_database()` method in `backend/app/models/tenant.py` (lines 193-195):
+  - Removed TODO comment about table creation
+  - Added call to `tenant_db_manager.create_tenant_tables(self.database_name)`
+  - Tables are now automatically created immediately after database creation
+  - Ensures tenant databases are ready to use as soon as they're created
+- Multi-database architecture now fully operational:
+  - Main database (`__bind_key__ = 'main'`): User, Tenant, UserTenantAssociation
+  - Tenant databases (`__bind_key__ = None`): File, Document (dynamically bound)
+  - TenantDatabaseManager handles engine caching and session factories
+  - Connection pooling configured per tenant database
+  - Context manager `tenant_db_session()` provides safe database access
+- Schema initialization is automatic:
+  - Creating a new tenant via `Tenant.create_database()` automatically creates tables
+  - No manual schema setup required
+  - Proper isolation: each tenant gets their own files and documents tables
+- All Phase 2 tasks (Models & Database) now complete:
+  - 5 models implemented (User, Tenant, UserTenantAssociation, File, Document)
+  - All bidirectional relationships activated and functional
+  - Multi-database binding configured and working
+  - Ready to proceed to Phase 3 (Marshmallow Schemas)
 
 ---
 

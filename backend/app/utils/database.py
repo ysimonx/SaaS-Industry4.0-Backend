@@ -202,17 +202,29 @@ class TenantDatabaseManager:
         Args:
             database_name: Name of the tenant database
 
-        Note:
-            This method will be enhanced in Phase 2 to import and create models.
-            For now, it's a placeholder for the table creation logic.
+        Raises:
+            Exception: If table creation fails
         """
         engine = self.get_tenant_engine(database_name)
 
-        # TODO: Import models and create tables
-        # from app.models import Document, File
-        # Base.metadata.create_all(bind=engine, tables=[Document.__table__, File.__table__])
+        try:
+            # Import tenant database models
+            from app.models import File, Document
+            from app.extensions import db
 
-        logger.info(f"Created tables in tenant database: {database_name}")
+            # Create only File and Document tables in tenant database
+            # These models have __bind_key__ = None, so they need explicit binding
+            File.__table__.create(bind=engine, checkfirst=True)
+            logger.info(f"Created 'files' table in tenant database: {database_name}")
+
+            Document.__table__.create(bind=engine, checkfirst=True)
+            logger.info(f"Created 'documents' table in tenant database: {database_name}")
+
+            logger.info(f"Successfully created all tables in tenant database: {database_name}")
+
+        except Exception as e:
+            logger.error(f"Failed to create tables in tenant database {database_name}: {str(e)}")
+            raise
 
     def drop_tenant_database(self, database_name: str, force: bool = False) -> bool:
         """
