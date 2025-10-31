@@ -49,12 +49,24 @@ Routes (Controllers) → Services (Business Logic) → Models → Database
   - Query methods: find_by_user_and_tenant(), get_user_tenants(), get_tenant_users()
   - Bidirectional relationships with User and Tenant models
   - Updated User and Tenant models with working get_tenants(), get_users(), has_access_to_tenant() methods
+- ✅ **Task 9**: Create File Model (Phase 2) - *Completed*
+  - `backend/app/models/file.py` with File model for tenant databases (550+ lines)
+  - MD5-based deduplication within tenant boundaries
+  - Fields: md5_hash (String(32), indexed), s3_path (String(500), unique), file_size (BigInteger)
+  - S3 path sharding strategy: tenants/{tenant_id}/files/{md5[:2]}/{md5[2:4]}/{md5}_{uuid}
+  - Methods: find_by_md5(), check_duplicate(), generate_s3_path(), is_orphaned(), delete_from_s3()
+  - Storage management: get_total_storage_used(), get_file_count(), find_orphaned_files()
+  - Validation: MD5 hash format (32 hex chars), positive file size, prevents md5/s3_path changes
+  - Pre-signed URL generation: get_s3_url() (placeholder for Phase 6)
+  - Dynamic tenant database binding: __bind_key__ = None
+  - Relationship to Document model (commented out, will be activated in Task 10)
+  - Updated `backend/app/models/__init__.py` to export File model
 
 ### In Progress
-- 🔄 **Task 9**: Create File Model (Phase 2) - *Next*
+- 🔄 **Task 10**: Create Document Model (Phase 2) - *Next*
 
 ### Pending
-- ⏳ Tasks 9-44: Remaining implementation tasks
+- ⏳ Tasks 10-44: Remaining implementation tasks
 
 ---
 
@@ -553,9 +565,10 @@ class UserTenantAssociation(db.Model):
 
 ---
 
-### Task 9: Create File Model (Tenant Database)
+### Task 9: Create File Model (Tenant Database) ✅ COMPLETED
 **Priority**: Critical
 **Dependencies**: 5
+**Status**: ✅ Completed
 
 **File**: `app/models/file.py`
 
@@ -585,9 +598,59 @@ class File(BaseModel, db.Model):
 - File size must be positive
 
 **Deliverables**:
-- File model with deduplication support
-- S3 integration methods
-- Orphan detection logic
+- ✅ File model with deduplication support
+- ✅ S3 integration methods
+- ✅ Orphan detection logic
+
+**Completion Notes**:
+- Created `backend/app/models/file.py` with comprehensive File model (550+ lines):
+  - Fields: md5_hash (String(32), indexed), s3_path (String(500), unique), file_size (BigInteger)
+  - Inherits from BaseModel: UUID id, created_at, updated_at, created_by
+  - Indexes on md5_hash, s3_path (unique), and created_at for performance
+  - Dynamic tenant database binding: `__bind_key__ = None`
+
+  MD5-based deduplication:
+  - `find_by_md5(md5_hash)` - find existing file by MD5 hash within tenant
+  - `check_duplicate(md5_hash)` - quick boolean check for duplicate
+  - `_is_valid_md5(md5_hash)` - validates 32 hex character format
+  - Deduplication works within tenant boundary only (no cross-tenant sharing)
+
+  S3 integration methods:
+  - `generate_s3_path(tenant_id, md5_hash, file_id)` - creates sharded S3 path
+  - S3 path format: `tenants/{tenant_id}/files/{md5[:2]}/{md5[2:4]}/{md5}_{file_id}`
+  - Sharding strategy prevents too many files in single S3 directory
+  - `get_s3_url(expiration)` - generates pre-signed download URL (placeholder for Phase 6)
+  - `delete_from_s3(confirm=True)` - removes file from S3 storage (placeholder for Phase 6)
+  - `find_by_s3_path(s3_path)` - find file by S3 path
+
+  Orphan detection and cleanup:
+  - `is_orphaned()` - checks if file has no document references (placeholder until Document model exists)
+  - `get_document_count()` - returns number of documents using this file
+  - `find_orphaned_files()` - class method to find all unreferenced files in tenant
+  - Orphaned files can be safely deleted to free storage
+
+  Storage management:
+  - `get_total_storage_used()` - calculates total bytes used by all files in tenant
+  - `get_file_count()` - returns total number of files in tenant
+  - Supports quota management and analytics
+
+  Lifecycle hooks and validation:
+  - `before_insert()` - validates MD5 format, S3 path not empty, file size positive
+  - `before_update()` - prevents changing md5_hash or s3_path after creation (immutable fields)
+  - Comprehensive validation ensures data integrity
+
+  Serialization:
+  - `to_dict(exclude=[], include_stats=False)` - JSON serialization with optional stats
+  - `__repr__()` and `__str__()` - debug-friendly string representation
+
+  Relationship to Document model:
+  - Relationship commented out (will be activated in Task 10)
+  - One-to-many: one File can be referenced by multiple Documents
+
+- Updated `backend/app/models/__init__.py` to export File model
+- Model ready for use in tenant databases
+- All S3 operations are placeholders (will be implemented in Phase 6)
+- Comprehensive logging for debugging and audit trail
 
 ---
 

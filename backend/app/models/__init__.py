@@ -14,6 +14,7 @@ from app.models.base import BaseModel, register_base_model_events
 from app.models.user import User
 from app.models.tenant import Tenant
 from app.models.user_tenant_association import UserTenantAssociation
+from app.models.file import File
 
 __all__ = [
     'BaseModel',
@@ -21,8 +22,8 @@ __all__ = [
     'User',
     'Tenant',
     'UserTenantAssociation',
+    'File',
 ]
 
 # Models will be imported here as they are created:
-# from app.models.file import File
 # from app.models.document import Document
