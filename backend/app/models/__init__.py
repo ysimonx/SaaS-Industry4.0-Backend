@@ -11,14 +11,15 @@ This package contains all database models:
 """
 
 from app.models.base import BaseModel, register_base_model_events
+from app.models.user import User
 
 __all__ = [
     'BaseModel',
     'register_base_model_events',
+    'User',
 ]
 
 # Models will be imported here as they are created:
-# from app.models.user import User
 # from app.models.tenant import Tenant
 # from app.models.user_tenant_association import UserTenantAssociation
 # from app.models.file import File
