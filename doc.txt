@@ -4,3 +4,4 @@
 
 - stash and commit all the latest changes with a short and clear commit message
 
+- continue with the next step in @plan.md, then I can review
