@@ -1,0 +1,5 @@
+Think hard about how to implement all the requirements
+ described in @specs/requirements.md
+ Create a detailed plan in a file "plan.md" with all the proposed tasks and subtasks,
+  focusing on the flask routes and sqlalchemy models first 
+  and add that the platform should build its own requirements.txt with pip install commands followed by a pip freeze

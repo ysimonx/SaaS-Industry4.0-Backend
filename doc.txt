@@ -1,0 +1,6 @@
+- process with the @plan.md  Stop at each step so I can review
+
+- update the @plan.md file with the latest uncommitted changes
+
+- stash and commit all the latest changes with a short and clear commit message
+

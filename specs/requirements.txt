@@ -1,0 +1,94 @@
+écris moi un requirements.md pour que je le fournisse à Claude AI au sujet du backend d'une plateforme SaaS que je souhaite développer en python.
+
+Ce backend doit gérer des "tenants" (des clients de la plateforme SaaS), des "users" (des utilisateurs de la plateforme SaaS)
+et des "documents" (des fichiers uploadés par les utilisateurs de la plateforme SaaS).
+
+Je souhaite que ce backend utilise :
+- python
+- flask
+- postgresql
+- Flask-Migrate
+- kafka
+- 1 stockage de fichier compatible s3 dont j'ai deja les informations de connexion
+
+Je souhaite le respect d'une architecture "Routes → Services → Models → DB"
+Et que cette architecture soit bien respectée dans l'organisation des répertoires et fichiers du projet.
+
+la couche "service" est généralement appelée "Business Logic Services Layer"
+
+Le backend python/flask doit pouvoir être démarré avec gunicorn
+
+Le port utilisé par ce backend python/flask ne doit pas etre 5000, mais 4999
+
+En terme de fonctionnalités :
+- je souhaite que ce backend utilise postgresql avec sqlalchemy
+- Les routes flask doivent renvoyer systematiquement une reponse json "success" ou "error", avec les status codes standard et des messages explicites en cas d'erreur
+- Les routes doivent etre réparties dans des Blueprints dédiées selon le type d'objet manipulé
+- Les routes flask ne doivent pas accéder directement à la base de données , elles doivent utiliser les services créés (Business Logic Services Layer) et ne doivent servir qu'à vérifier les accès, appeler les services et à renvoyer des réponses fournies par les services
+- Kafka doit etre utilisé pour gérer les taches asynchrones
+- Kafka doit pouvoir etre utilisé par flask -> prévoir un endpoint de demo pour produire un message dans un topic et un autre endpoint de demo pour le consumer
+- Chaque action réalisée par les routes flask doit envoyer un message dans un topic kafka dédié
+- Un container docker "worker" doit permettre de demarrer le programme python qui produit ou consomme des topics kafka pour réaliser les taches asynchrones. Comme pour les routes flask, ce programme python ne peut pas directement accéder à la base de données et doit utiliser les memes services que ceux fournis pour les routes flask
+
+
+Je souhaite que ce backend api, worker, postgresql et kafka soient démarrés dans des containers docker
+
+
+Je souhaite disposer d'un fichier swagger au format yaml pour documenter  les routes
+
+Je souhaite que toutes les données envoyées soient validées à l'aide de classes de schémas dédiées (par exemple avec marshmallow)
+note : si tu utilises Marshmallow le paramètre missing a été remplacé par load_default
+
+
+Nous allons commencer par les objets suivants :
+- user
+- tenant
+- file
+- document
+
+
+Chaque objet héritera d'une classe générique qui contient la date de création au format utc, la date de modification au format utc,
+ainsi que l'identifiant du "user" qui a créé l'objet
+
+Pour commencer, nous créérons un objet "user"  (table "users") (l'identifiant unique "id" au format uuid, nom, prénom, e-mail)
+dont les routes doivent permettre à un consommateur de l'API :
+- de se logguer avec un e-mail et un mot de passe : renvoie un access token et un refresh token à l'aide de JWT
+- lorsqu'il se loggue, il obtient la liste des tenants auxquels il est inscrit
+- de rafraichir l'access token
+- de se délogguer
+- de créer son compte user
+- de modifiier son compte user
+
+
+Je veux un objet de type "tenant" (table "tenants")
+(en plus de la classe générique, je veux un champ "id" (au format uuid), un champ "nom" et champ "database_name")
+- un "user" peut etre inscrit dans 0 à plusieurs tenants : prevoir le modele de données correspondant
+- je veux des endpoints CRUD ainsi que les services correspondants pour ces "tenants"
+- le champ database_name doit correspondre à une database supplementaire à la database saas_platform, qu'il faut aussi prévoir de creer quand nous ajoutons un tenant dans la table "tenant"
+- chaque creation de tenant doit provoquer la creation de sa database correspondante
+
+Je veux créer un objet de type "file" (table "files") :
+(en plus de la classe générique les champs sont  "id" (au format uuid),  et le md5 du contenu du fichier, le chemin d'accès à son stockage s3)
+- un "file" est propre à un tenant : chaque database propre à un tenant doit donc disposer de sa table "file"
+- au sein d'un meme "tenant", un "fichier" peut etre lié à plusieurs "documents" (voir ci dessous) : prevoir le modele de données correspondant
+- le stockage s3 doit aussi etre cloisonné par tenant
+- Je souhaite que ces envois sur l'espace de stockage s3 se fassent grace à une tache asynchrone  traitées par kafka
+- je veux des endpoints CRUD pour ces "fichiers"
+- au sein du meme tenant, un fichier est lié de 1 à plusieurs documents : prevoir le modele de données correspondant
+
+
+Je veux créer un objet de type "document" (table documents) :
+(en plus de la classe générique les champs sont  "id" (au format uuid), un champ "mime-type" et un champ texte "filename")
+Le document est ce que l'utilisateur voit et manipule, le "fichier" est le stockage effectif du contenu du document
+- à 1 document est lié à 1 et un seul "tenant" : chaque database propre à un tenant doit donc disposer de sa table "document"
+- à 1 document est lié à 1 et un seul "user" (l'utilisateur qui a uploadé le document)
+- à 1 document est lié à 1 et un seul "fichier" (le fichier stocké dans l'espace s3)
+- je veux des endpoints CRUD pour ces "documents"
+- les documents doivent etre cloisonnés dans le stockage s3 d'un tenant à un autre, à l'aide de répertoire dédié par tenants.id
+- le md5 du contenu du fichier peut etre fait pour eviter de stocker le meme fichier plusieurs fois pour le meme tenant,
+cependant, il est accepté et souhaitable qu'un meme fichier soit dupliqué d'un tenant à un autre, puisque les espaces sont cloisonnés, entre plusieurs tenants
+- faire en sorte sur le stockage s3 que les fichiers soient correctement et efficacement stockés
+
+
+en résumé, les tables "users" et "tenants" sont stockés dans la database "saas_platform"
+chaque tenant dispose de sa propre base, dont le nom est celui stocké dans la colonne "database_name", et chacune de ces databases contient les tables "files" et "documents"
