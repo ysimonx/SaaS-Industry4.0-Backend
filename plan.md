@@ -61,12 +61,25 @@ Routes (Controllers) → Services (Business Logic) → Models → Database
   - Dynamic tenant database binding: __bind_key__ = None
   - Relationship to Document model (commented out, will be activated in Task 10)
   - Updated `backend/app/models/__init__.py` to export File model
+- ✅ **Task 10**: Create Document Model (Phase 2) - *Completed*
+  - `backend/app/models/document.py` with Document model for tenant databases (550+ lines)
+  - Many-to-one relationship with File (multiple documents can share same file)
+  - Fields: filename (String(255), indexed), mime_type (String(100)), file_id (UUID, FK), user_id (UUID)
+  - Cross-database user reference: user_id references users in main database
+  - Methods: get_download_url(), get_owner(), update_metadata(), get_file_size(), get_file_hash()
+  - Query methods: find_by_filename(), find_by_user(), find_by_file(), search_by_filename(), get_recent()
+  - Validation: filename non-empty, MIME type format (type/subtype), file_id and user_id immutable
+  - Indexes: filename, file_id, user_id, (user_id, filename) composite, created_at
+  - FK RESTRICT prevents file deletion if documents reference it
+  - Activated bidirectional relationship in File model (documents relationship)
+  - Updated File model: is_orphaned(), get_document_count(), find_orphaned_files() now fully functional
+  - Updated `backend/app/models/__init__.py` to export Document model
 
 ### In Progress
-- 🔄 **Task 10**: Create Document Model (Phase 2) - *Next*
+- 🔄 **Task 11**: Configure Multi-Database Bindings (Phase 2) - *Next*
 
 ### Pending
-- ⏳ Tasks 10-44: Remaining implementation tasks
+- ⏳ Tasks 11-44: Remaining implementation tasks
 
 ---
 
@@ -654,9 +667,10 @@ class File(BaseModel, db.Model):
 
 ---
 
-### Task 10: Create Document Model (Tenant Database)
+### Task 10: Create Document Model (Tenant Database) ✅ COMPLETED
 **Priority**: Critical
 **Dependencies**: 5, 9
+**Status**: ✅ Completed
 
 **File**: `app/models/document.py`
 
@@ -686,9 +700,74 @@ class Document(BaseModel, db.Model):
 - file_id must reference existing file
 
 **Deliverables**:
-- Document model with file relationship
-- Cross-database user reference
-- Download URL generation
+- ✅ Document model with file relationship
+- ✅ Cross-database user reference
+- ✅ Download URL generation
+
+**Completion Notes**:
+- Created `backend/app/models/document.py` with comprehensive Document model (550+ lines):
+  - Fields: filename (String(255), indexed), mime_type (String(100)), file_id (UUID, FK to files.id), user_id (UUID)
+  - Inherits from BaseModel: UUID id, created_at, updated_at, created_by
+  - Dynamic tenant database binding: `__bind_key__ = None`
+  - Foreign key with RESTRICT delete to files.id (prevents file deletion if documents reference it)
+
+  Many-to-one relationship with File:
+  - Multiple documents can reference the same physical file (deduplication)
+  - Bidirectional relationship: file = relationship('File', back_populates='documents')
+  - Cascade delete-orphan: deleting a document does NOT delete the file
+
+  Cross-database user reference:
+  - user_id references users.id in main database (cross-database reference)
+  - No FK constraint enforced by SQLAlchemy (different databases)
+  - Application code must ensure referential integrity
+  - `get_owner()` - fetches user from main database (requires session management)
+
+  Document operations:
+  - `get_download_url(expiration)` - delegates to file.get_s3_url() for pre-signed URL
+  - `update_metadata(filename, mime_type)` - updates metadata only (file content unchanged)
+  - `get_file_size()` - returns underlying file size in bytes
+  - `get_file_hash()` - returns MD5 hash of underlying file
+
+  Query methods:
+  - `find_by_filename(filename, user_id)` - find documents by exact filename match
+  - `find_by_user(user_id)` - all documents owned by specific user
+  - `count_by_user(user_id)` - count documents owned by user
+  - `find_by_file(file_id)` - all documents referencing a specific file (deduplication analysis)
+  - `count_by_file(file_id)` - count documents referencing a file (orphan detection)
+  - `search_by_filename(pattern, user_id)` - search with wildcards (case-insensitive)
+  - `get_recent(limit, user_id)` - most recent documents
+
+  MIME type validation:
+  - `_is_valid_mime_type()` - validates format type/subtype (e.g., "application/pdf")
+  - Regex validation: `^[a-zA-Z0-9][a-zA-Z0-9\-\+\.]*/[a-zA-Z0-9][a-zA-Z0-9\-\+\.]*$`
+
+  Indexes for performance:
+  - filename, file_id, user_id (individual indexes)
+  - (user_id, filename) - composite index for user-specific filename queries
+  - created_at - for chronological queries
+
+  Lifecycle hooks and validation:
+  - `before_insert()` - validates filename non-empty, MIME type format, file_id and user_id present
+  - `before_update()` - prevents changing file_id or user_id after creation (immutable ownership)
+  - Filename is trimmed on insert
+
+  Serialization:
+  - `to_dict(exclude=[], include_file=False)` - JSON serialization with optional file details
+  - `__repr__()` and `__str__()` - debug-friendly string representation
+
+- Updated `backend/app/models/file.py` to activate bidirectional relationship:
+  - Uncommented `documents = relationship('Document', back_populates='file', cascade='all, delete-orphan')`
+  - Updated `is_orphaned()` - now returns `len(self.documents) == 0` (fully functional)
+  - Updated `get_document_count()` - now returns `len(self.documents)` (fully functional)
+  - Updated `find_orphaned_files()` - now uses LEFT OUTER JOIN to find unreferenced files
+
+- Updated `backend/app/models/__init__.py` to export Document model
+
+- All Phase 2 models now complete:
+  - Main database: User, Tenant, UserTenantAssociation (3 models)
+  - Tenant databases: File, Document (2 models)
+  - All bidirectional relationships activated and functional
+  - Ready for Phase 3 (Marshmallow schemas) and Phase 4 (Flask app setup)
 
 ---
 

@@ -70,8 +70,7 @@ class File(BaseModel, db.Model):
     file_size = db.Column(BigInteger, nullable=False)
 
     # Relationships
-    # Note: 'Document' relationship will be added when Document model is created
-    # documents = relationship('Document', back_populates='file', cascade='all, delete-orphan')
+    documents = relationship('Document', back_populates='file', cascade='all, delete-orphan')
 
     # Indexes for common queries
     __table_args__ = (
@@ -221,11 +220,8 @@ class File(BaseModel, db.Model):
                     file.delete_from_s3()
                     db.session.delete(file)
         """
-        # TODO: Update this when Document model is created
-        # For now, return False (assume all files are referenced)
-        # return len(self.documents) == 0
         logger.debug(f"Checking if file {self.id} is orphaned")
-        return False  # Placeholder until Document model exists
+        return len(self.documents) == 0
 
     def get_document_count(self) -> int:
         """
@@ -238,9 +234,7 @@ class File(BaseModel, db.Model):
             if file.get_document_count() > 10:
                 print(f"Popular file: {file.md5_hash}")
         """
-        # TODO: Update this when Document model is created
-        # return len(self.documents)
-        return 0  # Placeholder until Document model exists
+        return len(self.documents)
 
     def delete_from_s3(self, confirm: bool = False) -> bool:
         """
@@ -370,11 +364,12 @@ class File(BaseModel, db.Model):
             for file in orphaned:
                 logger.info(f"Orphaned file: {file.s3_path} ({file.file_size} bytes)")
         """
-        # TODO: Implement this when Document model is created
-        # Use a LEFT JOIN to find files with no associated documents
-        # return cls.query.outerjoin(Document).filter(Document.id == None).all()
-        logger.warning("find_orphaned_files() not yet implemented (requires Document model)")
-        return []
+        from .document import Document
+
+        # Use a LEFT OUTER JOIN to find files with no associated documents
+        orphaned = cls.query.outerjoin(Document).filter(Document.id == None).all()
+        logger.info(f"Found {len(orphaned)} orphaned files")
+        return orphaned
 
     def before_insert(self) -> None:
         """
