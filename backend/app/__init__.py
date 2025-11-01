@@ -231,6 +231,13 @@ def register_blueprints(app):
     except ImportError as e:
         app.logger.warning(f"Files blueprint not found: {e}")
 
+    try:
+        from app.routes.kafka_demo import kafka_demo_bp
+        app.register_blueprint(kafka_demo_bp)
+        app.logger.info("Registered blueprint: kafka_demo (/api/demo/kafka)")
+    except ImportError as e:
+        app.logger.warning(f"Kafka demo blueprint not found: {e}")
+
     # Health check endpoint (no blueprint needed)
     @app.route('/health')
     def health_check():
@@ -254,7 +261,8 @@ def register_blueprints(app):
                 'users': '/api/users',
                 'tenants': '/api/tenants',
                 'documents': '/api/documents',
-                'files': '/api/files'
+                'files': '/api/files',
+                'kafka_demo': '/api/demo/kafka'
             }
         }), 200
 

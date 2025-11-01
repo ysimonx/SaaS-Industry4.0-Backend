@@ -9,6 +9,7 @@ from app.routes.users import users_bp
 from app.routes.tenants import tenants_bp
 from app.routes.documents import documents_bp
 from app.routes.files import files_bp
+from app.routes.kafka_demo import kafka_demo_bp
 
 __all__ = [
     'auth_bp',
@@ -16,4 +17,5 @@ __all__ = [
     'tenants_bp',
     'documents_bp',
     'files_bp',
+    'kafka_demo_bp',
 ]
