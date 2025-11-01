@@ -341,11 +341,13 @@ pip install bcrypt
 - All packages have specific version pinning for reproducibility:
   - Flask 3.0.0, SQLAlchemy 2.0.25, Flask-Migrate 4.0.5
   - Flask-JWT-Extended 4.6.0, bcrypt 4.1.2, cryptography 42.0.0
-  - marshmallow 3.20.2, kafka-python 2.0.2, boto3 1.34.34
+  - marshmallow 3.20.2, kafka-python 2.0.2, boto3 1.34.34, botocore 1.34.34
   - psycopg2-binary 2.9.9, gunicorn 21.2.0, python-dotenv 1.0.1
+  - urllib3 2.0.7 (downgraded from 2.1.0 for botocore compatibility)
 - Organized into clear sections: Web Framework, Database & ORM, Authentication & Security, Data Validation, Kafka, AWS S3, HTTP & CORS, Environment, WSGI Server, Utilities
 - Included development/testing packages: pytest 7.4.4, black 24.1.1, flake8 7.0.0, mypy 1.8.0
 - Added type stubs for better IDE support and type checking
+- Fixed dependency conflict: urllib3==2.0.7 (compatible with botocore 1.34.34 requirement of urllib3<2.1)
 
 ---
 
