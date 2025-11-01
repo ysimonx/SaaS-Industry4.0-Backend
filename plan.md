@@ -2137,30 +2137,47 @@ bucket/tenants/{tenant_id}/files/{year}/{month}/{file_id}_{md5_hash}
 
 ## Phase 7: Infrastructure & External Services
 
-### Task 32: Implement JWT Middleware
+### Task 32: Implement JWT Middleware ✅
 **Priority**: Critical
 **Dependencies**: 17, 25
+**Status**: COMPLETED
 
 **File**: `app/utils/decorators.py` (enhancement)
 
-**Implementation**:
-- JWT token validation decorator
-- Token blacklist checking
-- User context injection into request
-- Tenant context validation
-- Role-based access control decorator
+**Implementation**: ✅
+- ✅ JWT token validation decorator - `jwt_required_custom`
+- ✅ Token blacklist checking - Integrated with TokenBlacklist.is_token_blacklisted()
+- ✅ User context injection into request - Sets g.user_id and g.jwt_claims
+- ✅ Tenant context validation - `tenant_required` decorator
+- ✅ Role-based access control decorator - `role_required`, `admin_required`
 
 **Decorators**:
 ```python
-@jwt_required_custom
-@tenant_required(tenant_id_param='tenant_id')
-@role_required(['admin', 'user'])
+@jwt_required_custom  # Validates JWT + checks blacklist
+@tenant_required(tenant_id_param='tenant_id')  # Verifies tenant access
+@role_required(['admin', 'user'])  # Enforces role permissions
 ```
 
-**Deliverables**:
-- JWT validation middleware
-- Token blacklist integration
-- Request context management
+**Security Features**: ✅
+1. JWT signature and expiration validation
+2. Token blacklist checking using jti claim
+3. User identity verification
+4. Tenant membership validation
+5. Role-based access control with hierarchy (admin > user > viewer)
+6. Request JSON validation with required fields
+7. Rate limiting placeholder for future implementation
+
+**Additional Decorators**: ✅
+- `@admin_required` - Convenience decorator for admin-only endpoints
+- `@validate_json(required_fields=[...])` - JSON request validation
+- `@rate_limit(limit, per, scope)` - Rate limiting placeholder
+
+**Deliverables**: ✅
+- JWT validation middleware with blacklist integration
+- Token blacklist checking using TokenBlacklist model
+- Request context management (g.user_id, g.jwt_claims, g.tenant_id, g.user_role)
+- Role-based access control with flexible decorator composition
+- Comprehensive security logging for audit trail
 
 ---
 
