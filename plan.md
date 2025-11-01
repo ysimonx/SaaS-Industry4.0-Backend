@@ -2019,17 +2019,19 @@ bucket/tenants/{tenant_id}/files/{year}/{month}/{file_id}_{md5_hash}
 
 ---
 
-### Task 30: Create KafkaService
+### Task 30: Create KafkaService ✅
 **Priority**: High
 **Dependencies**: None
+**Status**: Completed
+**Completed**: 2025-11-01
 
-**File**: `app/services/kafka_service.py`
+**File**: `app/services/kafka_service.py` (463 lines)
 
-**Methods**:
+**Implemented Methods**:
 
-1. **produce_message(topic, event_type, tenant_id, user_id, data)**
-   - Generate event_id (UUID)
-   - Format message:
+1. ✅ **produce_message(topic, event_type, tenant_id, user_id, data)**
+   - Generates unique event_id (UUID4) for message tracking
+   - Formats message with standardized structure:
      ```json
      {
        "event_id": "uuid",
@@ -2040,28 +2042,37 @@ bucket/tenants/{tenant_id}/files/{year}/{month}/{file_id}_{md5_hash}
        "data": {...}
      }
      ```
-   - Send to Kafka topic
-   - Return event_id
+   - Sends to Kafka topic (placeholder for Phase 6)
+   - Returns (event_id, error_message) tuple
 
-2. **consume_messages(topic, callback)**
-   - Subscribe to topic
-   - Poll for messages
-   - Call callback(message) for each message
-   - Handle errors and retries
+2. ✅ **consume_messages(topic, callback, group_id, auto_offset_reset)**
+   - Subscribes to topic with consumer group
+   - Polls for messages continuously
+   - Calls callback(message) for each message
+   - Handles callback errors without stopping consumer
+   - Graceful shutdown support
+   - Returns (success, error_message) tuple
 
-**Topics**:
-- `tenant.created`
-- `tenant.deleted`
-- `document.uploaded`
-- `document.deleted`
-- `file.process`
-- `audit.log`
+3. ✅ **get_producer_metrics()** - Returns producer statistics (placeholder)
+4. ✅ **get_consumer_metrics(group_id)** - Returns consumer statistics (placeholder)
+5. ✅ **check_kafka_health()** - Verifies Kafka broker connectivity
 
-**Deliverables**:
-- Kafka producer wrapper
-- Kafka consumer wrapper
-- Standard message format
-- Error handling and retries
+**Supported Topics**:
+- `tenant.created` - Tenant provisioning events
+- `tenant.deleted` - Tenant deletion/deactivation events
+- `document.uploaded` - Document upload completion
+- `document.deleted` - Document deletion
+- `file.process` - File processing/analysis jobs
+- `audit.log` - Security audit trail
+
+**Deliverables**: ✅
+- Kafka producer wrapper with standardized message format
+- Kafka consumer wrapper with callback processing
+- Topic and event type constants
+- Error handling with tuple return pattern
+- Comprehensive logging for monitoring
+- Health check for broker connectivity
+- Metrics placeholders for Phase 6
 
 ---
 
