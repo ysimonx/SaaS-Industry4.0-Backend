@@ -1,7 +1,22 @@
-- process with the @plan.md  Stop at each step so I can review
+A - utilise le site https://claude.ai pour soumettre le prompt "requirements.txt"
+et télécharge le fichier requirements.md
 
-- update the @plan.md file with the latest uncommitted changes
+B - utilise le prompt suivant pour générer un plan.md
+Think hard about how to implement all the requirements
+ described in @specs/requirements.md
+ Create a detailed plan in a file "plan.md" with all the proposed tasks and subtasks,
+  focusing on the flask routes and sqlalchemy models first
+  and add that the platform should build its own requirements.txt with pip install commands followed by a pip freeze
 
-- stash and commit all the latest changes with a short and clear commit message
+Soumet ensuite dans l'extension vs claude
 
-- continue with the next step in @plan.md, then I can review
+C - process with the @plan.md  Stop at each step so I can review
+
+D - puis boucle sur tout le plan sur les 3 taches suivantes
+-----
+D1 - update the @plan.md file with the latest uncommitted changes
+
+D2 - stash and commit all the latest changes with a short and clear commit message
+
+D3 - continue with the next step in @plan.md, then I can review
+------
