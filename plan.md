@@ -1210,63 +1210,6 @@ def create_app(config_name=None):
 
 ## Phase 4: Flask Application Setup
 
-### Task 18: Create Flask App Factory (DUPLICATE - NEEDS RENUMBERING)
-**Priority**: Critical
-**Dependencies**: 2, 11
-
-**File**: `app/__init__.py`
-
-**Implementation**:
-```python
-def create_app(config_name='development'):
-    app = Flask(__name__)
-    app.config.from_object(config[config_name])
-
-    # Initialize extensions
-    db.init_app(app)
-    migrate.init_app(app, db)
-    jwt.init_app(app)
-    cors.init_app(app)
-
-    # Register blueprints
-    from app.routes import auth, users, tenants, documents, files
-    app.register_blueprint(auth.bp)
-    app.register_blueprint(users.bp)
-    app.register_blueprint(tenants.bp)
-    app.register_blueprint(documents.bp)
-    app.register_blueprint(files.bp)
-
-    return app
-```
-
-**Deliverables**:
-- App factory pattern implementation
-- Extension initialization
-- Blueprint registration
-- Configuration loading
-
----
-
-### Task 17: Initialize Database Extensions
-**Priority**: Critical
-**Dependencies**: 16
-
-**Files to update**:
-- `app/__init__.py` - Extension instances
-- `app/models/__init__.py` - Import all models
-
-**Extensions to initialize**:
-- SQLAlchemy (db)
-- Flask-Migrate (migrate)
-- Flask-JWT-Extended (jwt)
-- Flask-CORS (cors)
-
-**Deliverables**:
-- All extensions properly initialized
-- Models imported for migration detection
-
----
-
 ### Task 18: Set Up Database Migrations
 **Priority**: High
 **Dependencies**: 17
