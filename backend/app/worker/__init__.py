@@ -12,7 +12,7 @@ Architecture:
 
 Components:
 - producer.py: Kafka producer wrapper for message production
-- consumer.py: Kafka consumer worker for message consumption (Task 34)
+- consumer.py: Kafka consumer worker for message consumption
 
 Message Flow:
 1. Flask app produces messages via producer.produce_message()
@@ -26,6 +26,14 @@ Worker Deployment:
 - Scaling: Multiple consumer processes can run in same consumer group
 - Monitoring: Health checks, metrics, logging
 
+Event Handlers:
+- tenant.created: Create tenant database with Document/File tables
+- tenant.deleted: Mark tenant as deleted, optionally drop database
+- document.uploaded: Process document (OCR, thumbnails, indexing)
+- document.deleted: Check for orphaned files and schedule cleanup
+- file.process: Background file processing (virus scan, metadata extraction)
+- audit.log: Write audit events to logging system
+
 Usage (Producer):
     from app.worker.producer import produce_message
 
@@ -35,9 +43,15 @@ Usage (Producer):
         key='event-id'
     )
 
-Usage (Consumer - Task 34):
+Usage (Consumer):
     # Run consumer worker in separate terminal
     python -m app.worker.consumer
+
+    # Or run in background
+    nohup python -m app.worker.consumer &
+
+    # Graceful shutdown
+    kill -TERM <pid>
 """
 
 from app.worker.producer import (
@@ -48,6 +62,9 @@ from app.worker.producer import (
     close_producer,
     get_producer_metrics,
 )
+
+# Consumer is not imported here as it's meant to be run as standalone process
+# Import consumer module directly: from app.worker import consumer
 
 __all__ = [
     'KafkaProducerWrapper',
