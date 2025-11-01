@@ -1604,30 +1604,61 @@ flask db upgrade
 
 ---
 
-### Task 24: Create Kafka Demo Blueprint
+### Task 24: Create Kafka Demo Blueprint ✅ COMPLETED
 **Priority**: Low
 **Dependencies**: 16, 19
+**Status**: ✅ Completed
 
 **File**: `app/routes/kafka_demo.py`
 
 **Endpoints**:
 
-1. **POST /api/demo/kafka/produce**
+1. **POST /api/demo/kafka/produce** ✅
    - Auth: JWT required
-   - Input: topic, message
-   - Action: Produce test message to Kafka
-   - Response: Message sent confirmation
+   - Input: topic (required), message (dict, required), key (optional)
+   - Action: Produce test message to Kafka with event metadata
+   - Response: Message sent confirmation with event_id, topic, timestamp, status
 
-2. **GET /api/demo/kafka/consume**
+2. **GET /api/demo/kafka/consume** ✅
    - Auth: JWT required
-   - Action: Return status of Kafka consumer
-   - Response: Consumer status, last messages
+   - Query params: limit (default 10, max 50)
+   - Action: Return consumer status and recent messages from in-memory buffer
+   - Response: Consumer status, message_count, buffer_size, messages array
+
+3. **GET /api/demo/kafka/health** ✅
+   - No auth required
+   - Action: Health check with buffer count
+   - Response: Service status, buffer_count
 
 **Purpose**: Testing and demonstration of Kafka integration
 
 **Deliverables**:
-- Demo endpoints for Kafka testing
-- Simple message producer/consumer examples
+- ✅ Demo endpoints for Kafka testing (333 lines)
+- ✅ Simple message producer/consumer examples with in-memory buffer
+- ✅ KafkaProduceSchema for request validation
+- ✅ Helper function: produce_kafka_message() with event metadata generation
+- ✅ In-memory MESSAGE_BUFFER (last 10 messages) for demo consumption
+- ✅ JWT authentication for produce/consume endpoints
+- ✅ Comprehensive error handling and logging
+- ✅ Registered kafka_demo_bp in Flask app
+- ✅ Updated root endpoint documentation
+
+**Completion Notes**:
+- Created `backend/app/routes/kafka_demo.py` (333 lines) with 3 endpoints
+- Blueprint URL prefix: `/api/demo/kafka` (demo namespace)
+- In-memory message buffer (max 10 messages) for demonstration purposes
+- Event metadata includes: event_id (UUID), topic, timestamp, user_id, key, payload
+- Placeholder Kafka producer (TODO for Phase 6 with kafka-python library)
+- Real consumer will run in separate worker process (app/worker/)
+- KafkaProduceSchema validates: topic (str), message (dict), key (optional str)
+- Health check endpoint shows buffer count without authentication
+- Demo workflow: POST to produce → GET to consume → see messages in buffer
+- Messages persist in-memory until server restart (demo implementation)
+- Updated `backend/app/routes/__init__.py` to export kafka_demo_bp
+- Updated `backend/app/__init__.py` to register kafka_demo blueprint
+- Updated root endpoint to include `/api/demo/kafka` in endpoints list
+- Comprehensive docstrings explain placeholder nature and Phase 6 implementation plan
+- Standard message format prepares for real Kafka integration (event_id, topic, timestamp, user_id, key, payload)
 
 ---
 
