@@ -14,12 +14,15 @@ Architecture:
 Available Services:
 - AuthService: Authentication, registration, token management, logout
 - UserService: User management, profile updates, tenant associations
+- TenantService: Tenant management, database provisioning, user associations
 """
 
 from app.services.auth_service import AuthService
 from app.services.user_service import UserService
+from app.services.tenant_service import TenantService
 
 __all__ = [
     'AuthService',
     'UserService',
+    'TenantService',
 ]
