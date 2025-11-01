@@ -211,8 +211,8 @@ def register_blueprints(app):
         app.logger.warning(f"Users blueprint not found: {e}")
 
     try:
-        from app.routes.tenants import bp as tenants_bp
-        app.register_blueprint(tenants_bp, url_prefix='/api/tenants')
+        from app.routes.tenants import tenants_bp
+        app.register_blueprint(tenants_bp)
         app.logger.info("Registered blueprint: tenants (/api/tenants)")
     except ImportError as e:
         app.logger.warning(f"Tenants blueprint not found: {e}")
