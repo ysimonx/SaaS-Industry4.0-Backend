@@ -1955,52 +1955,56 @@ flask db upgrade
 
 ---
 
-### Task 29: Create FileService
+### Task 29: Create FileService ✅
 **Priority**: Critical
 **Dependencies**: 9, 31
+**Status**: Completed
+**Completed**: 2025-11-01
 
-**File**: `app/services/file_service.py`
+**File**: `app/services/file_service.py` (697 lines)
 
-**Methods**:
+**Implemented Methods**:
 
-1. **upload_file(tenant_id, file_obj)**
-   - Calculate MD5 hash
-   - Check duplicate via check_duplicate()
-   - If duplicate: return existing file_id
+1. ✅ **upload_file(tenant_id, tenant_database_name, file_obj, file_size, user_id, original_filename)**
+   - Calculate MD5 hash from file content
+   - Check duplicate via MD5 query
+   - If duplicate: return existing file (deduplication)
    - If new:
      - Generate S3 path: `tenants/{tenant_id}/files/{year}/{month}/{file_id}_{md5_hash}`
-     - Upload to S3 with metadata
-     - Create File record
-     - Return file_id
+     - Upload to S3 with metadata (placeholder for Phase 6)
+     - Create File record in tenant database
+     - Publish file.uploaded event to Kafka (placeholder for Phase 6)
+     - Return file object
 
-2. **get_file(tenant_id, file_id)**
+2. ✅ **get_file(tenant_database_name, file_id)**
    - Switch to tenant database context
-   - Fetch file record
-   - Return file object
+   - Fetch file record by ID
+   - Return file object with metadata
 
-3. **check_duplicate(tenant_id, md5_hash)**
+3. ✅ **check_duplicate(tenant_database_name, md5_hash)**
    - Switch to tenant database context
    - Query File by md5_hash
-   - Return file_id if exists, None otherwise
+   - Return file object if exists, None otherwise (not an error)
 
-4. **delete_file(tenant_id, file_id)**
-   - Check if file is orphaned
-   - If yes:
-     - Delete S3 object
-     - Delete File record
+4. ✅ **delete_file(tenant_id, tenant_database_name, file_id, force=False)**
+   - Check if file is orphaned (no document references)
+   - If orphaned or force=True:
+     - Delete S3 object (placeholder for Phase 6)
+     - Delete File record from database
+     - Publish file.deleted event to Kafka (placeholder for Phase 6)
      - Return success
-   - If no: raise error "File in use"
+   - If not orphaned and force=False: return error "File still has document references"
 
-5. **delete_orphaned_files(tenant_id)**
-   - Find all files with no document references
-   - Delete from S3
-   - Delete File records
-   - Return count of deleted files
+5. ✅ **delete_orphaned_files(tenant_id, tenant_database_name, batch_size=100)**
+   - Query all files in tenant database
+   - Check each file for orphaned status
+   - Delete orphaned files from S3 and database in batches
+   - Return statistics: total_checked, deleted, failed
 
-6. **generate_download_url(tenant_id, file_id, expires_in=3600)**
+6. ✅ **generate_download_url(tenant_id, tenant_database_name, file_id, expiration=3600)**
    - Fetch file record
-   - Generate pre-signed S3 URL
-   - Return URL
+   - Generate pre-signed S3 URL (placeholder for Phase 6)
+   - Return URL with expiration time
 
 **S3 path structure**:
 ```
