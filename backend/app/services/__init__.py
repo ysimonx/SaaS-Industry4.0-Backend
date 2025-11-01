@@ -17,6 +17,7 @@ Available Services:
 - TenantService: Tenant management, database provisioning, user associations
 - DocumentService: Document management, file deduplication, S3/Kafka integration
 - FileService: File uploads, downloads, deduplication, orphaned file cleanup
+- KafkaService: Message production/consumption, event-driven architecture
 """
 
 from app.services.auth_service import AuthService
@@ -24,6 +25,7 @@ from app.services.user_service import UserService
 from app.services.tenant_service import TenantService
 from app.services.document_service import DocumentService
 from app.services.file_service import FileService
+from app.services.kafka_service import KafkaService
 
 __all__ = [
     'AuthService',
@@ -31,4 +33,5 @@ __all__ = [
     'TenantService',
     'DocumentService',
     'FileService',
+    'KafkaService',
 ]
