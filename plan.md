@@ -1384,9 +1384,10 @@ flask db upgrade
 
 ---
 
-### Task 21: Create Tenants Blueprint
+### Task 21: Create Tenants Blueprint ✅ COMPLETED
 **Priority**: High
 **Dependencies**: 13, 16, 19
+**Status**: ✅ Completed
 
 **File**: `app/routes/tenants.py`
 
@@ -1441,6 +1442,25 @@ flask db upgrade
 - Complete tenant management blueprint
 - Role-based access control
 - Tenant member management
+
+**Completion Notes**:
+- ✅ Created `backend/app/routes/tenants.py` with comprehensive tenant management blueprint (738 lines)
+- ✅ Implemented all 7 endpoints with proper JWT authentication and role-based access control
+- ✅ GET /api/tenants - Lists user's tenants with roles and joined_at timestamps
+- ✅ POST /api/tenants - Creates tenant, database, tables, and adds creator as admin
+- ✅ GET /api/tenants/<id> - Returns tenant details with full member list
+- ✅ PUT /api/tenants/<id> - Updates tenant (admin only, validates role)
+- ✅ DELETE /api/tenants/<id> - Soft deletes tenant (admin only, logs database not dropped)
+- ✅ POST /api/tenants/<id>/users - Adds user to tenant with role (admin only, prevents duplicates)
+- ✅ DELETE /api/tenants/<id>/users/<user_id> - Removes user (admin only, prevents removing last admin)
+- ✅ Helper functions: `get_user_tenant_role()`, `require_tenant_admin()`
+- ✅ Integrated with TenantDatabaseManager for database creation/management
+- ✅ Uses Marshmallow schemas: TenantCreateSchema, TenantUpdateSchema, UserTenantAssociationCreateSchema
+- ✅ Comprehensive error handling with standardized responses (ok, created, bad_request, not_found, forbidden, internal_error)
+- ✅ Updated `backend/app/routes/__init__.py` to export tenants_bp
+- ✅ Updated `backend/app/__init__.py` to register tenants blueprint
+- ✅ Health check endpoint at /api/tenants/health
+- ✅ All database operations use transactions with proper rollback on errors
 
 ---
 
