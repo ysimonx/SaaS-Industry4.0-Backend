@@ -1664,45 +1664,79 @@ flask db upgrade
 
 ## Phase 6: Services Layer
 
-### Task 25: Create AuthService
+### Task 25: Create AuthService ✅ COMPLETED
 **Priority**: Critical
 **Dependencies**: 6, 12
+**Status**: ✅ Completed
 
 **File**: `app/services/auth_service.py`
 
 **Methods**:
 
-1. **authenticate(email, password)**
-   - Validate email/password
-   - Check user exists and is active
-   - Verify password hash
-   - Generate access + refresh tokens
-   - Fetch user's tenants
-   - Return tokens + user + tenants
+1. **register(user_data)** ✅
+   - Validates email uniqueness (case-insensitive)
+   - Creates user with hashed password (bcrypt)
+   - Handles database transactions with rollback
+   - Returns: (User, error_message)
 
-2. **refresh_token(refresh_token)**
-   - Validate refresh token
-   - Check token not blacklisted
-   - Generate new access token
-   - Return new access token
+2. **authenticate(email, password)** ✅
+   - Validates email/password (case-insensitive email lookup)
+   - Checks user exists and is active
+   - Verifies password hash
+   - Generates access (15min) + refresh (7day) tokens
+   - Fetches user's tenants with roles via _get_user_tenants()
+   - Returns: (auth_data dict, error_message)
+     - auth_data contains: access_token, refresh_token, user dict, tenants list
 
-3. **logout(user_id, token_jti)**
-   - Add token JTI to blacklist
-   - Set expiration on blacklist entry
-   - Return success
+3. **refresh_access_token(refresh_token)** ✅
+   - Decodes and validates refresh token
+   - Checks token not blacklisted (TOKEN_BLACKLIST set)
+   - Verifies user still exists and is active
+   - Generates new access token
+   - Returns: (new_access_token, error_message)
 
-4. **register(user_data)**
-   - Validate user data
-   - Check email uniqueness
-   - Hash password
-   - Create user record
-   - Return user object
+4. **logout(jti)** ✅
+   - Adds token JTI to blacklist (in-memory set for dev)
+   - Revokes token for future use
+   - Idempotent operation
+   - Returns: (success bool, error_message)
+
+5. **is_token_blacklisted(jti)** ✅
+   - Checks if token JTI is in blacklist
+   - Used by JWT callbacks for validation
+   - Returns: bool
+
+**Helper Methods**:
+- _get_user_tenants(user_id) - Fetches user's active tenants with roles (private)
 
 **Deliverables**:
-- Complete authentication service
-- JWT token management
-- Token blacklist implementation
-- Password hashing/verification
+- ✅ Complete authentication service (457 lines)
+- ✅ JWT token management with blacklist
+- ✅ Token blacklist implementation (in-memory for dev, Redis for prod)
+- ✅ Password hashing/verification via User model
+- ✅ Error handling with tuple return pattern (result, error)
+- ✅ Comprehensive logging for audit trail
+- ✅ Created services package with __init__.py
+- ✅ Exported AuthService from app.services
+
+**Completion Notes**:
+- Created `backend/app/services/auth_service.py` (457 lines) with AuthService class
+- All methods are static (no instance state required)
+- Return pattern: (result, error_message) for consistent error handling
+- authenticate() returns complete auth data: tokens, user, tenants
+- _get_user_tenants() queries UserTenantAssociation with Tenant join
+- Fetches only active tenants, sorted by joined_at descending
+- TOKEN_BLACKLIST: Global in-memory set for development (use Redis in production)
+- JTI (JWT ID) used for token revocation tracking
+- Email lookup is case-insensitive for both registration and authentication
+- Password hashing delegated to User.set_password() (bcrypt)
+- Password verification delegated to User.check_password()
+- Database transactions with rollback on registration error
+- Comprehensive logging: info for successful ops, warning for failures
+- Created `backend/app/services/__init__.py` to export AuthService
+- Service layer architecture: Routes → Services → Models → Database
+- Benefits: Reusable logic, easier testing, separation of concerns
+- Auth blueprint can be refactored to use AuthService methods
 
 ---
 
