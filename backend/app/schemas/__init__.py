@@ -5,6 +5,7 @@ This package contains all validation schemas for the SaaS Multi-Tenant Platform:
 - user_schema: User registration, login, updates, and responses
 - tenant_schema: Tenant creation, updates, and responses
 - document_schema: Document upload, metadata updates, and responses
+- file_schema: File metadata serialization (read-only)
 """
 
 from app.schemas.user_schema import (
@@ -49,6 +50,14 @@ from app.schemas.document_schema import (
     documents_response_schema,
 )
 
+from app.schemas.file_schema import (
+    FileSchema,
+    FileResponseSchema,
+    file_schema,
+    file_response_schema,
+    files_response_schema,
+)
+
 __all__ = [
     # User schemas
     'UserSchema',
@@ -89,4 +98,11 @@ __all__ = [
     'document_response_schema',
     'document_with_file_response_schema',
     'documents_response_schema',
+    # File schemas
+    'FileSchema',
+    'FileResponseSchema',
+    # Pre-instantiated file schemas
+    'file_schema',
+    'file_response_schema',
+    'files_response_schema',
 ]

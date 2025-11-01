@@ -129,11 +129,22 @@ Routes (Controllers) → Services (Business Logic) → Models → Database
   - Updated `backend/app/schemas/__init__.py` to export all DocumentSchema classes and instances
   - All schemas ready for use in document routes and services
 
+- ✅ **Task 15**: Create FileSchema (Phase 3) - *Completed*
+  - Created `backend/app/schemas/file_schema.py` with read-only file metadata schemas (140+ lines)
+  - FileSchema: Base schema with all File model fields (all dump_only)
+  - FileResponseSchema: For API responses (functionally identical to FileSchema, provided for consistency)
+  - All fields dump_only since files are immutable once created (no create, update, or delete operations)
+  - Fields: id, md5_hash, s3_path, file_size, created_at
+  - Files created automatically during document upload with MD5 deduplication
+  - Pre-instantiated schema instances: file_schema, file_response_schema, files_response_schema
+  - Updated `backend/app/schemas/__init__.py` to export all FileSchema classes and instances
+  - Schema ready for use in document routes when returning file details
+
 ### In Progress
-- 🔄 **Task 15**: Create FileSchema (Phase 3) - *Next*
+- 🔄 **Task 16**: Create UserTenantAssociationSchema (Phase 3) - *Next*
 
 ### Pending
-- ⏳ Tasks 15-44: Remaining implementation tasks
+- ⏳ Tasks 16-44: Remaining implementation tasks
 
 ---
 
@@ -1026,6 +1037,8 @@ class DocumentSchema(Schema):
 **Priority**: High
 **Dependencies**: 9
 
+**Status**: ✅ Completed
+
 **File**: `app/schemas/file_schema.py`
 
 **Implementation**:
@@ -1036,11 +1049,34 @@ class FileSchema(Schema):
     s3_path = fields.Str(dump_only=True)
     file_size = fields.Integer(dump_only=True)
     created_at = fields.DateTime(dump_only=True)
+
+class FileResponseSchema(Schema):
+    id = fields.UUID(dump_only=True)
+    md5_hash = fields.Str(dump_only=True)
+    s3_path = fields.Str(dump_only=True)
+    file_size = fields.Integer(dump_only=True)
+    created_at = fields.DateTime(dump_only=True)
 ```
 
 **Deliverables**:
-- File metadata schema
-- All fields dump_only (files are immutable)
+- ✅ File metadata schema
+- ✅ All fields dump_only (files are immutable)
+
+**Completion Notes**:
+- Created `backend/app/schemas/file_schema.py` with read-only file metadata schemas (140+ lines)
+- FileSchema: Base schema with all File model fields (all dump_only)
+- FileResponseSchema: For API responses (functionally identical to FileSchema, provided for consistency with other model schemas)
+- All fields dump_only since files are immutable once created (no create, update, or delete operations via API)
+- Fields included: id (UUID), md5_hash (32 hex chars), s3_path (S3 object path), file_size (bytes), created_at (timestamp)
+- Files are created automatically during document upload process, not via direct API endpoints
+- MD5 deduplication: Files with same MD5 hash are reused to save storage space
+- S3 path format: tenants/{tenant_id}/files/{md5_prefix}/{md5_hash}_{file_uuid}
+- Multiple documents can reference the same file_id (many-to-one relationship via deduplication)
+- Files never deleted (managed by S3 lifecycle policies, referenced by documents)
+- Pre-instantiated schema instances: file_schema, file_response_schema, files_response_schema
+- Updated `backend/app/schemas/__init__.py` to export all FileSchema classes and instances
+- Schema ready for use in document routes when returning file details (e.g., in DocumentWithFileResponseSchema)
+- Comprehensive docstrings explain file management context and immutability constraints
 
 ---
 
