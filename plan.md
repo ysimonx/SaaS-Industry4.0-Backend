@@ -153,11 +153,24 @@ Routes (Controllers) → Services (Business Logic) → Models → Database
   - Updated `backend/app/schemas/__init__.py` to export all UserTenantAssociationSchema classes, instances, and role constants
   - All schemas ready for use in tenant user management routes
 
+- ✅ **Task 17**: Create Flask App Factory (Phase 4) - *Completed*
+  - Created `backend/app/__init__.py` with application factory pattern (450+ lines)
+  - create_app() function: Creates Flask app with specified configuration (development, production, testing)
+  - Extension initialization: db, migrate, jwt, cors with proper configuration
+  - JWT callbacks: configured handlers for expired, invalid, missing, and revoked tokens
+  - Blueprint registration: auth, users, tenants, documents (with graceful import handling)
+  - Health check endpoints: /health and / (root) for monitoring
+  - Error handlers: 400, 401, 403, 404, 405, 500, and catch-all exception handler
+  - Logging configuration: console and rotating file handler with configurable levels
+  - Shell context: makes db and models available in flask shell
+  - CORS configured with origins, credentials, max_age from config
+  - Comprehensive docstrings and inline comments
+
 ### In Progress
-- 🔄 **Task 17**: Create Flask App Factory (Phase 4) - *Next*
+- 🔄 **Task 18**: Initialize Database Extensions (Phase 4) - *Next*
 
 ### Pending
-- ⏳ Tasks 17-44: Remaining implementation tasks
+- ⏳ Tasks 18-44: Remaining implementation tasks
 
 ---
 
@@ -1145,9 +1158,59 @@ class UserTenantAssociationUpdateSchema(Schema):
 
 ---
 
+### Task 17: Create Flask App Factory
+**Priority**: Critical
+**Dependencies**: 2, 11
+
+**Status**: ✅ Completed
+
+**File**: `app/__init__.py`
+
+**Implementation**:
+```python
+def create_app(config_name=None):
+    app = Flask(__name__)
+    config_class = config.get(config_name, config['default'])
+    app.config.from_object(config_class)
+    config_class.init_app(app)
+
+    initialize_extensions(app)
+    register_blueprints(app)
+    register_error_handlers(app)
+    configure_logging(app)
+    register_shell_context(app)
+
+    return app
+```
+
+**Deliverables**:
+- ✅ App factory pattern implementation
+- ✅ Extension initialization
+- ✅ Blueprint registration
+- ✅ Configuration loading
+- ✅ Error handlers
+- ✅ Logging configuration
+
+**Completion Notes**:
+- Created `backend/app/__init__.py` with comprehensive Flask application factory (450+ lines)
+- create_app() function: Implements factory pattern with configurable environments (development, production, testing)
+- Extension initialization: db, migrate, jwt, cors with proper configuration from app.config
+- JWT callbacks: Configured error handlers for expired_token, invalid_token, unauthorized, and revoked_token scenarios
+- Blueprint registration: Graceful import handling for auth, users, tenants, documents blueprints with try/except
+- Health check endpoints: /health returns service status, / (root) returns API information and endpoint map
+- Error handlers: Comprehensive handlers for 400, 401, 403, 404, 405, 500, and catch-all Exception handler with JSON responses
+- Logging configuration: console handler and rotating file handler with configurable LOG_LEVEL, LOG_FORMAT, LOG_FILE, LOG_MAX_BYTES, LOG_BACKUP_COUNT
+- Shell context: register_shell_context() makes db and all models (User, Tenant, Document, File, UserTenantAssociation) available in flask shell
+- CORS: Configured with origins, supports_credentials, max_age, allow_headers, methods from app.config
+- Proper error logging: Internal errors and unhandled exceptions logged with exc_info=True for debugging
+- Configuration validation: Each config class has init_app() method for environment-specific setup
+- Comprehensive docstrings: Module, function, and inline comments explain factory pattern and all components
+
+---
+
 ## Phase 4: Flask Application Setup
 
-### Task 16: Create Flask App Factory
+### Task 18: Create Flask App Factory (DUPLICATE - NEEDS RENUMBERING)
 **Priority**: Critical
 **Dependencies**: 2, 11
 
