@@ -140,11 +140,24 @@ Routes (Controllers) → Services (Business Logic) → Models → Database
   - Updated `backend/app/schemas/__init__.py` to export all FileSchema classes and instances
   - Schema ready for use in document routes when returning file details
 
+- ✅ **Task 16**: Create UserTenantAssociationSchema (Phase 3) - *Completed*
+  - Created `backend/app/schemas/user_tenant_association_schema.py` with role management schemas (370+ lines)
+  - UserTenantAssociationSchema: Base schema with all UserTenantAssociation model fields
+  - UserTenantAssociationCreateSchema: For adding users to tenants (POST /api/tenants/{id}/users)
+  - UserTenantAssociationUpdateSchema: For updating user roles (PUT /api/tenants/{id}/users/{user_id})
+  - UserTenantAssociationResponseSchema: For API responses (all dump_only, optional nested user/tenant data)
+  - Role validation: enforces one of three valid roles (admin, user, viewer)
+  - Data normalization: @post_load hooks trim whitespace and convert role to lowercase
+  - Role constants exported: ROLE_ADMIN, ROLE_USER, ROLE_VIEWER, VALID_ROLES
+  - Pre-instantiated schema instances: user_tenant_association_schema, user_tenant_association_create_schema, user_tenant_association_update_schema, user_tenant_association_response_schema, user_tenant_associations_response_schema
+  - Updated `backend/app/schemas/__init__.py` to export all UserTenantAssociationSchema classes, instances, and role constants
+  - All schemas ready for use in tenant user management routes
+
 ### In Progress
-- 🔄 **Task 16**: Create UserTenantAssociationSchema (Phase 3) - *Next*
+- 🔄 **Task 17**: Create Flask App Factory (Phase 4) - *Next*
 
 ### Pending
-- ⏳ Tasks 16-44: Remaining implementation tasks
+- ⏳ Tasks 17-44: Remaining implementation tasks
 
 ---
 
@@ -1077,6 +1090,58 @@ class FileResponseSchema(Schema):
 - Updated `backend/app/schemas/__init__.py` to export all FileSchema classes and instances
 - Schema ready for use in document routes when returning file details (e.g., in DocumentWithFileResponseSchema)
 - Comprehensive docstrings explain file management context and immutability constraints
+
+---
+
+### Task 16: Create UserTenantAssociationSchema
+**Priority**: High
+**Dependencies**: 8
+
+**Status**: ✅ Completed
+
+**File**: `app/schemas/user_tenant_association_schema.py`
+
+**Implementation**:
+```python
+class UserTenantAssociationSchema(Schema):
+    user_id = fields.UUID(dump_only=True)
+    tenant_id = fields.UUID(dump_only=True)
+    role = fields.Str(required=True, validate=validate.OneOf(['admin', 'user', 'viewer']))
+    joined_at = fields.DateTime(dump_only=True)
+
+class UserTenantAssociationCreateSchema(Schema):
+    user_id = fields.UUID(required=True)
+    role = fields.Str(required=True, validate=validate.OneOf(['admin', 'user', 'viewer']))
+
+class UserTenantAssociationUpdateSchema(Schema):
+    role = fields.Str(required=True, validate=validate.OneOf(['admin', 'user', 'viewer']))
+```
+
+**Variants**:
+- ✅ `UserTenantAssociationCreateSchema` - For adding users to tenants (POST /api/tenants/{id}/users)
+- ✅ `UserTenantAssociationUpdateSchema` - For updating user roles (PUT /api/tenants/{id}/users/{user_id})
+- ✅ `UserTenantAssociationResponseSchema` - For API responses (all dump_only)
+
+**Deliverables**:
+- ✅ User-tenant association schemas with role management
+- ✅ Role validation (admin, user, viewer)
+- ✅ Role constants exported
+
+**Completion Notes**:
+- Created `backend/app/schemas/user_tenant_association_schema.py` with comprehensive role management schemas (370+ lines)
+- UserTenantAssociationSchema: Base schema with all fields (user_id, tenant_id, role, joined_at)
+- UserTenantAssociationCreateSchema: For adding users to tenants with role assignment (user_id and role required)
+- UserTenantAssociationUpdateSchema: For updating user roles (only role field, required)
+- UserTenantAssociationResponseSchema: All fields dump_only with optional nested user/tenant data
+- Role validation: @validates decorator enforces one of three valid roles (admin, user, viewer)
+- Role hierarchy: admin > user > viewer (for permission checks in business logic)
+- Data normalization: @post_load hooks trim whitespace and convert role to lowercase
+- Role constants exported: ROLE_ADMIN='admin', ROLE_USER='user', ROLE_VIEWER='viewer', VALID_ROLES list
+- Composite primary key (user_id, tenant_id) prevents duplicate associations
+- Pre-instantiated schema instances: user_tenant_association_schema, user_tenant_association_create_schema, user_tenant_association_update_schema, user_tenant_association_response_schema, user_tenant_associations_response_schema
+- Updated `backend/app/schemas/__init__.py` to export all UserTenantAssociationSchema classes, instances, and role constants
+- All schemas ready for immediate use in tenant user management routes
+- Comprehensive docstrings explain role-based access control (RBAC) and business rules
 
 ---
 
