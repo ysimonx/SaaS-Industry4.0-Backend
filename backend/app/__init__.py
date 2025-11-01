@@ -197,15 +197,15 @@ def register_blueprints(app):
     # Import blueprints here to avoid circular imports
     # The blueprints will be created in subsequent tasks
     try:
-        from app.routes.auth import bp as auth_bp
-        app.register_blueprint(auth_bp, url_prefix='/api/auth')
+        from app.routes.auth import auth_bp
+        app.register_blueprint(auth_bp)
         app.logger.info("Registered blueprint: auth (/api/auth)")
     except ImportError as e:
         app.logger.warning(f"Auth blueprint not found: {e}")
 
     try:
-        from app.routes.users import bp as users_bp
-        app.register_blueprint(users_bp, url_prefix='/api/users')
+        from app.routes.users import users_bp
+        app.register_blueprint(users_bp)
         app.logger.info("Registered blueprint: users (/api/users)")
     except ImportError as e:
         app.logger.warning(f"Users blueprint not found: {e}")

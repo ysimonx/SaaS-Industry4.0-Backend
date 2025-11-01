@@ -186,11 +186,24 @@ Routes (Controllers) → Services (Business Logic) → Models → Database
   - Comprehensive error handling with proper HTTP status codes
   - Health check endpoint: GET /api/auth/health
 
+- ✅ **Task 20**: Create Users Blueprint (Phase 5) - *Completed*
+  - Created `backend/app/routes/users.py` with user profile management blueprint (290+ lines)
+  - GET /api/users/me: Get current user profile (JWT protected)
+  - PUT /api/users/me: Update user profile (first_name, last_name only, email immutable)
+  - GET /api/users/me/tenants: List user's tenants with roles and joined_at timestamps
+  - All endpoints require JWT authentication via @jwt_required_custom decorator
+  - Proper validation with UserUpdateSchema from Marshmallow
+  - Comprehensive error handling with proper HTTP status codes
+  - Health check endpoint: GET /api/users/health
+  - Updated `backend/app/routes/__init__.py` to export users_bp
+  - Updated `backend/app/__init__.py` to register users blueprint
+  - Fixed auth blueprint registration to use correct variable name (auth_bp)
+
 ### In Progress
-- 🔄 **Task 20**: Create Users Blueprint (Phase 5) - *Next*
+- 🔄 **Task 21**: Create Tenants Blueprint (Phase 5) - *Next*
 
 ### Pending
-- ⏳ Tasks 20-44: Remaining implementation tasks
+- ⏳ Tasks 21-44: Remaining implementation tasks
 
 ---
 
