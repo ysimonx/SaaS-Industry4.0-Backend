@@ -1740,37 +1740,55 @@ flask db upgrade
 
 ---
 
-### Task 26: Create UserService
+### Task 26: Create UserService ✅
 **Priority**: High
 **Dependencies**: 6, 8
+**Status**: COMPLETED
 
 **File**: `app/services/user_service.py`
 
 **Methods**:
 
-1. **get_user_by_id(user_id)**
+1. **get_user_by_id(user_id)** ✅
    - Fetch user by UUID
    - Return user object or None
+   - Tuple return pattern: (User, error)
 
-2. **get_user_by_email(email)**
-   - Fetch user by email
-   - Return user object or None
+2. **get_user_by_email(email)** ✅
+   - Fetch user by email (case-insensitive)
+   - Email normalized to lowercase
+   - Tuple return pattern: (User, error)
 
-3. **update_user(user_id, user_data)**
+3. **update_user(user_id, user_data)** ✅
    - Validate update data
-   - Update user fields
-   - Commit transaction
-   - Return updated user
+   - Update user fields: first_name, last_name, email, is_active
+   - Partial updates supported
+   - Email uniqueness validation
+   - Commit transaction with rollback on error
+   - Tuple return pattern: (User, error)
 
-4. **get_user_tenants(user_id)**
+4. **get_user_tenants(user_id)** ✅
    - Join User → UserTenantAssociation → Tenant
-   - Return list of tenants with roles
-   - Include tenant active status
+   - Return list of tenants with roles and status
+   - Include tenant active status, database_name
+   - Sorted by joined_at descending
+   - Tuple return pattern: (List[Dict], error)
 
-**Deliverables**:
+**Deliverables**: ✅
 - User CRUD operations
 - Tenant membership queries
 - Transaction management
+- Comprehensive logging and error handling
+
+**Implementation Notes**:
+- 348 lines of well-documented code
+- Static methods (no instance state)
+- Tuple return pattern: (result, error_message)
+- Case-insensitive email handling
+- Field-level update tracking for logging
+- IntegrityError handling for email uniqueness
+- Password updates explicitly NOT allowed (separate endpoint)
+- Empty tenant list is valid (not an error)
 
 ---
 
