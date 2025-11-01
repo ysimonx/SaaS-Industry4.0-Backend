@@ -114,12 +114,26 @@ Routes (Controllers) → Services (Business Logic) → Models → Database
   - Pre-instantiated schema instances: tenant_schema, tenant_create_schema, tenant_update_schema, tenant_response_schema, tenant_with_users_response_schema, tenants_response_schema
   - Updated `backend/app/schemas/__init__.py` to export all TenantSchema classes and instances
   - All schemas ready for use in tenant routes and services
+- ✅ **Task 14**: Create DocumentSchema (Phase 3) - *Completed*
+  - Created `backend/app/schemas/document_schema.py` with 5 comprehensive Marshmallow schemas (450+ lines)
+  - DocumentSchema: Base schema with all Document model fields
+  - DocumentUploadSchema: For uploading documents (POST /api/tenants/{id}/documents, multipart/form-data)
+  - DocumentUpdateSchema: For updating metadata (PUT /api/tenants/{id}/documents/{id}, all fields optional)
+  - DocumentResponseSchema: For API responses (all dump_only)
+  - DocumentWithFileResponseSchema: Extended schema with file details for detailed document view
+  - Filename validation: prevents empty/whitespace, enforces 1-255 char limit, blocks path separators (security)
+  - MIME type validation: enforces type/subtype format with regex validation
+  - Data normalization: @post_load hooks trim whitespace from filename, normalize mime_type to lowercase
+  - Auto-generated fields marked as dump_only: id, file_id, user_id, timestamps, created_by
+  - Pre-instantiated schema instances: document_schema, document_upload_schema, document_update_schema, document_response_schema, document_with_file_response_schema, documents_response_schema
+  - Updated `backend/app/schemas/__init__.py` to export all DocumentSchema classes and instances
+  - All schemas ready for use in document routes and services
 
 ### In Progress
-- 🔄 **Task 14**: Create DocumentSchema (Phase 3) - *Next*
+- 🔄 **Task 15**: Create FileSchema (Phase 3) - *Next*
 
 ### Pending
-- ⏳ Tasks 14-44: Remaining implementation tasks
+- ⏳ Tasks 15-44: Remaining implementation tasks
 
 ---
 
@@ -963,9 +977,10 @@ class TenantSchema(Schema):
 
 ---
 
-### Task 14: Create DocumentSchema
+### Task 14: Create DocumentSchema ✅ COMPLETED
 **Priority**: High
 **Dependencies**: 10
+**Status**: ✅ Completed
 
 **File**: `app/schemas/document_schema.py`
 
@@ -980,9 +995,30 @@ class DocumentSchema(Schema):
     created_at = fields.DateTime(dump_only=True)
 ```
 
+**Variants**:
+- ✅ `DocumentUploadSchema` - For uploading documents (multipart/form-data)
+- ✅ `DocumentUpdateSchema` - For updating metadata (all fields optional)
+- ✅ `DocumentResponseSchema` - For API responses (all dump_only)
+- ✅ `DocumentWithFileResponseSchema` - Extended schema with file details
+
 **Deliverables**:
-- Document validation schema
-- File upload handling schema
+- ✅ Document validation schema
+- ✅ File upload handling schema
+
+**Completion Notes**:
+- Created `backend/app/schemas/document_schema.py` with 5 comprehensive Marshmallow schemas (450+ lines)
+- All schemas include proper field validation with Marshmallow validators
+- Filename validation: @validates decorator prevents empty/whitespace, enforces 1-255 char limit, blocks path separators (/ and \) for security
+- MIME type validation: custom regex validation enforces type/subtype format (e.g., "application/pdf", "image/png")
+- Data normalization: @post_load hooks trim whitespace from filename, normalize mime_type to lowercase
+- DocumentUploadSchema: Used with multipart/form-data for file uploads (filename and mime_type required, file binary handled separately)
+- DocumentUpdateSchema: Optional filename and mime_type fields (file_id and user_id immutable)
+- DocumentResponseSchema: All fields dump_only for API responses
+- DocumentWithFileResponseSchema: Extends DocumentResponseSchema to include nested file object with MD5, S3 path, file size
+- Pre-instantiated schema instances: document_schema, document_upload_schema, document_update_schema, document_response_schema, document_with_file_response_schema, documents_response_schema
+- Updated `backend/app/schemas/__init__.py` to export all DocumentSchema classes and instances
+- All schemas ready for immediate use in document routes and services
+- Security: Path traversal prevention in filename validation
 
 ---
 
