@@ -87,9 +87,23 @@ Routes (Controllers) → Services (Business Logic) → Models → Database
   - Comprehensive logging for table creation operations
   - Proper error handling with exception propagation
   - All Phase 2 models and database configuration complete
+- ✅ **Task 12**: Create UserSchema (Phase 3) - *Completed*
+  - Created `backend/app/schemas/user_schema.py` with 5 comprehensive Marshmallow schemas (260+ lines)
+  - UserSchema: Base schema with all User model fields
+  - UserCreateSchema: For registration with password validation and data normalization
+  - UserUpdateSchema: For profile updates (excludes password and email, all fields optional)
+  - UserResponseSchema: For API responses (all dump_only, excludes sensitive data)
+  - UserLoginSchema: For authentication (email and password only)
+  - Password security validation: min 8 chars, must contain at least one letter and one number
+  - Email normalization to lowercase with whitespace trimming
+  - Name validation and whitespace trimming via @validates decorators
+  - Post-load data normalization hooks for all input schemas
+  - Pre-instantiated schema instances: user_schema, user_create_schema, user_update_schema, user_response_schema, user_login_schema, users_response_schema
+  - Updated `backend/app/schemas/__init__.py` to export all schema classes and instances
+  - All schemas ready for use in routes and services
 
 ### In Progress
-- 🔄 **Task 12**: Create UserSchema (Phase 3) - *Next*
+- 🔄 **Task 13**: Create TenantSchema (Phase 3) - *Next*
 
 ### Pending
 - ⏳ Tasks 12-44: Remaining implementation tasks
@@ -847,9 +861,10 @@ with tenant_db_session(tenant_id) as session:
 
 ## Phase 3: Marshmallow Schemas
 
-### Task 12: Create UserSchema
+### Task 12: Create UserSchema ✅ COMPLETED
 **Priority**: High
 **Dependencies**: 6
+**Status**: ✅ Completed
 
 **File**: `app/schemas/user_schema.py`
 
@@ -867,14 +882,28 @@ class UserSchema(Schema):
 ```
 
 **Variants**:
-- `UserCreateSchema` - For registration (with password)
-- `UserUpdateSchema` - For profile updates (no password)
-- `UserResponseSchema` - For API responses (no sensitive data)
+- ✅ `UserCreateSchema` - For registration (with password)
+- ✅ `UserUpdateSchema` - For profile updates (no password)
+- ✅ `UserResponseSchema` - For API responses (no sensitive data)
+- ✅ `UserLoginSchema` - For authentication (email and password only)
 
 **Deliverables**:
-- Complete validation schemas for User operations
-- Password handling (load_only, never dumped)
-- Email format validation
+- ✅ Complete validation schemas for User operations
+- ✅ Password handling (load_only, never dumped)
+- ✅ Email format validation
+
+**Completion Notes**:
+- Created `backend/app/schemas/user_schema.py` with 5 comprehensive Marshmallow schemas (260+ lines)
+- All schemas include proper field validation with Marshmallow validators
+- Password security: custom @validates decorator enforces min 8 chars, letter+number requirement
+- Data normalization: @post_load hooks normalize email to lowercase, trim whitespace from names
+- UserCreateSchema: Registration with first_name, last_name, email, password (all required)
+- UserUpdateSchema: Profile updates with first_name, last_name (all optional, no password/email)
+- UserResponseSchema: API responses with all fields dump_only, password excluded
+- UserLoginSchema: Authentication with email and password only
+- Pre-instantiated schema instances for easy import: user_schema, user_create_schema, user_update_schema, user_response_schema, user_login_schema, users_response_schema
+- Updated `backend/app/schemas/__init__.py` to export all schema classes and instances
+- All schemas ready for immediate use in routes and services
 
 ---
 
