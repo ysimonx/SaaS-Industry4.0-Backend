@@ -224,6 +224,13 @@ def register_blueprints(app):
     except ImportError as e:
         app.logger.warning(f"Documents blueprint not found: {e}")
 
+    try:
+        from app.routes.files import files_bp
+        app.register_blueprint(files_bp)
+        app.logger.info("Registered blueprint: files (/api/files)")
+    except ImportError as e:
+        app.logger.warning(f"Files blueprint not found: {e}")
+
     # Health check endpoint (no blueprint needed)
     @app.route('/health')
     def health_check():
@@ -246,7 +253,8 @@ def register_blueprints(app):
                 'auth': '/api/auth',
                 'users': '/api/users',
                 'tenants': '/api/tenants',
-                'documents': '/api/documents'
+                'documents': '/api/documents',
+                'files': '/api/files'
             }
         }), 200
 
