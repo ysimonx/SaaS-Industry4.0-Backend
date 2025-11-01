@@ -11,6 +11,7 @@ from flask_jwt_extended import verify_jwt_in_request, get_jwt_identity, get_jwt
 import logging
 
 from app.utils.responses import unauthorized, forbidden, not_found
+from app.models import TokenBlacklist
 
 logger = logging.getLogger(__name__)
 
@@ -20,7 +21,14 @@ def jwt_required_custom(fn: Callable) -> Callable:
     Custom JWT authentication decorator.
 
     Validates JWT token and injects user information into Flask's g object.
-    Enhances Flask-JWT-Extended's jwt_required with custom error handling.
+    Enhances Flask-JWT-Extended's jwt_required with custom error handling
+    and token blacklist checking.
+
+    Security Features:
+        - Validates JWT signature and expiration
+        - Checks token against blacklist (revoked tokens)
+        - Verifies user identity is present
+        - Injects user context into Flask g object
 
     Usage:
         @app.route('/api/users/me')
@@ -31,7 +39,12 @@ def jwt_required_custom(fn: Callable) -> Callable:
 
     Sets in Flask g:
         - g.user_id: UUID of authenticated user
-        - g.jwt_claims: Full JWT claims dict
+        - g.jwt_claims: Full JWT claims dict (includes jti, exp, iat, etc.)
+
+    Token Blacklist:
+        - Checks TokenBlacklist model for revoked tokens
+        - Uses jti (JWT ID) claim for blacklist lookups
+        - Returns 401 if token is blacklisted
 
     Returns:
         Decorated function with JWT validation
@@ -49,6 +62,14 @@ def jwt_required_custom(fn: Callable) -> Callable:
             if not user_id:
                 logger.warning("JWT token missing user identity")
                 return unauthorized("Invalid authentication token")
+
+            # Check if token is blacklisted
+            jti = jwt_claims.get('jti')  # JWT ID from token claims
+            if jti:
+                is_blacklisted = TokenBlacklist.is_token_blacklisted(jti)
+                if is_blacklisted:
+                    logger.warning(f"Blacklisted token attempted: user_id={user_id}, jti={jti}")
+                    return unauthorized("Token has been revoked")
 
             # Store in Flask g for access in route handlers
             g.user_id = user_id
