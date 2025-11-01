@@ -13,10 +13,13 @@ Architecture:
 
 Available Services:
 - AuthService: Authentication, registration, token management, logout
+- UserService: User management, profile updates, tenant associations
 """
 
 from app.services.auth_service import AuthService
+from app.services.user_service import UserService
 
 __all__ = [
     'AuthService',
+    'UserService',
 ]
