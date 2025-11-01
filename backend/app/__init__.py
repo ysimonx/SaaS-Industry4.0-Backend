@@ -218,8 +218,8 @@ def register_blueprints(app):
         app.logger.warning(f"Tenants blueprint not found: {e}")
 
     try:
-        from app.routes.documents import bp as documents_bp
-        app.register_blueprint(documents_bp, url_prefix='/api/documents')
+        from app.routes.documents import documents_bp
+        app.register_blueprint(documents_bp)
         app.logger.info("Registered blueprint: documents (/api/documents)")
     except ImportError as e:
         app.logger.warning(f"Documents blueprint not found: {e}")
