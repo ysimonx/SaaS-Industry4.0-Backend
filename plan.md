@@ -101,12 +101,25 @@ Routes (Controllers) → Services (Business Logic) → Models → Database
   - Pre-instantiated schema instances: user_schema, user_create_schema, user_update_schema, user_response_schema, user_login_schema, users_response_schema
   - Updated `backend/app/schemas/__init__.py` to export all schema classes and instances
   - All schemas ready for use in routes and services
+- ✅ **Task 13**: Create TenantSchema (Phase 3) - *Completed*
+  - Created `backend/app/schemas/tenant_schema.py` with 5 comprehensive Marshmallow schemas (350+ lines)
+  - TenantSchema: Base schema with all Tenant model fields
+  - TenantCreateSchema: For creating new tenants (POST /api/tenants)
+  - TenantUpdateSchema: For updating tenant info (PUT /api/tenants/{id}, all fields optional)
+  - TenantResponseSchema: For API responses (all dump_only)
+  - TenantWithUsersResponseSchema: Extended schema with user list for detailed tenant view
+  - Name validation: prevents empty/whitespace-only names, enforces 1-255 char limit
+  - Data normalization: @post_load hooks trim whitespace from tenant name
+  - Auto-generated fields marked as dump_only: id, database_name, timestamps, created_by
+  - Pre-instantiated schema instances: tenant_schema, tenant_create_schema, tenant_update_schema, tenant_response_schema, tenant_with_users_response_schema, tenants_response_schema
+  - Updated `backend/app/schemas/__init__.py` to export all TenantSchema classes and instances
+  - All schemas ready for use in tenant routes and services
 
 ### In Progress
-- 🔄 **Task 13**: Create TenantSchema (Phase 3) - *Next*
+- 🔄 **Task 14**: Create DocumentSchema (Phase 3) - *Next*
 
 ### Pending
-- ⏳ Tasks 12-44: Remaining implementation tasks
+- ⏳ Tasks 14-44: Remaining implementation tasks
 
 ---
 
@@ -907,9 +920,10 @@ class UserSchema(Schema):
 
 ---
 
-### Task 13: Create TenantSchema
+### Task 13: Create TenantSchema ✅ COMPLETED
 **Priority**: High
 **Dependencies**: 7
+**Status**: ✅ Completed
 
 **File**: `app/schemas/tenant_schema.py`
 
@@ -924,9 +938,28 @@ class TenantSchema(Schema):
     updated_at = fields.DateTime(dump_only=True)
 ```
 
+**Variants**:
+- ✅ `TenantCreateSchema` - For creating new tenants
+- ✅ `TenantUpdateSchema` - For updating tenant info (all fields optional)
+- ✅ `TenantResponseSchema` - For API responses (all dump_only)
+- ✅ `TenantWithUsersResponseSchema` - Extended schema with user list
+
 **Deliverables**:
-- Tenant validation schema
-- Auto-generated fields marked as dump_only
+- ✅ Tenant validation schema
+- ✅ Auto-generated fields marked as dump_only
+
+**Completion Notes**:
+- Created `backend/app/schemas/tenant_schema.py` with 5 comprehensive Marshmallow schemas (350+ lines)
+- All schemas include proper field validation with Marshmallow validators
+- Name validation: @validates decorator prevents empty/whitespace-only names, enforces 1-255 char limit
+- Data normalization: @post_load hooks trim whitespace from tenant name
+- TenantCreateSchema: Only requires name field (database_name auto-generated, creator auto-added as admin)
+- TenantUpdateSchema: Optional name and is_active fields (database_name immutable)
+- TenantResponseSchema: All fields dump_only with optional user_count and database_exists stats
+- TenantWithUsersResponseSchema: Extends TenantResponseSchema to include users list with roles
+- Pre-instantiated schema instances: tenant_schema, tenant_create_schema, tenant_update_schema, tenant_response_schema, tenant_with_users_response_schema, tenants_response_schema
+- Updated `backend/app/schemas/__init__.py` to export all TenantSchema classes and instances
+- All schemas ready for immediate use in tenant routes and services
 
 ---
 
