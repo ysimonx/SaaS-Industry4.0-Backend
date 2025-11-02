@@ -1376,6 +1376,7 @@ flask db upgrade
 ### Task 20: Create Users Blueprint
 **Priority**: High
 **Dependencies**: 12, 16, 19
+**Status**: ✅ COMPLETED
 
 **File**: `app/routes/users.py`
 
@@ -1402,6 +1403,23 @@ flask db upgrade
 - Users blueprint with 3 endpoints
 - JWT-protected routes
 - User profile management
+
+**Completion Notes**:
+- Created `backend/app/routes/users.py` with comprehensive user profile management (275 lines)
+- Implemented all 3 required endpoints with JWT authentication:
+  - GET /api/users/me - Retrieves current user profile with serialized data (excludes password_hash)
+  - PUT /api/users/me - Updates user profile (first_name, last_name only, email immutable)
+  - GET /api/users/me/tenants - Returns user's tenants with roles and joined_at timestamps
+- Additional health check endpoint: GET /api/users/health
+- Uses Marshmallow schemas: user_update_schema, user_response_schema
+- Comprehensive error handling with standardized responses (ok, bad_request, not_found, internal_error)
+- Database transaction management with rollback on errors
+- Detailed logging for all operations
+- Query optimization: JOIN UserTenantAssociation + Tenant to fetch tenant details with roles in single query
+- Filters only active tenants (is_active=True)
+- Orders tenants by joined_at DESC (most recent first)
+- All endpoints protected with @jwt_required_custom decorator
+- Comprehensive docstrings with request/response examples
 
 ---
 
