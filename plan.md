@@ -343,6 +343,7 @@ pip install Flask-JWT-Extended
 pip install marshmallow
 pip install kafka-python
 pip install boto3
+pip install psycopg2
 pip install psycopg2-binary
 pip install gunicorn
 pip install python-dotenv
