@@ -5,9 +5,9 @@ This directory contains Docker configurations for the SaaS Platform.
 ## Files
 
 - **Dockerfile.api** - Multi-stage Dockerfile for Flask API server
-- **Dockerfile.worker** - Dockerfile for Kafka consumer worker
+- **Dockerfile.worker** - Multi-stage Dockerfile for Kafka consumer worker
 - **build-api.sh** - Build script for API Docker image
-- **build-worker.sh** - Build script for worker Docker image (coming soon)
+- **build-worker.sh** - Build script for worker Docker image
 
 ## Building Images
 
@@ -21,11 +21,22 @@ This directory contains Docker configurations for the SaaS Platform.
 ./docker/build-api.sh v1.0.0
 ```
 
+### Kafka Consumer Worker
+
+```bash
+# Build with default tag (latest)
+./docker/build-worker.sh
+
+# Build with custom tag
+./docker/build-worker.sh v1.0.0
+```
+
 ### Manual Build
 
 ```bash
 # From project root
 docker build -f docker/Dockerfile.api -t saas-platform-api:latest .
+docker build -f docker/Dockerfile.worker -t saas-platform-worker:latest .
 ```
 
 ## Running Containers
@@ -43,6 +54,22 @@ docker run -p 4999:4999 \
   saas-platform-api:latest
 ```
 
+### Kafka Consumer Worker
+
+```bash
+# Run with environment file
+docker run --env-file .env saas-platform-worker:latest
+
+# Run with environment variables
+docker run \
+  -e DATABASE_URL=postgresql://user:pass@host/db \
+  -e KAFKA_BOOTSTRAP_SERVERS=kafka:9092 \
+  saas-platform-worker:latest
+
+# Check worker logs
+docker logs -f <container-id>
+```
+
 ### Health Check
 
 ```bash
@@ -51,6 +78,9 @@ curl http://localhost:4999/health
 
 # Expected response
 {"status": "healthy", "message": "SaaS Platform API is running"}
+
+# Check worker health (process check)
+docker exec <container-id> pgrep -f "python -m app.worker.consumer"
 ```
 
 ## Image Details
@@ -94,6 +124,52 @@ curl http://localhost:4999/health
 - Minimal attack surface
 
 **Image Size**: ~300-400MB (optimized with multi-stage build)
+
+### Dockerfile.worker
+
+**Base Image**: `python:3.11-slim`
+
+**Features**:
+- Multi-stage build for optimized image size
+- Non-root user for security (`workeruser`)
+- Process-based health check
+- Unbuffered Python output for better logging
+- Automatic graceful shutdown on SIGTERM/SIGINT
+- Event-driven message processing
+
+**Exposed Ports**:
+- None (worker process, no HTTP server)
+
+**Environment Variables**:
+- `KAFKA_BOOTSTRAP_SERVERS` - Kafka broker addresses (required)
+- `KAFKA_CONSUMER_GROUP_ID` - Consumer group ID (default: saas-consumer-group)
+- `KAFKA_AUTO_OFFSET_RESET` - Offset reset behavior (earliest/latest)
+- `DATABASE_URL` - PostgreSQL connection string (required)
+- `S3_ENDPOINT_URL` - S3 endpoint URL
+- `S3_BUCKET` - S3 bucket name
+- See `.env.example` for complete list
+
+**Consumer Configuration**:
+- Consumer group: saas-consumer-group (configurable)
+- Auto commit: enabled
+- Max poll records: 100
+- Topics: tenant.*, document.*, file.process, audit.log
+- Message handlers: 6 event handlers
+
+**Security**:
+- Runs as non-root user (`workeruser`)
+- No unnecessary build tools in final image
+- Minimal attack surface
+- Process isolation
+
+**Image Size**: ~300-400MB (optimized with multi-stage build)
+
+**Health Check**:
+- Process-based check (pgrep for consumer process)
+- Interval: 30 seconds
+- Timeout: 10 seconds
+- Start period: 60 seconds (longer for Kafka connection)
+- Retries: 3
 
 ## Docker Compose
 

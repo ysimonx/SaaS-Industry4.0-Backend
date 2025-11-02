@@ -1,0 +1,89 @@
+# Multi-stage Dockerfile for SaaS Platform Kafka Consumer Worker
+# This Dockerfile creates an optimized production image for the Kafka consumer worker process
+
+# ============================================================================
+# Stage 1: Builder - Install dependencies
+# ============================================================================
+FROM python:3.11-slim AS builder
+
+# Set working directory
+WORKDIR /app
+
+# Install system dependencies required for Python packages
+# - gcc, g++: Required for compiling Python packages with C extensions
+# - libpq-dev: PostgreSQL client library headers (for psycopg2)
+# - python3-dev: Python development headers
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    gcc \
+    g++ \
+    libpq-dev \
+    python3-dev \
+    && rm -rf /var/lib/apt/lists/*
+
+# Copy requirements file
+COPY backend/requirements.txt .
+
+# Create virtual environment and install dependencies
+# Using virtual environment for cleaner dependency isolation
+RUN python -m venv /opt/venv
+ENV PATH="/opt/venv/bin:$PATH"
+
+# Install Python dependencies
+# --no-cache-dir: Don't cache pip packages (reduces image size)
+# --upgrade pip: Ensure latest pip version
+RUN pip install --no-cache-dir --upgrade pip && \
+    pip install --no-cache-dir -r requirements.txt
+
+# ============================================================================
+# Stage 2: Runtime - Create final production image
+# ============================================================================
+FROM python:3.11-slim
+
+# Set environment variables
+# PYTHONUNBUFFERED: Force Python to run in unbuffered mode (better for Docker logs)
+# PYTHONDONTWRITEBYTECODE: Prevent Python from writing .pyc files
+# KAFKA_CONSUMER_GROUP_ID: Default consumer group ID
+ENV PYTHONUNBUFFERED=1 \
+    PYTHONDONTWRITEBYTECODE=1 \
+    KAFKA_CONSUMER_GROUP_ID=saas-consumer-group
+
+# Install runtime dependencies only (no build tools)
+# - libpq5: PostgreSQL client library (runtime only)
+# - netcat-openbsd: For network connectivity checks in health checks
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    libpq5 \
+    netcat-openbsd \
+    && rm -rf /var/lib/apt/lists/*
+
+# Create non-root user for security
+# Running as non-root is a security best practice
+RUN groupadd -r workeruser && useradd -r -g workeruser workeruser
+
+# Set working directory
+WORKDIR /app
+
+# Copy virtual environment from builder stage
+COPY --from=builder /opt/venv /opt/venv
+ENV PATH="/opt/venv/bin:$PATH"
+
+# Copy application code
+# Copy backend directory contents to /app
+COPY backend/ .
+
+# Create necessary directories and set permissions
+RUN mkdir -p logs && \
+    chown -R workeruser:workeruser /app
+
+# Switch to non-root user
+USER workeruser
+
+# Health check
+# Check if the consumer process is running
+# Since the worker doesn't expose HTTP endpoints, we check the process
+HEALTHCHECK --interval=30s --timeout=10s --start-period=60s --retries=3 \
+    CMD pgrep -f "python -m app.worker.consumer" || exit 1
+
+# Start the Kafka consumer worker
+# -m app.worker.consumer: Run the consumer module
+# -u: Force unbuffered output for better logging
+CMD ["python", "-u", "-m", "app.worker.consumer"]

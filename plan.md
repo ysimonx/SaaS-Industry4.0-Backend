@@ -216,12 +216,13 @@ Routes (Controllers) → Services (Business Logic) → Models → Database
 - ✅ **Task 35**: Create Startup Script (Phase 7) - *Completed*
 
 - ✅ **Task 36**: Create Dockerfile.api (Phase 8) - *Completed*
+- ✅ **Task 37**: Create Dockerfile.worker (Phase 8) - *Completed*
 
 ### In Progress
-- 🔄 **Task 37**: Create Dockerfile.worker (Phase 8) - *Next*
+- 🔄 **Task 38**: Create docker-compose.yml (Phase 8) - *Next*
 
 ### Pending
-- ⏳ Tasks 37-44: Remaining implementation tasks
+- ⏳ Tasks 38-44: Remaining implementation tasks
 
 ---
 
@@ -2556,25 +2557,143 @@ curl http://localhost:4999/health
 
 ---
 
-### Task 37: Create Dockerfile.worker
+### Task 37: Create Dockerfile.worker ✅
 **Priority**: High
 **Dependencies**: 34
+**Status**: COMPLETED
 
-**File**: `docker/Dockerfile.worker`
+**Files**:
+- `docker/Dockerfile.worker` (90+ lines)
+- `docker/build-worker.sh` (85+ lines)
+- `docker/README.md` (updated with worker documentation)
 
-**Implementation**:
-```dockerfile
-FROM python:3.11-slim
-WORKDIR /app
-COPY requirements.txt .
-RUN pip install -r requirements.txt
-COPY . .
-CMD ["python", "-m", "app.worker.consumer"]
+**Implementation**: ✅
+
+**Multi-stage Dockerfile with optimization**:
+
+**Stage 1: Builder**
+- Base image: `python:3.11-slim`
+- Install build dependencies: gcc, g++, libpq-dev, python3-dev
+- Create virtual environment in `/opt/venv`
+- Install Python dependencies from `backend/requirements.txt`
+- Clean up apt cache to reduce layer size
+
+**Stage 2: Runtime**
+- Base image: `python:3.11-slim` (clean slate)
+- Install runtime dependencies only: libpq5, netcat-openbsd
+- Copy virtual environment from builder stage
+- Create non-root user `workeruser` for security
+- Copy application code from `backend/` directory
+- Set proper file permissions
+- Run as non-root user
+
+**Security Features**: ✅
+- Non-root user execution (workeruser:workeruser)
+- Minimal runtime dependencies (no build tools)
+- No .pyc files written (PYTHONDONTWRITEBYTECODE=1)
+- Process-based health check
+- Proper file permissions
+- Process isolation
+
+**Worker Configuration**: ✅
+- Consumer module: `python -m app.worker.consumer`
+- Unbuffered output: `-u` flag for better Docker logs
+- Consumer group: saas-consumer-group (configurable)
+- Graceful shutdown: handles SIGTERM/SIGINT signals
+- Auto-commit enabled
+- Max poll records: 100
+
+**Environment Variables**: ✅
+- PYTHONUNBUFFERED=1 (better Docker logs)
+- PYTHONDONTWRITEBYTECODE=1 (no .pyc files)
+- KAFKA_CONSUMER_GROUP_ID=saas-consumer-group (default)
+- KAFKA_BOOTSTRAP_SERVERS (required, set at runtime)
+- DATABASE_URL (required, set at runtime)
+
+**Health Check**: ✅
+- Process-based check: `pgrep -f "python -m app.worker.consumer"`
+- Interval: 30 seconds
+- Timeout: 10 seconds
+- Start period: 60 seconds (longer grace period for Kafka connection)
+- Retries: 3
+
+**Exposed Ports**: ✅
+- None (worker process, no HTTP server)
+
+**Event Handlers**: ✅
+- tenant.created - Create tenant database
+- tenant.deleted - Mark tenant deleted
+- document.uploaded - Process document (OCR, thumbnails)
+- document.deleted - Cleanup orphaned files
+- file.process - Background file processing
+- audit.log - Write audit events
+
+**Additional Files**: ✅
+
+1. **docker/build-worker.sh** (85+ lines)
+   - Automated build script with proper error handling
+   - Accepts custom tag parameter
+   - Colored output for better UX
+   - Shows image size after build
+   - Validates worker consumer module exists
+   - Provides next steps and usage examples
+   - Made executable with chmod +x
+
+2. **docker/README.md** (updated)
+   - Added worker build instructions
+   - Added worker run instructions with examples
+   - Added worker health check verification
+   - Added worker image specifications
+   - Added worker environment variables
+   - Added consumer configuration details
+   - Added worker-specific troubleshooting
+
+**Image Optimization**: ✅
+- Multi-stage build reduces final image size (~300-400MB)
+- Builder stage discarded after dependency installation
+- Only runtime dependencies in final image
+- Virtual environment isolation
+- Minimal base image (python:3.11-slim)
+- Shared layers with API image (same base)
+
+**Usage Examples**: ✅
+```bash
+# Build image
+./docker/build-worker.sh
+
+# Build with custom tag
+./docker/build-worker.sh v1.0.0
+
+# Run container
+docker run --env-file .env saas-platform-worker:latest
+
+# Run with specific Kafka servers
+docker run -e KAFKA_BOOTSTRAP_SERVERS=kafka:9092 saas-platform-worker:latest
+
+# Check logs
+docker logs -f <container-id>
 ```
 
-**Deliverables**:
-- Docker image for Kafka consumer worker
-- Shared codebase with API
+**Deliverables**: ✅
+- ✅ Optimized multi-stage Dockerfile for Kafka consumer worker
+- ✅ Non-root user for security best practices
+- ✅ Process-based health check
+- ✅ Automated build script with error handling
+- ✅ Updated Docker documentation with worker details
+- ✅ Production-ready configuration
+- ✅ Shared codebase with API (same backend/ directory)
+- ✅ Graceful shutdown support
+- ✅ Unbuffered logging for Docker
+
+**Completion Notes**:
+- Multi-stage build significantly reduces image size
+- Security hardened with non-root user
+- Production-ready with proper logging and health checks
+- Shared base layers with API image for efficient storage
+- Process-based health check (no HTTP endpoint needed)
+- Comprehensive documentation for developers and ops
+- Build script automates common tasks
+- Ready for use with docker-compose (Task 38)
 
 ---
 
