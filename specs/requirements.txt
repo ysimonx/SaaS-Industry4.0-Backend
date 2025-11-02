@@ -20,6 +20,7 @@ Le backend python/flask doit pouvoir être démarré avec gunicorn
 
 Le port utilisé par ce backend python/flask ne doit pas etre 5000, mais 4999
 
+
 En terme de fonctionnalités :
 - je souhaite que ce backend utilise postgresql avec sqlalchemy
 - Les routes flask doivent renvoyer systematiquement une reponse json "success" ou "error", avec les status codes standard et des messages explicites en cas d'erreur
@@ -92,3 +93,9 @@ cependant, il est accepté et souhaitable qu'un meme fichier soit dupliqué d'un
 
 en résumé, les tables "users" et "tenants" sont stockés dans la database "saas_platform"
 chaque tenant dispose de sa propre base, dont le nom est celui stocké dans la colonne "database_name", et chacune de ces databases contient les tables "files" et "documents"
+
+
+
+
+quelques notes liées à mon experience avec python
+- ne pas utiliser le decorateur "before_app_first_request" qui est obsolete 
