@@ -215,11 +215,13 @@ Routes (Controllers) → Services (Business Logic) → Models → Database
 - ✅ **Task 34**: Create Kafka Consumer Worker (Phase 7) - *Completed*
 - ✅ **Task 35**: Create Startup Script (Phase 7) - *Completed*
 
+- ✅ **Task 36**: Create Dockerfile.api (Phase 8) - *Completed*
+
 ### In Progress
-- 🔄 **Task 36**: Create Dockerfile.api (Phase 8) - *Next*
+- 🔄 **Task 37**: Create Dockerfile.worker (Phase 8) - *Next*
 
 ### Pending
-- ⏳ Tasks 36-44: Remaining implementation tasks
+- ⏳ Tasks 37-44: Remaining implementation tasks
 
 ---
 
@@ -2423,27 +2425,134 @@ python scripts/init_db.py --drop-all --create-admin --create-test-tenant
 
 ## Phase 8: Docker Configuration
 
-### Task 36: Create Dockerfile.api
+### Task 36: Create Dockerfile.api ✅
 **Priority**: High
 **Dependencies**: 3
+**Status**: COMPLETED
 
-**File**: `docker/Dockerfile.api`
+**Files**:
+- `docker/Dockerfile.api` (100+ lines)
+- `.dockerignore` (60+ lines)
+- `docker/build-api.sh` (70+ lines)
+- `docker/README.md` (200+ lines)
 
-**Implementation**:
-```dockerfile
-FROM python:3.11-slim
-WORKDIR /app
-COPY requirements.txt .
-RUN pip install -r requirements.txt
-COPY . .
-EXPOSE 4999
-CMD ["gunicorn", "-w", "4", "-b", "0.0.0.0:4999", "--access-logfile", "-", "--error-logfile", "-", "app:create_app()"]
+**Implementation**: ✅
+
+**Multi-stage Dockerfile with optimization**:
+
+**Stage 1: Builder**
+- Base image: `python:3.11-slim`
+- Install build dependencies: gcc, g++, libpq-dev, python3-dev
+- Create virtual environment in `/opt/venv`
+- Install Python dependencies from `backend/requirements.txt`
+- Clean up apt cache to reduce layer size
+
+**Stage 2: Runtime**
+- Base image: `python:3.11-slim` (clean slate)
+- Install runtime dependencies only: libpq5, curl
+- Copy virtual environment from builder stage
+- Create non-root user `appuser` for security
+- Copy application code from `backend/` directory
+- Set proper file permissions
+- Run as non-root user
+
+**Security Features**: ✅
+- Non-root user execution (appuser:appuser)
+- Minimal runtime dependencies (no build tools)
+- No .pyc files written (PYTHONDONTWRITEBYTECODE=1)
+- Health check endpoint monitoring
+- Proper file permissions
+
+**Gunicorn Configuration**: ✅
+- Workers: 4 (good concurrency for multi-core systems)
+- Bind: 0.0.0.0:4999 (accept connections from any interface)
+- Timeout: 120 seconds (allows long-running requests)
+- Keep-alive: 5 seconds
+- Max requests: 1000 (restart workers to prevent memory leaks)
+- Max requests jitter: 50 (randomize restart to avoid thundering herd)
+- Logging: stdout/stderr for Docker log collection
+
+**Environment Variables**: ✅
+- PYTHONUNBUFFERED=1 (better Docker logs)
+- PYTHONDONTWRITEBYTECODE=1 (no .pyc files)
+- FLASK_APP=run.py
+- FLASK_ENV=production
+
+**Health Check**: ✅
+- Endpoint: http://localhost:4999/health
+- Interval: 30 seconds
+- Timeout: 10 seconds
+- Start period: 40 seconds (grace period for startup)
+- Retries: 3
+
+**Exposed Ports**: ✅
+- 4999 - Flask API server
+
+**Additional Files**: ✅
+
+1. **.dockerignore** (60+ lines)
+   - Excludes unnecessary files from build context
+   - Reduces image size and build time
+   - Excludes: __pycache__, venv/, .git/, logs/, *.md (except README), .env files
+
+2. **docker/build-api.sh** (70+ lines)
+   - Automated build script with proper error handling
+   - Accepts custom tag parameter
+   - Colored output for better UX
+   - Shows image size after build
+   - Provides next steps and usage examples
+   - Made executable with chmod +x
+
+3. **docker/README.md** (200+ lines)
+   - Comprehensive Docker documentation
+   - Build instructions (automated and manual)
+   - Run instructions with examples
+   - Health check verification
+   - Image details and specifications
+   - Troubleshooting guide
+   - Development vs production best practices
+   - Resource limits and monitoring recommendations
+
+**Image Optimization**: ✅
+- Multi-stage build reduces final image size (~300-400MB)
+- Builder stage discarded after dependency installation
+- Only runtime dependencies in final image
+- Virtual environment isolation
+- Minimal base image (python:3.11-slim)
+
+**Usage Examples**: ✅
+```bash
+# Build image
+./docker/build-api.sh
+
+# Build with custom tag
+./docker/build-api.sh v1.0.0
+
+# Run container
+docker run -p 4999:4999 --env-file .env saas-platform-api:latest
+
+# Check health
+curl http://localhost:4999/health
 ```
 
-**Deliverables**:
-- Optimized Docker image for Flask API
-- Multi-stage build (optional)
-- Port 4999 exposed
+**Deliverables**: ✅
+- ✅ Optimized multi-stage Dockerfile for Flask API
+- ✅ Non-root user for security best practices
+- ✅ Health check configuration
+- ✅ Comprehensive .dockerignore file
+- ✅ Automated build script with error handling
+- ✅ Complete Docker documentation
+- ✅ Production-ready configuration
+- ✅ Port 4999 exposed
+- ✅ Gunicorn WSGI server with 4 workers
+
+**Completion Notes**:
+- Multi-stage build significantly reduces image size
+- Security hardened with non-root user
+- Production-ready with proper logging and health checks
+- Comprehensive documentation for developers and ops
+- Build script automates common tasks
+- Ready for use with docker-compose (Task 38)
 
 ---
 

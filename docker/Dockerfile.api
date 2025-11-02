@@ -1,0 +1,112 @@
+# Multi-stage Dockerfile for SaaS Platform Flask API
+# This Dockerfile creates an optimized production image for the Flask API server
+
+# ============================================================================
+# Stage 1: Builder - Install dependencies
+# ============================================================================
+FROM python:3.11-slim AS builder
+
+# Set working directory
+WORKDIR /app
+
+# Install system dependencies required for Python packages
+# - gcc, g++: Required for compiling Python packages with C extensions
+# - libpq-dev: PostgreSQL client library headers (for psycopg2)
+# - python3-dev: Python development headers
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    gcc \
+    g++ \
+    libpq-dev \
+    python3-dev \
+    && rm -rf /var/lib/apt/lists/*
+
+# Copy requirements file
+COPY backend/requirements.txt .
+
+# Create virtual environment and install dependencies
+# Using virtual environment for cleaner dependency isolation
+RUN python -m venv /opt/venv
+ENV PATH="/opt/venv/bin:$PATH"
+
+# Install Python dependencies
+# --no-cache-dir: Don't cache pip packages (reduces image size)
+# --upgrade pip: Ensure latest pip version
+RUN pip install --no-cache-dir --upgrade pip && \
+    pip install --no-cache-dir -r requirements.txt
+
+# ============================================================================
+# Stage 2: Runtime - Create final production image
+# ============================================================================
+FROM python:3.11-slim
+
+# Set environment variables
+# PYTHONUNBUFFERED: Force Python to run in unbuffered mode (better for Docker logs)
+# PYTHONDONTWRITEBYTECODE: Prevent Python from writing .pyc files
+# FLASK_APP: Set Flask application entry point
+# FLASK_ENV: Set Flask environment to production
+ENV PYTHONUNBUFFERED=1 \
+    PYTHONDONTWRITEBYTECODE=1 \
+    FLASK_APP=run.py \
+    FLASK_ENV=production
+
+# Install runtime dependencies only (no build tools)
+# - libpq5: PostgreSQL client library (runtime only)
+# - curl: For health checks
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    libpq5 \
+    curl \
+    && rm -rf /var/lib/apt/lists/*
+
+# Create non-root user for security
+# Running as non-root is a security best practice
+RUN groupadd -r appuser && useradd -r -g appuser appuser
+
+# Set working directory
+WORKDIR /app
+
+# Copy virtual environment from builder stage
+COPY --from=builder /opt/venv /opt/venv
+ENV PATH="/opt/venv/bin:$PATH"
+
+# Copy application code
+# Copy backend directory contents to /app
+COPY backend/ .
+
+# Create necessary directories and set permissions
+RUN mkdir -p logs && \
+    chown -R appuser:appuser /app
+
+# Switch to non-root user
+USER appuser
+
+# Expose port 4999 (Flask API port)
+EXPOSE 4999
+
+# Health check
+# Check if the API is responding on the health endpoint
+# --fail: Return non-zero exit code on HTTP errors
+# --silent: Don't show progress
+# --show-error: Show errors even in silent mode
+HEALTHCHECK --interval=30s --timeout=10s --start-period=40s --retries=3 \
+    CMD curl --fail --silent --show-error http://localhost:4999/health || exit 1
+
+# Set gunicorn configuration
+# -w: Number of worker processes (4 workers for good concurrency)
+# -b: Bind address (0.0.0.0:4999 to accept connections from any interface)
+# --access-logfile -: Log access logs to stdout
+# --error-logfile -: Log error logs to stderr
+# --timeout 120: Worker timeout (2 minutes for long requests)
+# --keep-alive 5: Keep-alive timeout
+# --max-requests 1000: Restart workers after 1000 requests (prevents memory leaks)
+# --max-requests-jitter 50: Add random jitter to max-requests
+CMD ["gunicorn", \
+     "-w", "4", \
+     "-b", "0.0.0.0:4999", \
+     "--access-logfile", "-", \
+     "--error-logfile", "-", \
+     "--log-level", "info", \
+     "--timeout", "120", \
+     "--keep-alive", "5", \
+     "--max-requests", "1000", \
+     "--max-requests-jitter", "50", \
+     "run:app"]
