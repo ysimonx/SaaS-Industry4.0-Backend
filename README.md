@@ -1121,7 +1121,7 @@ SOFTWARE.
 ## Support
 
 ### Documentation
-- **Architecture**: See [plan.md](plan.md)
+- **Architecture**: See [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)
 - **Docker Deployment**: See [DOCKER.md](DOCKER.md)
 - **API Reference**: See [swagger.yaml](swagger.yaml)
 
