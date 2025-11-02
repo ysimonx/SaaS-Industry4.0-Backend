@@ -1,0 +1,254 @@
+# Docker Compose configuration for SaaS Multi-Tenant Platform
+# This file defines all services needed to run the complete stack locally
+
+version: '3.8'
+
+services:
+  # PostgreSQL Database - Main database for users, tenants, associations
+  # Also serves as base for dynamically created tenant databases
+  postgres:
+    image: postgres:14-alpine
+    container_name: saas-postgres
+    restart: unless-stopped
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_DB: saas_platform
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_INITDB_ARGS: "--encoding=UTF8 --locale=en_US.UTF-8"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./docker/init-scripts:/docker-entrypoint-initdb.d  # Optional init scripts
+    networks:
+      - saas-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Zookeeper - Required for Kafka coordination
+  zookeeper:
+    image: confluentinc/cp-zookeeper:7.5.0
+    container_name: saas-zookeeper
+    restart: unless-stopped
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+    networks:
+      - saas-network
+    healthcheck:
+      test: ["CMD", "nc", "-z", "localhost", "2181"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Kafka - Message broker for async processing
+  kafka:
+    image: confluentinc/cp-kafka:7.5.0
+    container_name: saas-kafka
+    restart: unless-stopped
+    depends_on:
+      zookeeper:
+        condition: service_healthy
+    ports:
+      - "9092:9092"
+      - "9093:9093"  # External access
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092,PLAINTEXT_HOST://localhost:9093
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
+      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
+      KAFKA_AUTO_CREATE_TOPICS_ENABLE: "true"
+    networks:
+      - saas-network
+    healthcheck:
+      test: ["CMD", "kafka-broker-api-versions", "--bootstrap-server", "localhost:9092"]
+      interval: 10s
+      timeout: 10s
+      retries: 5
+
+  # MinIO - S3-compatible object storage
+  minio:
+    image: minio/minio:latest
+    container_name: saas-minio
+    restart: unless-stopped
+    ports:
+      - "9000:9000"  # API
+      - "9001:9001"  # Console
+    environment:
+      MINIO_ROOT_USER: minioadmin
+      MINIO_ROOT_PASSWORD: minioadmin
+    command: server /data --console-address ":9001"
+    volumes:
+      - minio_data:/data
+    networks:
+      - saas-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # MinIO Client - Create buckets on startup
+  minio-init:
+    image: minio/mc:latest
+    container_name: saas-minio-init
+    depends_on:
+      minio:
+        condition: service_healthy
+    entrypoint: >
+      /bin/sh -c "
+      /usr/bin/mc alias set myminio http://minio:9000 minioadmin minioadmin;
+      /usr/bin/mc mb myminio/saas-documents --ignore-existing;
+      /usr/bin/mc policy set public myminio/saas-documents;
+      exit 0;
+      "
+    networks:
+      - saas-network
+
+  # Flask API - Main REST API server
+  api:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.api
+    container_name: saas-api
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+      kafka:
+        condition: service_healthy
+      minio:
+        condition: service_healthy
+    ports:
+      - "4999:4999"
+    environment:
+      # Flask
+      FLASK_ENV: development
+      FLASK_APP: run.py
+      FLASK_DEBUG: "1"
+
+      # Database
+      DATABASE_URL: postgresql://postgres:postgres@postgres:5432/saas_platform
+      DATABASE_POOL_SIZE: 10
+      DATABASE_MAX_OVERFLOW: 20
+
+      # JWT
+      JWT_SECRET_KEY: dev-secret-key-change-in-production
+      JWT_ACCESS_TOKEN_EXPIRES: 900
+      JWT_REFRESH_TOKEN_EXPIRES: 604800
+
+      # Kafka
+      KAFKA_BOOTSTRAP_SERVERS: kafka:9092
+      KAFKA_CONSUMER_GROUP_ID: saas-consumer-group
+      KAFKA_AUTO_OFFSET_RESET: earliest
+
+      # S3 (MinIO)
+      S3_ENDPOINT_URL: http://minio:9000
+      S3_ACCESS_KEY_ID: minioadmin
+      S3_SECRET_ACCESS_KEY: minioadmin
+      S3_BUCKET: saas-documents
+      S3_REGION: us-east-1
+      S3_USE_SSL: "false"
+
+      # CORS
+      CORS_ORIGINS: http://localhost:3000,http://localhost:4999
+
+      # Logging
+      LOG_LEVEL: DEBUG
+    volumes:
+      - ./backend:/app  # Hot reload for development
+      - ./logs:/app/logs
+    networks:
+      - saas-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:4999/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  # Kafka Consumer Worker - Processes async messages
+  worker:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.worker
+    container_name: saas-worker
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+      kafka:
+        condition: service_healthy
+      minio:
+        condition: service_healthy
+    environment:
+      # Database
+      DATABASE_URL: postgresql://postgres:postgres@postgres:5432/saas_platform
+
+      # Kafka
+      KAFKA_BOOTSTRAP_SERVERS: kafka:9092
+      KAFKA_CONSUMER_GROUP_ID: saas-consumer-group
+      KAFKA_AUTO_OFFSET_RESET: earliest
+      KAFKA_ENABLE_AUTO_COMMIT: "true"
+      KAFKA_MAX_POLL_RECORDS: 100
+
+      # S3 (MinIO)
+      S3_ENDPOINT_URL: http://minio:9000
+      S3_ACCESS_KEY_ID: minioadmin
+      S3_SECRET_ACCESS_KEY: minioadmin
+      S3_BUCKET: saas-documents
+      S3_REGION: us-east-1
+      S3_USE_SSL: "false"
+
+      # Logging
+      LOG_LEVEL: DEBUG
+    volumes:
+      - ./backend:/app  # Hot reload for development
+      - ./logs:/app/logs
+    networks:
+      - saas-network
+    healthcheck:
+      test: ["CMD", "pgrep", "-f", "python -m app.worker.consumer"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+
+  # Redis - Optional: For caching and token blacklist
+  # Uncomment to enable Redis support
+  # redis:
+  #   image: redis:7-alpine
+  #   container_name: saas-redis
+  #   restart: unless-stopped
+  #   ports:
+  #     - "6379:6379"
+  #   volumes:
+  #     - redis_data:/data
+  #   networks:
+  #     - saas-network
+  #   healthcheck:
+  #     test: ["CMD", "redis-cli", "ping"]
+  #     interval: 10s
+  #     timeout: 5s
+  #     retries: 5
+
+# Named volumes for data persistence
+volumes:
+  postgres_data:
+    driver: local
+  minio_data:
+    driver: local
+  # redis_data:
+  #   driver: local
+
+# Custom network for service communication
+networks:
+  saas-network:
+    driver: bridge

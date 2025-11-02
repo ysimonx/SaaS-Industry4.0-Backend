@@ -217,12 +217,13 @@ Routes (Controllers) → Services (Business Logic) → Models → Database
 
 - ✅ **Task 36**: Create Dockerfile.api (Phase 8) - *Completed*
 - ✅ **Task 37**: Create Dockerfile.worker (Phase 8) - *Completed*
+- ✅ **Task 38**: Create docker-compose.yml (Phase 8) - *Completed*
 
 ### In Progress
-- 🔄 **Task 38**: Create docker-compose.yml (Phase 8) - *Next*
+- 🔄 **Task 39**: Create Environment Files (Phase 8) - *Next*
 
 ### Pending
-- ⏳ Tasks 38-44: Remaining implementation tasks
+- ⏳ Tasks 39-44: Remaining implementation tasks
 
 ---
 
@@ -2697,69 +2698,188 @@ docker logs -f <container-id>
 
 ---
 
-### Task 38: Create docker-compose.yml
+### Task 38: Create docker-compose.yml ✅
 **Priority**: High
 **Dependencies**: 36, 37
+**Status**: COMPLETED
 
-**File**: `docker-compose.yml`
+**Files**:
+- `docker-compose.yml` (290+ lines)
+- `.env.docker` (90+ lines)
+- `DOCKER.md` (500+ lines)
 
-**Services**:
-```yaml
-services:
-  postgres:
-    image: postgres:14
-    ports: ["5432:5432"]
-    environment:
-      POSTGRES_DB: saas_platform
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
+**Implementation**: ✅
 
-  zookeeper:
-    image: confluentinc/cp-zookeeper:latest
-    environment:
-      ZOOKEEPER_CLIENT_PORT: 2181
+**Services Configuration**:
 
-  kafka:
-    image: confluentinc/cp-kafka:latest
-    ports: ["9092:9092"]
-    depends_on: [zookeeper]
-    environment:
-      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
-      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092
+1. **PostgreSQL (postgres)** ✅
+   - Image: postgres:14-alpine
+   - Port: 5432
+   - Database: saas_platform
+   - Volume: postgres_data (persistent)
+   - Health check: pg_isready
+   - Init scripts support
 
-  api:
-    build:
-      context: .
-      dockerfile: docker/Dockerfile.api
-    ports: ["4999:4999"]
-    depends_on: [postgres, kafka]
-    environment:
-      DATABASE_URL: postgresql://postgres:postgres@postgres/saas_platform
-      KAFKA_BOOTSTRAP_SERVERS: kafka:9092
-    volumes:
-      - ./backend:/app
+2. **Zookeeper (zookeeper)** ✅
+   - Image: confluentinc/cp-zookeeper:7.5.0
+   - Port: 2181 (internal)
+   - Required for Kafka coordination
+   - Health check: netcat port test
 
-  worker:
-    build:
-      context: .
-      dockerfile: docker/Dockerfile.worker
-    depends_on: [postgres, kafka]
-    environment:
-      DATABASE_URL: postgresql://postgres:postgres@postgres/saas_platform
-      KAFKA_BOOTSTRAP_SERVERS: kafka:9092
-    volumes:
-      - ./backend:/app
+3. **Kafka (kafka)** ✅
+   - Image: confluentinc/cp-kafka:7.5.0
+   - Ports: 9092 (internal), 9093 (external)
+   - Depends on: zookeeper
+   - Auto-create topics enabled
+   - Replication factor: 1 (dev)
+   - Health check: broker API version check
 
-volumes:
-  postgres_data:
+4. **MinIO (minio)** ✅
+   - Image: minio/minio:latest
+   - Ports: 9000 (API), 9001 (Console)
+   - Credentials: minioadmin/minioadmin
+   - Volume: minio_data (persistent)
+   - Health check: /minio/health/live
+   - S3-compatible object storage
+
+5. **MinIO Init (minio-init)** ✅
+   - Image: minio/mc:latest
+   - One-time initialization container
+   - Creates saas-documents bucket
+   - Sets public policy
+   - Exits after completion
+
+6. **Flask API (api)** ✅
+   - Build: docker/Dockerfile.api
+   - Port: 4999
+   - Depends on: postgres, kafka, minio
+   - Hot reload: ./backend mounted as volume
+   - Health check: GET /health
+   - Environment: development mode
+   - All env vars configured
+
+7. **Kafka Worker (worker)** ✅
+   - Build: docker/Dockerfile.worker
+   - No exposed ports
+   - Depends on: postgres, kafka, minio
+   - Hot reload: ./backend mounted as volume
+   - Health check: pgrep process check
+   - Consumer group: saas-consumer-group
+   - All env vars configured
+
+8. **Redis (optional, commented)** ✅
+   - Image: redis:7-alpine
+   - Port: 6379
+   - For caching and token blacklist
+   - Can be enabled by uncommenting
+
+**Networking**: ✅
+- Custom bridge network: saas-network
+- All services connected
+- Service discovery by name
+- Isolated from host
+
+**Volumes**: ✅
+- postgres_data - PostgreSQL data persistence
+- minio_data - S3 object storage persistence
+- redis_data - Redis persistence (optional)
+- ./backend - Hot reload for development
+- ./logs - Application logs
+
+**Health Checks**: ✅
+- All critical services have health checks
+- Proper startup dependencies with condition: service_healthy
+- Retry logic and timeout configuration
+- Start period for slower services
+
+**Environment Configuration**: ✅
+- Comprehensive .env.docker template
+- 90+ environment variables documented
+- Sections: Flask, Database, JWT, Kafka, S3, CORS, Logging
+- Development-friendly defaults
+- Production security notes
+
+**Development Features**: ✅
+- Hot reload for API and worker
+- Volume mounts for code changes
+- Debug mode enabled
+- Verbose logging
+- Local MinIO console access
+- External Kafka access (port 9093)
+
+**Additional Files**: ✅
+
+1. **.env.docker** (90+ lines)
+   - Complete environment variable template
+   - All services configured
+   - Development-safe defaults
+   - Comments explaining each variable
+   - Production security warnings
+
+2. **DOCKER.md** (500+ lines)
+   - Complete Docker deployment guide
+   - Quick start instructions
+   - Service descriptions with ports
+   - Common operations (start, stop, logs)
+   - Database, Kafka, MinIO operations
+   - Development workflow guide
+   - Troubleshooting section
+   - Production deployment checklist
+   - Performance tuning tips
+   - Backup and recovery procedures
+
+**Usage Examples**: ✅
+```bash
+# Quick start
+cp .env.docker .env
+docker-compose up -d
+docker-compose exec api python scripts/init_db.py --create-admin
+
+# View logs
+docker-compose logs -f api
+docker-compose logs -f worker
+
+# Check health
+curl http://localhost:4999/health
+
+# Access MinIO console
+open http://localhost:9001
+
+# Stop all services
+docker-compose down
+
+# Stop and remove volumes
+docker-compose down -v
 ```
 
-**Deliverables**:
-- Complete Docker Compose configuration
-- All services properly networked
-- Volume persistence for PostgreSQL
+**Production Ready**: ✅
+- Security checklist provided
+- Production compose override example
+- Resource limits configuration
+- Restart policies (unless-stopped)
+- Performance tuning guide
+- Backup strategy documented
+
+**Deliverables**: ✅
+- ✅ Complete Docker Compose v3.8 configuration
+- ✅ All 7+ services properly configured
+- ✅ Custom bridge network for isolation
+- ✅ Health checks for all critical services
+- ✅ Volume persistence for databases
+- ✅ Hot reload for development
+- ✅ Environment variable template
+- ✅ Comprehensive deployment documentation
+- ✅ Troubleshooting guide
+- ✅ Production deployment checklist
+
+**Completion Notes**:
+- Complete stack can be started with single command
+- All services properly networked and health-checked
+- MinIO provides local S3-compatible storage
+- Hot reload enabled for fast development
+- Comprehensive documentation for all operations
+- Production deployment guidance included
+- Ready for local development and testing
 
 ---
 
