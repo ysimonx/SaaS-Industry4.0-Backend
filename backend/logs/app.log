@@ -1,0 +1,12 @@
+2025-11-02 20:22:26,934 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-02 20:22:26,934 - app - INFO - Flask app created with config: development
+2025-11-02 20:22:26,934 - app - INFO - Debug mode: True
+2025-11-02 20:22:26,935 - app - INFO - Database URI: postgresql://postgres:postgres@localhost:5432/saas...
+2025-11-02 20:33:47,263 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-02 20:33:47,263 - app - INFO - Flask app created with config: development
+2025-11-02 20:33:47,263 - app - INFO - Debug mode: True
+2025-11-02 20:33:47,263 - app - INFO - Database URI: postgresql://postgres:postgres@localhost:5432/saas...
+2025-11-02 20:34:53,103 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-02 20:34:53,103 - app - INFO - Flask app created with config: development
+2025-11-02 20:34:53,103 - app - INFO - Debug mode: True
+2025-11-02 20:34:53,103 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...

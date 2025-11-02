@@ -335,11 +335,12 @@ Create `backend/requirements.txt` by installing packages and freezing dependenci
 2. Activate virtual environment
 3. Install required packages:
 ```bash
-pip install Flask>=2.3.0
-pip install SQLAlchemy>=2.0.0
+pip install --upgrade pip
+pip install Flask
+pip install SQLAlchemy
 pip install Flask-Migrate
 pip install Flask-JWT-Extended
-pip install marshmallow>=3.20.0
+pip install marshmallow
 pip install kafka-python
 pip install boto3
 pip install psycopg2-binary
