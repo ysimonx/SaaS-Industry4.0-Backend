@@ -199,11 +199,27 @@ Routes (Controllers) → Services (Business Logic) → Models → Database
   - Updated `backend/app/__init__.py` to register users blueprint
   - Fixed auth blueprint registration to use correct variable name (auth_bp)
 
+- ✅ **Task 21**: Create Tenants Blueprint (Phase 5) - *Completed*
+- ✅ **Task 22**: Create Documents Blueprint (Phase 5) - *Completed*
+- ✅ **Task 23**: Create Files Blueprint (Phase 5) - *Completed*
+- ✅ **Task 24**: Create Kafka Demo Blueprint (Phase 5) - *Completed*
+- ✅ **Task 25**: Create AuthService (Phase 6) - *Completed*
+- ✅ **Task 26**: Create UserService (Phase 6) - *Completed*
+- ✅ **Task 27**: Create TenantService (Phase 6) - *Completed*
+- ✅ **Task 28**: Create DocumentService (Phase 6) - *Completed*
+- ✅ **Task 29**: Create FileService (Phase 6) - *Completed*
+- ✅ **Task 30**: Create KafkaService (Phase 6) - *Completed*
+- ✅ **Task 31**: Create S3 Client Utility (Phase 7) - *Completed*
+- ✅ **Task 32**: Implement JWT Middleware (Phase 7) - *Completed*
+- ✅ **Task 33**: Create Kafka Producer (Phase 7) - *Completed*
+- ✅ **Task 34**: Create Kafka Consumer Worker (Phase 7) - *Completed*
+- ✅ **Task 35**: Create Startup Script (Phase 7) - *Completed*
+
 ### In Progress
-- 🔄 **Task 21**: Create Tenants Blueprint (Phase 5) - *Next*
+- 🔄 **Task 36**: Create Dockerfile.api (Phase 8) - *Next*
 
 ### Pending
-- ⏳ Tasks 21-44: Remaining implementation tasks
+- ⏳ Tasks 36-44: Remaining implementation tasks
 
 ---
 
@@ -2309,24 +2325,99 @@ bucket/tenants/{tenant_id}/files/{year}/{month}/{file_id}_{md5_hash}
 
 ---
 
-### Task 35: Create Startup Script
+### Task 35: Create Startup Script ✅
 **Priority**: Medium
 **Dependencies**: 18
+**Status**: COMPLETED
 
-**File**: `backend/scripts/init_db.py`
+**File**: `backend/scripts/init_db.py` (550+ lines)
 
-**Implementation**:
-```python
-# 1. Create main database if not exists
-# 2. Run migrations
-# 3. Create initial admin user (optional)
-# 4. Create test tenant (optional)
+**Implementation**: ✅
+- ✅ Create main database if not exists
+- ✅ Run Flask-Migrate migrations
+- ✅ Create initial admin user (optional)
+- ✅ Create test tenant with database and tables (optional)
+
+**Features**: ✅
+1. **create_database_if_not_exists(database_url)**
+   - Connects to PostgreSQL using 'postgres' database
+   - Checks if target database exists via pg_database query
+   - Creates database if not found with AUTOCOMMIT isolation
+   - Comprehensive error handling for connection issues
+
+2. **run_migrations(app)**
+   - Verifies migrations directory exists
+   - Runs Flask-Migrate upgrade() to apply all migrations
+   - Lists all created tables from pg_tables
+   - Validates required tables: users, tenants, user_tenant_associations
+
+3. **create_admin_user(app, interactive=True)**
+   - Interactive mode: prompts for email, name, password
+   - Non-interactive mode: reads from environment variables
+   - Checks for existing user by email (case-insensitive)
+   - Creates user with bcrypt password hashing
+   - Environment variables: ADMIN_EMAIL, ADMIN_PASSWORD, ADMIN_FIRST_NAME, ADMIN_LAST_NAME
+
+4. **create_test_tenant(app, admin_user, interactive=True)**
+   - Interactive mode: prompts for tenant name
+   - Non-interactive mode: reads TEST_TENANT_NAME from environment
+   - Generates unique database_name from tenant name
+   - Creates tenant database via tenant.create_database()
+   - Creates Document/File tables via create_tenant_tables()
+   - Adds admin user to tenant with 'admin' role
+   - Validates tenant doesn't already exist
+
+5. **drop_all_data(app)** (DANGEROUS)
+   - Requires explicit confirmation: "DELETE EVERYTHING"
+   - Drops all tables via db.drop_all()
+   - Recreates all tables via db.create_all()
+   - Used with --drop-all flag for clean slate
+
+**Command-line Arguments**: ✅
+- `--create-admin`: Create initial admin user
+- `--create-test-tenant`: Create test tenant with database
+- `--drop-all`: Drop all data before initialization (DANGEROUS!)
+- `--non-interactive`: Use environment variables instead of prompts
+- `--config [development|production|testing]`: Configuration to use
+
+**Usage Examples**: ✅
+```bash
+# Initialize database only (no seed data)
+python scripts/init_db.py
+
+# Initialize with admin user (interactive)
+python scripts/init_db.py --create-admin
+
+# Initialize with admin and test tenant
+python scripts/init_db.py --create-admin --create-test-tenant
+
+# Non-interactive mode with environment variables
+ADMIN_EMAIL=admin@example.com ADMIN_PASSWORD=password123 \
+python scripts/init_db.py --create-admin --non-interactive
+
+# Full reset (DANGEROUS - deletes all data!)
+python scripts/init_db.py --drop-all --create-admin --create-test-tenant
 ```
 
-**Deliverables**:
-- Database initialization script
-- Migration runner
-- Optional seed data
+**Deliverables**: ✅
+- ✅ Comprehensive database initialization script (550+ lines)
+- ✅ Automatic migration runner with table verification
+- ✅ Optional admin user creation with secure password input
+- ✅ Optional test tenant creation with database and tables
+- ✅ Interactive and non-interactive modes
+- ✅ Comprehensive error handling and troubleshooting messages
+- ✅ Summary output with next steps and credentials
+- ✅ Made executable with chmod +x
+
+**Completion Notes**:
+- Script handles all database initialization tasks in one command
+- Validates PostgreSQL connectivity and permissions
+- Checks for existing data before creating (idempotent)
+- Uses getpass for secure password input in interactive mode
+- Environment variable support for CI/CD automation
+- Detailed progress output with step-by-step logging
+- Error handling with helpful troubleshooting messages
+- Ready for use in development and production environments
 
 ---
 
