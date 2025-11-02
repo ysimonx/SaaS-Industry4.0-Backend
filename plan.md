@@ -2930,9 +2930,10 @@ docker-compose down -v
 
 ## Phase 9: Documentation & Testing
 
-### Task 40: Create Swagger/OpenAPI Specification
+### Task 40: Create Swagger/OpenAPI Specification ✅ COMPLETED
 **Priority**: Medium
 **Dependencies**: 19, 20, 21, 22, 23
+**Status**: ✅ Completed
 
 **File**: `swagger.yaml`
 
@@ -2951,8 +2952,38 @@ docker-compose down -v
 - Components (schemas, responses, parameters)
 
 **Deliverables**:
-- Complete OpenAPI 3.0 specification
+- ✅ Complete OpenAPI 3.0 specification
 - Swagger UI integration (optional)
+
+**Completion Notes**:
+- Created comprehensive `swagger.yaml` with OpenAPI 3.0.3 specification (1,800+ lines)
+- Complete API documentation with all endpoints across 6 blueprint groups:
+  - Authentication: `/api/auth/*` - register, login, refresh, logout, health
+  - Users: `/api/users/*` - profile management, tenant list
+  - Tenants: `/api/tenants/*` - CRUD operations, user associations
+  - Documents: `/api/tenants/{tenant_id}/documents/*` - upload, list, get, update, delete, download
+  - Files: `/api/files/{tenant_id}/files/*` - list, get, delete orphaned files
+  - Kafka Demo: `/api/demo/kafka/*` - produce, consume, health
+- Comprehensive component schemas:
+  - User schemas: User, UserCreate, UserLogin, UserUpdate
+  - Tenant schemas: Tenant, TenantWithRole, TenantWithMembers, TenantCreate, TenantUpdate
+  - Document schemas: Document, DocumentWithFile, DocumentUpload, DocumentUpdate
+  - File schemas: File, FileWithStats
+  - Kafka schemas: KafkaMessage, KafkaProduceResponse, KafkaConsumeResponse
+  - Common schemas: SuccessResponse, ErrorResponse, PaginationMetadata, HealthResponse
+- Security scheme: JWT Bearer authentication with detailed description
+- All endpoints include:
+  - Operation ID, summary, and detailed description
+  - Request body schemas with examples (where applicable)
+  - Response schemas for success (200/201) and error cases (400/401/403/404/500)
+  - Path parameters, query parameters with validation rules
+  - Authentication requirements (BearerAuth for protected endpoints)
+- Request/response examples for common scenarios
+- Tags for organized grouping: Authentication, Users, Tenants, Documents, Files, Kafka Demo, Health
+- Server definitions: localhost:4999 (development), production server placeholder
+- API metadata: version 1.0.0, MIT license, contact information
+- Detailed descriptions including security features, multi-tenant architecture, token expiry
+- Ready for use with Swagger UI, Postman, or any OpenAPI-compatible tool
 
 ---
 
