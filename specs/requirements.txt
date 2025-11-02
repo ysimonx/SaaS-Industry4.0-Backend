@@ -21,6 +21,7 @@ Le backend python/flask doit pouvoir être démarré avec gunicorn
 Le port utilisé par ce backend python/flask ne doit pas etre 5000, mais 4999
 
 
+
 En terme de fonctionnalités :
 - je souhaite que ce backend utilise postgresql avec sqlalchemy
 - Les routes flask doivent renvoyer systematiquement une reponse json "success" ou "error", avec les status codes standard et des messages explicites en cas d'erreur
