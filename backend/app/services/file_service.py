@@ -41,7 +41,7 @@ from datetime import datetime
 
 from app.models.file import File
 from app.models.document import Document
-from app.utils.tenant_db_manager import TenantDatabaseManager
+from app.utils.database import TenantDatabaseManager
 
 logger = logging.getLogger(__name__)
 

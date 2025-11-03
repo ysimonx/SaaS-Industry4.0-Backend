@@ -30,7 +30,7 @@ from datetime import datetime
 from flask import Blueprint, request, jsonify
 from marshmallow import Schema, fields, ValidationError
 
-from app.utils.responses import success, created, bad_request, server_error
+from app.utils.responses import ok, created, bad_request, internal_error
 from app.utils.decorators import jwt_required_custom
 
 logger = logging.getLogger(__name__)
@@ -212,7 +212,7 @@ def produce_message():
 
     except Exception as e:
         logger.error(f"Error producing Kafka message: {str(e)}", exc_info=True)
-        return server_error(f'Failed to send Kafka message: {str(e)}')
+        return internal_error(f'Failed to send Kafka message: {str(e)}')
 
 
 @kafka_demo_bp.route('/consume', methods=['GET'])
@@ -285,7 +285,7 @@ def consume_messages():
 
         logger.info(f"Kafka consumer status requested by user={user_id}, returned {len(messages)} messages")
 
-        return success(
+        return ok(
             message='Kafka consumer status retrieved',
             data={
                 'status': 'running',
@@ -300,7 +300,7 @@ def consume_messages():
 
     except Exception as e:
         logger.error(f"Error retrieving Kafka consumer status: {str(e)}", exc_info=True)
-        return server_error(f'Failed to get consumer status: {str(e)}')
+        return internal_error(f'Failed to get consumer status: {str(e)}')
 
 
 @kafka_demo_bp.route('/health', methods=['GET'])

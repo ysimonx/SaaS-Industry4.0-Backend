@@ -29,7 +29,7 @@ from marshmallow import ValidationError
 
 from app.models import Tenant, UserTenantAssociation, File, Document
 from app.schemas import file_response_schema, files_response_schema
-from app.utils.responses import success, created, not_found, bad_request, server_error, forbidden
+from app.utils.responses import ok, created, not_found, bad_request, internal_error, forbidden
 from app.utils.decorators import jwt_required_custom
 from app.utils.database import tenant_db_manager
 from app.extensions import db
@@ -211,7 +211,7 @@ def list_files(tenant_id: str):
                 f"(page {page}/{total_pages}, total: {total})"
             )
 
-            return success(
+            return ok(
                 message='Files retrieved successfully',
                 data={
                     'files': files_data,
@@ -231,7 +231,7 @@ def list_files(tenant_id: str):
 
     except Exception as e:
         logger.error(f"Error listing files for tenant {tenant_id}: {str(e)}", exc_info=True)
-        return server_error(f'Failed to list files: {str(e)}')
+        return internal_error(f'Failed to list files: {str(e)}')
 
 
 @files_bp.route('/<tenant_id>/files/<file_id>', methods=['GET'])
@@ -316,7 +316,7 @@ def get_file(tenant_id: str, file_id: str):
 
             logger.info(f"Retrieved file {file_id} for tenant {tenant_id}")
 
-            return success(
+            return ok(
                 message='File retrieved successfully',
                 data=file_data
             )
@@ -326,7 +326,7 @@ def get_file(tenant_id: str, file_id: str):
             f"Error retrieving file {file_id} for tenant {tenant_id}: {str(e)}",
             exc_info=True
         )
-        return server_error(f'Failed to retrieve file: {str(e)}')
+        return internal_error(f'Failed to retrieve file: {str(e)}')
 
 
 @files_bp.route('/<tenant_id>/files/<file_id>', methods=['DELETE'])
@@ -423,7 +423,7 @@ def delete_file(tenant_id: str, file_id: str):
                 f"(freed {file_data['freed_storage_mb']} MB)"
             )
 
-            return success(
+            return ok(
                 message='Orphaned file deleted successfully',
                 data=file_data
             )
@@ -433,7 +433,7 @@ def delete_file(tenant_id: str, file_id: str):
             f"Error deleting file {file_id} for tenant {tenant_id}: {str(e)}",
             exc_info=True
         )
-        return server_error(f'Failed to delete file: {str(e)}')
+        return internal_error(f'Failed to delete file: {str(e)}')
 
 
 # Export blueprint
