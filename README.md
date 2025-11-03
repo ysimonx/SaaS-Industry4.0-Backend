@@ -409,6 +409,7 @@ docker-compose ps
 #### 6. Access Services
 
 - **API Server**: http://localhost:4999
+- **API Documentation (Swagger UI)**: http://localhost:4999/api/docs
 - **MinIO Console**: http://localhost:9001
   - Username: `minioadmin`
   - Password: `minioadmin`
@@ -892,6 +893,21 @@ Tenant Databases (tenant_xyz_*)
 ---
 
 ## API Documentation
+
+### Interactive Swagger UI
+
+The API includes an interactive Swagger UI interface for easy exploration and testing:
+
+- **Swagger UI**: http://localhost:4999/api/docs
+- **OpenAPI Specification**: http://localhost:4999/api/docs/swagger.yaml
+- **API Root**: http://localhost:4999/
+
+The Swagger UI provides:
+- Complete endpoint documentation with request/response examples
+- Interactive API testing directly from your browser
+- JWT authentication support (use the "Authorize" button)
+- Schema validation and example payloads
+- Download OpenAPI specification
 
 ### OpenAPI/Swagger Specification
 

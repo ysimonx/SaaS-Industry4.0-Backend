@@ -72,6 +72,9 @@ ENV PATH="/opt/venv/bin:$PATH"
 # Copy backend directory contents to /app
 COPY backend/ .
 
+# Copy swagger.yaml from project root for API documentation
+COPY swagger.yaml /app/swagger.yaml
+
 # Create necessary directories and set permissions
 RUN mkdir -p logs && \
     chown -R appuser:appuser /app

@@ -264,6 +264,15 @@ def register_blueprints(app):
     except ImportError as e:
         app.logger.warning(f"Kafka demo blueprint not found: {e}")
 
+    # Register Swagger UI blueprints for API documentation
+    try:
+        from app.routes.swagger import swaggerui_blueprint, swagger_file_bp
+        app.register_blueprint(swaggerui_blueprint)
+        app.register_blueprint(swagger_file_bp)
+        app.logger.info("Registered blueprint: swagger_ui (/api/docs)")
+    except ImportError as e:
+        app.logger.warning(f"Swagger UI blueprint not found: {e}")
+
     # Health check endpoint (no blueprint needed)
     @app.route('/health')
     def health_check():
@@ -281,6 +290,7 @@ def register_blueprints(app):
             'service': 'SaaS Multi-Tenant Backend Platform',
             'version': '1.0.0',
             'status': 'running',
+            'documentation': '/api/docs',
             'endpoints': {
                 'health': '/health',
                 'auth': '/api/auth',
