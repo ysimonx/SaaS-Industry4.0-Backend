@@ -11,7 +11,7 @@ from flask_jwt_extended import verify_jwt_in_request, get_jwt_identity, get_jwt
 import logging
 
 from app.utils.responses import unauthorized, forbidden, not_found
-from app.models import TokenBlacklist
+from app.services.auth_service import AuthService
 
 logger = logging.getLogger(__name__)
 
@@ -42,7 +42,7 @@ def jwt_required_custom(fn: Callable) -> Callable:
         - g.jwt_claims: Full JWT claims dict (includes jti, exp, iat, etc.)
 
     Token Blacklist:
-        - Checks TokenBlacklist model for revoked tokens
+        - Checks AuthService.is_token_blacklisted() for revoked tokens
         - Uses jti (JWT ID) claim for blacklist lookups
         - Returns 401 if token is blacklisted
 
@@ -66,7 +66,7 @@ def jwt_required_custom(fn: Callable) -> Callable:
             # Check if token is blacklisted
             jti = jwt_claims.get('jti')  # JWT ID from token claims
             if jti:
-                is_blacklisted = TokenBlacklist.is_token_blacklisted(jti)
+                is_blacklisted = AuthService.is_token_blacklisted(jti)
                 if is_blacklisted:
                     logger.warning(f"Blacklisted token attempted: user_id={user_id}, jti={jti}")
                     return unauthorized("Token has been revoked")

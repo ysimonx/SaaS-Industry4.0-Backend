@@ -2187,7 +2187,7 @@ bucket/tenants/{tenant_id}/files/{year}/{month}/{file_id}_{md5_hash}
 
 **Implementation**: ✅
 - ✅ JWT token validation decorator - `jwt_required_custom`
-- ✅ Token blacklist checking - Integrated with TokenBlacklist.is_token_blacklisted()
+- ✅ Token blacklist checking - Integrated with AuthService.is_token_blacklisted()
 - ✅ User context injection into request - Sets g.user_id and g.jwt_claims
 - ✅ Tenant context validation - `tenant_required` decorator
 - ✅ Role-based access control decorator - `role_required`, `admin_required`
@@ -2215,7 +2215,7 @@ bucket/tenants/{tenant_id}/files/{year}/{month}/{file_id}_{md5_hash}
 
 **Deliverables**: ✅
 - JWT validation middleware with blacklist integration
-- Token blacklist checking using TokenBlacklist model
+- Token blacklist checking using AuthService.is_token_blacklisted()
 - Request context management (g.user_id, g.jwt_claims, g.tenant_id, g.user_role)
 - Role-based access control with flexible decorator composition
 - Comprehensive security logging for audit trail
