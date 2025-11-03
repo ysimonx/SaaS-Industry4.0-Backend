@@ -27,7 +27,9 @@ import logging
 from flask import Blueprint, request, jsonify
 from marshmallow import ValidationError
 
-from app.models import Tenant, UserTenantAssociation, File, Document
+from app.models import Tenant, UserTenantAssociation
+from app.models.file import File
+from app.models.document import Document
 from app.schemas import file_response_schema, files_response_schema
 from app.utils.responses import ok, created, not_found, bad_request, internal_error, forbidden
 from app.utils.decorators import jwt_required_custom

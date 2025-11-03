@@ -6,16 +6,21 @@ This package contains all database models:
 - User: User accounts (main database)
 - Tenant: Tenant organizations (main database)
 - UserTenantAssociation: User-to-tenant membership with roles (main database)
-- File: Physical files in S3 (tenant databases)
-- Document: Document metadata with file references (tenant databases)
+- File: Physical files in S3 (tenant databases) - NOT included in main DB migrations
+- Document: Document metadata with file references (tenant databases) - NOT included in main DB migrations
+
+IMPORTANT: File and Document are imported separately to avoid creating them
+in the main database migrations. They are ONLY for tenant databases.
 """
 
 from app.models.base import BaseModel, register_base_model_events
 from app.models.user import User
 from app.models.tenant import Tenant
 from app.models.user_tenant_association import UserTenantAssociation
-from app.models.file import File
-from app.models.document import Document
+
+# File and Document are NOT imported here to exclude them from main DB migrations
+# Import them explicitly where needed: from app.models.file import File
+# from app.models.document import Document
 
 __all__ = [
     'BaseModel',
@@ -23,6 +28,6 @@ __all__ = [
     'User',
     'Tenant',
     'UserTenantAssociation',
-    'File',
-    'Document',
+    # 'File',  # Tenant database only - import separately
+    # 'Document',  # Tenant database only - import separately
 ]
