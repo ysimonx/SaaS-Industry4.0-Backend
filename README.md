@@ -250,13 +250,19 @@ python -c "import secrets; print(f'JWT_SECRET_KEY={secrets.token_urlsafe(64)}')"
 # 4. Start all services
 docker-compose up -d
 
-# 5. Initialize database (create admin user)
+# 5. Initialize Flask-Migrate migrations (REQUIRED - first time only)
+docker-compose exec api python scripts/setup_migrations.py
+
+# 6. Create initial migration
+docker-compose exec api flask db migrate -m "Initial migration"
+
+# 7. Initialize database (create admin user and apply migrations)
 docker-compose exec api python scripts/init_db.py --create-admin --create-test-tenant
 
-# 6. Verify services
+# 8. Verify services
 curl http://localhost:4999/health
 
-# 7. View API docs
+# 9. View API docs
 open http://localhost:4999/api-docs  # (if Swagger UI configured)
 ```
 
@@ -316,10 +322,27 @@ docker-compose logs -f api
 docker-compose logs -f worker
 ```
 
-#### 4. Initialize Database
+#### 4. Initialize Migrations (First Time Only)
+
+**IMPORTANT**: This step is required the first time you set up the project.
 
 ```bash
-# Run database initialization script
+# Initialize Flask-Migrate migrations directory
+docker-compose exec api python scripts/setup_migrations.py
+
+# Create initial migration from models
+docker-compose exec api flask db migrate -m "Initial migration"
+```
+
+This creates:
+- `backend/migrations/env.py` - Alembic environment configuration
+- `backend/migrations/versions/` - Directory for migration scripts
+- Initial migration file with all your models
+
+#### 5. Initialize Database
+
+```bash
+# Run database initialization script (applies migrations and seeds data)
 docker-compose exec api python scripts/init_db.py --create-admin --create-test-tenant
 
 # Follow interactive prompts to create admin user
@@ -332,7 +355,13 @@ docker-compose exec api python scripts/init_db.py \
   --admin-password SecurePass123
 ```
 
-#### 5. Verify Installation
+This script will:
+1. Create main database if it doesn't exist
+2. Apply all migrations (create tables)
+3. Create admin user (if --create-admin)
+4. Create test tenant with database (if --create-test-tenant)
+
+#### 6. Verify Installation
 
 ```bash
 # Check API health
