@@ -36,6 +36,7 @@ from app.models.user import User
 from app.models.user_tenant_association import UserTenantAssociation
 from app.utils.database import tenant_db_manager
 from app.extensions import db
+from app.tenant_db.tenant_migrations import get_migrator
 
 logger = logging.getLogger(__name__)
 
@@ -135,6 +136,35 @@ class TenantService:
                     f"Created tenant database: {tenant.database_name} "
                     f"for tenant {tenant.id} ({tenant.name})"
                 )
+
+                # Apply tenant-specific migrations
+                try:
+                    # Obtenir une session pour le tenant
+                    session_factory = tenant_db_manager.get_tenant_session_factory(tenant.database_name)
+                    tenant_db = session_factory()
+
+                    try:
+                        migrator = get_migrator(tenant_db)
+                        applied_migrations = migrator.migrate_to_latest()
+
+                        if applied_migrations:
+                            logger.info(
+                                f"Applied {len(applied_migrations)} migration(s) to tenant {tenant.id}: "
+                                f"{', '.join(applied_migrations)}"
+                            )
+                        else:
+                            logger.info(f"Tenant {tenant.id} schema is up to date")
+                    finally:
+                        tenant_db.close()
+
+                except Exception as migration_error:
+                    logger.error(
+                        f"Failed to apply tenant migrations: {str(migration_error)}",
+                        exc_info=True
+                    )
+                    # Continue without failing - migrations can be applied later
+                    # using migrate_all_tenants.py script
+
             except Exception as e:
                 db.session.rollback()
                 logger.error(

@@ -1,0 +1,9 @@
+docker-compose exec postgres psql -U postgres -c "DROP DATABASE IF EXISTS saas_platform;"
+
+docker-compose exec postgres psql -U postgres -c "CREATE DATABASE saas_platform;"
+
+docker-compose exec api flask db migrate -m "Initial migration: User, Tenant, UserTenantAssociation"
+
+docker-compose exec api flask db upgrade
+
+docker-compose exec api python scripts/init_db.py --create-admin --create-test-tenant

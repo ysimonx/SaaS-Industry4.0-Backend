@@ -670,9 +670,13 @@ LOG_FILE=logs/app.log              # Log file path
 
 ## Database Migrations
 
-The platform uses Flask-Migrate (Alembic) for database schema management.
+The platform uses two different migration systems depending on the tables:
 
-### Initialize Migrations (First Time Only)
+### 1. Main Database Migrations (Alembic)
+
+For the main database tables (User, Tenant, UserTenantAssociation), we use **Flask-Migrate (Alembic)**.
+
+#### Initialize Migrations (First Time Only)
 
 ```bash
 # Navigate to backend directory
@@ -682,7 +686,7 @@ cd backend
 flask db init
 ```
 
-### Create Migration
+#### Create Migration
 
 ```bash
 # Auto-generate migration from model changes
@@ -692,7 +696,7 @@ flask db migrate -m "Description of changes"
 flask db migrate -m "Add email verification field to User"
 ```
 
-### Apply Migration
+#### Apply Migration
 
 ```bash
 # Upgrade to latest version
@@ -711,7 +715,7 @@ flask db current
 flask db history
 ```
 
-### Docker Migrations
+#### Docker Migrations
 
 ```bash
 # Run migrations in Docker container
@@ -720,6 +724,100 @@ docker-compose exec api flask db upgrade
 # Create new migration in Docker
 docker-compose exec api flask db migrate -m "Add new field"
 ```
+
+### 2. Tenant-Specific Migrations (Manual)
+
+For tenant-specific tables (File, Document), which are created dynamically in each tenant's database, we use a **custom versioning system**.
+
+#### Why Not Alembic for Tenant Tables?
+
+- Tenant databases are created dynamically when a tenant is created
+- Each tenant has isolated File and Document tables
+- Alembic doesn't manage these tables in the main database
+- We need a system to evolve these schemas across all tenant databases
+
+#### Creating a Tenant Migration
+
+Edit [backend/app/tenant_db/tenant_migrations.py](backend/app/tenant_db/tenant_migrations.py) and add your migration:
+
+```python
+from app.tenant_db.tenant_migrations import register_migration
+from sqlalchemy import text
+
+@register_migration(2)  # Use next sequential version number
+def add_file_metadata_column(db):
+    """Ajoute une colonne metadata JSONB à la table files"""
+    db.execute(text("""
+        ALTER TABLE files
+        ADD COLUMN IF NOT EXISTS metadata JSONB DEFAULT '{}'::jsonb
+    """))
+
+@register_migration(3)
+def add_document_version_column(db):
+    """Ajoute une colonne version à la table documents"""
+    db.execute(text("""
+        ALTER TABLE documents
+        ADD COLUMN IF NOT EXISTS version INTEGER DEFAULT 1 CHECK (version > 0)
+    """))
+```
+
+#### Applying Tenant Migrations
+
+**Option 1: Automatic (for new tenants)**
+- Migrations are automatically applied when creating a new tenant
+- No action needed
+
+**Option 2: Manual (for existing tenants)**
+
+```bash
+# Dry-run mode (preview changes without applying)
+python backend/scripts/migrate_all_tenants.py --dry-run
+
+# Apply migrations to all tenants
+python backend/scripts/migrate_all_tenants.py
+
+# Migrate a specific tenant
+python backend/scripts/migrate_all_tenants.py --tenant-id <tenant_id>
+
+# View migration history
+python backend/scripts/migrate_all_tenants.py --history
+```
+
+**Docker:**
+```bash
+# Dry-run
+docker-compose exec api python scripts/migrate_all_tenants.py --dry-run
+
+# Apply to all tenants
+docker-compose exec api python scripts/migrate_all_tenants.py
+
+# View history
+docker-compose exec api python scripts/migrate_all_tenants.py --history
+```
+
+#### Migration Examples
+
+See [backend/app/tenant_db/tenant_migrations_examples.py](backend/app/tenant_db/tenant_migrations_examples.py) for 13+ examples including:
+
+1. Adding simple columns
+2. Adding columns with constraints
+3. Creating indexes
+4. Adding PostgreSQL arrays
+5. Modifying column types
+6. Data migrations
+7. Creating related tables
+8. Soft delete implementation
+9. And more...
+
+#### Tenant Migration Best Practices
+
+1. **Always use IF NOT EXISTS**: Migrations must be idempotent
+2. **Test in dry-run mode first**: Use `--dry-run` to preview changes
+3. **Sequential version numbers**: Use v1, v2, v3... without gaps
+4. **Document each migration**: Add clear docstrings
+5. **Backup before migrating**: Tenant data is critical
+6. **Test on one tenant first**: Use `--tenant-id` to test on a single tenant
+7. **Handle failures gracefully**: Failed migrations don't affect other tenants
 
 ### Complete Database Reset (Development Only)
 
@@ -757,6 +855,26 @@ docker-compose exec api python scripts/init_db.py --create-admin --create-test-t
 - Table creation
 - Excluding tenant-specific models (File, Document) from main database
 
+### Migration Architecture Summary
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│                     Database Migrations                          │
+└─────────────────────────────────────────────────────────────────┘
+
+Main Database (saas_platform)
+├── User, Tenant, UserTenantAssociation
+├── Managed by: Alembic/Flask-Migrate
+├── Location: backend/migrations/versions/
+└── Commands: flask db migrate, flask db upgrade
+
+Tenant Databases (tenant_xyz_*)
+├── File, Document (per tenant)
+├── Managed by: Custom Migration System
+├── Location: backend/app/tenant_db/tenant_migrations.py
+└── Commands: python scripts/migrate_all_tenants.py
+```
+
 ### Migration Best Practices
 
 1. **Always Review Auto-Generated Migrations**: Alembic may not capture all changes correctly
@@ -764,6 +882,7 @@ docker-compose exec api python scripts/init_db.py --create-admin --create-test-t
 3. **Backup Before Migrating**: Always backup databases before running migrations
 4. **Version Control**: Commit migration files to Git
 5. **Production Migrations**: Use maintenance windows for production migrations
+6. **Tenant Migrations**: Always test in dry-run mode first
 
 ---
 
