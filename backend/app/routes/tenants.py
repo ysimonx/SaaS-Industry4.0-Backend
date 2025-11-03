@@ -26,9 +26,9 @@ from app.models.user_tenant_association import UserTenantAssociation
 from app.schemas.tenant_schema import (
     tenant_create_schema,
     tenant_update_schema,
-    tenant_response_schema,
-    user_tenant_association_create_schema
+    tenant_response_schema
 )
+from app.schemas.user_tenant_association_schema import user_tenant_association_create_schema
 from app.schemas.user_schema import user_response_schema
 from app.utils.responses import ok, created, bad_request, not_found, forbidden, internal_error
 from app.utils.decorators import jwt_required_custom
