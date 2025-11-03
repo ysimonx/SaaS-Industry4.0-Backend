@@ -198,7 +198,30 @@ Routes (Controllers) → Services (Business Logic) → Models → Database
   - Updated `backend/app/routes/__init__.py` to export users_bp
   - Updated `backend/app/__init__.py` to register users blueprint
   - Fixed auth blueprint registration to use correct variable name (auth_bp)
-  - **CORRECTED 2025-01-03**: Renamed auth blueprint from `bp` to `auth_bp` and added `url_prefix='/api/auth'` for consistency
+
+**CORRECTIONS 2025-01-03** (commits: 05ab496, 4abb46b, 5713e31, 6079629, 28078b9, a5eb8ea):
+
+1. **Auth Blueprint Renaming & URL Prefix**:
+   - Renamed blueprint from `bp` to `auth_bp` for consistency with imports
+   - Added `url_prefix='/api/auth'` to blueprint definition
+   - Updated all route decorators: `@bp.route(...)` → `@auth_bp.route(...)`
+   - Fixed blueprint registration in `__init__.py`
+
+2. **JWT Blacklist Architecture Fix**:
+   - Removed duplicate `TOKEN_BLACKLIST` from `auth.py` (kept only in `auth_service.py`)
+   - Removed invalid `@auth_bp.before_app_first_request` decorator (doesn't exist for blueprints)
+   - Removed `setup_jwt_blacklist()` function from blueprint
+   - Added `@jwt.token_in_blocklist_loader` callback in `__init__.py/configure_jwt()`
+   - Modified `/logout` route to use `AuthService.logout()` instead of direct blacklist access
+   - Updated `decorators.py` to use `AuthService.is_token_blacklisted()` instead of non-existent `TokenBlacklist.is_token_blacklisted()`
+   - **Architecture**: Single `TOKEN_BLACKLIST` in AuthService → JWT callback in app config → consistent across all blueprints
+
+3. **Import Fixes**:
+   - `tenants.py`: Fixed import of `user_tenant_association_create_schema` from correct module (`user_tenant_association_schema` not `tenant_schema`)
+   - `file_service.py`: Fixed import `TenantDatabaseManager` from `app.utils.database` (not `app.utils.tenant_db_manager`)
+   - `kafka_demo.py`: Fixed imports `success` → `ok`, `server_error` → `internal_error` (3 usages)
+   - `files.py`: Fixed imports `success` → `ok`, `server_error` → `internal_error` (6 usages)
+   - All blueprints now load correctly without ImportError warnings
 
 - ✅ **Task 21**: Create Tenants Blueprint (Phase 5) - *Completed*
 - ✅ **Task 22**: Create Documents Blueprint (Phase 5) - *Completed*
