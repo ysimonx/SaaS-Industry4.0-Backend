@@ -682,6 +682,8 @@ The platform uses two different migration systems depending on the tables:
 
 For the main database tables (User, Tenant, UserTenantAssociation), we use **Flask-Migrate (Alembic)**.
 
+> **IMPORTANT:** The `documents` and `files` tables are **NOT** migrated in the main database. These tables are tenant-specific and only exist in individual tenant databases. The migration system is configured to automatically exclude them from main database migrations via the `include_object` filter in `backend/migrations/env.py`.
+
 #### Initialize Migrations (First Time Only)
 
 ```bash
@@ -729,6 +731,32 @@ docker-compose exec api flask db upgrade
 
 # Create new migration in Docker
 docker-compose exec api flask db migrate -m "Add new field"
+```
+
+#### Verify Table Exclusion
+
+To verify that `documents` and `files` tables are correctly excluded from the main database:
+
+```bash
+# Check main database tables (should NOT include documents/files)
+docker-compose exec postgres psql -U postgres -d saas_platform -c "\dt"
+
+# Expected output: Only users, tenants, user_tenant_associations, alembic_version
+# NOT documents or files
+
+# When creating a migration, you should see exclusion logs:
+docker-compose exec api flask db migrate -m "Test migration"
+# Expected logs:
+# INFO  [alembic.env] Excluding tenant-specific table 'documents' from main database migration
+# INFO  [alembic.env] Excluding tenant-specific table 'files' from main database migration
+```
+
+If you accidentally have `documents` or `files` tables in the main database (from old migrations), remove them:
+
+```bash
+# Remove incorrect tables from main database
+docker-compose exec postgres psql -U postgres -d saas_platform -c "DROP TABLE IF EXISTS documents CASCADE;"
+docker-compose exec postgres psql -U postgres -d saas_platform -c "DROP TABLE IF EXISTS files CASCADE;"
 ```
 
 ### 2. Tenant-Specific Migrations (Manual)

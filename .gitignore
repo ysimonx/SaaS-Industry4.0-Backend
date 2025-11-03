@@ -1,6 +1,5 @@
 backend/__pycache__
 *.pyc
-backend/migrations/*
 
 # Ignore copy of swagger.yaml in backend (source is in project root)
 # This copy is needed for Docker volume mount
