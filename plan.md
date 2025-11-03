@@ -198,6 +198,7 @@ Routes (Controllers) → Services (Business Logic) → Models → Database
   - Updated `backend/app/routes/__init__.py` to export users_bp
   - Updated `backend/app/__init__.py` to register users blueprint
   - Fixed auth blueprint registration to use correct variable name (auth_bp)
+  - **CORRECTED 2025-01-03**: Renamed auth blueprint from `bp` to `auth_bp` and added `url_prefix='/api/auth'` for consistency
 
 - ✅ **Task 21**: Create Tenants Blueprint (Phase 5) - *Completed*
 - ✅ **Task 22**: Create Documents Blueprint (Phase 5) - *Completed*
