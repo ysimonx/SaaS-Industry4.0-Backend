@@ -174,6 +174,27 @@ def configure_jwt(app):
             'message': 'The token has been revoked.'
         }), 401
 
+    @jwt.token_in_blocklist_loader
+    def check_if_token_revoked(jwt_header, jwt_payload):
+        """
+        Check if a JWT token has been revoked (is in blacklist).
+
+        This callback is called automatically by Flask-JWT-Extended
+        for every request that requires JWT authentication.
+
+        Args:
+            jwt_header: JWT header dict
+            jwt_payload: JWT payload dict containing 'jti'
+
+        Returns:
+            bool: True if token is revoked, False otherwise
+        """
+        from app.services.auth_service import AuthService
+        jti = jwt_payload.get('jti')
+        if jti:
+            return AuthService.is_token_blacklisted(jti)
+        return False
+
 
 def register_blueprints(app):
     """

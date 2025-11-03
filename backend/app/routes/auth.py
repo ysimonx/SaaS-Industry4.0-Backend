@@ -35,14 +35,11 @@ from app.schemas.user_schema import (
     user_response_schema
 )
 from app.schemas.tenant_schema import tenant_response_schema
+from app.services.auth_service import AuthService
 
 
 # Create Blueprint
 auth_bp = Blueprint('auth', __name__, url_prefix='/api/auth')
-
-# In-memory token blacklist (for production, use Redis or database)
-# This stores JTI (JWT ID) of revoked tokens
-TOKEN_BLACKLIST = set()
 
 
 @auth_bp.route('/register', methods=['POST'])
@@ -352,8 +349,14 @@ def logout():
         # Get JWT ID (jti) from current token
         jti = get_jwt()['jti']
 
-        # Add token to blacklist
-        TOKEN_BLACKLIST.add(jti)
+        # Add token to blacklist via AuthService
+        success, error = AuthService.logout(jti)
+
+        if not success:
+            return jsonify({
+                'error': 'logout_failed',
+                'message': error or 'Failed to logout. Please try again.'
+            }), 500
 
         return jsonify({
             'message': 'Logged out successfully'
@@ -364,35 +367,6 @@ def logout():
             'error': 'logout_failed',
             'message': 'Failed to logout. Please try again.'
         }), 500
-
-
-# JWT token blacklist checker
-# This callback is called automatically by Flask-JWT-Extended
-# to check if a token has been revoked
-@auth_bp.before_app_first_request
-def setup_jwt_blacklist():
-    """
-    Configure JWT blacklist checker.
-
-    This function is called before the first request to the app.
-    It sets up the token revocation callback.
-    """
-    from app.extensions import jwt
-
-    @jwt.token_in_blocklist_loader
-    def check_if_token_revoked(jwt_header, jwt_payload):
-        """
-        Check if a JWT token has been revoked (is in blacklist).
-
-        Args:
-            jwt_header: JWT header dict
-            jwt_payload: JWT payload dict containing 'jti'
-
-        Returns:
-            bool: True if token is revoked, False otherwise
-        """
-        jti = jwt_payload['jti']
-        return jti in TOKEN_BLACKLIST
 
 
 # Health check endpoint for auth service
