@@ -208,8 +208,10 @@ class TenantDatabaseManager:
         engine = self.get_tenant_engine(database_name)
 
         try:
-            # Import tenant database models
-            from app.models import File, Document
+            # Import tenant database models directly from modules
+            # NOT from app.models to avoid including them in main DB migrations
+            from app.models.file import File
+            from app.models.document import Document
             from app.extensions import db
 
             # Create only File and Document tables in tenant database

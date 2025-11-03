@@ -57,7 +57,7 @@ class UserTenantAssociation(db.Model):
     """
 
     __tablename__ = 'user_tenant_associations'
-    __bind_key__ = 'main'  # Store in main database
+    # No __bind_key__ needed - uses default (main) database
 
     # Composite Primary Key
     user_id = db.Column(

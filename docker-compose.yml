@@ -136,6 +136,7 @@ services:
 
       # Database
       DATABASE_URL: postgresql://postgres:postgres@postgres:5432/saas_platform
+      TENANT_DATABASE_URL_TEMPLATE: postgresql://postgres:postgres@postgres:5432/{database_name}
       DATABASE_POOL_SIZE: 10
       DATABASE_MAX_OVERFLOW: 20
 
@@ -191,6 +192,7 @@ services:
     environment:
       # Database
       DATABASE_URL: postgresql://postgres:postgres@postgres:5432/saas_platform
+      TENANT_DATABASE_URL_TEMPLATE: postgresql://postgres:postgres@postgres:5432/{database_name}
 
       # Kafka
       KAFKA_BOOTSTRAP_SERVERS: kafka:9092

@@ -103,6 +103,7 @@ def initialize_extensions(app):
         - Flask-Migrate (migrate): Database migrations
         - Flask-JWT-Extended (jwt): JWT authentication
         - Flask-CORS (cors): Cross-Origin Resource Sharing
+        - TenantDatabaseManager: Multi-tenant database manager
     """
     # Initialize SQLAlchemy
     db.init_app(app)
@@ -123,10 +124,14 @@ def initialize_extensions(app):
         methods=['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS']
     )
 
+    # Initialize Tenant Database Manager
+    from app.utils.database import tenant_db_manager
+    tenant_db_manager.init_app(app)
+
     # Configure JWT callbacks
     configure_jwt(app)
 
-    app.logger.info("Extensions initialized: db, migrate, jwt, cors")
+    app.logger.info("Extensions initialized: db, migrate, jwt, cors, tenant_db_manager")
 
 
 def configure_jwt(app):
@@ -440,20 +445,20 @@ def register_shell_context(app):
     def make_shell_context():
         """Create shell context with commonly used objects."""
         # Import models here to avoid circular imports
+        # NOTE: File and Document are NOT imported to prevent them from being
+        # registered in main database migrations. They are tenant-database-only models.
         try:
             from app.models.user import User
             from app.models.tenant import Tenant
-            from app.models.document import Document
-            from app.models.file import File
             from app.models.user_tenant_association import UserTenantAssociation
 
             return {
                 'db': db,
                 'User': User,
                 'Tenant': Tenant,
-                'Document': Document,
-                'File': File,
                 'UserTenantAssociation': UserTenantAssociation
+                # 'Document': Document,  # Tenant database only - import separately
+                # 'File': File,  # Tenant database only - import separately
             }
         except ImportError as e:
             app.logger.warning(f"Could not import models for shell context: {e}")

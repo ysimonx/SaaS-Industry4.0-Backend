@@ -250,20 +250,15 @@ python -c "import secrets; print(f'JWT_SECRET_KEY={secrets.token_urlsafe(64)}')"
 # 4. Start all services
 docker-compose up -d
 
-# 5. Initialize Flask-Migrate migrations (REQUIRED - first time only)
-docker-compose exec api python scripts/setup_migrations.py
-
-# 6. Create initial migration
-docker-compose exec api flask db migrate -m "Initial migration"
-
-# 7. Initialize database (create admin user and apply migrations)
+# 5. Initialize database (creates DB, applies migrations, creates admin user)
+# Note: Migrations are already in the repository
 docker-compose exec api python scripts/init_db.py --create-admin --create-test-tenant
 
-# 8. Verify services
+# 6. Verify services
 curl http://localhost:4999/health
 
-# 9. View API docs
-open http://localhost:4999/api-docs  # (if Swagger UI configured)
+# 7. View logs (optional)
+docker-compose logs -f api
 ```
 
 **Default Admin Credentials** (change immediately!):
@@ -322,46 +317,67 @@ docker-compose logs -f api
 docker-compose logs -f worker
 ```
 
-#### 4. Initialize Migrations (First Time Only)
+#### 4. Initialize Database
 
-**IMPORTANT**: This step is required the first time you set up the project.
+**Note**: The migrations directory is already included in the repository with the initial migration for User, Tenant, and UserTenantAssociation tables.
 
+**⚠️ IMPORTANT**: If you deleted `migrations/versions/` manually, you must first regenerate the migration:
 ```bash
-# Initialize Flask-Migrate migrations directory
-docker-compose exec api python scripts/setup_migrations.py
-
-# Create initial migration from models
 docker-compose exec api flask db migrate -m "Initial migration"
 ```
 
-This creates:
-- `backend/migrations/env.py` - Alembic environment configuration
-- `backend/migrations/versions/` - Directory for migration scripts
-- Initial migration file with all your models
-
-#### 5. Initialize Database
-
 ```bash
-# Run database initialization script (applies migrations and seeds data)
+# Option 1: Quick setup (recommended for first-time setup)
+# This creates the database if it doesn't exist, applies migrations, and optionally creates admin user
 docker-compose exec api python scripts/init_db.py --create-admin --create-test-tenant
 
-# Follow interactive prompts to create admin user
-# Or use non-interactive mode:
+# Option 2: Step-by-step setup (if migrations already exist in repository)
+# Step 1: Apply migrations only (database must exist)
+docker-compose exec api flask db upgrade
+
+# Step 2: Create admin user and test tenant
+docker-compose exec api python scripts/init_db.py --create-admin --create-test-tenant
+
+# Option 3: If migrations/versions/ is empty (you deleted it)
+# Step 1: Generate migration from models
+docker-compose exec api flask db migrate -m "Initial migration: User, Tenant, UserTenantAssociation"
+
+# Step 2: Apply migration
+docker-compose exec api flask db upgrade
+
+# Step 3: Create admin user and test tenant
+docker-compose exec api python scripts/init_db.py --create-admin --create-test-tenant
+```
+
+The `init_db.py` script will:
+1. Create main database if it doesn't exist (`saas_platform`)
+2. Apply all migrations (create tables: users, tenants, user_tenant_associations)
+3. Create admin user (if `--create-admin` flag)
+4. Create test tenant with isolated database (if `--create-test-tenant` flag)
+
+**Interactive vs Non-Interactive Mode**:
+
+```bash
+# Interactive mode (prompts for admin credentials)
+docker-compose exec api python scripts/init_db.py --create-admin --create-test-tenant
+
+# Non-interactive mode (uses environment variables or defaults)
 docker-compose exec api python scripts/init_db.py \
   --create-admin \
   --create-test-tenant \
-  --non-interactive \
-  --admin-email admin@example.com \
-  --admin-password SecurePass123
+  --non-interactive
 ```
 
-This script will:
-1. Create main database if it doesn't exist
-2. Apply all migrations (create tables)
-3. Create admin user (if --create-admin)
-4. Create test tenant with database (if --create-test-tenant)
+Set environment variables for non-interactive mode:
+```bash
+export ADMIN_EMAIL=admin@example.com
+export ADMIN_PASSWORD=SecurePass123
+export ADMIN_FIRST_NAME=Admin
+export ADMIN_LAST_NAME=User
+export TEST_TENANT_NAME="Test Organization"
+```
 
-#### 6. Verify Installation
+#### 5. Verify Installation
 
 ```bash
 # Check API health
@@ -695,6 +711,42 @@ docker-compose exec api flask db upgrade
 # Create new migration in Docker
 docker-compose exec api flask db migrate -m "Add new field"
 ```
+
+### Complete Database Reset (Development Only)
+
+**⚠️ WARNING**: This will delete ALL data including all tenant databases!
+
+Use this when you need to completely reset your development environment:
+- After deleting the database manually
+- When migrations are corrupted or out of sync
+- To regenerate migrations from model changes
+- To start fresh with a clean slate
+
+```bash
+# Option 1: Use automated reset script (recommended)
+# IMPORTANT: Run this from the HOST machine, NOT from inside a container
+./backend/scripts/reset_db.sh
+
+# Option 2: Manual reset
+# Step 1: Drop and recreate database
+docker-compose exec postgres psql -U postgres -c "DROP DATABASE IF EXISTS saas_platform;"
+docker-compose exec postgres psql -U postgres -c "CREATE DATABASE saas_platform;"
+
+# Step 2: Generate migration from models
+docker-compose exec api flask db migrate -m "Initial migration"
+
+# Step 3: Apply migration
+docker-compose exec api flask db upgrade
+
+# Step 4: (Optional) Create admin user and test tenant
+docker-compose exec api python scripts/init_db.py --create-admin --create-test-tenant
+```
+
+**Note**: The reset script automatically handles:
+- Database drop and recreation
+- Migration generation from current models
+- Table creation
+- Excluding tenant-specific models (File, Document) from main database
 
 ### Migration Best Practices
 

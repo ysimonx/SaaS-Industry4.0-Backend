@@ -56,7 +56,7 @@ class Tenant(BaseModel, db.Model):
     """
 
     __tablename__ = 'tenants'
-    __bind_key__ = 'main'  # Store in main database
+    # No __bind_key__ needed - uses default (main) database
 
     # Fields
     name = db.Column(String(255), nullable=False)

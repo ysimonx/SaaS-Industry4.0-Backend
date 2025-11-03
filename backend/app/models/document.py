@@ -69,15 +69,14 @@ class Document(BaseModel, db.Model):
     __bind_key__ = None  # Dynamic binding to tenant database
 
     # Fields
-    filename = db.Column(String(255), nullable=False, index=True)
+    filename = db.Column(String(255), nullable=False)
     mime_type = db.Column(String(100), nullable=False)
     file_id = db.Column(
         UUID(as_uuid=True),
         ForeignKey('files.id', ondelete='RESTRICT'),
-        nullable=False,
-        index=True
+        nullable=False
     )
-    user_id = db.Column(UUID(as_uuid=True), nullable=False, index=True)  # Cross-DB reference
+    user_id = db.Column(UUID(as_uuid=True), nullable=False)  # Cross-DB reference
 
     # Relationships
     file = relationship('File', back_populates='documents')

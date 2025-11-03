@@ -65,7 +65,7 @@ class File(BaseModel, db.Model):
     __bind_key__ = None  # Dynamic binding to tenant database
 
     # Fields
-    md5_hash = db.Column(String(32), nullable=False, index=True)
+    md5_hash = db.Column(String(32), nullable=False)
     s3_path = db.Column(String(500), nullable=False, unique=True)
     file_size = db.Column(BigInteger, nullable=False)
 
