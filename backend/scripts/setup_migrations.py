@@ -36,6 +36,32 @@ def check_migrations_initialized():
     return False
 
 
+def handle_incomplete_migrations():
+    """Handle case where migrations directory exists but is incomplete."""
+    migrations_dir = backend_dir / 'migrations'
+
+    if not migrations_dir.exists():
+        return False
+
+    # Check if directory is empty or only contains README
+    contents = list(migrations_dir.iterdir())
+    is_incomplete = len(contents) == 0 or (
+        len(contents) == 1 and contents[0].name == 'README.md'
+    )
+
+    if is_incomplete:
+        print("⚠ Found incomplete migrations directory")
+        print(f"  Contents: {[f.name for f in contents]}")
+        print("\nRemoving incomplete migrations directory...")
+
+        import shutil
+        shutil.rmtree(migrations_dir)
+        print("✓ Removed incomplete migrations directory")
+        return True
+
+    return False
+
+
 def initialize_migrations():
     """Initialize Flask-Migrate migrations directory."""
     print("="*60)
@@ -50,6 +76,9 @@ def initialize_migrations():
         print("2. Apply migrations: flask db upgrade")
         print("3. Or run: python scripts/init_db.py --create-admin --create-test-tenant")
         return True
+
+    # Handle incomplete migrations directory
+    handle_incomplete_migrations()
 
     print("Initializing migrations directory...")
     print()
