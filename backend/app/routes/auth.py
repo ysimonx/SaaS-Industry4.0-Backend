@@ -38,14 +38,14 @@ from app.schemas.tenant_schema import tenant_response_schema
 
 
 # Create Blueprint
-bp = Blueprint('auth', __name__)
+auth_bp = Blueprint('auth', __name__, url_prefix='/api/auth')
 
 # In-memory token blacklist (for production, use Redis or database)
 # This stores JTI (JWT ID) of revoked tokens
 TOKEN_BLACKLIST = set()
 
 
-@bp.route('/register', methods=['POST'])
+@auth_bp.route('/register', methods=['POST'])
 def register():
     """
     Register a new user account.
@@ -132,7 +132,7 @@ def register():
         }), 500
 
 
-@bp.route('/login', methods=['POST'])
+@auth_bp.route('/login', methods=['POST'])
 def login():
     """
     Authenticate user and generate JWT tokens.
@@ -252,7 +252,7 @@ def login():
         }), 500
 
 
-@bp.route('/refresh', methods=['POST'])
+@auth_bp.route('/refresh', methods=['POST'])
 @jwt_required(refresh=True)
 def refresh():
     """
@@ -315,7 +315,7 @@ def refresh():
         }), 500
 
 
-@bp.route('/logout', methods=['POST'])
+@auth_bp.route('/logout', methods=['POST'])
 @jwt_required()
 def logout():
     """
@@ -369,7 +369,7 @@ def logout():
 # JWT token blacklist checker
 # This callback is called automatically by Flask-JWT-Extended
 # to check if a token has been revoked
-@bp.before_app_first_request
+@auth_bp.before_app_first_request
 def setup_jwt_blacklist():
     """
     Configure JWT blacklist checker.
@@ -396,7 +396,7 @@ def setup_jwt_blacklist():
 
 
 # Health check endpoint for auth service
-@bp.route('/health', methods=['GET'])
+@auth_bp.route('/health', methods=['GET'])
 def health():
     """
     Health check endpoint for authentication service.
