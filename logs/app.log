@@ -836,3 +836,132 @@ LINE 1: INSERT INTO files (md5_hash, s3_path, file_size, metadata, i...
 [SQL: INSERT INTO files (md5_hash, s3_path, file_size, metadata, id, created_at, updated_at, created_by) VALUES (%(md5_hash)s, %(s3_path)s, %(file_size)s, %(metadata)s::JSONB, %(id)s::UUID, %(created_at)s, %(updated_at)s, %(created_by)s::UUID)]
 [parameters: {'md5_hash': 'bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb', 's3_path': 'test/example2.jpg', 'file_size': 512000, 'metadata': '{"mime_type": "image/png", "width": 800, "height": 600}', 'id': UUID('3a461844-6717-4c6f-bb11-6125e4f22c7f'), 'created_at': datetime.datetime(2025, 11, 3, 16, 5, 38, 996023, tzinfo=datetime.timezone.utc), 'updated_at': datetime.datetime(2025, 11, 3, 16, 5, 38, 996026, tzinfo=datetime.timezone.utc), 'created_by': '6e96ddac-8c66-459c-9f51-9debcbdeb8c4'}]
 (Background on this error at: https://sqlalche.me/e/20/f405)
+2025-11-03 16:17:22,494 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-03 16:17:22,497 - app - INFO - Flask app created with config: development
+2025-11-03 16:17:22,497 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-03 16:17:22,498 - app - INFO - Debug mode: True
+2025-11-03 16:17:22,499 - app - INFO - Flask app created with config: development
+2025-11-03 16:17:22,499 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-03 16:17:22,500 - app - INFO - Debug mode: True
+2025-11-03 16:17:22,501 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-03 16:17:22,503 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-03 16:17:22,503 - app - INFO - Flask app created with config: development
+2025-11-03 16:17:22,504 - app - INFO - Debug mode: True
+2025-11-03 16:17:22,504 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-03 16:17:22,552 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-03 16:17:22,553 - app - INFO - Flask app created with config: development
+2025-11-03 16:17:22,554 - app - INFO - Debug mode: True
+2025-11-03 16:17:22,555 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-03 16:22:43,377 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-03 16:22:43,377 - app - INFO - Flask app created with config: development
+2025-11-03 16:22:43,379 - app - INFO - Debug mode: True
+2025-11-03 16:22:43,380 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-03 16:22:43,434 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-03 16:22:43,435 - app - INFO - Flask app created with config: development
+2025-11-03 16:22:43,436 - app - INFO - Debug mode: True
+2025-11-03 16:22:43,437 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-03 16:22:43,496 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-03 16:22:43,496 - app - INFO - Flask app created with config: development
+2025-11-03 16:22:43,496 - app - INFO - Debug mode: True
+2025-11-03 16:22:43,497 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-03 16:22:43,563 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-03 16:22:43,563 - app - INFO - Flask app created with config: development
+2025-11-03 16:22:43,563 - app - INFO - Debug mode: True
+2025-11-03 16:22:43,563 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-03 16:23:51,626 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-03 16:23:51,626 - app - INFO - Flask app created with config: development
+2025-11-03 16:23:51,627 - app - INFO - Debug mode: True
+2025-11-03 16:23:51,627 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-03 16:24:08,835 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-03 16:24:08,836 - app - INFO - Flask app created with config: development
+2025-11-03 16:24:08,836 - app - INFO - Debug mode: True
+2025-11-03 16:24:08,836 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-03 16:24:53,919 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-03 16:24:53,920 - app - INFO - Flask app created with config: development
+2025-11-03 16:24:53,920 - app - INFO - Debug mode: True
+2025-11-03 16:24:53,920 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-03 16:25:02,484 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-03 16:25:02,484 - app - INFO - Flask app created with config: development
+2025-11-03 16:25:02,484 - app - INFO - Debug mode: True
+2025-11-03 16:25:02,484 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-03 16:25:13,966 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-03 16:25:13,966 - app - INFO - Flask app created with config: development
+2025-11-03 16:25:13,967 - app - INFO - Debug mode: True
+2025-11-03 16:25:13,967 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-03 16:25:22,353 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-03 16:25:22,353 - app - INFO - Flask app created with config: development
+2025-11-03 16:25:22,353 - app - INFO - Debug mode: True
+2025-11-03 16:25:22,354 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-03 16:25:37,860 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-03 16:25:37,861 - app - INFO - Flask app created with config: development
+2025-11-03 16:25:37,861 - app - INFO - Debug mode: True
+2025-11-03 16:25:37,862 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-03 16:26:22,016 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-03 16:26:22,016 - app - INFO - Flask app created with config: development
+2025-11-03 16:26:22,016 - app - INFO - Debug mode: True
+2025-11-03 16:26:22,017 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-03 16:26:26,456 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-03 16:26:26,456 - app - INFO - Flask app created with config: development
+2025-11-03 16:26:26,456 - app - INFO - Debug mode: True
+2025-11-03 16:26:26,457 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-03 16:26:31,052 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-03 16:26:31,052 - app - INFO - Flask app created with config: development
+2025-11-03 16:26:31,053 - app - INFO - Debug mode: True
+2025-11-03 16:26:31,053 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-03 16:27:03,085 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-03 16:27:03,085 - app - INFO - Flask app created with config: development
+2025-11-03 16:27:03,085 - app - INFO - Debug mode: True
+2025-11-03 16:27:03,085 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-03 16:28:12,826 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-03 16:28:12,827 - app - INFO - Flask app created with config: development
+2025-11-03 16:28:12,829 - app - INFO - Debug mode: True
+2025-11-03 16:28:12,830 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-03 16:28:12,870 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-03 16:28:12,871 - app - INFO - Flask app created with config: development
+2025-11-03 16:28:12,873 - app - INFO - Debug mode: True
+2025-11-03 16:28:12,875 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-03 16:28:12,897 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-03 16:28:12,897 - app - INFO - Flask app created with config: development
+2025-11-03 16:28:12,897 - app - INFO - Debug mode: True
+2025-11-03 16:28:12,898 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-03 16:28:12,927 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-03 16:28:12,928 - app - INFO - Flask app created with config: development
+2025-11-03 16:28:12,928 - app - INFO - Debug mode: True
+2025-11-03 16:28:12,928 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-03 16:28:53,109 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-03 16:28:53,110 - app - INFO - Flask app created with config: development
+2025-11-03 16:28:53,110 - app - INFO - Debug mode: True
+2025-11-03 16:28:53,110 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-03 16:29:01,187 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-03 16:29:01,187 - app - INFO - Flask app created with config: development
+2025-11-03 16:29:01,187 - app - INFO - Debug mode: True
+2025-11-03 16:29:01,187 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-03 16:29:08,423 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-03 16:29:08,423 - app - INFO - Flask app created with config: development
+2025-11-03 16:29:08,424 - app - INFO - Debug mode: True
+2025-11-03 16:29:08,424 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-03 16:29:28,411 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-03 16:29:28,412 - app - INFO - Flask app created with config: development
+2025-11-03 16:29:28,412 - app - INFO - Debug mode: True
+2025-11-03 16:29:28,412 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-03 16:30:49,293 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-03 16:30:49,294 - app - INFO - Flask app created with config: development
+2025-11-03 16:30:49,294 - app - INFO - Debug mode: True
+2025-11-03 16:30:49,294 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-03 16:30:49,322 - app.tenant_db.tenant_migrations - DEBUG - Schema version table doesn't exist yet: (psycopg2.errors.UndefinedTable) relation "tenant_schema_version" does not exist
+LINE 1: SELECT version FROM tenant_schema_version ORDER BY version D...
+                            ^
+
+[SQL: SELECT version FROM tenant_schema_version ORDER BY version DESC LIMIT 1]
+(Background on this error at: https://sqlalche.me/e/20/f405)
+2025-11-03 16:30:49,329 - app.tenant_db.tenant_migrations - INFO - Created tenant_schema_version table
+2025-11-03 16:31:08,953 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-03 16:31:08,953 - app - INFO - Flask app created with config: development
+2025-11-03 16:31:08,954 - app - INFO - Debug mode: True
+2025-11-03 16:31:08,954 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-03 16:31:08,981 - app.tenant_db.tenant_migrations - INFO - Applying migration v1: initial_schema
+2025-11-03 16:31:08,983 - app.tenant_db.tenant_migrations - INFO - ✓ Migration v1 applied successfully
+2025-11-03 16:31:55,369 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-03 16:31:55,369 - app - INFO - Flask app created with config: development
+2025-11-03 16:31:55,369 - app - INFO - Debug mode: True
+2025-11-03 16:31:55,370 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...

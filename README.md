@@ -254,6 +254,8 @@ docker-compose exec postgres psql -U postgres -c "DROP DATABASE IF EXISTS saas_p
 
 docker-compose exec postgres psql -U postgres -c "CREATE DATABASE saas_platform;"
 
+docker-compose exec api flask db init
+
 docker-compose exec api flask db migrate -m "Initial migration: User, Tenant, UserTenantAssociation"
 
 docker-compose exec api flask db upgrade
@@ -262,6 +264,9 @@ docker-compose exec api flask db upgrade
 # 5. Initialize database (creates DB, applies migrations, creates admin user)
 # Note: Migrations are already in the repository
 docker-compose exec api python scripts/init_db.py --create-admin --create-test-tenant
+
+## 5.1 eventuellement migration des databases des tenants
+docker-compose exec api python scripts/migrate_all_tenants.py
 
 # 6. Verify services
 curl http://localhost:4999/health
