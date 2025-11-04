@@ -139,6 +139,26 @@ services:
       - ./vault/logs:/vault/logs
     command: server -dev -dev-root-token-id="root-token-dev"
 
+  # Vault Initialization - Auto-injects secrets and generates AppRole credentials
+  vault-init:
+    image: hashicorp/vault:1.15
+    container_name: saas-vault-init
+    depends_on:
+      vault:
+        condition: service_healthy
+    environment:
+      VAULT_ADDR: "http://vault:8200"
+      VAULT_TOKEN: "root-token-dev"
+      VAULT_ENV: "${VAULT_ENV:-docker}"
+    volumes:
+      - ./vault/scripts:/scripts:ro
+      - ./vault/init-data:/init-data:ro
+      - ./.env.vault:/output/.env.vault
+    command: /scripts/init-vault.sh
+    networks:
+      - saas-network
+    restart: "no"
+
   # Flask API - Main REST API server
   api:
     build:
