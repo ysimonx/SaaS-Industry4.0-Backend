@@ -1,0 +1,13 @@
+# Vault data (contient les secrets)
+data/
+logs/
+
+# Tokens et credentials
+.vault-token
+*.token
+
+# Configuration locale
+config/local.hcl
+
+# Secrets initiaux (ne JAMAIS commiter)
+init-data/

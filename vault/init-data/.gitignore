@@ -1,0 +1,3 @@
+# Ignorer TOUS les fichiers de secrets
+*
+!.gitignore
