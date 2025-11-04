@@ -56,8 +56,8 @@ if [ "$USE_VAULT" = "true" ]; then
 
     echo "✅ Credentials Vault chargés avec succès"
     echo "   VAULT_ADDR: $VAULT_ADDR"
-    echo "   VAULT_ROLE_ID: ${VAULT_ROLE_ID:0:20}..."
-    echo "   VAULT_SECRET_ID: ${VAULT_SECRET_ID:0:20}..."
+    echo "   VAULT_ROLE_ID: $(echo "$VAULT_ROLE_ID" | cut -c1-20)..."
+    echo "   VAULT_SECRET_ID: $(echo "$VAULT_SECRET_ID" | cut -c1-20)..."
 else
     echo "→ Vault désactivé (USE_VAULT=false)"
     echo "→ Utilisation des variables d'environnement (.env.docker)"

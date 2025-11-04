@@ -72,8 +72,8 @@ ENV PATH="/opt/venv/bin:$PATH"
 # Copy backend directory contents to /app
 COPY backend/ .
 
-# Copy swagger.yaml from project root for API documentation
-COPY swagger.yaml /app/swagger.yaml
+# Copy swagger.yaml from project root for API documentation (if exists)
+# COPY swagger.yaml /app/swagger.yaml
 
 # Copy docker-entrypoint.sh for Vault integration
 COPY backend/docker-entrypoint.sh /docker-entrypoint.sh
