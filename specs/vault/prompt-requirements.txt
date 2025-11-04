@@ -1,0 +1,6 @@
+je souhaite stocker les "secrets" de ce projet de plateforme SaaS écrit en python/flask dans un serveur vault de hashicorp. 
+En particulier, sur l'environnement docker, je souhaite disposer d'un container vault
+les scripts de demarrage devront utiliser appRole pour aller chercher ces secrets.
+les tokens devront etre renouvelés.
+écris moi un requirements.md que je vais fournir à Claude AI pour qu'il me fasse un plan.md
+
