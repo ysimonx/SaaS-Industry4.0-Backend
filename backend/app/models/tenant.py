@@ -60,7 +60,7 @@ class Tenant(BaseModel, db.Model):
 
     # Fields
     name = db.Column(String(255), nullable=False)
-    database_name = db.Column(String(63), unique=True, nullable=False, index=True)
+    database_name = db.Column(String(63), unique=True, nullable=False)
     is_active = db.Column(Boolean, default=True, nullable=False)
 
     # Relationships

@@ -201,6 +201,10 @@ class TestingConfig(Config):
     SQLALCHEMY_DATABASE_URI = os.environ.get('TEST_DATABASE_URL') or \
         'sqlite:///:memory:'
 
+    # SQLite doesn't support pool_size, pool_timeout, max_overflow
+    # Override engine options for SQLite
+    SQLALCHEMY_ENGINE_OPTIONS = {}
+
     # Disable CSRF for testing
     WTF_CSRF_ENABLED = False
 

@@ -69,7 +69,7 @@ def db(app):
 
 
 @pytest.fixture(scope='function')
-def session(db):
+def session(db, app):
     """
     Create a new database session for a test.
 
@@ -81,22 +81,19 @@ def session(db):
     Returns:
         SQLAlchemy session
     """
-    # Start a new transaction
-    connection = db.engine.connect()
-    transaction = connection.begin()
+    with app.app_context():
+        # Start a new transaction
+        connection = db.engine.connect()
+        transaction = connection.begin()
 
-    # Bind the session to the connection
-    session = db.create_scoped_session(
-        options={'bind': connection, 'binds': {}}
-    )
-    db.session = session
+        # Use session directly - Flask-SQLAlchemy 3.x manages sessions differently
+        # We'll just use the main session and rollback at the end
+        yield db.session
 
-    yield session
-
-    # Rollback transaction to clean up
-    session.close()
-    transaction.rollback()
-    connection.close()
+        # Rollback transaction to clean up
+        db.session.rollback()
+        transaction.rollback()
+        connection.close()
 
 
 @pytest.fixture(scope='function')
