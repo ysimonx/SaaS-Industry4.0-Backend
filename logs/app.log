@@ -1657,3 +1657,19 @@ WHERE users.email = %(email_1)s
 2025-11-04 22:24:27,251 - app - INFO - Flask app created with config: development
 2025-11-04 22:24:27,251 - app - INFO - Debug mode: True
 2025-11-04 22:24:27,252 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-04 23:10:46,797 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-04 23:10:46,798 - app - INFO - Flask app created with config: development
+2025-11-04 23:10:46,798 - app - INFO - Debug mode: True
+2025-11-04 23:10:46,799 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-04 23:10:46,830 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-04 23:10:46,831 - app - INFO - Flask app created with config: development
+2025-11-04 23:10:46,834 - app - INFO - Debug mode: True
+2025-11-04 23:10:46,835 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-04 23:10:46,872 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-04 23:10:46,873 - app - INFO - Flask app created with config: development
+2025-11-04 23:10:46,873 - app - INFO - Debug mode: True
+2025-11-04 23:10:46,874 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-04 23:10:46,911 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-04 23:10:46,911 - app - INFO - Flask app created with config: development
+2025-11-04 23:10:46,912 - app - INFO - Debug mode: True
+2025-11-04 23:10:46,913 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
