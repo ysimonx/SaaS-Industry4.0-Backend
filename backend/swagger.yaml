@@ -352,10 +352,10 @@ paths:
                 email:
                   type: string
                   format: email
-                  example: "john.doe@example.com"
+                  example: "admin@example.com"
                 password:
                   type: string
-                  example: "SecurePass123"
+                  example: "12345678"
       responses:
         '200':
           description: Login successful
