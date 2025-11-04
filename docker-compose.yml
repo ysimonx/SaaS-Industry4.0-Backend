@@ -153,7 +153,7 @@ services:
     volumes:
       - ./vault/scripts:/scripts:ro
       - ./vault/init-data:/init-data:ro
-      - ./.env.vault:/output/.env.vault
+      - .:/output
     command: /scripts/init-vault.sh
     networks:
       - saas-network
