@@ -112,6 +112,33 @@ services:
     networks:
       - saas-network
 
+  # HashiCorp Vault - Secrets management
+  vault:
+    image: hashicorp/vault:1.15
+    container_name: saas-vault
+    restart: unless-stopped
+    ports:
+      - "8200:8200"
+    environment:
+      VAULT_DEV_ROOT_TOKEN_ID: "root-token-dev"
+      VAULT_DEV_LISTEN_ADDRESS: "0.0.0.0:8200"
+      VAULT_ADDR: "http://0.0.0.0:8200"
+    cap_add:
+      - IPC_LOCK
+    networks:
+      - saas-network
+    healthcheck:
+      test: ["CMD", "vault", "status"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    volumes:
+      - ./vault/config:/vault/config
+      - ./vault/data:/vault/data
+      - ./vault/logs:/vault/logs
+    command: server -dev -dev-root-token-id="root-token-dev"
+
   # Flask API - Main REST API server
   api:
     build:
