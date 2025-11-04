@@ -201,13 +201,396 @@ logs/
 
 # Configuration locale
 config/local.hcl
+
+# Secrets initiaux (ne JAMAIS commiter)
+init-data/
 ```
+
+**Fichier:** `vault/init-data/.gitignore`
+
+```
+# Ignorer TOUS les fichiers de secrets
+*
+!.gitignore
+```
+
+**Fichier:** `.gitignore` (à la racine du projet)
+
+**Ajouter ces lignes:**
+
+```
+# HashiCorp Vault
+vault/data/
+vault/logs/
+vault/init-data/
+.env.vault
+
+# Backups temporaires des anciens .env (à supprimer après migration)
+.env.*.backup
+```
+
+### 2.6 Configuration de l'Auto-Initialisation de Vault
+
+**Important:** Cette section configure l'**injection automatique des secrets** dans Vault au démarrage. Vault devient la **source unique de vérité**.
+
+#### 2.6.1 Ajout du Service vault-init dans docker-compose.yml
+
+**Fichier:** `docker-compose.yml`
+
+**Action:** Ajouter le service `vault-init` après le service `vault`
+
+```yaml
+services:
+  # ... service vault existant ...
+
+  vault-init:
+    image: hashicorp/vault:1.15
+    container_name: saas-vault-init
+    depends_on:
+      vault:
+        condition: service_healthy
+    environment:
+      VAULT_ADDR: "http://vault:8200"
+      VAULT_TOKEN: "root-token-dev"
+      VAULT_ENV: "${VAULT_ENV:-docker}"  # dev, docker, ou prod
+    volumes:
+      - ./vault/scripts:/scripts:ro
+      - ./vault/init-data:/init-data:ro
+      - ./.env.vault:/output/.env.vault
+    command: /scripts/init-vault.sh
+    networks:
+      - saas-network
+    restart: "no"  # S'exécute une seule fois
+```
+
+**Notes importantes:**
+- **depends_on vault:healthy** : S'assure que Vault est prêt avant l'initialisation
+- **VAULT_ENV** : Environnement à initialiser (dev, docker, prod)
+- **volumes** :
+  - `scripts:ro` : Scripts en lecture seule
+  - `init-data:ro` : Secrets en lecture seule
+  - `.env.vault` : Écriture des credentials AppRole
+- **restart: no** : Le conteneur s'arrête après l'initialisation
+
+#### 2.6.2 Création du Script d'Initialisation
+
+**Fichier:** `vault/scripts/init-vault.sh`
+
+```bash
+#!/bin/bash
+set -e
+
+VAULT_ENV=${VAULT_ENV:-docker}
+SECRETS_FILE="/init-data/${VAULT_ENV}.env"
+OUTPUT_FILE="/output/.env.vault"
+
+echo "=========================================="
+echo "🔐 Initialisation Automatique de Vault"
+echo "=========================================="
+echo "Environnement : $VAULT_ENV"
+echo "Fichier source: $SECRETS_FILE"
+echo "=========================================="
+echo ""
+
+# Vérifier que le fichier de secrets existe
+if [ ! -f "$SECRETS_FILE" ]; then
+    echo "❌ ERREUR: Fichier $SECRETS_FILE introuvable"
+    echo ""
+    echo "📝 Créez ce fichier avec vos secrets pour l'environnement $VAULT_ENV"
+    echo ""
+    echo "Exemple:"
+    echo "  cat > vault/init-data/${VAULT_ENV}.env <<EOF"
+    echo "  DATABASE_URL=postgresql://..."
+    echo "  JWT_SECRET_KEY=..."
+    echo "  EOF"
+    exit 1
+fi
+
+echo "✓ Chargement des secrets depuis $SECRETS_FILE"
+source "$SECRETS_FILE"
+
+# Attendre que Vault soit vraiment prêt
+echo "→ Attente de Vault..."
+sleep 3
+
+# Activer le KV secrets engine v2 (si pas déjà fait)
+echo "→ Activation du KV Secrets Engine v2..."
+vault secrets enable -version=2 -path=secret kv 2>/dev/null && echo "✓ KV engine activé" || echo "✓ KV engine déjà activé"
+
+# Injection des secrets DATABASE
+echo "→ Injection des secrets DATABASE pour environnement '$VAULT_ENV'..."
+vault kv put "secret/saas-project/${VAULT_ENV}/database" \
+  main_url="$DATABASE_URL" \
+  tenant_url_template="$TENANT_DATABASE_URL_TEMPLATE"
+echo "✓ Secrets DATABASE injectés"
+
+# Injection des secrets JWT
+echo "→ Injection des secrets JWT pour environnement '$VAULT_ENV'..."
+vault kv put "secret/saas-project/${VAULT_ENV}/jwt" \
+  secret_key="$JWT_SECRET_KEY" \
+  access_token_expires="${JWT_ACCESS_TOKEN_EXPIRES:-900}"
+echo "✓ Secrets JWT injectés"
+
+# Injection des secrets S3
+echo "→ Injection des secrets S3 pour environnement '$VAULT_ENV'..."
+vault kv put "secret/saas-project/${VAULT_ENV}/s3" \
+  endpoint_url="$S3_ENDPOINT_URL" \
+  access_key_id="$S3_ACCESS_KEY_ID" \
+  secret_access_key="$S3_SECRET_ACCESS_KEY" \
+  bucket_name="${S3_BUCKET:-saas-documents}" \
+  region="${S3_REGION:-us-east-1}"
+echo "✓ Secrets S3 injectés"
+
+# Configuration de l'authentification AppRole
+echo "→ Configuration de l'authentification AppRole..."
+vault auth enable approle 2>/dev/null && echo "✓ AppRole activé" || echo "✓ AppRole déjà activé"
+
+# Créer la politique d'accès
+echo "→ Création de la politique Vault pour environnement '$VAULT_ENV'..."
+vault policy write saas-app-policy-${VAULT_ENV} - <<EOF
+# Politique pour l'environnement ${VAULT_ENV}
+path "secret/data/saas-project/${VAULT_ENV}/*" {
+  capabilities = ["read"]
+}
+
+path "secret/metadata/saas-project/${VAULT_ENV}/*" {
+  capabilities = ["list", "read"]
+}
+
+path "auth/token/renew-self" {
+  capabilities = ["update"]
+}
+
+path "auth/token/lookup-self" {
+  capabilities = ["read"]
+}
+EOF
+echo "✓ Politique créée: saas-app-policy-${VAULT_ENV}"
+
+# Configurer le rôle AppRole
+echo "→ Configuration du rôle AppRole..."
+vault write auth/approle/role/saas-app-role-${VAULT_ENV} \
+  token_policies="saas-app-policy-${VAULT_ENV}" \
+  token_ttl=1h \
+  token_max_ttl=4h \
+  secret_id_ttl=0 \
+  secret_id_num_uses=0 2>/dev/null || echo "✓ Rôle AppRole déjà configuré"
+echo "✓ Rôle AppRole configuré: saas-app-role-${VAULT_ENV}"
+
+# Récupérer les credentials AppRole
+echo "→ Génération des credentials AppRole..."
+ROLE_ID=$(vault read -field=role_id auth/approle/role/saas-app-role-${VAULT_ENV}/role-id)
+SECRET_ID=$(vault write -field=secret_id -f auth/approle/role/saas-app-role-${VAULT_ENV}/secret-id)
+
+# Écrire le fichier .env.vault
+echo "→ Écriture du fichier .env.vault..."
+cat > "$OUTPUT_FILE" <<EOF
+# HashiCorp Vault Credentials
+# Auto-généré par init-vault.sh le $(date)
+# Environnement: ${VAULT_ENV}
+#
+# ⚠️  NE PAS COMMITER CE FICHIER
+# ⚠️  Ces credentials donnent accès aux secrets Vault
+
+VAULT_ADDR=http://vault:8200
+VAULT_ROLE_ID=$ROLE_ID
+VAULT_SECRET_ID=$SECRET_ID
+EOF
+
+chmod 600 "$OUTPUT_FILE" 2>/dev/null || true
+echo "✓ Fichier .env.vault créé avec permissions 600"
+
+echo ""
+echo "=========================================="
+echo "✅ INITIALISATION TERMINÉE AVEC SUCCÈS"
+echo "=========================================="
+echo "Environnement  : $VAULT_ENV"
+echo "Secrets créés  : secret/saas-project/${VAULT_ENV}/*"
+echo "Politique      : saas-app-policy-${VAULT_ENV}"
+echo "Rôle AppRole   : saas-app-role-${VAULT_ENV}"
+echo ""
+echo "📄 Credentials Vault:"
+echo "   VAULT_ADDR     : http://vault:8200"
+echo "   VAULT_ROLE_ID  : $ROLE_ID"
+echo "   VAULT_SECRET_ID: $SECRET_ID"
+echo ""
+echo "✓ Ces credentials ont été écrits dans .env.vault"
+echo "✓ L'application peut maintenant démarrer et lire les secrets depuis Vault"
+echo "=========================================="
+
+exit 0
+```
+
+**Rendre le script exécutable:**
+
+```bash
+chmod +x vault/scripts/init-vault.sh
+```
+
+### 2.7 Préparation des Secrets Initiaux
+
+**Important:** Les secrets doivent être stockés dans `vault/init-data/` et **JAMAIS commités dans Git**.
+
+#### 2.7.1 Création des Répertoires
+
+```bash
+# Créer les répertoires
+mkdir -p vault/init-data
+
+# Créer le .gitignore
+cat > vault/init-data/.gitignore <<EOF
+# Ignorer TOUS les fichiers de secrets
+*
+!.gitignore
+EOF
+```
+
+#### 2.7.2 Migration depuis les Anciens .env
+
+**Étape 1 : Créer les Backups**
+
+```bash
+# Sauvegarder les anciens fichiers .env
+cp .env.docker .env.docker.backup
+cp .env.development .env.development.backup
+cp .env.production .env.production.backup 2>/dev/null || true
+```
+
+**Étape 2 : Créer vault/init-data/docker.env**
+
+```bash
+cat > vault/init-data/docker.env <<'EOF'
+# ============================================================================
+# Secrets pour Environnement DOCKER (Docker Compose Local)
+# ============================================================================
+# ⚠️  NE PAS COMMITER CE FICHIER
+# ⚠️  Ces secrets seront injectés automatiquement dans Vault au démarrage
+
+# Database
+DATABASE_URL=postgresql://postgres:postgres@postgres:5432/saas_platform
+TENANT_DATABASE_URL_TEMPLATE=postgresql://postgres:postgres@postgres:5432/{database_name}
+
+# JWT - IMPORTANT: Générer une nouvelle clé sécurisée
+# Générer avec: openssl rand -hex 32
+JWT_SECRET_KEY=CHANGE_ME_$(openssl rand -hex 32)
+JWT_ACCESS_TOKEN_EXPIRES=900
+
+# S3/MinIO
+S3_ENDPOINT_URL=http://minio:9000
+S3_ACCESS_KEY_ID=minioadmin
+S3_SECRET_ACCESS_KEY=minioadmin
+S3_BUCKET=saas-documents
+S3_REGION=us-east-1
+EOF
+```
+
+**Étape 3 : Créer vault/init-data/dev.env**
+
+```bash
+cat > vault/init-data/dev.env <<'EOF'
+# ============================================================================
+# Secrets pour Environnement DEV (Développement Local sans Docker)
+# ============================================================================
+# ⚠️  NE PAS COMMITER CE FICHIER
+
+# Database (localhost pour dev local)
+DATABASE_URL=postgresql://postgres:postgres@localhost:5432/saas_platform
+TENANT_DATABASE_URL_TEMPLATE=postgresql://postgres:postgres@localhost:5432/{database_name}
+
+# JWT
+JWT_SECRET_KEY=dev-local-secret-$(openssl rand -hex 16)
+JWT_ACCESS_TOKEN_EXPIRES=900
+
+# S3/MinIO (localhost pour dev local)
+S3_ENDPOINT_URL=http://localhost:9000
+S3_ACCESS_KEY_ID=minioadmin
+S3_SECRET_ACCESS_KEY=minioadmin
+S3_BUCKET=saas-documents-dev
+S3_REGION=us-east-1
+EOF
+```
+
+**Étape 4 : Créer vault/init-data/prod.env (Template)**
+
+```bash
+cat > vault/init-data/prod.env <<'EOF'
+# ============================================================================
+# Secrets pour Environnement PROD (Production)
+# ============================================================================
+# ⚠️  NE PAS COMMITER CE FICHIER
+# ⚠️  À CONFIGURER MANUELLEMENT SUR LE SERVEUR DE PRODUCTION
+
+# Database - REMPLACER PAR LES VRAIES VALEURS
+DATABASE_URL=postgresql://prod_user:STRONG_PASSWORD@prod-db-host:5432/saas_platform_prod
+TENANT_DATABASE_URL_TEMPLATE=postgresql://prod_user:STRONG_PASSWORD@prod-db-host:5432/{database_name}
+
+# JWT - GÉNÉRER UNE CLÉ FORTE UNIQUE
+# Générer avec: openssl rand -hex 32
+JWT_SECRET_KEY=REPLACE_WITH_STRONG_RANDOM_KEY
+JWT_ACCESS_TOKEN_EXPIRES=900
+
+# S3 - REMPLACER PAR LES VRAIES VALEURS AWS/S3
+S3_ENDPOINT_URL=https://s3.amazonaws.com
+S3_ACCESS_KEY_ID=REPLACE_WITH_AWS_ACCESS_KEY
+S3_SECRET_ACCESS_KEY=REPLACE_WITH_AWS_SECRET_KEY
+S3_BUCKET=saas-documents-production
+S3_REGION=us-east-1
+EOF
+```
+
+#### 2.7.3 Nettoyage des Fichiers .env Existants
+
+**Les fichiers .env ne doivent plus contenir de secrets, seulement des configurations non-sensibles.**
+
+**Fichier:** `.env.docker` (nettoyer)
+
+```bash
+# ============================================================================
+# Configuration NON-SENSIBLE pour Docker Compose
+# ============================================================================
+# ✅ Ce fichier peut être commité (aucun secret)
+# ✅ Les secrets sont dans Vault (chargés depuis vault/init-data/docker.env)
+
+# Flask Configuration
+FLASK_ENV=development
+FLASK_DEBUG=false
+
+# Logging
+LOG_LEVEL=DEBUG
+
+# CORS
+CORS_ORIGINS=http://localhost:3000,http://localhost:4999
+
+# Kafka Configuration (non sensible)
+KAFKA_CONSUMER_GROUP_ID=saas-consumer-group
+KAFKA_AUTO_OFFSET_RESET=earliest
+KAFKA_ENABLE_AUTO_COMMIT=true
+KAFKA_MAX_POLL_RECORDS=100
+
+# Database Pool Configuration (non sensible)
+DATABASE_POOL_SIZE=10
+DATABASE_MAX_OVERFLOW=20
+
+# ⚠️  AUCUN SECRET DANS CE FICHIER
+# ⚠️  Tous les secrets sont dans vault/init-data/docker.env
+```
+
+**Appliquer le même nettoyage pour `.env.development` et `.env.production`**
 
 ---
 
 ## 3. Phase 2 - Configuration de Vault
 
-### 3.1 Initialisation de Vault (Mode Dev)
+> **⚡ NOTE IMPORTANTE:** Avec la configuration d'auto-initialisation mise en place dans les sections 2.6 et 2.7, **toutes les étapes de cette phase sont automatisées** par le script `init-vault.sh`.
+>
+> Les sections ci-dessous sont conservées **à titre informatif** pour comprendre ce qui se passe en arrière-plan. Vous n'avez **pas besoin d'exécuter ces commandes manuellement**.
+>
+> **Pour initialiser Vault, il suffit de lancer :**
+> ```bash
+> docker-compose up -d vault vault-init
+> ```
+
+### 3.1 Initialisation de Vault (Mode Dev) - ⚙️ AUTOMATISÉ
 
 **En mode développement**, Vault est déjà initialisé avec le token root. Pour vérifier:
 
@@ -240,9 +623,11 @@ Cluster ID      ...
 HA Enabled      false
 ```
 
-### 3.2 Activation du KV Secrets Engine v2
+### 3.2 Activation du KV Secrets Engine v2 - ⚙️ AUTOMATISÉ
 
 Le **Key-Value Secrets Engine v2** permet le versioning des secrets.
+
+> **✅ Cette étape est automatiquement exécutée par `init-vault.sh`**
 
 ```bash
 # Activer le KV engine au chemin "secret/"
@@ -263,7 +648,11 @@ secret/       kv           n/a
 sys/          system       system endpoints used for control
 ```
 
-### 3.3 Création de la Structure de Chemins de Secrets
+### 3.3 Création de la Structure de Chemins de Secrets - ⚙️ AUTOMATISÉ
+
+> **✅ Cette étape est automatiquement exécutée par `init-vault.sh`**
+>
+> Les secrets sont créés depuis les fichiers `vault/init-data/{env}.env`
 
 **Structure hiérarchique proposée:**
 
@@ -271,7 +660,7 @@ sys/          system       system endpoints used for control
 secret/
 └── data/
     └── saas-project/
-        ├── dev/
+        ├── dev/              # Développement local (.env.development)
         │   ├── database/
         │   │   ├── main_url
         │   │   └── tenant_url_template
@@ -284,27 +673,36 @@ secret/
         │       ├── secret_access_key
         │       ├── bucket_name
         │       └── region
-        └── prod/
+        ├── docker/           # Environnement Docker local (.env.docker)
+        │   ├── database/
+        │   ├── jwt/
+        │   └── s3/
+        └── prod/             # Production (.env.production)
             ├── database/
             ├── jwt/
             └── s3/
 ```
 
-**Commandes pour créer les secrets (environnement dev):**
+**Note sur les environnements :**
+- `dev` : Développement local (correspond à `.env.development`)
+- `docker` : Docker Compose local (correspond à `.env.docker`) - **environnement principal pour le développement**
+- `prod` : Production (correspond à `.env.production`)
+
+**Commandes pour créer les secrets (environnement docker - recommandé pour le développement):**
 
 ```bash
-# Secrets de base de données
-docker exec -it saas-vault vault kv put secret/saas-project/dev/database \
+# Secrets de base de données (Docker)
+docker exec -it saas-vault vault kv put secret/saas-project/docker/database \
   main_url="postgresql://postgres:postgres@postgres:5432/saas_platform" \
   tenant_url_template="postgresql://postgres:postgres@postgres:5432/{database_name}"
 
-# Secrets JWT
-docker exec -it saas-vault vault kv put secret/saas-project/dev/jwt \
-  secret_key="super-secret-jwt-key-change-in-production" \
+# Secrets JWT (Docker)
+docker exec -it saas-vault vault kv put secret/saas-project/docker/jwt \
+  secret_key="dev-secret-jwt-key-change-in-production" \
   access_token_expires="900"
 
-# Secrets S3/MinIO
-docker exec -it saas-vault vault kv put secret/saas-project/dev/s3 \
+# Secrets S3/MinIO (Docker)
+docker exec -it saas-vault vault kv put secret/saas-project/docker/s3 \
   endpoint_url="http://minio:9000" \
   access_key_id="minioadmin" \
   secret_access_key="minioadmin" \
@@ -312,37 +710,103 @@ docker exec -it saas-vault vault kv put secret/saas-project/dev/s3 \
   region="us-east-1"
 
 # Vérifier la création
-docker exec -it saas-vault vault kv get secret/saas-project/dev/database
+docker exec -it saas-vault vault kv get secret/saas-project/docker/database
 ```
 
-### 3.4 Création de la Politique d'Accès (ACL Policy)
+**Commandes pour créer les secrets (environnement dev - développement local sans Docker):**
 
-**Fichier:** `vault/policies/saas-app-policy.hcl`
+```bash
+# Secrets de base de données (Dev local)
+docker exec -it saas-vault vault kv put secret/saas-project/dev/database \
+  main_url="postgresql://postgres:postgres@localhost:5432/saas_platform" \
+  tenant_url_template="postgresql://postgres:postgres@localhost:5432/{database_name}"
+
+# Secrets JWT (Dev local)
+docker exec -it saas-vault vault kv put secret/saas-project/dev/jwt \
+  secret_key="dev-local-secret-jwt-key" \
+  access_token_expires="900"
+
+# Secrets S3/MinIO (Dev local)
+docker exec -it saas-vault vault kv put secret/saas-project/dev/s3 \
+  endpoint_url="http://localhost:9000" \
+  access_key_id="minioadmin" \
+  secret_access_key="minioadmin" \
+  bucket_name="saas-documents" \
+  region="us-east-1"
+```
+
+### 3.4 Création de la Politique d'Accès (ACL Policy) - ⚙️ AUTOMATISÉ
+
+> **✅ Cette étape est automatiquement exécutée par `init-vault.sh`**
+>
+> La politique est créée dynamiquement pour chaque environnement (dev, docker, prod)
+
+**Exemple de politique (générée automatiquement) :**
 
 ```hcl
 # Politique pour l'application SaaS Flask
-# Permet uniquement la lecture des secrets dev
+# Permet uniquement la lecture des secrets pour les environnements dev, docker et prod
 
-# Accès aux secrets de base de données
+# ============================================================================
+# Environnement DEV (développement local)
+# ============================================================================
 path "secret/data/saas-project/dev/database" {
   capabilities = ["read"]
 }
 
-# Accès aux secrets JWT
 path "secret/data/saas-project/dev/jwt" {
   capabilities = ["read"]
 }
 
-# Accès aux secrets S3
 path "secret/data/saas-project/dev/s3" {
   capabilities = ["read"]
 }
 
-# Accès aux métadonnées (pour lister les versions)
 path "secret/metadata/saas-project/dev/*" {
   capabilities = ["list", "read"]
 }
 
+# ============================================================================
+# Environnement DOCKER (Docker Compose local)
+# ============================================================================
+path "secret/data/saas-project/docker/database" {
+  capabilities = ["read"]
+}
+
+path "secret/data/saas-project/docker/jwt" {
+  capabilities = ["read"]
+}
+
+path "secret/data/saas-project/docker/s3" {
+  capabilities = ["read"]
+}
+
+path "secret/metadata/saas-project/docker/*" {
+  capabilities = ["list", "read"]
+}
+
+# ============================================================================
+# Environnement PROD (production)
+# ============================================================================
+path "secret/data/saas-project/prod/database" {
+  capabilities = ["read"]
+}
+
+path "secret/data/saas-project/prod/jwt" {
+  capabilities = ["read"]
+}
+
+path "secret/data/saas-project/prod/s3" {
+  capabilities = ["read"]
+}
+
+path "secret/metadata/saas-project/prod/*" {
+  capabilities = ["list", "read"]
+}
+
+# ============================================================================
+# Gestion des tokens
+# ============================================================================
 # Renouvellement de token
 path "auth/token/renew-self" {
   capabilities = ["update"]
@@ -367,9 +831,13 @@ docker exec -it saas-vault vault policy write saas-app-policy /tmp/saas-app-poli
 docker exec -it saas-vault vault policy read saas-app-policy
 ```
 
-### 3.5 Configuration de l'Authentification AppRole
+### 3.5 Configuration de l'Authentification AppRole - ⚙️ AUTOMATISÉ
 
-**Étape 1: Activer la méthode d'authentification AppRole**
+> **✅ Toutes ces étapes sont automatiquement exécutées par `init-vault.sh`**
+>
+> Le script génère également le fichier `.env.vault` avec les credentials AppRole
+
+**Étape 1: Activer la méthode d'authentification AppRole** (automatique)
 
 ```bash
 docker exec -it saas-vault vault auth enable approle
@@ -861,10 +1329,18 @@ config = {
 
 **Fichier:** `backend/run.py`
 
+**Important:** Ce fichier sert à deux usages :
+1. **Développement local** : Lancement direct avec `python run.py` (serveur Flask intégré)
+2. **Production avec Gunicorn** : Gunicorn appelle `run:app` pour obtenir l'instance Flask
+
 ```python
 """
 Point d'entrée de l'application Flask.
 Gère l'initialisation de Vault et le démarrage du serveur.
+
+Usage:
+  - Développement: python run.py
+  - Production (Gunicorn): gunicorn run:app
 """
 
 import os
@@ -919,17 +1395,19 @@ def initialize_vault():
         sys.exit(1)
 
 
+# Initialiser Vault et créer l'application Flask
+# Cette instance est utilisée par Gunicorn (run:app)
+vault_client = initialize_vault()
+config_name = os.environ.get("FLASK_ENV", "development")
+app = create_app(config_name, vault_client=vault_client)
+
+
 def main():
-    """Point d'entrée principal de l'application."""
-
-    # 1. Initialiser Vault (si activé)
-    vault_client = initialize_vault()
-
-    # 2. Créer l'application Flask
-    config_name = os.environ.get("FLASK_ENV", "development")
-    app = create_app(config_name, vault_client=vault_client)
-
-    # 3. Démarrer le serveur
+    """
+    Point d'entrée pour le développement local uniquement.
+    En production, Gunicorn utilise directement l'objet 'app' ci-dessus.
+    """
+    # Démarrer le serveur Flask intégré (développement uniquement)
     host = os.environ.get("FLASK_HOST", "0.0.0.0")
     port = int(os.environ.get("FLASK_PORT", 4999))
     debug = os.environ.get("FLASK_DEBUG", "false").lower() == "true"
@@ -1095,7 +1573,7 @@ chmod +x backend/scripts/docker-entrypoint.sh
 
 **Fichier:** `docker/Dockerfile.api`
 
-**Ajouter l'entrypoint et les variables d'environnement:**
+**Ajouter l'entrypoint (garder le CMD Gunicorn existant):**
 
 ```dockerfile
 # ... contenu existant ...
@@ -1107,9 +1585,22 @@ RUN chmod +x /usr/local/bin/docker-entrypoint.sh
 # Définir l'entrypoint
 ENTRYPOINT ["/usr/local/bin/docker-entrypoint.sh"]
 
-# Commande par défaut
-CMD ["python", "run.py"]
+# Commande par défaut (Gunicorn pour production)
+# IMPORTANT: Garder la configuration Gunicorn existante
+CMD ["gunicorn", \
+     "-w", "4", \
+     "-b", "0.0.0.0:4999", \
+     "--access-logfile", "-", \
+     "--error-logfile", "-", \
+     "--log-level", "info", \
+     "--timeout", "120", \
+     "--keep-alive", "5", \
+     "--max-requests", "1000", \
+     "--max-requests-jitter", "50", \
+     "run:app"]
 ```
+
+**Note:** L'entrypoint script exécutera les vérifications (Vault, migrations) puis lancera Gunicorn via `exec "$@"`.
 
 **Fichier:** `docker/Dockerfile.worker`
 
@@ -1150,7 +1641,7 @@ services:
     environment:
       # Activation de Vault
       USE_VAULT: "true"
-      VAULT_ENVIRONMENT: "dev"
+      VAULT_ENVIRONMENT: "docker"  # Utilise l'environnement docker de Vault
       VAULT_ADDR: "http://vault:8200"
       # Les VAULT_ROLE_ID et VAULT_SECRET_ID sont chargés depuis .env.vault
 
@@ -1186,7 +1677,7 @@ services:
     environment:
       # Activation de Vault
       USE_VAULT: "true"
-      VAULT_ENVIRONMENT: "dev"
+      VAULT_ENVIRONMENT: "docker"  # Utilise l'environnement docker de Vault
       VAULT_ADDR: "http://vault:8200"
 
       # Configuration Worker
@@ -1645,72 +2136,213 @@ if __name__ == "__main__":
   - [ ] Vérification des logs
   - [ ] Tests fonctionnels de l'application
 
-### 6.2 Script de Migration des Secrets
+### 6.2 Workflow d'Initialisation Automatique
 
-**Fichier:** `vault/scripts/migrate-secrets.sh`
+> **✅ La migration des secrets est automatisée via le service `vault-init`**
+>
+> Cette section explique le workflow complet d'initialisation
+
+#### 6.2.1 Premier Démarrage - Configuration Initiale
+
+**Étape 1 : Vérifier que les Secrets Initiaux Sont Prêts**
 
 ```bash
-#!/bin/bash
+# Vérifier que le fichier de secrets existe
+ls -l vault/init-data/docker.env
 
-# Script de migration des secrets depuis .env vers Vault
-# Usage: ./migrate-secrets.sh <environment>
-
-set -e
-
-ENVIRONMENT=${1:-dev}
-ENV_FILE=".env.${ENVIRONMENT}"
-
-if [ ! -f "$ENV_FILE" ]; then
-    echo "Erreur: Fichier $ENV_FILE introuvable"
-    exit 1
-fi
-
-echo "Migration des secrets depuis $ENV_FILE vers Vault (environnement: $ENVIRONMENT)"
-
-# Charger les variables d'environnement
-source "$ENV_FILE"
-
-export VAULT_ADDR='http://localhost:8200'
-export VAULT_TOKEN='root-token-dev'
-
-# Fonction pour échapper les valeurs contenant des espaces ou caractères spéciaux
-escape_value() {
-    echo "$1" | sed 's/"/\\"/g'
-}
-
-# Migration des secrets de base de données
-echo "Migration des secrets database..."
-docker exec -e VAULT_TOKEN=$VAULT_TOKEN -it saas-vault vault kv put "secret/saas-project/${ENVIRONMENT}/database" \
-  "main_url=$(escape_value "$DATABASE_URL")" \
-  "tenant_url_template=$(escape_value "$TENANT_DATABASE_URL_TEMPLATE")"
-
-# Migration des secrets JWT
-echo "Migration des secrets JWT..."
-docker exec -e VAULT_TOKEN=$VAULT_TOKEN -it saas-vault vault kv put "secret/saas-project/${ENVIRONMENT}/jwt" \
-  "secret_key=$(escape_value "$JWT_SECRET_KEY")" \
-  "access_token_expires=$(escape_value "${JWT_ACCESS_TOKEN_EXPIRES:-900}")"
-
-# Migration des secrets S3
-echo "Migration des secrets S3..."
-docker exec -e VAULT_TOKEN=$VAULT_TOKEN -it saas-vault vault kv put "secret/saas-project/${ENVIRONMENT}/s3" \
-  "endpoint_url=$(escape_value "$S3_ENDPOINT_URL")" \
-  "access_key_id=$(escape_value "$S3_ACCESS_KEY_ID")" \
-  "secret_access_key=$(escape_value "$S3_SECRET_ACCESS_KEY")" \
-  "bucket_name=$(escape_value "$S3_BUCKET_NAME")" \
-  "region=$(escape_value "$S3_REGION")"
-
-echo "Migration terminée avec succès!"
-echo ""
-echo "Vérification des secrets migrés:"
-docker exec -e VAULT_TOKEN=$VAULT_TOKEN -it saas-vault vault kv get "secret/saas-project/${ENVIRONMENT}/database"
-docker exec -e VAULT_TOKEN=$VAULT_TOKEN -it saas-vault vault kv get "secret/saas-project/${ENVIRONMENT}/jwt"
-docker exec -e VAULT_TOKEN=$VAULT_TOKEN -it saas-vault vault kv get "secret/saas-project/${ENVIRONMENT}/s3"
+# Si le fichier n'existe pas, le créer (voir Section 2.7)
+# Exemple rapide :
+cat > vault/init-data/docker.env <<'EOF'
+DATABASE_URL=postgresql://postgres:postgres@postgres:5432/saas_platform
+TENANT_DATABASE_URL_TEMPLATE=postgresql://postgres:postgres@postgres:5432/{database_name}
+JWT_SECRET_KEY=$(openssl rand -hex 32)
+JWT_ACCESS_TOKEN_EXPIRES=900
+S3_ENDPOINT_URL=http://minio:9000
+S3_ACCESS_KEY_ID=minioadmin
+S3_SECRET_ACCESS_KEY=minioadmin
+S3_BUCKET=saas-documents
+S3_REGION=us-east-1
+EOF
 ```
 
-**Rendre le script exécutable:**
+**Étape 2 : Démarrer Vault et L'Initialiser**
 
 ```bash
-chmod +x vault/scripts/migrate-secrets.sh
+# Démarrer Vault
+docker-compose up -d vault
+
+# Attendre que Vault soit ready (quelques secondes)
+docker-compose logs -f vault
+
+# Démarrer l'initialisation automatique
+docker-compose up -d vault-init
+
+# Suivre l'initialisation en temps réel
+docker-compose logs -f vault-init
+```
+
+**Sortie attendue de `vault-init` :**
+
+```
+==========================================
+🔐 Initialisation Automatique de Vault
+==========================================
+Environnement : docker
+Fichier source: /init-data/docker.env
+==========================================
+
+✓ Chargement des secrets depuis /init-data/docker.env
+→ Attente de Vault...
+→ Activation du KV Secrets Engine v2...
+✓ KV engine activé
+→ Injection des secrets DATABASE pour environnement 'docker'...
+✓ Secrets DATABASE injectés
+→ Injection des secrets JWT pour environnement 'docker'...
+✓ Secrets JWT injectés
+→ Injection des secrets S3 pour environnement 'docker'...
+✓ Secrets S3 injectés
+→ Configuration de l'authentification AppRole...
+✓ AppRole activé
+→ Création de la politique Vault pour environnement 'docker'...
+✓ Politique créée: saas-app-policy-docker
+→ Configuration du rôle AppRole...
+✓ Rôle AppRole configuré: saas-app-role-docker
+→ Génération des credentials AppRole...
+→ Écriture du fichier .env.vault...
+✓ Fichier .env.vault créé avec permissions 600
+
+==========================================
+✅ INITIALISATION TERMINÉE AVEC SUCCÈS
+==========================================
+Environnement  : docker
+Secrets créés  : secret/saas-project/docker/*
+Politique      : saas-app-policy-docker
+Rôle AppRole   : saas-app-role-docker
+
+📄 Credentials Vault:
+   VAULT_ADDR     : http://vault:8200
+   VAULT_ROLE_ID  : xxxxx-xxxxx-xxxxx
+   VAULT_SECRET_ID: xxxxx-xxxxx-xxxxx
+
+✓ Ces credentials ont été écrits dans .env.vault
+✓ L'application peut maintenant démarrer et lire les secrets depuis Vault
+==========================================
+```
+
+**Étape 3 : Vérifier Que .env.vault a Été Créé**
+
+```bash
+# Vérifier le fichier généré
+cat .env.vault
+
+# Sortie attendue :
+# VAULT_ADDR=http://vault:8200
+# VAULT_ROLE_ID=xxxxx-xxxxx-xxxxx
+# VAULT_SECRET_ID=xxxxx-xxxxx-xxxxx
+```
+
+**Étape 4 : Démarrer l'Application**
+
+```bash
+# Démarrer tous les services
+docker-compose up -d
+
+# Vérifier les logs de l'API
+docker-compose logs -f api
+
+# Sortie attendue :
+# - "Vault désactivé" OU "Initialisation de Vault..."
+# - "Authentification Vault réussie"
+# - "Chargement de la configuration depuis Vault..."
+# - "Configuration database chargée depuis Vault"
+# - "Listening at: http://0.0.0.0:4999" (Gunicorn)
+```
+
+#### 6.2.2 Redémarrages Ultérieurs
+
+**Workflow Normal (Docker-Compose Up)**
+
+```bash
+# Un simple docker-compose up suffit
+docker-compose up -d
+
+# Le workflow automatique :
+# 1. Vault démarre (mode dev, données en mémoire)
+# 2. vault-init réinjecte automatiquement les secrets
+# 3. .env.vault est regénéré
+# 4. L'application démarre et lit depuis Vault
+```
+
+**En Cas de Problème**
+
+```bash
+# Redémarrer Vault et l'initialisation
+docker-compose restart vault vault-init
+
+# Vérifier les logs
+docker-compose logs vault vault-init
+
+# Forcer une réinitialisation complète
+docker-compose down
+docker-compose up -d vault vault-init
+docker-compose logs -f vault-init
+```
+
+#### 6.2.3 Initialisation pour Différents Environnements
+
+**Environnement DEV (développement local) :**
+
+```bash
+# Créer vault/init-data/dev.env d'abord (voir Section 2.7)
+
+# Lancer avec l'environnement DEV
+VAULT_ENV=dev docker-compose up -d vault vault-init
+
+# Vérifier
+docker-compose logs vault-init
+```
+
+**Environnement PROD (production) :**
+
+```bash
+# Sur le serveur de production :
+# 1. Créer vault/init-data/prod.env avec les vraies valeurs
+
+# 2. Lancer avec l'environnement PROD
+VAULT_ENV=prod docker-compose up -d vault vault-init
+
+# 3. Vérifier que .env.vault a été créé
+cat .env.vault
+```
+
+#### 6.2.4 Vérification Manuelle des Secrets
+
+**Vérifier que les secrets ont bien été injectés :**
+
+```bash
+# Se connecter au conteneur Vault
+docker exec -it saas-vault sh
+
+# À l'intérieur du conteneur
+export VAULT_ADDR='http://127.0.0.1:8200'
+export VAULT_TOKEN='root-token-dev'
+
+# Lister les secrets
+vault kv list secret/saas-project/docker
+
+# Lire un secret spécifique
+vault kv get secret/saas-project/docker/database
+vault kv get secret/saas-project/docker/jwt
+vault kv get secret/saas-project/docker/s3
+
+# Vérifier la politique
+vault policy read saas-app-policy-docker
+
+# Vérifier le rôle AppRole
+vault read auth/approle/role/saas-app-role-docker
+
+# Sortir
+exit
 ```
 
 ### 6.3 Tests Unitaires du VaultClient
@@ -1919,14 +2551,26 @@ VAULT_ROLE_ID=$ROLE_ID
 VAULT_SECRET_ID=$SECRET_ID
 EOF
 
-# 6. Migrer les secrets
-./vault/scripts/migrate-secrets.sh dev
+# 6. Migrer les secrets (environnement docker par défaut)
+./vault/scripts/migrate-secrets.sh docker
+
+# OU pour migrer les autres environnements:
+# ./vault/scripts/migrate-secrets.sh dev   # .env.development
+# ./vault/scripts/migrate-secrets.sh prod  # .env.production
 
 # 7. Démarrer l'application avec Vault activé
 docker-compose up -d api worker
 
-# 8. Vérifier les logs
+# 8. Vérifier les logs (vous devriez voir Gunicorn démarrer avec 4 workers)
 docker-compose logs -f api
+# Sortie attendue:
+# - "Vault est accessible et initialisé"
+# - "Exécution des migrations de base de données..."
+# - "Authentification Vault réussie"
+# - "Chargement de la configuration depuis Vault..."
+# - "Listening at: http://0.0.0.0:4999" (Gunicorn)
+# - "Using worker: sync" (Gunicorn)
+# - "Booting worker with pid: ..." (4 workers)
 
 # 9. Tester l'endpoint de health check
 curl http://localhost:4999/api/health
@@ -1934,6 +2578,24 @@ curl http://localhost:4999/api/health
 # 10. Exécuter les tests
 docker-compose exec api pytest tests/integration/test_vault_integration.py -v
 ```
+
+**Note importante sur le flux de démarrage avec Gunicorn:**
+
+1. **Entrypoint** (`docker-entrypoint.sh`) :
+   - Vérifie que Vault est accessible
+   - Exécute les migrations DB
+   - Lance la commande : `exec gunicorn ...`
+
+2. **Gunicorn démarre** et importe `run:app` :
+   - Le code au niveau module de `run.py` s'exécute
+   - `initialize_vault()` est appelé
+   - `app = create_app(...)` crée l'instance Flask avec Vault
+   - Le token renewer démarre dans chaque worker
+
+3. **4 workers Gunicorn** sont créés :
+   - Chaque worker a sa propre instance de l'app Flask
+   - Chaque worker a son propre VaultClient et TokenRenewer
+   - Les workers partagent les secrets chargés au démarrage
 
 ### 6.6 Procédure de Rollback
 
@@ -2038,13 +2700,101 @@ SaaSBackendWithClaude/
 
 ### 7.3 Variables d'Environnement Complètes
 
-**Fichier `.env.vault` (à ne pas commiter):**
+> **⚠️ IMPORTANT:** Avec l'auto-initialisation, les fichiers `.env.*` ne doivent **PLUS contenir de secrets**. Seulement des configurations non-sensibles.
+
+#### 7.3.1 Fichier `.env.vault` (Auto-Généré)
+
+**Ce fichier est généré automatiquement par `init-vault.sh` :**
 
 ```bash
-# HashiCorp Vault Configuration
+# HashiCorp Vault Credentials
+# Auto-généré par init-vault.sh le 2025-11-04
+# Environnement: docker
+#
+# ⚠️  NE PAS COMMITER CE FICHIER
+# ⚠️  Ces credentials donnent accès aux secrets Vault
+
 VAULT_ADDR=http://vault:8200
 VAULT_ROLE_ID=a1b2c3d4-e5f6-7890-abcd-ef1234567890
 VAULT_SECRET_ID=f9e8d7c6-b5a4-3210-9876-543210fedcba
+```
+
+**⚠️ À AJOUTER dans `.gitignore` :**
+
+```
+.env.vault
+```
+
+#### 7.3.2 Fichier `.env.docker` (Sans Secrets)
+
+**Ce fichier NE contient PLUS de secrets, seulement des configs non-sensibles :**
+
+```bash
+# ============================================================================
+# Configuration NON-SENSIBLE pour Docker Compose
+# ============================================================================
+# ✅ Ce fichier peut être commité (aucun secret)
+# ✅ Les secrets sont dans vault/init-data/docker.env (git-ignored)
+
+# Flask Configuration
+FLASK_ENV=development
+FLASK_DEBUG=false
+FLASK_HOST=0.0.0.0
+FLASK_PORT=4999
+
+# Logging
+LOG_LEVEL=DEBUG
+
+# CORS
+CORS_ORIGINS=http://localhost:3000,http://localhost:4999
+
+# Kafka Configuration (non sensible)
+KAFKA_CONSUMER_GROUP_ID=saas-consumer-group
+KAFKA_AUTO_OFFSET_RESET=earliest
+KAFKA_ENABLE_AUTO_COMMIT=true
+KAFKA_MAX_POLL_RECORDS=100
+
+# Database Pool Configuration (non sensible)
+DATABASE_POOL_SIZE=10
+DATABASE_MAX_OVERFLOW=20
+
+# ⚠️  AUCUN SECRET DANS CE FICHIER
+# ⚠️  Tous les secrets sont dans vault/init-data/docker.env (git-ignored)
+# ⚠️  et chargés automatiquement dans Vault au démarrage
+```
+
+#### 7.3.3 Fichier `vault/init-data/docker.env` (Secrets - Git-Ignored)
+
+**Ce fichier contient TOUS les secrets et est git-ignored :**
+
+```bash
+# ============================================================================
+# Secrets pour Environnement DOCKER (Docker Compose Local)
+# ============================================================================
+# ⚠️  NE PAS COMMITER CE FICHIER (dans .gitignore)
+# ⚠️  Ces secrets seront injectés automatiquement dans Vault au démarrage
+
+# Database
+DATABASE_URL=postgresql://postgres:postgres@postgres:5432/saas_platform
+TENANT_DATABASE_URL_TEMPLATE=postgresql://postgres:postgres@postgres:5432/{database_name}
+
+# JWT - IMPORTANT: Générer une nouvelle clé sécurisée
+# Générer avec: openssl rand -hex 32
+JWT_SECRET_KEY=votre-cle-secrete-jwt-tres-longue-et-aleatoire
+JWT_ACCESS_TOKEN_EXPIRES=900
+
+# S3/MinIO
+S3_ENDPOINT_URL=http://minio:9000
+S3_ACCESS_KEY_ID=minioadmin
+S3_SECRET_ACCESS_KEY=minioadmin
+S3_BUCKET=saas-documents
+S3_REGION=us-east-1
+```
+
+**⚠️ À AJOUTER dans `.gitignore` :**
+
+```
+vault/init-data/
 ```
 
 **Variables à ajouter dans `docker-compose.yml`:**
@@ -2053,10 +2803,15 @@ VAULT_SECRET_ID=f9e8d7c6-b5a4-3210-9876-543210fedcba
 environment:
   # Vault
   USE_VAULT: "true"
-  VAULT_ENVIRONMENT: "dev"  # ou "prod"
+  VAULT_ENVIRONMENT: "docker"  # Valeurs possibles: "dev", "docker", "prod"
   VAULT_ADDR: "http://vault:8200"
   # VAULT_ROLE_ID et VAULT_SECRET_ID chargés depuis .env.vault
 ```
+
+**Correspondance des environnements:**
+- `VAULT_ENVIRONMENT=dev` : Développement local (`.env.development`)
+- `VAULT_ENVIRONMENT=docker` : Docker Compose local (`.env.docker`) - **recommandé**
+- `VAULT_ENVIRONMENT=prod` : Production (`.env.production`)
 
 ### 7.4 Troubleshooting Guide
 
@@ -2117,6 +2872,54 @@ print('Auth OK')
 "
 ```
 
+**Problème: Gunicorn démarre mais les workers crashent**
+
+```bash
+# Vérifier les logs détaillés
+docker-compose logs api | grep -A 10 "worker"
+
+# Symptômes courants:
+# - "Worker timeout" : Vault prend trop de temps à répondre
+# - "Worker failed to boot" : Erreur lors de l'import de run:app
+# - Multiple workers démarrent/crashent en boucle
+
+# Solutions:
+# 1. Augmenter le timeout Gunicorn (dans Dockerfile.api)
+CMD ["gunicorn", "--timeout", "300", ...]  # 5 minutes
+
+# 2. Réduire le nombre de workers pendant le debug
+CMD ["gunicorn", "-w", "1", ...]  # 1 worker pour isoler le problème
+
+# 3. Vérifier que Vault est bien accessible AVANT le démarrage de Gunicorn
+# Le entrypoint script doit attendre Vault correctement
+
+# 4. Tester l'import manuel
+docker-compose exec api python -c "from run import app; print('OK')"
+```
+
+**Problème: Les secrets ne sont pas chargés depuis Vault**
+
+```bash
+# Vérifier que USE_VAULT est activé
+docker-compose exec api env | grep VAULT
+
+# Vérifier l'ordre de chargement dans les logs
+docker-compose logs api | grep -E "(Vault|Configuration|secrets)"
+
+# Sortie attendue:
+# - "Initialisation de Vault..."
+# - "Authentification Vault réussie"
+# - "Chargement de la configuration depuis Vault..."
+# - "Configuration database chargée depuis Vault"
+# - "Configuration JWT chargée depuis Vault"
+# - "Configuration S3 chargée depuis Vault"
+
+# Si les messages Vault n'apparaissent pas:
+# 1. Vérifier que USE_VAULT=true dans docker-compose.yml
+# 2. Vérifier que .env.vault contient VAULT_ROLE_ID et VAULT_SECRET_ID
+# 3. Vérifier que l'ordre d'initialisation est correct dans run.py
+```
+
 ### 7.5 Sécurité Best Practices
 
 **Pour la Production:**
@@ -2166,6 +2969,309 @@ print('Auth OK')
 
 ---
 
+### 7.7 Gestion du Cycle de Vie des Secrets
+
+Cette section détaille les opérations quotidiennes de gestion des secrets avec le système d'auto-initialisation.
+
+#### 7.7.1 Workflow Quotidien (Démarrage Normal)
+
+**Démarrage complet de l'environnement:**
+
+```bash
+# 1. Démarrer tous les services (y compris auto-init)
+docker-compose up -d
+
+# 2. Vérifier que l'initialisation s'est bien déroulée
+docker-compose logs vault-init
+
+# 3. Vérifier que .env.vault a été généré
+ls -la .env.vault
+cat .env.vault  # Doit contenir VAULT_ROLE_ID et VAULT_SECRET_ID
+
+# 4. Vérifier que l'API a démarré correctement
+docker-compose logs api | grep "Vault"
+```
+
+**Sortie attendue:**
+
+```
+vault-init_1  | ✅ KV Secrets Engine v2 activé
+vault-init_1  | ✅ Secrets database injectés
+vault-init_1  | ✅ Secrets JWT injectés
+vault-init_1  | ✅ Secrets S3 injectés
+vault-init_1  | ✅ AppRole 'saas-api-docker' créé
+vault-init_1  | ✅ Fichier .env.vault généré avec succès
+api_1         | INFO: Configuration complète chargée depuis Vault avec succès
+```
+
+**Workflow simplifié (après première initialisation):**
+
+```bash
+# Démarrage rapide - tout est automatique
+docker-compose up -d
+
+# L'ordre est géré par depends_on:
+# 1. postgres, kafka, minio démarrent
+# 2. vault démarre
+# 3. vault-init injecte les secrets et génère .env.vault
+# 4. api et worker démarrent avec les secrets de Vault
+```
+
+#### 7.7.2 Mise à Jour d'un Secret
+
+**Scénario:** Rotation de la clé JWT
+
+```bash
+# 1. Générer une nouvelle clé
+NEW_JWT_KEY=$(openssl rand -hex 32)
+
+# 2. Mettre à jour le fichier de secrets
+vim vault/init-data/docker.env
+
+# Modifier la ligne:
+# JWT_SECRET_KEY=ancienne-cle
+# Par:
+# JWT_SECRET_KEY=nouvelle-cle-generee
+
+# 3. Redémarrer Vault et vault-init pour réinjecter
+docker-compose restart vault
+docker-compose up -d vault-init
+
+# 4. Attendre la fin de l'initialisation
+docker-compose logs -f vault-init
+
+# 5. Redémarrer l'API pour charger le nouveau secret
+docker-compose restart api
+
+# 6. Vérifier que l'API utilise bien le nouveau secret
+docker-compose logs api | grep "JWT"
+```
+
+**Alternative: Mise à jour manuelle via CLI Vault:**
+
+```bash
+# 1. Se connecter à Vault
+export VAULT_ADDR="http://localhost:8200"
+export VAULT_TOKEN="root-token-dev"
+
+# 2. Mettre à jour un secret spécifique
+vault kv put secret/saas-project/docker/jwt \
+  secret_key="nouvelle-cle-jwt" \
+  access_token_expires="900"
+
+# 3. Redémarrer l'API (le token renewal rechargera les secrets)
+docker-compose restart api
+```
+
+> **⚠️ IMPORTANT:** Pensez toujours à mettre à jour `vault/init-data/docker.env`
+> pour que le secret soit persisté au prochain redémarrage de Vault.
+
+#### 7.7.3 Rotation des Credentials AppRole
+
+**Rotation du SECRET_ID (recommandé tous les 90 jours en production):**
+
+```bash
+# 1. Se connecter au conteneur vault-init
+docker-compose run --rm vault-init sh
+
+# 2. Générer un nouveau SECRET_ID
+export VAULT_ADDR="http://vault:8200"
+export VAULT_TOKEN="root-token-dev"
+export VAULT_ENV="docker"
+
+# 3. Créer un nouveau Secret ID
+NEW_SECRET_ID=$(vault write -field=secret_id \
+  auth/approle/role/saas-api-${VAULT_ENV}/secret-id)
+
+echo "Nouveau SECRET_ID: $NEW_SECRET_ID"
+
+# 4. Mettre à jour .env.vault
+echo "VAULT_ADDR=http://vault:8200" > /output/.env.vault
+echo "VAULT_ROLE_ID=$(vault read -field=role_id auth/approle/role/saas-api-${VAULT_ENV}/role-id)" >> /output/.env.vault
+echo "VAULT_SECRET_ID=$NEW_SECRET_ID" >> /output/.env.vault
+chmod 600 /output/.env.vault
+
+# 5. Sortir du conteneur
+exit
+
+# 6. Redémarrer l'API
+docker-compose restart api
+```
+
+**Rotation complète (Role ID + Secret ID):**
+
+> **⚠️ ATTENTION:** Cette opération nécessite une interruption de service.
+
+```bash
+# 1. Supprimer l'ancien AppRole
+docker-compose exec vault sh -c "
+  export VAULT_ADDR='http://127.0.0.1:8200'
+  export VAULT_TOKEN='root-token-dev'
+  vault delete auth/approle/role/saas-api-docker
+"
+
+# 2. Relancer vault-init pour recréer le rôle
+docker-compose up -d vault-init
+
+# 3. Vérifier la génération du nouveau .env.vault
+cat .env.vault
+
+# 4. Redémarrer l'API
+docker-compose restart api
+```
+
+#### 7.7.4 Gestion Multi-Environnements
+
+**Configuration par environnement:**
+
+```bash
+# Développement local (.env.development)
+VAULT_ENV=dev docker-compose up -d
+# Utilise: vault/init-data/dev.env
+
+# Docker local (.env.docker) - PAR DÉFAUT
+docker-compose up -d
+# Utilise: vault/init-data/docker.env
+
+# Production (.env.production)
+VAULT_ENV=prod docker-compose -f docker-compose.prod.yml up -d
+# Utilise: vault/init-data/prod.env
+```
+
+**Structure des secrets par environnement:**
+
+```
+vault/init-data/
+├── dev.env           # Secrets de développement (minioadmin, JWT faible)
+├── docker.env        # Secrets Docker Compose local
+└── prod.env          # Secrets de production (forte entropie, rotation fréquente)
+```
+
+**Bonnes pratiques:**
+
+- **dev.env:** Secrets simples, partagés avec l'équipe, pas de données sensibles
+- **docker.env:** Secrets locaux pour tests d'intégration, peuvent être partagés
+- **prod.env:** **JAMAIS commité**, généré uniquement sur les serveurs de production
+
+#### 7.7.5 Sauvegarde et Disaster Recovery
+
+**Sauvegarde des secrets initiaux:**
+
+```bash
+# 1. Créer un backup chiffré des secrets
+tar -czf vault-secrets-backup-$(date +%Y%m%d).tar.gz vault/init-data/
+
+# 2. Chiffrer le backup (GPG)
+gpg --symmetric --cipher-algo AES256 vault-secrets-backup-*.tar.gz
+
+# 3. Stocker le fichier .gpg dans un emplacement sécurisé
+# (Coffre-fort d'entreprise, gestionnaire de mots de passe, HSM)
+
+# 4. Supprimer les fichiers non chiffrés
+rm vault-secrets-backup-*.tar.gz
+```
+
+**Restauration après sinistre:**
+
+```bash
+# 1. Récupérer le backup chiffré
+# 2. Déchiffrer
+gpg --decrypt vault-secrets-backup-YYYYMMDD.tar.gz.gpg > vault-secrets-backup.tar.gz
+
+# 3. Extraire
+tar -xzf vault-secrets-backup.tar.gz
+
+# 4. Redémarrer l'environnement
+docker-compose down -v  # ⚠️ Supprime TOUS les volumes
+docker-compose up -d
+
+# 5. Vérifier que les secrets ont été réinjectés
+docker-compose logs vault-init
+```
+
+#### 7.7.6 Monitoring et Alertes
+
+**Vérifications à automatiser:**
+
+```bash
+#!/bin/bash
+# vault-health-check.sh
+
+# 1. Vérifier que Vault répond
+curl -sf http://localhost:8200/v1/sys/health || echo "❌ Vault ne répond pas"
+
+# 2. Vérifier que l'API peut s'authentifier
+docker-compose exec api python -c "
+from app.utils.vault_client import VaultClient
+try:
+    vc = VaultClient()
+    vc.authenticate()
+    print('✅ API authentifiée sur Vault')
+except Exception as e:
+    print(f'❌ Erreur authentification: {e}')
+    exit(1)
+"
+
+# 3. Vérifier que .env.vault existe et est valide
+if [ ! -f .env.vault ]; then
+    echo "❌ .env.vault manquant"
+    exit 1
+fi
+
+if ! grep -q "VAULT_ROLE_ID" .env.vault; then
+    echo "❌ .env.vault invalide"
+    exit 1
+fi
+
+echo "✅ Tous les checks Vault OK"
+```
+
+**Alertes critiques à configurer:**
+
+- ⚠️ Vault inaccessible (downtime)
+- ⚠️ Échec d'authentification AppRole
+- ⚠️ Token expiré et non renouvelé
+- ⚠️ Espace disque faible (en production avec storage persistant)
+- ⚠️ Secret ID proche de l'expiration (en production)
+
+#### 7.7.7 Bonnes Pratiques de Sécurité
+
+**DO ✅**
+
+- Toujours utiliser `vault/init-data/` pour les secrets (git-ignored)
+- Générer les secrets avec forte entropie (`openssl rand -hex 32`)
+- Sauvegarder `vault/init-data/prod.env` de manière chiffrée hors du repo
+- Tester la rotation des secrets en environnement de staging
+- Documenter toute modification de secret dans un changelog sécurisé
+- Utiliser des secrets différents entre dev/docker/prod
+- Limiter l'accès au serveur de production (principe du moindre privilège)
+
+**DON'T ❌**
+
+- Ne JAMAIS commiter `vault/init-data/` dans Git
+- Ne JAMAIS commiter `.env.vault` dans Git
+- Ne JAMAIS utiliser les mêmes secrets entre dev et prod
+- Ne JAMAIS partager le VAULT_TOKEN root en production
+- Ne JAMAIS afficher les secrets dans les logs
+- Ne JAMAIS stocker des secrets en clair dans des fichiers non protégés
+- Ne JAMAIS utiliser le mode dev de Vault en production
+
+**Checklist avant commit:**
+
+```bash
+# Vérifier qu'aucun secret n'est commité
+git status
+git diff
+
+# Vérifier .gitignore
+grep -E "(init-data|.env.vault)" .gitignore
+
+# Scanner les secrets potentiels
+git secrets --scan  # Installer avec: brew install git-secrets
+```
+
+---
+
 ## Conclusion
 
 Ce plan d'intégration détaille toutes les étapes nécessaires pour migrer votre SaaS Platform vers une gestion de secrets sécurisée avec HashiCorp Vault. L'implémentation suit les best practices de sécurité avec :
@@ -2174,22 +3280,290 @@ Ce plan d'intégration détaille toutes les étapes nécessaires pour migrer vot
 - ✅ Politiques ACL restrictives (read-only)
 - ✅ Renouvellement automatique des tokens
 - ✅ Architecture résiliente avec fallback
+- ✅ Auto-initialisation complète des secrets
+- ✅ Vault comme source unique de vérité (Single Source of Truth)
 - ✅ Audit trail complet
 - ✅ Tests unitaires et d'intégration
 
-**Prochaines étapes:**
+---
 
-1. Exécuter Phase 1 (Préparation)
-2. Exécuter Phase 2 (Configuration Vault)
-3. Exécuter Phase 3 (Code Application)
-4. Exécuter Phase 4 (Token Renewal)
-5. Exécuter Phase 5 (Migration et Tests)
+## Annexe A - Workflow Final Complet
+
+### A.1 Premier Démarrage (Setup Initial)
+
+**Étape 1: Préparation des secrets initiaux**
+
+```bash
+# 1. Créer la structure
+mkdir -p vault/init-data vault/scripts
+
+# 2. Créer le fichier de secrets pour l'environnement docker
+cat > vault/init-data/docker.env << 'EOF'
+# Database Configuration
+DATABASE_URL=postgresql://postgres:postgres@postgres:5432/saas_platform
+TENANT_DATABASE_URL_TEMPLATE=postgresql://postgres:postgres@postgres:5432/{database_name}
+
+# JWT Configuration (générer avec: openssl rand -hex 32)
+JWT_SECRET_KEY=votre-cle-jwt-generee-avec-openssl-rand-hex-32
+JWT_ACCESS_TOKEN_EXPIRES=900
+JWT_REFRESH_TOKEN_EXPIRES=604800
+
+# S3/MinIO Configuration
+S3_ENDPOINT_URL=http://minio:9000
+S3_ACCESS_KEY_ID=minioadmin
+S3_SECRET_ACCESS_KEY=minioadmin
+S3_BUCKET_NAME=saas-documents
+S3_REGION=us-east-1
+
+# Kafka Configuration
+KAFKA_BOOTSTRAP_SERVERS=kafka:9092
+EOF
+
+# 3. Sécuriser les permissions
+chmod 600 vault/init-data/docker.env
+
+# 4. Créer le script d'initialisation (voir section 2.6.2)
+# Copier le contenu de init-vault.sh dans vault/scripts/init-vault.sh
+chmod +x vault/scripts/init-vault.sh
+```
+
+**Étape 2: Mettre à jour .gitignore**
+
+```bash
+# Ajouter à .gitignore
+cat >> .gitignore << 'EOF'
+
+# HashiCorp Vault
+vault/data/
+vault/logs/
+vault/init-data/
+.env.vault
+EOF
+```
+
+**Étape 3: Mettre à jour docker-compose.yml**
+
+Ajouter les services `vault` et `vault-init` comme décrit dans la section 2.6.
+
+**Étape 4: Premier lancement**
+
+```bash
+# 1. Démarrer l'infrastructure
+docker-compose up -d
+
+# 2. Vérifier les logs d'initialisation
+docker-compose logs -f vault-init
+
+# Sortie attendue:
+# ✅ KV Secrets Engine v2 activé
+# ✅ Secrets database injectés
+# ✅ Secrets JWT injectés
+# ✅ Secrets S3 injectés
+# ✅ AppRole 'saas-api-docker' créé
+# ✅ Policy 'saas-api-docker-policy' créée
+# ✅ Fichier .env.vault généré avec succès
+
+# 3. Vérifier .env.vault
+cat .env.vault
+# VAULT_ADDR=http://vault:8200
+# VAULT_ROLE_ID=abcd1234-...
+# VAULT_SECRET_ID=xyz9876-...
+
+# 4. Vérifier que l'API a chargé les secrets
+docker-compose logs api | grep "Vault"
+# INFO: Configuration complète chargée depuis Vault avec succès
+```
+
+**Étape 5: Vérification complète**
+
+```bash
+# 1. Tester l'API
+curl http://localhost:4999/health
+# {"status": "healthy"}
+
+# 2. Vérifier que les secrets sont bien dans Vault
+docker-compose exec vault sh -c "
+  export VAULT_ADDR='http://127.0.0.1:8200'
+  export VAULT_TOKEN='root-token-dev'
+  vault kv get secret/saas-project/docker/database
+"
+
+# 3. Tester l'authentification avec AppRole
+docker-compose exec api python -c "
+from app.utils.vault_client import VaultClient
+vc = VaultClient()
+token = vc.authenticate()
+print(f'✅ Token obtenu: {token[:20]}...')
+secrets = vc.get_all_secrets('docker')
+print(f'✅ {len(secrets)} groupes de secrets récupérés')
+"
+```
+
+### A.2 Utilisation Quotidienne
+
+**Démarrage normal:**
+
+```bash
+# Démarrer tous les services
+docker-compose up -d
+
+# C'est tout ! L'auto-initialisation se fait automatiquement:
+# 1. vault démarre
+# 2. vault-init injecte les secrets et génère .env.vault
+# 3. api et worker se connectent à Vault
+```
+
+**Arrêt:**
+
+```bash
+# Arrêt propre
+docker-compose down
+
+# Arrêt avec suppression des volumes (⚠️ perte de données)
+docker-compose down -v
+```
+
+**Logs et debugging:**
+
+```bash
+# Logs de tous les services
+docker-compose logs -f
+
+# Logs spécifiques
+docker-compose logs -f vault
+docker-compose logs -f vault-init
+docker-compose logs -f api
+
+# Vérifier la santé de Vault
+curl http://localhost:8200/v1/sys/health | jq
+```
+
+### A.3 Scénarios Courants
+
+**Scénario 1: Ajouter un nouveau secret**
+
+```bash
+# 1. Éditer le fichier de secrets
+vim vault/init-data/docker.env
+
+# Ajouter:
+# NEW_API_KEY=your-new-api-key-here
+
+# 2. Redémarrer vault et vault-init
+docker-compose restart vault
+docker-compose up -d vault-init
+
+# 3. Mettre à jour le code pour lire le nouveau secret
+# Dans app/config.py:
+#   NEW_API_KEY = os.environ.get("NEW_API_KEY")
+# Dans app/config.py load_from_vault():
+#   if "new_service" in secrets:
+#       cls.NEW_API_KEY = secrets["new_service"].get("api_key")
+
+# 4. Mettre à jour vault/scripts/init-vault.sh pour injecter le secret
+# Ajouter dans la section appropriée:
+#   vault kv put secret/saas-project/${VAULT_ENV}/new_service \
+#     api_key="${NEW_API_KEY}"
+
+# 5. Relancer l'initialisation
+docker-compose restart vault
+docker-compose up -d vault-init
+
+# 6. Redémarrer l'API
+docker-compose restart api
+```
+
+**Scénario 2: Changer d'environnement**
+
+```bash
+# Passer en environnement de développement
+export VAULT_ENV=dev
+docker-compose down
+docker-compose up -d
+# Utilisera vault/init-data/dev.env
+
+# Passer en environnement de production
+export VAULT_ENV=prod
+docker-compose -f docker-compose.prod.yml up -d
+# Utilisera vault/init-data/prod.env
+```
+
+**Scénario 3: Régénérer complètement .env.vault**
+
+```bash
+# 1. Supprimer l'ancien fichier
+rm .env.vault
+
+# 2. Relancer vault-init
+docker-compose up -d vault-init
+
+# 3. Vérifier le nouveau fichier
+cat .env.vault
+
+# 4. Redémarrer l'API
+docker-compose restart api
+```
+
+**Scénario 4: Disaster Recovery**
+
+```bash
+# 1. Restaurer les secrets depuis backup
+# (Voir section 7.7.5 - Sauvegarde et Disaster Recovery)
+
+# 2. Redémarrer complètement l'infrastructure
+docker-compose down -v
+docker-compose up -d
+
+# 3. Vérifier que tout fonctionne
+docker-compose logs vault-init
+docker-compose logs api | grep "Vault"
+curl http://localhost:4999/health
+```
+
+### A.4 Troubleshooting Rapide
+
+| Problème | Solution |
+|----------|----------|
+| `.env.vault` n'est pas généré | Vérifier `docker-compose logs vault-init`, vérifier que `vault/init-data/docker.env` existe |
+| API ne peut pas s'authentifier | Vérifier que `.env.vault` existe et contient `VAULT_ROLE_ID` et `VAULT_SECRET_ID` |
+| Secrets non chargés | Vérifier `docker-compose logs api`, vérifier `VAULT_ENVIRONMENT=docker` dans docker-compose.yml |
+| Vault ne démarre pas | Vérifier `docker-compose logs vault`, vérifier que le port 8200 n'est pas déjà utilisé |
+| Token expiré | Vérifier le token renewal dans les logs, redémarrer l'API |
+
+### A.5 Checklist de Production
+
+Avant de déployer en production, vérifier:
+
+- [ ] `vault/init-data/prod.env` contient des secrets forts (générés avec `openssl rand -hex 32`)
+- [ ] `vault/init-data/prod.env` est sauvegardé de manière chiffrée (GPG) hors du repo
+- [ ] `.env.vault` est dans `.gitignore`
+- [ ] `vault/init-data/` est dans `.gitignore`
+- [ ] Les secrets de production sont DIFFÉRENTS de dev et docker
+- [ ] Le mode dev de Vault est remplacé par un déploiement production (avec storage persistent)
+- [ ] TLS/HTTPS est activé pour Vault
+- [ ] L'audit logging est configuré
+- [ ] Le monitoring est en place (healthchecks, alertes)
+- [ ] La rotation des SECRET_ID est planifiée (tous les 90 jours)
+- [ ] L'équipe connaît le processus de disaster recovery
+- [ ] Un audit de sécurité a été réalisé
+
+---
+
+**Prochaines étapes recommandées:**
+
+1. ✅ **Phase 1 (Préparation):** Créer `vault/init-data/docker.env` et le script d'init
+2. ✅ **Phase 2 (Configuration Docker):** Ajouter les services `vault` et `vault-init`
+3. ✅ **Phase 3 (Code Application):** Implémenter `VaultClient` et `Config.load_from_vault()`
+4. ✅ **Phase 4 (Token Renewal):** Ajouter le background worker pour le renouvellement
+5. ✅ **Phase 5 (Tests):** Tester l'ensemble du workflow
+6. 🔄 **Phase 6 (Production):** Suivre la checklist de production ci-dessus
 
 **Ressources supplémentaires:**
 
 - Documentation Vault: https://www.vaultproject.io/docs
 - Bibliothèque hvac: https://hvac.readthedocs.io/
 - Best Practices: https://www.vaultproject.io/docs/internals/security
+- AppRole Auth Method: https://www.vaultproject.io/docs/auth/approle
 
 **Support:**
 
@@ -2197,4 +3571,6 @@ Pour toute question ou assistance, référez-vous à la documentation officielle
 
 ---
 
-**Fin du document**
+**Fin du document - Version 2.0 avec Auto-Initialisation**
+
+*Dernière mise à jour: Intégration complète du système d'auto-initialisation Vault avec support multi-environnements (dev/docker/prod)*
