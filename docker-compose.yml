@@ -112,6 +112,53 @@ services:
     networks:
       - saas-network
 
+  # HashiCorp Vault - Secrets management
+  vault:
+    image: hashicorp/vault:1.15
+    container_name: saas-vault
+    restart: unless-stopped
+    ports:
+      - "8200:8200"
+    environment:
+      VAULT_DEV_ROOT_TOKEN_ID: "root-token-dev"
+      VAULT_DEV_LISTEN_ADDRESS: "0.0.0.0:8200"
+      VAULT_ADDR: "http://0.0.0.0:8200"
+    cap_add:
+      - IPC_LOCK
+    networks:
+      - saas-network
+    healthcheck:
+      test: ["CMD", "vault", "status"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    volumes:
+      - ./vault/config:/vault/config
+      - ./vault/data:/vault/data
+      - ./vault/logs:/vault/logs
+    command: server -dev -dev-root-token-id="root-token-dev"
+
+  # Vault Initialization - Auto-injects secrets and generates AppRole credentials
+  vault-init:
+    image: hashicorp/vault:1.15
+    container_name: saas-vault-init
+    depends_on:
+      vault:
+        condition: service_healthy
+    environment:
+      VAULT_ADDR: "http://vault:8200"
+      VAULT_TOKEN: "root-token-dev"
+      VAULT_ENV: "${VAULT_ENV:-docker}"
+    volumes:
+      - ./vault/scripts:/scripts:ro
+      - ./vault/init-data:/init-data:ro
+      - .:/output
+    command: /scripts/init-vault.sh
+    networks:
+      - saas-network
+    restart: "no"
+
   # Flask API - Main REST API server
   api:
     build:
@@ -126,6 +173,10 @@ services:
         condition: service_healthy
       minio:
         condition: service_healthy
+      vault:
+        condition: service_healthy
+      vault-init:
+        condition: service_completed_successfully
     ports:
       - "4999:4999"
     environment:
@@ -134,13 +185,17 @@ services:
       FLASK_APP: run.py
       FLASK_DEBUG: "1"
 
-      # Database
+      # Vault Configuration
+      USE_VAULT: "true"
+      VAULT_ENVIRONMENT: "docker"
+
+      # Database (fallback values if Vault is disabled)
       DATABASE_URL: postgresql://postgres:postgres@postgres:5432/saas_platform
       TENANT_DATABASE_URL_TEMPLATE: postgresql://postgres:postgres@postgres:5432/{database_name}
       DATABASE_POOL_SIZE: 10
       DATABASE_MAX_OVERFLOW: 20
 
-      # JWT
+      # JWT (fallback values if Vault is disabled)
       JWT_SECRET_KEY: dev-secret-key-change-in-production
       JWT_ACCESS_TOKEN_EXPIRES: 900
       JWT_REFRESH_TOKEN_EXPIRES: 604800
@@ -150,7 +205,7 @@ services:
       KAFKA_CONSUMER_GROUP_ID: saas-consumer-group
       KAFKA_AUTO_OFFSET_RESET: earliest
 
-      # S3 (MinIO)
+      # S3 (MinIO) (fallback values if Vault is disabled)
       S3_ENDPOINT_URL: http://minio:9000
       S3_ACCESS_KEY_ID: minioadmin
       S3_SECRET_ACCESS_KEY: minioadmin
@@ -166,6 +221,7 @@ services:
     volumes:
       - ./backend:/app  # Hot reload for development
       - ./logs:/app/logs
+      - ./.env.vault:/.env.vault:ro  # Vault credentials (read-only)
     networks:
       - saas-network
     healthcheck:
@@ -189,8 +245,16 @@ services:
         condition: service_healthy
       minio:
         condition: service_healthy
+      vault:
+        condition: service_healthy
+      vault-init:
+        condition: service_completed_successfully
     environment:
-      # Database
+      # Vault Configuration
+      USE_VAULT: "true"
+      VAULT_ENVIRONMENT: "docker"
+
+      # Database (fallback values if Vault is disabled)
       DATABASE_URL: postgresql://postgres:postgres@postgres:5432/saas_platform
       TENANT_DATABASE_URL_TEMPLATE: postgresql://postgres:postgres@postgres:5432/{database_name}
 
@@ -201,7 +265,7 @@ services:
       KAFKA_ENABLE_AUTO_COMMIT: "true"
       KAFKA_MAX_POLL_RECORDS: 100
 
-      # S3 (MinIO)
+      # S3 (MinIO) (fallback values if Vault is disabled)
       S3_ENDPOINT_URL: http://minio:9000
       S3_ACCESS_KEY_ID: minioadmin
       S3_SECRET_ACCESS_KEY: minioadmin
@@ -214,6 +278,7 @@ services:
     volumes:
       - ./backend:/app  # Hot reload for development
       - ./logs:/app/logs
+      - ./.env.vault:/.env.vault:ro  # Vault credentials (read-only)
     networks:
       - saas-network
     healthcheck:

@@ -1,6 +1,11 @@
 backend/__pycache__
 *.pyc
 
-# Ignore copy of swagger.yaml in backend (source is in project root)
-# This copy is needed for Docker volume mount
-backend/swagger.yaml
+# HashiCorp Vault
+vault/data/
+vault/logs/
+vault/init-data/
+.env.vault
+
+# Backups temporaires des anciens .env (à supprimer après migration)
+.env.*.backup

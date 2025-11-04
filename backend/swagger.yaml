@@ -1,0 +1,1659 @@
+openapi: 3.0.3
+info:
+  title: SaaS Multi-Tenant Backend Platform API
+  description: |
+    A comprehensive multi-tenant SaaS backend platform built with Flask.
+
+    ## Features
+    - Multi-tenant architecture with database isolation
+    - JWT-based authentication with refresh tokens
+    - File management with MD5 deduplication
+    - Role-based access control (Admin, User, Viewer)
+    - Document management system
+    - Kafka integration (placeholder for Phase 6)
+
+    ## Authentication
+    Most endpoints require JWT authentication. Include the access token in the Authorization header:
+    ```
+    Authorization: Bearer <access_token>
+    ```
+
+    ## Rate Limiting
+    API rate limiting will be implemented in Phase 6.
+
+    ## Error Responses
+    All endpoints return consistent error responses with the following structure:
+    ```json
+    {
+      "success": false,
+      "message": "Error description",
+      "error": "ERROR_CODE"
+    }
+    ```
+  version: 1.0.0
+  contact:
+    name: API Support
+    email: support@example.com
+  license:
+    name: MIT
+    url: https://opensource.org/licenses/MIT
+
+servers:
+  - url: http://localhost:4999
+    description: Development server
+  - url: http://localhost:8080
+    description: Docker development server
+  - url: https://api.example.com
+    description: Production server (Phase 7)
+
+tags:
+  - name: Authentication
+    description: User authentication and session management
+  - name: Users
+    description: User profile and management
+  - name: Tenants
+    description: Multi-tenant management
+  - name: Documents
+    description: Document upload and management
+  - name: Files
+    description: File storage and deduplication
+  - name: Kafka Demo
+    description: Kafka integration demo (Phase 6 placeholder)
+  - name: Health
+    description: Service health checks
+
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: JWT access token
+
+  schemas:
+    Error:
+      type: object
+      required:
+        - success
+        - message
+      properties:
+        success:
+          type: boolean
+          example: false
+        message:
+          type: string
+          example: "An error occurred"
+        error:
+          type: string
+          example: "ERROR_CODE"
+
+    User:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          example: "123e4567-e89b-12d3-a456-426614174000"
+        first_name:
+          type: string
+          example: "John"
+        last_name:
+          type: string
+          example: "Doe"
+        email:
+          type: string
+          format: email
+          example: "john.doe@example.com"
+        is_active:
+          type: boolean
+          example: true
+        created_at:
+          type: string
+          format: date-time
+          example: "2024-01-01T00:00:00Z"
+        updated_at:
+          type: string
+          format: date-time
+          example: "2024-01-01T00:00:00Z"
+
+    Tenant:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          example: "123e4567-e89b-12d3-a456-426614174000"
+        name:
+          type: string
+          example: "Acme Corp"
+        database_name:
+          type: string
+          example: "tenant_acme_corp_a1b2c3d4"
+        is_active:
+          type: boolean
+          example: true
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+        role:
+          type: string
+          enum: [admin, user, viewer]
+          example: "admin"
+        joined_at:
+          type: string
+          format: date-time
+
+    Document:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        filename:
+          type: string
+          example: "report.pdf"
+        mime_type:
+          type: string
+          example: "application/pdf"
+        file_id:
+          type: string
+          format: uuid
+        user_id:
+          type: string
+          format: uuid
+        created_at:
+          type: string
+          format: date-time
+        created_by:
+          type: string
+          format: uuid
+        updated_at:
+          type: string
+          format: date-time
+
+    File:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        md5_hash:
+          type: string
+          example: "5d41402abc4b2a76b9719d911017c592"
+        s3_path:
+          type: string
+          example: "tenants/123/files/5d/41/..."
+        file_size:
+          type: integer
+          example: 1048576
+        created_at:
+          type: string
+          format: date-time
+        document_count:
+          type: integer
+          example: 3
+        is_orphaned:
+          type: boolean
+          example: false
+
+    Pagination:
+      type: object
+      properties:
+        page:
+          type: integer
+          example: 1
+        per_page:
+          type: integer
+          example: 20
+        total:
+          type: integer
+          example: 100
+        pages:
+          type: integer
+          example: 5
+
+paths:
+  /:
+    get:
+      tags:
+        - Health
+      summary: Root endpoint
+      description: Returns basic service information and available endpoints
+      responses:
+        '200':
+          description: Service information
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  service:
+                    type: string
+                    example: "SaaS Multi-Tenant Backend Platform"
+                  version:
+                    type: string
+                    example: "1.0.0"
+                  status:
+                    type: string
+                    example: "running"
+                  documentation:
+                    type: string
+                    example: "/api/docs"
+                  endpoints:
+                    type: object
+
+  /health:
+    get:
+      tags:
+        - Health
+      summary: Health check
+      description: Returns the health status of the service
+      responses:
+        '200':
+          description: Service is healthy
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: "healthy"
+                  service:
+                    type: string
+                    example: "SaaS Multi-Tenant Backend"
+                  version:
+                    type: string
+                    example: "1.0.0"
+
+  /api/auth/register:
+    post:
+      tags:
+        - Authentication
+      summary: Register a new user
+      description: Creates a new user account with email and password
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - first_name
+                - last_name
+                - email
+                - password
+              properties:
+                first_name:
+                  type: string
+                  minLength: 1
+                  maxLength: 50
+                  example: "John"
+                last_name:
+                  type: string
+                  minLength: 1
+                  maxLength: 50
+                  example: "Doe"
+                email:
+                  type: string
+                  format: email
+                  example: "john.doe@example.com"
+                password:
+                  type: string
+                  minLength: 8
+                  pattern: "^(?=.*[A-Za-z])(?=.*\\d).+$"
+                  example: "SecurePass123"
+                  description: "Minimum 8 characters, must contain at least one letter and one number"
+      responses:
+        '201':
+          description: User registered successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "User registered successfully"
+                  user:
+                    $ref: '#/components/schemas/User'
+        '400':
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '409':
+          description: Email already exists
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /api/auth/login:
+    post:
+      tags:
+        - Authentication
+      summary: User login
+      description: Authenticates user and returns access and refresh tokens
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - email
+                - password
+              properties:
+                email:
+                  type: string
+                  format: email
+                  example: "john.doe@example.com"
+                password:
+                  type: string
+                  example: "SecurePass123"
+      responses:
+        '200':
+          description: Login successful
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Login successful"
+                  access_token:
+                    type: string
+                    example: "eyJ0eXAiOiJKV1QiLCJhbGc..."
+                  refresh_token:
+                    type: string
+                    example: "eyJ0eXAiOiJKV1QiLCJhbGc..."
+                  user:
+                    $ref: '#/components/schemas/User'
+                  tenants:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Tenant'
+        '401':
+          description: Invalid credentials
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Account inactive
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /api/auth/refresh:
+    post:
+      tags:
+        - Authentication
+      summary: Refresh access token
+      description: Uses refresh token to obtain new access token
+      security:
+        - BearerAuth: []
+      responses:
+        '200':
+          description: Token refreshed successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  access_token:
+                    type: string
+                    example: "eyJ0eXAiOiJKV1QiLCJhbGc..."
+        '401':
+          description: Invalid or expired refresh token
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /api/auth/logout:
+    post:
+      tags:
+        - Authentication
+      summary: User logout
+      description: Invalidates the current access token
+      security:
+        - BearerAuth: []
+      responses:
+        '200':
+          description: Logged out successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Logged out successfully"
+        '401':
+          description: Missing or invalid token
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /api/auth/health:
+    get:
+      tags:
+        - Authentication
+        - Health
+      summary: Authentication service health check
+      responses:
+        '200':
+          description: Service is healthy
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: "healthy"
+                  service:
+                    type: string
+                    example: "authentication"
+                  endpoints:
+                    type: object
+
+  /api/users/me:
+    get:
+      tags:
+        - Users
+      summary: Get current user profile
+      description: Returns the authenticated user's profile information
+      security:
+        - BearerAuth: []
+      responses:
+        '200':
+          description: User profile retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: "User profile retrieved successfully"
+                  data:
+                    $ref: '#/components/schemas/User'
+        '404':
+          description: User not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+    put:
+      tags:
+        - Users
+      summary: Update current user profile
+      description: Updates the authenticated user's profile (first_name and last_name only)
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                first_name:
+                  type: string
+                  minLength: 1
+                  maxLength: 50
+                  example: "Jane"
+                last_name:
+                  type: string
+                  minLength: 1
+                  maxLength: 50
+                  example: "Smith"
+      responses:
+        '200':
+          description: User profile updated successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: "User profile updated successfully"
+                  data:
+                    $ref: '#/components/schemas/User'
+        '400':
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /api/users/me/tenants:
+    get:
+      tags:
+        - Users
+      summary: Get user's tenants
+      description: Returns all tenants the authenticated user is a member of
+      security:
+        - BearerAuth: []
+      responses:
+        '200':
+          description: User tenants retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: "User tenants retrieved successfully"
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Tenant'
+
+  /api/users/health:
+    get:
+      tags:
+        - Users
+        - Health
+      summary: Users service health check
+      responses:
+        '200':
+          description: Service is healthy
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: "Users API is healthy"
+                  data:
+                    type: object
+                    properties:
+                      status:
+                        type: string
+                        example: "healthy"
+                      blueprint:
+                        type: string
+                        example: "users"
+
+  /api/tenants:
+    get:
+      tags:
+        - Tenants
+      summary: List user's tenants
+      description: Returns all tenants the authenticated user is a member of
+      security:
+        - BearerAuth: []
+      responses:
+        '200':
+          description: Tenants retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: "Tenants retrieved successfully"
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Tenant'
+
+    post:
+      tags:
+        - Tenants
+      summary: Create a new tenant
+      description: Creates a new tenant organization. Creator becomes admin.
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - name
+              properties:
+                name:
+                  type: string
+                  minLength: 1
+                  maxLength: 100
+                  example: "Acme Corp"
+      responses:
+        '201':
+          description: Tenant created successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: "Tenant created successfully"
+                  data:
+                    $ref: '#/components/schemas/Tenant'
+        '400':
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /api/tenants/{tenant_id}:
+    get:
+      tags:
+        - Tenants
+      summary: Get tenant details
+      description: Returns detailed information about a specific tenant
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: tenant_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+          description: UUID of the tenant
+      responses:
+        '200':
+          description: Tenant details retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: "Tenant details retrieved successfully"
+                  data:
+                    allOf:
+                      - $ref: '#/components/schemas/Tenant'
+                      - type: object
+                        properties:
+                          members:
+                            type: array
+                            items:
+                              type: object
+                              properties:
+                                id:
+                                  type: string
+                                  format: uuid
+                                first_name:
+                                  type: string
+                                last_name:
+                                  type: string
+                                email:
+                                  type: string
+                                  format: email
+                                role:
+                                  type: string
+                                  enum: [admin, user, viewer]
+                                joined_at:
+                                  type: string
+                                  format: date-time
+        '404':
+          description: Tenant not found or access denied
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+    put:
+      tags:
+        - Tenants
+      summary: Update tenant
+      description: Updates tenant information (admin only)
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: tenant_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+          description: UUID of the tenant
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  minLength: 1
+                  maxLength: 100
+                  example: "New Company Name"
+      responses:
+        '200':
+          description: Tenant updated successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: "Tenant updated successfully"
+                  data:
+                    $ref: '#/components/schemas/Tenant'
+        '403':
+          description: Not authorized (not admin)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+    delete:
+      tags:
+        - Tenants
+      summary: Delete tenant
+      description: Soft deletes a tenant (admin only)
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: tenant_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+          description: UUID of the tenant
+      responses:
+        '200':
+          description: Tenant deleted successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: "Tenant deleted successfully"
+                  data:
+                    type: "null"
+        '403':
+          description: Not authorized (not admin)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /api/tenants/{tenant_id}/users:
+    post:
+      tags:
+        - Tenants
+      summary: Add user to tenant
+      description: Adds a user to the tenant with specified role (admin only)
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: tenant_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+          description: UUID of the tenant
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - user_id
+                - role
+              properties:
+                user_id:
+                  type: string
+                  format: uuid
+                  example: "123e4567-e89b-12d3-a456-426614174000"
+                role:
+                  type: string
+                  enum: [admin, user, viewer]
+                  example: "user"
+      responses:
+        '201':
+          description: User added to tenant successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: "User added to tenant successfully"
+                  data:
+                    type: object
+                    properties:
+                      user_id:
+                        type: string
+                        format: uuid
+                      tenant_id:
+                        type: string
+                        format: uuid
+                      role:
+                        type: string
+                        enum: [admin, user, viewer]
+                      joined_at:
+                        type: string
+                        format: date-time
+        '400':
+          description: User already member or validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Not authorized (not admin)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /api/tenants/{tenant_id}/users/{target_user_id}:
+    delete:
+      tags:
+        - Tenants
+      summary: Remove user from tenant
+      description: Removes a user from the tenant (admin only)
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: tenant_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+          description: UUID of the tenant
+        - name: target_user_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+          description: UUID of the user to remove
+      responses:
+        '200':
+          description: User removed from tenant successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: "User removed from tenant successfully"
+                  data:
+                    type: "null"
+        '400':
+          description: Cannot remove last admin
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Not authorized (not admin)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /api/tenants/health:
+    get:
+      tags:
+        - Tenants
+        - Health
+      summary: Tenants service health check
+      responses:
+        '200':
+          description: Service is healthy
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: "Tenants API is healthy"
+                  data:
+                    type: object
+
+  /api/tenants/{tenant_id}/documents:
+    get:
+      tags:
+        - Documents
+      summary: List tenant documents
+      description: Returns paginated list of documents for a tenant
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: tenant_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+          description: UUID of the tenant
+        - name: page
+          in: query
+          schema:
+            type: integer
+            minimum: 1
+            default: 1
+          description: Page number
+        - name: per_page
+          in: query
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+            default: 20
+          description: Items per page
+        - name: filename
+          in: query
+          schema:
+            type: string
+          description: Filter by filename (partial match, case-insensitive)
+      responses:
+        '200':
+          description: Documents retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: "Documents retrieved successfully"
+                  data:
+                    type: object
+                    properties:
+                      documents:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/Document'
+                      pagination:
+                        $ref: '#/components/schemas/Pagination'
+
+    post:
+      tags:
+        - Documents
+      summary: Upload document
+      description: Uploads a new document to the tenant
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: tenant_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+          description: UUID of the tenant
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required:
+                - file
+              properties:
+                file:
+                  type: string
+                  format: binary
+                  description: File to upload (max 100MB)
+                filename:
+                  type: string
+                  description: Optional filename override
+                mime_type:
+                  type: string
+                  description: Optional MIME type override
+      responses:
+        '201':
+          description: Document uploaded successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: "Document uploaded successfully"
+                  data:
+                    $ref: '#/components/schemas/Document'
+        '400':
+          description: File too large or invalid type
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /api/tenants/{tenant_id}/documents/{document_id}:
+    get:
+      tags:
+        - Documents
+      summary: Get document details
+      description: Returns detailed information about a specific document
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: tenant_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+          description: UUID of the tenant
+        - name: document_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+          description: UUID of the document
+      responses:
+        '200':
+          description: Document retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: "Document retrieved successfully"
+                  data:
+                    allOf:
+                      - $ref: '#/components/schemas/Document'
+                      - type: object
+                        properties:
+                          file:
+                            $ref: '#/components/schemas/File'
+
+    put:
+      tags:
+        - Documents
+      summary: Update document metadata
+      description: Updates document filename or MIME type
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: tenant_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+          description: UUID of the tenant
+        - name: document_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+          description: UUID of the document
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                filename:
+                  type: string
+                  example: "Updated Report.pdf"
+                mime_type:
+                  type: string
+                  example: "application/pdf"
+      responses:
+        '200':
+          description: Document updated successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: "Document updated successfully"
+                  data:
+                    $ref: '#/components/schemas/Document'
+
+    delete:
+      tags:
+        - Documents
+      summary: Delete document
+      description: Deletes a document (file remains if used by other documents)
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: tenant_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+          description: UUID of the tenant
+        - name: document_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+          description: UUID of the document
+      responses:
+        '200':
+          description: Document deleted successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: "Document deleted successfully"
+                  data:
+                    type: object
+                    properties:
+                      deleted_document_id:
+                        type: string
+                        format: uuid
+                      file_orphaned:
+                        type: boolean
+                        description: Whether the underlying file is now orphaned
+
+  /api/tenants/{tenant_id}/documents/{document_id}/download:
+    get:
+      tags:
+        - Documents
+      summary: Get document download URL
+      description: Generates a pre-signed download URL (placeholder for Phase 6)
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: tenant_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+          description: UUID of the tenant
+        - name: document_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+          description: UUID of the document
+        - name: expires_in
+          in: query
+          schema:
+            type: integer
+            minimum: 60
+            maximum: 86400
+            default: 3600
+          description: URL expiration time in seconds
+      responses:
+        '200':
+          description: Download URL generated successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: "Download URL generated successfully"
+                  data:
+                    type: object
+                    properties:
+                      download_url:
+                        type: string
+                        format: uri
+                        example: "https://s3.amazonaws.com/..."
+                      expires_in:
+                        type: integer
+                        example: 3600
+                      expires_at:
+                        type: string
+                        format: date-time
+                      filename:
+                        type: string
+                      file_size:
+                        type: integer
+                      mime_type:
+                        type: string
+
+  /api/tenants/{tenant_id}/documents/health:
+    get:
+      tags:
+        - Documents
+        - Health
+      summary: Documents service health check
+      parameters:
+        - name: tenant_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+          description: UUID of the tenant
+      responses:
+        '200':
+          description: Service is healthy
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: "Documents API is healthy"
+                  data:
+                    type: object
+
+  /api/files/{tenant_id}/files:
+    get:
+      tags:
+        - Files
+      summary: List tenant files
+      description: Returns paginated list of files with deduplication info
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: tenant_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+          description: UUID of the tenant
+        - name: page
+          in: query
+          schema:
+            type: integer
+            minimum: 1
+            default: 1
+        - name: per_page
+          in: query
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+            default: 20
+        - name: include_stats
+          in: query
+          schema:
+            type: boolean
+            default: false
+          description: Include document count and orphan status
+      responses:
+        '200':
+          description: Files retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: "Files retrieved successfully"
+                  data:
+                    type: object
+                    properties:
+                      files:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/File'
+                      pagination:
+                        $ref: '#/components/schemas/Pagination'
+                      stats:
+                        type: object
+                        properties:
+                          total_files:
+                            type: integer
+                          total_storage_bytes:
+                            type: integer
+                          total_storage_mb:
+                            type: number
+
+  /api/files/{tenant_id}/files/{file_id}:
+    get:
+      tags:
+        - Files
+      summary: Get file details
+      description: Returns detailed information about a specific file
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: tenant_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+          description: UUID of the tenant
+        - name: file_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+          description: UUID of the file
+      responses:
+        '200':
+          description: File retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: "File retrieved successfully"
+                  data:
+                    allOf:
+                      - $ref: '#/components/schemas/File'
+                      - type: object
+                        properties:
+                          documents:
+                            type: array
+                            items:
+                              $ref: '#/components/schemas/Document'
+
+    delete:
+      tags:
+        - Files
+      summary: Delete orphaned file
+      description: Deletes an orphaned file (admin only)
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: tenant_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+          description: UUID of the tenant
+        - name: file_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+          description: UUID of the file
+      responses:
+        '200':
+          description: Orphaned file deleted successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: "Orphaned file deleted successfully"
+                  data:
+                    type: object
+                    properties:
+                      file_id:
+                        type: string
+                        format: uuid
+                      md5_hash:
+                        type: string
+                      freed_storage_bytes:
+                        type: integer
+                      freed_storage_mb:
+                        type: number
+        '400':
+          description: File is not orphaned
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Not authorized (not admin)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /api/demo/kafka/produce:
+    post:
+      tags:
+        - Kafka Demo
+      summary: Produce Kafka message
+      description: Demo endpoint to produce a Kafka message (placeholder)
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - topic
+                - message
+              properties:
+                topic:
+                  type: string
+                  example: "test.topic"
+                message:
+                  type: object
+                  example:
+                    event_type: "test"
+                    data: "Hello Kafka"
+                key:
+                  type: string
+                  example: "partition-key-123"
+                  description: Optional partition key
+      responses:
+        '201':
+          description: Kafka message sent successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: "Kafka message sent successfully"
+                  data:
+                    type: object
+                    properties:
+                      event_id:
+                        type: string
+                        format: uuid
+                      topic:
+                        type: string
+                      timestamp:
+                        type: string
+                        format: date-time
+                      status:
+                        type: string
+                        example: "sent"
+                      note:
+                        type: string
+                        example: "This is a placeholder implementation..."
+
+  /api/demo/kafka/consume:
+    get:
+      tags:
+        - Kafka Demo
+      summary: Consume Kafka messages
+      description: Demo endpoint to view consumed messages (placeholder)
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 50
+            default: 10
+          description: Maximum number of messages to return
+      responses:
+        '200':
+          description: Kafka consumer status retrieved
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: "Kafka consumer status retrieved"
+                  data:
+                    type: object
+                    properties:
+                      status:
+                        type: string
+                        example: "running"
+                      message_count:
+                        type: integer
+                      buffer_size:
+                        type: integer
+                      messages:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            event_id:
+                              type: string
+                              format: uuid
+                            topic:
+                              type: string
+                            timestamp:
+                              type: string
+                              format: date-time
+                            user_id:
+                              type: string
+                              format: uuid
+                            key:
+                              type: string
+                            payload:
+                              type: object
+                      note:
+                        type: string
+
+  /api/demo/kafka/health:
+    get:
+      tags:
+        - Kafka Demo
+        - Health
+      summary: Kafka service health check
+      responses:
+        '200':
+          description: Service is healthy
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: "healthy"
+                  service:
+                    type: string
+                    example: "kafka_demo"
+                  buffer_count:
+                    type: integer
+                  note:
+                    type: string

@@ -14,6 +14,10 @@ from typing import Dict, Any
 class Config:
     """Base configuration class with common settings."""
 
+    # Vault Configuration
+    USE_VAULT = os.environ.get('USE_VAULT', 'false').lower() == 'true'
+    VAULT_ENVIRONMENT = os.environ.get('VAULT_ENVIRONMENT', 'docker')
+
     # Flask Core Settings
     SECRET_KEY = os.environ.get('SECRET_KEY') or secrets.token_urlsafe(32)
     FLASK_APP = os.environ.get('FLASK_APP', 'app')
@@ -113,6 +117,68 @@ class Config:
     # Pagination
     DEFAULT_PAGE_SIZE = int(os.environ.get('DEFAULT_PAGE_SIZE', 20))
     MAX_PAGE_SIZE = int(os.environ.get('MAX_PAGE_SIZE', 100))
+
+    @classmethod
+    def load_from_vault(cls, vault_client):
+        """
+        Charge la configuration depuis HashiCorp Vault.
+
+        Args:
+            vault_client: Instance de VaultClient authentifié
+        """
+        from app.utils.vault_client import VaultError
+        import logging
+
+        logger = logging.getLogger(__name__)
+
+        try:
+            logger.info(
+                f"Chargement de la configuration depuis Vault (env: {cls.VAULT_ENVIRONMENT})"
+            )
+
+            # Récupérer tous les secrets
+            secrets = vault_client.get_all_secrets(environment=cls.VAULT_ENVIRONMENT)
+
+            # Configuration Database
+            if "database" in secrets:
+                db_secrets = secrets["database"]
+                cls.SQLALCHEMY_DATABASE_URI = db_secrets.get("main_url")
+                cls.TENANT_DATABASE_URL_TEMPLATE = db_secrets.get("tenant_url_template")
+                logger.info("Configuration database chargée depuis Vault")
+
+            # Configuration JWT
+            if "jwt" in secrets:
+                jwt_secrets = secrets["jwt"]
+                cls.JWT_SECRET_KEY = jwt_secrets.get("secret_key")
+                cls.SECRET_KEY = jwt_secrets.get("secret_key")  # Utiliser la même clé
+
+                # Gestion du TTL
+                access_token_expires = jwt_secrets.get("access_token_expires")
+                if access_token_expires:
+                    cls.JWT_ACCESS_TOKEN_EXPIRES = timedelta(
+                        seconds=int(access_token_expires)
+                    )
+                logger.info("Configuration JWT chargée depuis Vault")
+
+            # Configuration S3
+            if "s3" in secrets:
+                s3_secrets = secrets["s3"]
+                cls.S3_ENDPOINT_URL = s3_secrets.get("endpoint_url")
+                cls.S3_ACCESS_KEY_ID = s3_secrets.get("access_key_id")
+                cls.S3_SECRET_ACCESS_KEY = s3_secrets.get("secret_access_key")
+                cls.S3_BUCKET_NAME = s3_secrets.get("bucket_name")
+                cls.S3_REGION = s3_secrets.get("region")
+                logger.info("Configuration S3 chargée depuis Vault")
+
+            logger.info("Configuration complète chargée depuis Vault avec succès")
+
+        except VaultError as e:
+            logger.error(f"Erreur lors du chargement de la configuration depuis Vault: {e}")
+            logger.warning("Utilisation de la configuration par défaut (variables d'environnement)")
+            # On laisse les valeurs par défaut chargées depuis .env
+        except Exception as e:
+            logger.error(f"Erreur inattendue lors du chargement depuis Vault: {e}")
+            raise
 
     @staticmethod
     def init_app(app):

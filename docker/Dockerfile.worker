@@ -70,12 +70,21 @@ ENV PATH="/opt/venv/bin:$PATH"
 # Copy backend directory contents to /app
 COPY backend/ .
 
+# Copy docker-entrypoint.sh for Vault integration
+COPY backend/docker-entrypoint.sh /docker-entrypoint.sh
+
 # Create necessary directories and set permissions
 RUN mkdir -p logs && \
     chown -R workeruser:workeruser /app
 
+# Make entrypoint executable (as root before switching user)
+RUN chmod +x /docker-entrypoint.sh
+
 # Switch to non-root user
 USER workeruser
+
+# Set entrypoint for Vault credential loading
+ENTRYPOINT ["/docker-entrypoint.sh"]
 
 # Health check
 # Check if the consumer process is running
