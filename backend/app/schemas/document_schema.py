@@ -61,7 +61,7 @@ class DocumentSchema(Schema):
     created_by = fields.UUID(dump_only=True)
 
     @validates('filename')
-    def validate_filename(self, value):
+    def validate_filename(self, value, **kwargs):
         """
         Validate document filename format.
 
@@ -89,7 +89,7 @@ class DocumentSchema(Schema):
         logger.debug(f"Validated filename: {value.strip()}")
 
     @validates('mime_type')
-    def validate_mime_type(self, value):
+    def validate_mime_type(self, value, **kwargs):
         """
         Validate MIME type format.
 
@@ -198,7 +198,7 @@ class DocumentUploadSchema(Schema):
     mime_type = fields.Str(required=True, validate=validate.Length(min=1, max=100))
 
     @validates('filename')
-    def validate_filename(self, value):
+    def validate_filename(self, value, **kwargs):
         """
         Validate document filename format.
 
@@ -226,7 +226,7 @@ class DocumentUploadSchema(Schema):
         logger.debug(f"Validated filename for upload: {value.strip()}")
 
     @validates('mime_type')
-    def validate_mime_type(self, value):
+    def validate_mime_type(self, value, **kwargs):
         """
         Validate MIME type format.
 
@@ -314,7 +314,7 @@ class DocumentUpdateSchema(Schema):
     mime_type = fields.Str(validate=validate.Length(min=1, max=100))
 
     @validates('filename')
-    def validate_filename(self, value):
+    def validate_filename(self, value, **kwargs):
         """
         Validate document filename format (if provided).
 
@@ -343,7 +343,7 @@ class DocumentUpdateSchema(Schema):
             logger.debug(f"Validated filename for update: {value.strip()}")
 
     @validates('mime_type')
-    def validate_mime_type(self, value):
+    def validate_mime_type(self, value, **kwargs):
         """
         Validate MIME type format (if provided).
 

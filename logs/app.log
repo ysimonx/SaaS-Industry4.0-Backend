@@ -1149,3 +1149,268 @@ LINE 1: SELECT version FROM tenant_schema_version ORDER BY version D...
 2025-11-03 17:25:23,352 - app - INFO - Flask app created with config: development
 2025-11-03 17:25:23,353 - app - INFO - Debug mode: True
 2025-11-03 17:25:23,353 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-04 07:31:44,242 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-04 07:31:44,242 - app - INFO - Flask app created with config: development
+2025-11-04 07:31:44,242 - app - INFO - Debug mode: True
+2025-11-04 07:31:44,245 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-04 07:31:44,298 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-04 07:31:44,300 - app - INFO - Flask app created with config: development
+2025-11-04 07:31:44,300 - app - INFO - Debug mode: True
+2025-11-04 07:31:44,301 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-04 07:31:44,312 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-04 07:31:44,312 - app - INFO - Flask app created with config: development
+2025-11-04 07:31:44,312 - app - INFO - Debug mode: True
+2025-11-04 07:31:44,313 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-04 07:31:44,364 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-04 07:31:44,364 - app - INFO - Flask app created with config: development
+2025-11-04 07:31:44,364 - app - INFO - Debug mode: True
+2025-11-04 07:31:44,364 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-04 07:32:04,971 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-04 07:32:04,971 - app - INFO - Flask app created with config: development
+2025-11-04 07:32:04,971 - app - INFO - Debug mode: True
+2025-11-04 07:32:04,971 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-04 07:32:29,038 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-04 07:32:29,038 - app - INFO - Flask app created with config: development
+2025-11-04 07:32:29,039 - app - INFO - Debug mode: True
+2025-11-04 07:32:29,039 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-04 07:32:39,687 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-04 07:32:39,687 - app - INFO - Flask app created with config: development
+2025-11-04 07:32:39,687 - app - INFO - Debug mode: True
+2025-11-04 07:32:39,688 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-04 07:33:21,529 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-04 07:33:21,529 - app - INFO - Flask app created with config: development
+2025-11-04 07:33:21,529 - app - INFO - Debug mode: True
+2025-11-04 07:33:21,529 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-04 07:46:04,734 - app - ERROR - Unhandled exception: UserLoginSchema.validate_email_format() got an unexpected keyword argument 'data_key'
+Traceback (most recent call last):
+  File "/opt/venv/lib/python3.11/site-packages/flask/app.py", line 917, in full_dispatch_request
+    rv = self.dispatch_request()
+         ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/venv/lib/python3.11/site-packages/flask/app.py", line 902, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/app/app/routes/auth.py", line 181, in login
+    data = user_login_schema.load(request.get_json())
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/venv/lib/python3.11/site-packages/marshmallow/schema.py", line 730, in load
+    return self._do_load(
+           ^^^^^^^^^^^^^^
+  File "/opt/venv/lib/python3.11/site-packages/marshmallow/schema.py", line 895, in _do_load
+    self._invoke_field_validators(
+  File "/opt/venv/lib/python3.11/site-packages/marshmallow/schema.py", line 1161, in _invoke_field_validators
+    validated_value = self._call_and_store(
+                      ^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/venv/lib/python3.11/site-packages/marshmallow/schema.py", line 517, in _call_and_store
+    value = getter_func(data)
+            ^^^^^^^^^^^^^^^^^
+TypeError: UserLoginSchema.validate_email_format() got an unexpected keyword argument 'data_key'
+2025-11-04 07:46:35,082 - app - ERROR - Unhandled exception: UserLoginSchema.validate_email_format() got an unexpected keyword argument 'data_key'
+Traceback (most recent call last):
+  File "/opt/venv/lib/python3.11/site-packages/flask/app.py", line 917, in full_dispatch_request
+    rv = self.dispatch_request()
+         ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/venv/lib/python3.11/site-packages/flask/app.py", line 902, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/app/app/routes/auth.py", line 181, in login
+    data = user_login_schema.load(request.get_json())
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/venv/lib/python3.11/site-packages/marshmallow/schema.py", line 730, in load
+    return self._do_load(
+           ^^^^^^^^^^^^^^
+  File "/opt/venv/lib/python3.11/site-packages/marshmallow/schema.py", line 895, in _do_load
+    self._invoke_field_validators(
+  File "/opt/venv/lib/python3.11/site-packages/marshmallow/schema.py", line 1161, in _invoke_field_validators
+    validated_value = self._call_and_store(
+                      ^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/venv/lib/python3.11/site-packages/marshmallow/schema.py", line 517, in _call_and_store
+    value = getter_func(data)
+            ^^^^^^^^^^^^^^^^^
+TypeError: UserLoginSchema.validate_email_format() got an unexpected keyword argument 'data_key'
+2025-11-04 07:48:05,703 - app - ERROR - Unhandled exception: UserLoginSchema.validate_email_format() got an unexpected keyword argument 'data_key'
+Traceback (most recent call last):
+  File "/opt/venv/lib/python3.11/site-packages/flask/app.py", line 917, in full_dispatch_request
+    rv = self.dispatch_request()
+         ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/venv/lib/python3.11/site-packages/flask/app.py", line 902, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/app/app/routes/auth.py", line 181, in login
+    data = user_login_schema.load(request.get_json())
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/venv/lib/python3.11/site-packages/marshmallow/schema.py", line 730, in load
+    return self._do_load(
+           ^^^^^^^^^^^^^^
+  File "/opt/venv/lib/python3.11/site-packages/marshmallow/schema.py", line 895, in _do_load
+    self._invoke_field_validators(
+  File "/opt/venv/lib/python3.11/site-packages/marshmallow/schema.py", line 1161, in _invoke_field_validators
+    validated_value = self._call_and_store(
+                      ^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/venv/lib/python3.11/site-packages/marshmallow/schema.py", line 517, in _call_and_store
+    value = getter_func(data)
+            ^^^^^^^^^^^^^^^^^
+TypeError: UserLoginSchema.validate_email_format() got an unexpected keyword argument 'data_key'
+2025-11-04 07:49:24,037 - app - ERROR - Unhandled exception: UserLoginSchema.validate_email_format() got an unexpected keyword argument 'data_key'
+Traceback (most recent call last):
+  File "/opt/venv/lib/python3.11/site-packages/flask/app.py", line 917, in full_dispatch_request
+    rv = self.dispatch_request()
+         ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/venv/lib/python3.11/site-packages/flask/app.py", line 902, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/app/app/routes/auth.py", line 181, in login
+    data = user_login_schema.load(request.get_json())
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/venv/lib/python3.11/site-packages/marshmallow/schema.py", line 730, in load
+    return self._do_load(
+           ^^^^^^^^^^^^^^
+  File "/opt/venv/lib/python3.11/site-packages/marshmallow/schema.py", line 895, in _do_load
+    self._invoke_field_validators(
+  File "/opt/venv/lib/python3.11/site-packages/marshmallow/schema.py", line 1161, in _invoke_field_validators
+    validated_value = self._call_and_store(
+                      ^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/venv/lib/python3.11/site-packages/marshmallow/schema.py", line 517, in _call_and_store
+    value = getter_func(data)
+            ^^^^^^^^^^^^^^^^^
+TypeError: UserLoginSchema.validate_email_format() got an unexpected keyword argument 'data_key'
+2025-11-04 07:49:55,496 - app - ERROR - Unhandled exception: UserLoginSchema.validate_email_format() got an unexpected keyword argument 'data_key'
+Traceback (most recent call last):
+  File "/opt/venv/lib/python3.11/site-packages/flask/app.py", line 917, in full_dispatch_request
+    rv = self.dispatch_request()
+         ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/venv/lib/python3.11/site-packages/flask/app.py", line 902, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/app/app/routes/auth.py", line 181, in login
+    data = user_login_schema.load(request.get_json())
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/venv/lib/python3.11/site-packages/marshmallow/schema.py", line 730, in load
+    return self._do_load(
+           ^^^^^^^^^^^^^^
+  File "/opt/venv/lib/python3.11/site-packages/marshmallow/schema.py", line 895, in _do_load
+    self._invoke_field_validators(
+  File "/opt/venv/lib/python3.11/site-packages/marshmallow/schema.py", line 1161, in _invoke_field_validators
+    validated_value = self._call_and_store(
+                      ^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/venv/lib/python3.11/site-packages/marshmallow/schema.py", line 517, in _call_and_store
+    value = getter_func(data)
+            ^^^^^^^^^^^^^^^^^
+TypeError: UserLoginSchema.validate_email_format() got an unexpected keyword argument 'data_key'
+2025-11-04 07:50:17,640 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-04 07:50:17,641 - app - INFO - Flask app created with config: development
+2025-11-04 07:50:17,641 - app - INFO - Debug mode: True
+2025-11-04 07:50:17,641 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-04 07:50:17,672 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-04 07:50:17,673 - app - INFO - Flask app created with config: development
+2025-11-04 07:50:17,673 - app - INFO - Debug mode: True
+2025-11-04 07:50:17,673 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-04 07:50:17,708 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-04 07:50:17,708 - app - INFO - Flask app created with config: development
+2025-11-04 07:50:17,708 - app - INFO - Debug mode: True
+2025-11-04 07:50:17,708 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-04 07:50:17,775 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-04 07:50:17,776 - app - INFO - Flask app created with config: development
+2025-11-04 07:50:17,776 - app - INFO - Debug mode: True
+2025-11-04 07:50:17,776 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-04 07:50:38,484 - app - ERROR - Unhandled exception: UserLoginSchema.validate_password_present() got an unexpected keyword argument 'data_key'
+Traceback (most recent call last):
+  File "/opt/venv/lib/python3.11/site-packages/flask/app.py", line 917, in full_dispatch_request
+    rv = self.dispatch_request()
+         ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/venv/lib/python3.11/site-packages/flask/app.py", line 902, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/app/app/routes/auth.py", line 181, in login
+    data = user_login_schema.load(request.get_json())
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/venv/lib/python3.11/site-packages/marshmallow/schema.py", line 730, in load
+    return self._do_load(
+           ^^^^^^^^^^^^^^
+  File "/opt/venv/lib/python3.11/site-packages/marshmallow/schema.py", line 895, in _do_load
+    self._invoke_field_validators(
+  File "/opt/venv/lib/python3.11/site-packages/marshmallow/schema.py", line 1161, in _invoke_field_validators
+    validated_value = self._call_and_store(
+                      ^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/venv/lib/python3.11/site-packages/marshmallow/schema.py", line 517, in _call_and_store
+    value = getter_func(data)
+            ^^^^^^^^^^^^^^^^^
+TypeError: UserLoginSchema.validate_password_present() got an unexpected keyword argument 'data_key'
+2025-11-04 07:52:10,674 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-04 07:52:10,675 - app - INFO - Flask app created with config: development
+2025-11-04 07:52:10,675 - app - INFO - Debug mode: True
+2025-11-04 07:52:10,675 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-04 07:52:10,796 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-04 07:52:10,797 - app - INFO - Flask app created with config: development
+2025-11-04 07:52:10,797 - app - INFO - Debug mode: True
+2025-11-04 07:52:10,797 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-04 07:52:10,886 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-04 07:52:10,886 - app - INFO - Flask app created with config: development
+2025-11-04 07:52:10,886 - app - INFO - Debug mode: True
+2025-11-04 07:52:10,886 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-04 07:52:11,008 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-04 07:52:11,008 - app - INFO - Flask app created with config: development
+2025-11-04 07:52:11,008 - app - INFO - Debug mode: True
+2025-11-04 07:52:11,008 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-04 07:53:15,797 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-04 07:53:15,798 - app - INFO - Flask app created with config: development
+2025-11-04 07:53:15,798 - app - INFO - Debug mode: True
+2025-11-04 07:53:15,798 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-04 07:54:29,965 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-04 07:54:29,965 - app - INFO - Flask app created with config: development
+2025-11-04 07:54:29,965 - app - INFO - Debug mode: True
+2025-11-04 07:54:29,965 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-04 07:54:55,864 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-04 07:54:55,865 - app - INFO - Flask app created with config: development
+2025-11-04 07:54:55,865 - app - INFO - Debug mode: True
+2025-11-04 07:54:55,866 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-04 07:54:55,879 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-04 07:54:55,880 - app - INFO - Flask app created with config: development
+2025-11-04 07:54:55,880 - app - INFO - Debug mode: True
+2025-11-04 07:54:55,881 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-04 07:54:55,886 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-04 07:54:55,887 - app - INFO - Flask app created with config: development
+2025-11-04 07:54:55,887 - app - INFO - Debug mode: True
+2025-11-04 07:54:55,887 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-04 07:54:55,907 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-04 07:54:55,907 - app - INFO - Flask app created with config: development
+2025-11-04 07:54:55,907 - app - INFO - Debug mode: True
+2025-11-04 07:54:55,907 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-04 07:55:25,201 - app - ERROR - Login exception: 'Tenant' object has no attribute 'subdomain'
+2025-11-04 07:55:25,202 - app - ERROR - Traceback (most recent call last):
+  File "/app/app/routes/auth.py", line 230, in login
+    'subdomain': tenant.subdomain,
+                 ^^^^^^^^^^^^^^^^
+AttributeError: 'Tenant' object has no attribute 'subdomain'
+
+2025-11-04 07:56:13,784 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-04 07:56:13,784 - app - INFO - Flask app created with config: development
+2025-11-04 07:56:13,784 - app - INFO - Debug mode: True
+2025-11-04 07:56:13,785 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-04 07:56:13,888 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-04 07:56:13,888 - app - INFO - Flask app created with config: development
+2025-11-04 07:56:13,888 - app - INFO - Debug mode: True
+2025-11-04 07:56:13,889 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-04 07:56:13,975 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-04 07:56:13,975 - app - INFO - Flask app created with config: development
+2025-11-04 07:56:13,975 - app - INFO - Debug mode: True
+2025-11-04 07:56:13,975 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-04 07:56:14,061 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-04 07:56:14,062 - app - INFO - Flask app created with config: development
+2025-11-04 07:56:14,062 - app - INFO - Debug mode: True
+2025-11-04 07:56:14,062 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-04 07:58:44,922 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-04 07:58:44,922 - app - INFO - Flask app created with config: development
+2025-11-04 07:58:44,923 - app - INFO - Debug mode: True
+2025-11-04 07:58:44,923 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-04 07:58:45,012 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-04 07:58:45,012 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-04 07:58:45,012 - app - INFO - Flask app created with config: development
+2025-11-04 07:58:45,012 - app - INFO - Flask app created with config: development
+2025-11-04 07:58:45,012 - app - INFO - Debug mode: True
+2025-11-04 07:58:45,013 - app - INFO - Debug mode: True
+2025-11-04 07:58:45,013 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-04 07:58:45,013 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-04 07:58:45,062 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-04 07:58:45,062 - app - INFO - Flask app created with config: development
+2025-11-04 07:58:45,063 - app - INFO - Debug mode: True
+2025-11-04 07:58:45,063 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...

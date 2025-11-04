@@ -56,7 +56,7 @@ class TenantSchema(Schema):
     created_by = fields.UUID(dump_only=True)
 
     @validates('name')
-    def validate_name(self, value):
+    def validate_name(self, value, **kwargs):
         """
         Validate tenant name format.
 
@@ -125,7 +125,7 @@ class TenantCreateSchema(Schema):
     name = fields.Str(required=True, validate=validate.Length(min=1, max=255))
 
     @validates('name')
-    def validate_name(self, value):
+    def validate_name(self, value, **kwargs):
         """
         Validate tenant name format.
 
@@ -197,7 +197,7 @@ class TenantUpdateSchema(Schema):
     is_active = fields.Boolean()
 
     @validates('name')
-    def validate_name(self, value):
+    def validate_name(self, value, **kwargs):
         """
         Validate tenant name format (if provided).
 

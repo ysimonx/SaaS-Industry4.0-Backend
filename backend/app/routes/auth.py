@@ -227,7 +227,7 @@ def login():
                 tenants_data.append({
                     'id': str(tenant.id),
                     'name': tenant.name,
-                    'subdomain': tenant.subdomain,
+                    'database_name': tenant.database_name,
                     'role': assoc.role
                 })
 
@@ -243,6 +243,10 @@ def login():
         }), 200
 
     except Exception as e:
+        import traceback
+        from flask import current_app
+        current_app.logger.error(f"Login exception: {str(e)}")
+        current_app.logger.error(traceback.format_exc())
         return jsonify({
             'error': 'login_failed',
             'message': 'Login failed. Please try again.'

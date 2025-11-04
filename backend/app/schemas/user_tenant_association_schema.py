@@ -80,7 +80,7 @@ class UserTenantAssociationSchema(Schema):
     joined_at = fields.DateTime(dump_only=True)
 
     @validates('role')
-    def validate_role(self, value):
+    def validate_role(self, value, **kwargs):
         """
         Validate role is one of the allowed values.
 
@@ -154,7 +154,7 @@ class UserTenantAssociationCreateSchema(Schema):
     role = fields.Str(required=True, validate=validate.OneOf(VALID_ROLES))
 
     @validates('role')
-    def validate_role(self, value):
+    def validate_role(self, value, **kwargs):
         """
         Validate role is one of the allowed values.
 
@@ -232,7 +232,7 @@ class UserTenantAssociationUpdateSchema(Schema):
     role = fields.Str(required=True, validate=validate.OneOf(VALID_ROLES))
 
     @validates('role')
-    def validate_role(self, value):
+    def validate_role(self, value, **kwargs):
         """
         Validate role is one of the allowed values.
 

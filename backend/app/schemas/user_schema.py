@@ -45,19 +45,19 @@ class UserSchema(Schema):
     created_by = fields.UUID(dump_only=True)
 
     @validates('first_name')
-    def validate_first_name(self, value):
+    def validate_first_name(self, value, **kwargs):
         """Validate first name is not empty or whitespace only."""
         if not value or not value.strip():
             raise ValidationError("First name cannot be empty or whitespace")
 
     @validates('last_name')
-    def validate_last_name(self, value):
+    def validate_last_name(self, value, **kwargs):
         """Validate last name is not empty or whitespace only."""
         if not value or not value.strip():
             raise ValidationError("Last name cannot be empty or whitespace")
 
     @validates('password')
-    def validate_password(self, value):
+    def validate_password(self, value, **kwargs):
         """
         Validate password meets security requirements.
 
@@ -102,19 +102,19 @@ class UserCreateSchema(Schema):
     )
 
     @validates('first_name')
-    def validate_first_name(self, value):
+    def validate_first_name(self, value, **kwargs):
         """Validate first name is not empty or whitespace only."""
         if not value or not value.strip():
             raise ValidationError("First name cannot be empty or whitespace")
 
     @validates('last_name')
-    def validate_last_name(self, value):
+    def validate_last_name(self, value, **kwargs):
         """Validate last name is not empty or whitespace only."""
         if not value or not value.strip():
             raise ValidationError("Last name cannot be empty or whitespace")
 
     @validates('email')
-    def validate_email_format(self, value):
+    def validate_email_format(self, value, **kwargs):
         """Additional email validation beyond the Email field validator."""
         # Email field already validates format, this is for additional checks
         if not value or not value.strip():
@@ -124,7 +124,7 @@ class UserCreateSchema(Schema):
         return value.lower()
 
     @validates('password')
-    def validate_password(self, value):
+    def validate_password(self, value, **kwargs):
         """
         Validate password meets security requirements.
 
@@ -172,13 +172,13 @@ class UserUpdateSchema(Schema):
     )
 
     @validates('first_name')
-    def validate_first_name(self, value):
+    def validate_first_name(self, value, **kwargs):
         """Validate first name is not empty or whitespace only."""
         if value is not None and (not value or not value.strip()):
             raise ValidationError("First name cannot be empty or whitespace")
 
     @validates('last_name')
-    def validate_last_name(self, value):
+    def validate_last_name(self, value, **kwargs):
         """Validate last name is not empty or whitespace only."""
         if value is not None and (not value or not value.strip()):
             raise ValidationError("Last name cannot be empty or whitespace")
@@ -228,13 +228,13 @@ class UserLoginSchema(Schema):
     )
 
     @validates('email')
-    def validate_email_format(self, value):
+    def validate_email_format(self, value, **kwargs):
         """Validate email is not empty."""
         if not value or not value.strip():
             raise ValidationError("Email cannot be empty or whitespace")
 
     @validates('password')
-    def validate_password_present(self, value):
+    def validate_password_present(self, value, **kwargs):
         """Validate password is provided."""
         if not value:
             raise ValidationError("Password is required")
