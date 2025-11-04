@@ -133,11 +133,31 @@ docker-compose exec api /bin/bash
 # Run Flask shell
 docker-compose exec api python -c "from app import create_app; app = create_app(); app.app_context().push()"
 
-# Run migrations
-docker-compose exec api flask db upgrade
-
 # Create admin user
 docker-compose exec api python scripts/init_db.py --create-admin
+```
+
+### Flask Commands with Vault Integration
+
+**Important**: With Vault integration enabled, Flask commands must use the wrapper script `/app/flask-wrapper.sh` to load environment variables from Vault:
+
+```bash
+# Database migrations
+docker-compose exec api /app/flask-wrapper.sh db init
+docker-compose exec api /app/flask-wrapper.sh db migrate -m "Migration message"
+docker-compose exec api /app/flask-wrapper.sh db upgrade
+docker-compose exec api /app/flask-wrapper.sh db downgrade
+docker-compose exec api /app/flask-wrapper.sh db current
+docker-compose exec api /app/flask-wrapper.sh db history
+
+# Other Flask commands
+docker-compose exec api /app/flask-wrapper.sh shell
+docker-compose exec api /app/flask-wrapper.sh routes
+
+# The wrapper script automatically:
+# 1. Loads variables from /.env.vault
+# 2. Exports Vault credentials (VAULT_ADDR, VAULT_ROLE_ID, VAULT_SECRET_ID)
+# 3. Executes the Flask command with proper environment
 ```
 
 ### Database Operations

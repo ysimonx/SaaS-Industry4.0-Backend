@@ -142,9 +142,9 @@ When setting up the platform for the first time:
 # Create main database and apply migrations
 docker-compose exec api python scripts/init_db.py
 
-# Or step by step:
-docker-compose exec api flask db migrate -m "Initial migration"
-docker-compose exec api flask db upgrade
+# Or step by step (with Vault integration):
+docker-compose exec api /app/flask-wrapper.sh db migrate -m "Initial migration"
+docker-compose exec api /app/flask-wrapper.sh db upgrade
 ```
 
 This creates:
@@ -184,14 +184,35 @@ tenant_db_manager.drop_tenant_database(tenant.database_name)
 
 ## Migration Management
 
+### Important: Flask Commands with Vault
+
+When Vault integration is enabled, all Flask database commands must use the wrapper script `/app/flask-wrapper.sh` to properly load Vault credentials:
+
+```bash
+# Instead of: docker-compose exec api flask db migrate
+# Use: docker-compose exec api /app/flask-wrapper.sh db migrate
+
+# The wrapper script handles:
+# - Loading VAULT_ADDR, VAULT_ROLE_ID, VAULT_SECRET_ID from .env.vault
+# - Authenticating with Vault
+# - Retrieving database credentials from Vault
+# - Executing the Flask command with proper environment
+```
+
 ### Main Database Migrations
 
 ```bash
-# Create migration for main DB models only
-docker-compose exec api flask db migrate -m "Add field to User"
+# Create migration for main DB models only (with Vault)
+docker-compose exec api /app/flask-wrapper.sh db migrate -m "Add field to User"
 
-# Apply migration
-docker-compose exec api flask db upgrade
+# Apply migration (with Vault)
+docker-compose exec api /app/flask-wrapper.sh db upgrade
+
+# Other migration commands (all require wrapper with Vault)
+docker-compose exec api /app/flask-wrapper.sh db init
+docker-compose exec api /app/flask-wrapper.sh db downgrade
+docker-compose exec api /app/flask-wrapper.sh db current
+docker-compose exec api /app/flask-wrapper.sh db history
 ```
 
 The migration system automatically excludes File and Document models.
@@ -220,8 +241,8 @@ To completely reset the database:
 # Manual steps:
 docker-compose exec postgres psql -U postgres -c "DROP DATABASE IF EXISTS saas_platform;"
 docker-compose exec postgres psql -U postgres -c "CREATE DATABASE saas_platform;"
-docker-compose exec api flask db migrate -m "Initial migration"
-docker-compose exec api flask db upgrade
+docker-compose exec api /app/flask-wrapper.sh db migrate -m "Initial migration"
+docker-compose exec api /app/flask-wrapper.sh db upgrade
 ```
 
 ## Common Pitfalls

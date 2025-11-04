@@ -1427,3 +1427,233 @@ AttributeError: 'Tenant' object has no attribute 'subdomain'
 2025-11-04 08:03:41,130 - app - INFO - Debug mode: True
 2025-11-04 08:03:41,130 - app - INFO - Database URI: sqlite:///:memory:...
 2025-11-04 08:03:41,305 - app.models.user - DEBUG - Password hashed for user: test@example.com
+2025-11-04 21:49:41,629 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-04 21:49:41,630 - app - INFO - Flask app created with config: development
+2025-11-04 21:49:41,630 - app - INFO - Debug mode: True
+2025-11-04 21:49:41,630 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-04 21:49:41,642 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-04 21:49:41,642 - app - INFO - Flask app created with config: development
+2025-11-04 21:49:41,642 - app - INFO - Debug mode: True
+2025-11-04 21:49:41,643 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-04 21:49:41,664 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-04 21:49:41,664 - app - INFO - Flask app created with config: development
+2025-11-04 21:49:41,664 - app - INFO - Debug mode: True
+2025-11-04 21:49:41,665 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-04 21:49:41,678 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-04 21:49:41,678 - app - INFO - Flask app created with config: development
+2025-11-04 21:49:41,679 - app - INFO - Debug mode: True
+2025-11-04 21:49:41,679 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-04 22:08:58,632 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-04 22:08:58,634 - app - INFO - Flask app created with config: development
+2025-11-04 22:08:58,634 - app - INFO - Debug mode: True
+2025-11-04 22:08:58,635 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-04 22:08:58,673 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-04 22:08:58,673 - app - INFO - Flask app created with config: development
+2025-11-04 22:08:58,674 - app - INFO - Debug mode: True
+2025-11-04 22:08:58,675 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-04 22:08:58,707 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-04 22:08:58,708 - app - INFO - Flask app created with config: development
+2025-11-04 22:08:58,708 - app - INFO - Debug mode: True
+2025-11-04 22:08:58,708 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-04 22:08:58,718 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-04 22:08:58,718 - app - INFO - Flask app created with config: development
+2025-11-04 22:08:58,718 - app - INFO - Debug mode: True
+2025-11-04 22:08:58,718 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-04 22:17:40,944 - app - ERROR - Unhandled exception: (psycopg2.errors.UndefinedTable) relation "users" does not exist
+LINE 2: FROM users 
+             ^
+
+[SQL: SELECT users.first_name AS users_first_name, users.last_name AS users_last_name, users.email AS users_email, users.password_hash AS users_password_hash, users.is_active AS users_is_active, users.id AS users_id, users.created_at AS users_created_at, users.updated_at AS users_updated_at, users.created_by AS users_created_by 
+FROM users 
+WHERE users.email = %(email_1)s 
+ LIMIT %(param_1)s]
+[parameters: {'email_1': 'john.doe@example.com', 'param_1': 1}]
+(Background on this error at: https://sqlalche.me/e/20/f405)
+Traceback (most recent call last):
+  File "/opt/venv/lib/python3.11/site-packages/sqlalchemy/engine/base.py", line 1967, in _exec_single_context
+    self.dialect.do_execute(
+  File "/opt/venv/lib/python3.11/site-packages/sqlalchemy/engine/default.py", line 951, in do_execute
+    cursor.execute(statement, parameters)
+psycopg2.errors.UndefinedTable: relation "users" does not exist
+LINE 2: FROM users 
+             ^
+
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/opt/venv/lib/python3.11/site-packages/flask/app.py", line 917, in full_dispatch_request
+    rv = self.dispatch_request()
+         ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/venv/lib/python3.11/site-packages/flask/app.py", line 902, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/app/app/routes/auth.py", line 190, in login
+    user = User.query.filter_by(email=data['email']).first()
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/venv/lib/python3.11/site-packages/sqlalchemy/orm/query.py", line 2759, in first
+    return self.limit(1)._iter().first()  # type: ignore
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/venv/lib/python3.11/site-packages/sqlalchemy/orm/query.py", line 2857, in _iter
+    result: Union[ScalarResult[_T], Result[_T]] = self.session.execute(
+                                                  ^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/venv/lib/python3.11/site-packages/sqlalchemy/orm/session.py", line 2351, in execute
+    return self._execute_internal(
+           ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/venv/lib/python3.11/site-packages/sqlalchemy/orm/session.py", line 2249, in _execute_internal
+    result: Result[Any] = compile_state_cls.orm_execute_statement(
+                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/venv/lib/python3.11/site-packages/sqlalchemy/orm/context.py", line 306, in orm_execute_statement
+    result = conn.execute(
+             ^^^^^^^^^^^^^
+  File "/opt/venv/lib/python3.11/site-packages/sqlalchemy/engine/base.py", line 1419, in execute
+    return meth(
+           ^^^^^
+  File "/opt/venv/lib/python3.11/site-packages/sqlalchemy/sql/elements.py", line 526, in _execute_on_connection
+    return connection._execute_clauseelement(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/venv/lib/python3.11/site-packages/sqlalchemy/engine/base.py", line 1641, in _execute_clauseelement
+    ret = self._execute_context(
+          ^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/venv/lib/python3.11/site-packages/sqlalchemy/engine/base.py", line 1846, in _execute_context
+    return self._exec_single_context(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/venv/lib/python3.11/site-packages/sqlalchemy/engine/base.py", line 1986, in _exec_single_context
+    self._handle_dbapi_exception(
+  File "/opt/venv/lib/python3.11/site-packages/sqlalchemy/engine/base.py", line 2355, in _handle_dbapi_exception
+    raise sqlalchemy_exception.with_traceback(exc_info[2]) from e
+  File "/opt/venv/lib/python3.11/site-packages/sqlalchemy/engine/base.py", line 1967, in _exec_single_context
+    self.dialect.do_execute(
+  File "/opt/venv/lib/python3.11/site-packages/sqlalchemy/engine/default.py", line 951, in do_execute
+    cursor.execute(statement, parameters)
+sqlalchemy.exc.ProgrammingError: (psycopg2.errors.UndefinedTable) relation "users" does not exist
+LINE 2: FROM users 
+             ^
+
+[SQL: SELECT users.first_name AS users_first_name, users.last_name AS users_last_name, users.email AS users_email, users.password_hash AS users_password_hash, users.is_active AS users_is_active, users.id AS users_id, users.created_at AS users_created_at, users.updated_at AS users_updated_at, users.created_by AS users_created_by 
+FROM users 
+WHERE users.email = %(email_1)s 
+ LIMIT %(param_1)s]
+[parameters: {'email_1': 'john.doe@example.com', 'param_1': 1}]
+(Background on this error at: https://sqlalche.me/e/20/f405)
+2025-11-04 22:17:45,658 - app - ERROR - Unhandled exception: (psycopg2.errors.UndefinedTable) relation "users" does not exist
+LINE 2: FROM users 
+             ^
+
+[SQL: SELECT users.first_name AS users_first_name, users.last_name AS users_last_name, users.email AS users_email, users.password_hash AS users_password_hash, users.is_active AS users_is_active, users.id AS users_id, users.created_at AS users_created_at, users.updated_at AS users_updated_at, users.created_by AS users_created_by 
+FROM users 
+WHERE users.email = %(email_1)s 
+ LIMIT %(param_1)s]
+[parameters: {'email_1': 'john.doe@example.com', 'param_1': 1}]
+(Background on this error at: https://sqlalche.me/e/20/f405)
+Traceback (most recent call last):
+  File "/opt/venv/lib/python3.11/site-packages/sqlalchemy/engine/base.py", line 1967, in _exec_single_context
+    self.dialect.do_execute(
+  File "/opt/venv/lib/python3.11/site-packages/sqlalchemy/engine/default.py", line 951, in do_execute
+    cursor.execute(statement, parameters)
+psycopg2.errors.UndefinedTable: relation "users" does not exist
+LINE 2: FROM users 
+             ^
+
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/opt/venv/lib/python3.11/site-packages/flask/app.py", line 917, in full_dispatch_request
+    rv = self.dispatch_request()
+         ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/venv/lib/python3.11/site-packages/flask/app.py", line 902, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/app/app/routes/auth.py", line 190, in login
+    user = User.query.filter_by(email=data['email']).first()
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/venv/lib/python3.11/site-packages/sqlalchemy/orm/query.py", line 2759, in first
+    return self.limit(1)._iter().first()  # type: ignore
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/venv/lib/python3.11/site-packages/sqlalchemy/orm/query.py", line 2857, in _iter
+    result: Union[ScalarResult[_T], Result[_T]] = self.session.execute(
+                                                  ^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/venv/lib/python3.11/site-packages/sqlalchemy/orm/session.py", line 2351, in execute
+    return self._execute_internal(
+           ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/venv/lib/python3.11/site-packages/sqlalchemy/orm/session.py", line 2249, in _execute_internal
+    result: Result[Any] = compile_state_cls.orm_execute_statement(
+                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/venv/lib/python3.11/site-packages/sqlalchemy/orm/context.py", line 306, in orm_execute_statement
+    result = conn.execute(
+             ^^^^^^^^^^^^^
+  File "/opt/venv/lib/python3.11/site-packages/sqlalchemy/engine/base.py", line 1419, in execute
+    return meth(
+           ^^^^^
+  File "/opt/venv/lib/python3.11/site-packages/sqlalchemy/sql/elements.py", line 526, in _execute_on_connection
+    return connection._execute_clauseelement(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/venv/lib/python3.11/site-packages/sqlalchemy/engine/base.py", line 1641, in _execute_clauseelement
+    ret = self._execute_context(
+          ^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/venv/lib/python3.11/site-packages/sqlalchemy/engine/base.py", line 1846, in _execute_context
+    return self._exec_single_context(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/venv/lib/python3.11/site-packages/sqlalchemy/engine/base.py", line 1986, in _exec_single_context
+    self._handle_dbapi_exception(
+  File "/opt/venv/lib/python3.11/site-packages/sqlalchemy/engine/base.py", line 2355, in _handle_dbapi_exception
+    raise sqlalchemy_exception.with_traceback(exc_info[2]) from e
+  File "/opt/venv/lib/python3.11/site-packages/sqlalchemy/engine/base.py", line 1967, in _exec_single_context
+    self.dialect.do_execute(
+  File "/opt/venv/lib/python3.11/site-packages/sqlalchemy/engine/default.py", line 951, in do_execute
+    cursor.execute(statement, parameters)
+sqlalchemy.exc.ProgrammingError: (psycopg2.errors.UndefinedTable) relation "users" does not exist
+LINE 2: FROM users 
+             ^
+
+[SQL: SELECT users.first_name AS users_first_name, users.last_name AS users_last_name, users.email AS users_email, users.password_hash AS users_password_hash, users.is_active AS users_is_active, users.id AS users_id, users.created_at AS users_created_at, users.updated_at AS users_updated_at, users.created_by AS users_created_by 
+FROM users 
+WHERE users.email = %(email_1)s 
+ LIMIT %(param_1)s]
+[parameters: {'email_1': 'john.doe@example.com', 'param_1': 1}]
+(Background on this error at: https://sqlalche.me/e/20/f405)
+2025-11-04 22:22:15,087 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-04 22:22:15,088 - app - INFO - Flask app created with config: development
+2025-11-04 22:22:15,091 - app - INFO - Debug mode: True
+2025-11-04 22:22:15,091 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-04 22:22:15,092 - app - INFO - Flask app created with config: development
+2025-11-04 22:22:15,091 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-04 22:22:15,093 - app - INFO - Debug mode: True
+2025-11-04 22:22:15,093 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-04 22:22:15,111 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-04 22:22:15,111 - app - INFO - Flask app created with config: development
+2025-11-04 22:22:15,112 - app - INFO - Debug mode: True
+2025-11-04 22:22:15,112 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-04 22:22:15,115 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-04 22:22:15,115 - app - INFO - Flask app created with config: development
+2025-11-04 22:22:15,116 - app - INFO - Debug mode: True
+2025-11-04 22:22:15,116 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-04 22:22:35,605 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-04 22:22:35,606 - app - INFO - Flask app created with config: development
+2025-11-04 22:22:35,606 - app - INFO - Debug mode: True
+2025-11-04 22:22:35,606 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-04 22:22:35,641 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-04 22:22:35,641 - app - INFO - Flask app created with config: development
+2025-11-04 22:22:35,643 - app - INFO - Debug mode: True
+2025-11-04 22:22:35,644 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-04 22:22:35,686 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-04 22:22:35,686 - app - INFO - Flask app created with config: development
+2025-11-04 22:22:35,686 - app - INFO - Debug mode: True
+2025-11-04 22:22:35,687 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-04 22:22:35,691 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-04 22:22:35,692 - app - INFO - Flask app created with config: development
+2025-11-04 22:22:35,692 - app - INFO - Debug mode: True
+2025-11-04 22:22:35,692 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-04 22:23:52,598 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-04 22:23:52,598 - app - INFO - Flask app created with config: development
+2025-11-04 22:23:52,599 - app - INFO - Debug mode: True
+2025-11-04 22:23:52,599 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-04 22:24:09,792 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-04 22:24:09,793 - app - INFO - Flask app created with config: development
+2025-11-04 22:24:09,793 - app - INFO - Debug mode: True
+2025-11-04 22:24:09,793 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-04 22:24:27,251 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-04 22:24:27,251 - app - INFO - Flask app created with config: development
+2025-11-04 22:24:27,251 - app - INFO - Debug mode: True
+2025-11-04 22:24:27,252 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...

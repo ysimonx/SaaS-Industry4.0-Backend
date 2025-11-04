@@ -76,7 +76,7 @@ COPY backend/ .
 # COPY swagger.yaml /app/swagger.yaml
 
 # Copy docker-entrypoint.sh for Vault integration
-COPY backend/docker-entrypoint.sh /docker-entrypoint.sh
+COPY docker/docker-entrypoint.sh /docker-entrypoint.sh
 
 # Create necessary directories and set permissions
 RUN mkdir -p logs && \
