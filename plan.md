@@ -377,6 +377,7 @@ pip install pytest
 pip install pytest-flask
 pip install pytest-mock
 pip install pytest-cov
+pip install hvac
 ```
 4. Generate requirements file: `pip freeze > requirements.txt`
 5. Move to `backend/requirements.txt`
