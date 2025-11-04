@@ -1290,26 +1290,316 @@ def list_documents(tenant_id, page=1, per_page=20, sort='created_at', order='des
    - Dead letter queue (future enhancement)
 ```
 
-### Environment Security
+### Environment Security with HashiCorp Vault
+
+The platform integrates **HashiCorp Vault** for centralized secrets management, providing secure storage and access control for sensitive configuration data.
 
 ```
-Required Environment Variables (Secrets):
-- JWT_SECRET_KEY           (64+ character random string)
-- DATABASE_URL             (PostgreSQL connection string)
-- AWS_ACCESS_KEY_ID        (S3 access)
-- AWS_SECRET_ACCESS_KEY    (S3 secret)
-- S3_BUCKET_NAME
-- KAFKA_BOOTSTRAP_SERVERS
+┌─────────────────────────────────────────────────────────────────┐
+│                    Vault Secrets Architecture                    │
+└─────────────────────────────────────────────────────────────────┘
 
-Production Checklist:
-✓ Change all default passwords
-✓ Generate strong JWT secret
-✓ Use IAM roles instead of AWS keys (if on EC2)
-✓ Enable database SSL connections
-✓ Configure firewall rules (only allow necessary ports)
-✓ Enable API rate limiting
-✓ Configure CORS properly
-✓ Use secrets management (AWS Secrets Manager, HashiCorp Vault)
+┌──────────────────┐         ┌──────────────────┐
+│  HashiCorp Vault │         │   Application    │
+│                  │         │                  │
+│  KV Secrets:     │◄────────│  vault-wrapper.sh│
+│  - JWT_SECRET    │  HTTPS  │  loads secrets   │
+│  - DB_PASSWORD   │         │  at startup      │
+│  - AWS_KEYS      │         │                  │
+│  - API_TOKENS    │         │  Flask API       │
+└──────────────────┘         │  Workers         │
+                             └──────────────────┘
+
+Benefits:
+- Centralized secrets management
+- Audit logging of all secret access
+- Dynamic secret rotation capability
+- Encryption at rest and in transit
+- Fine-grained access control policies
+```
+
+#### Vault Integration Components
+
+```python
+# backend/vault-wrapper.sh
+#!/bin/sh
+# Wrapper script that loads secrets from Vault before starting the application
+# Used for Flask commands that need environment variables
+
+# 1. Authenticate with Vault
+vault login -method=token token=$VAULT_TOKEN
+
+# 2. Load secrets into environment
+export JWT_SECRET_KEY=$(vault kv get -field=jwt_secret secret/saas-platform)
+export DATABASE_PASSWORD=$(vault kv get -field=db_password secret/saas-platform)
+export AWS_SECRET_ACCESS_KEY=$(vault kv get -field=aws_secret secret/saas-platform)
+
+# 3. Execute Flask command with loaded secrets
+exec flask "$@"
+```
+
+#### Docker Integration with Vault
+
+```yaml
+# docker-compose.yml Vault service configuration
+vault:
+  image: hashicorp/vault:latest
+  container_name: vault
+  cap_add:
+    - IPC_LOCK
+  environment:
+    VAULT_DEV_ROOT_TOKEN_ID: root-token
+    VAULT_DEV_LISTEN_ADDRESS: 0.0.0.0:8200
+  ports:
+    - "8200:8200"
+  command: server -dev
+  healthcheck:
+    test: ["CMD", "vault", "status"]
+    interval: 5s
+    timeout: 3s
+    retries: 5
+
+# Application service configuration
+api:
+  depends_on:
+    vault:
+      condition: service_healthy
+  environment:
+    VAULT_ADDR: http://vault:8200
+    VAULT_TOKEN: root-token
+  volumes:
+    - ./backend/vault-wrapper.sh:/app/vault-wrapper.sh
+    - ./backend/flask-wrapper.sh:/app/flask-wrapper.sh
+```
+
+#### Secret Storage Structure in Vault
+
+```bash
+# Vault KV secrets path structure
+secret/
+├── saas-platform/           # Main application secrets
+│   ├── jwt_secret           # JWT signing key
+│   ├── db_password          # PostgreSQL password
+│   ├── db_user              # PostgreSQL username
+│   ├── aws_access_key       # AWS access key ID
+│   ├── aws_secret          # AWS secret access key
+│   └── kafka_credentials    # Kafka authentication
+├── saas-platform/tenants/   # Per-tenant secrets (if needed)
+│   └── {tenant_id}/
+│       └── encryption_key   # Tenant-specific encryption
+└── saas-platform/api-keys/  # Third-party API keys
+    ├── sendgrid_key
+    ├── stripe_key
+    └── oauth_secrets
+```
+
+#### Vault Commands for Secret Management
+
+```bash
+# Initialize Vault secrets (run once during setup)
+docker-compose exec vault sh -c '
+  vault kv put secret/saas-platform \
+    jwt_secret="$(openssl rand -base64 64)" \
+    db_password="secure_password_here" \
+    db_user="postgres" \
+    aws_access_key="AKIA..." \
+    aws_secret="secret_key_here"
+'
+
+# Read a secret
+docker-compose exec vault vault kv get secret/saas-platform
+
+# Update a specific secret
+docker-compose exec vault vault kv patch secret/saas-platform \
+  jwt_secret="new_secret_value"
+
+# List all secrets
+docker-compose exec vault vault kv list secret/
+
+# Enable audit logging
+docker-compose exec vault vault audit enable file \
+  file_path=/vault/logs/audit.log
+```
+
+#### Flask Command Wrapper for Vault
+
+```bash
+# backend/flask-wrapper.sh
+#!/bin/sh
+# Wrapper for Flask commands that loads Vault secrets
+
+if [ -z "$VAULT_ADDR" ] || [ -z "$VAULT_TOKEN" ]; then
+    echo "Warning: Vault not configured, using environment variables directly"
+    exec flask "$@"
+    exit $?
+fi
+
+# Load secrets from Vault
+eval $(docker-compose exec -T vault sh -c "
+    vault kv get -format=json secret/saas-platform | \
+    jq -r '.data.data | to_entries[] | \"export \" + (.key | ascii_upcase) + \"=\" + (.value | @sh)'
+")
+
+# Execute Flask command with loaded secrets
+exec flask "$@"
+```
+
+#### Application Code Integration
+
+```python
+# backend/app/config.py
+import os
+from app.utils.vault_client import VaultClient
+
+class Config:
+    """Base configuration with Vault integration"""
+
+    def __init__(self):
+        # Try to load from Vault first, fallback to env vars
+        vault_client = VaultClient()
+        if vault_client.is_available():
+            secrets = vault_client.get_secrets('secret/saas-platform')
+            self.JWT_SECRET_KEY = secrets.get('jwt_secret',
+                                             os.getenv('JWT_SECRET_KEY'))
+            self.DATABASE_PASSWORD = secrets.get('db_password',
+                                                os.getenv('DATABASE_PASSWORD'))
+        else:
+            # Fallback to environment variables
+            self.JWT_SECRET_KEY = os.getenv('JWT_SECRET_KEY')
+            self.DATABASE_PASSWORD = os.getenv('DATABASE_PASSWORD')
+
+# backend/app/utils/vault_client.py
+import hvac
+import os
+import logging
+
+logger = logging.getLogger(__name__)
+
+class VaultClient:
+    """Client for HashiCorp Vault integration"""
+
+    def __init__(self):
+        self.vault_addr = os.getenv('VAULT_ADDR')
+        self.vault_token = os.getenv('VAULT_TOKEN')
+        self.client = None
+
+        if self.vault_addr and self.vault_token:
+            try:
+                self.client = hvac.Client(
+                    url=self.vault_addr,
+                    token=self.vault_token
+                )
+                if not self.client.is_authenticated():
+                    logger.warning("Vault authentication failed")
+                    self.client = None
+            except Exception as e:
+                logger.warning(f"Vault connection failed: {e}")
+                self.client = None
+
+    def is_available(self):
+        """Check if Vault is available and authenticated"""
+        return self.client is not None and self.client.is_authenticated()
+
+    def get_secrets(self, path):
+        """Retrieve secrets from Vault KV store"""
+        if not self.is_available():
+            return {}
+
+        try:
+            response = self.client.secrets.kv.v2.read_secret_version(
+                path=path.replace('secret/', '')
+            )
+            return response['data']['data']
+        except Exception as e:
+            logger.error(f"Failed to retrieve secrets from {path}: {e}")
+            return {}
+
+    def set_secret(self, path, key, value):
+        """Store a secret in Vault"""
+        if not self.is_available():
+            return False
+
+        try:
+            current_secrets = self.get_secrets(path)
+            current_secrets[key] = value
+            self.client.secrets.kv.v2.create_or_update_secret(
+                path=path.replace('secret/', ''),
+                secret=current_secrets
+            )
+            return True
+        except Exception as e:
+            logger.error(f"Failed to store secret at {path}/{key}: {e}")
+            return False
+```
+
+#### Security Best Practices with Vault
+
+```
+Production Security Checklist with Vault:
+✓ Use Vault in production mode (not dev mode)
+✓ Configure proper Vault backend (Consul, etcd, or integrated storage)
+✓ Enable TLS for Vault API endpoints
+✓ Use AppRole or Kubernetes auth instead of root tokens
+✓ Implement secret rotation policies
+✓ Enable audit logging for all secret access
+✓ Use separate Vault namespaces for environments
+✓ Implement least-privilege access policies
+✓ Regular backup of Vault data
+✓ Monitor Vault metrics and health
+
+Vault Policy Example (backend/vault/policies/app-policy.hcl):
+path "secret/data/saas-platform/*" {
+  capabilities = ["read", "list"]
+}
+
+path "secret/metadata/saas-platform/*" {
+  capabilities = ["list"]
+}
+
+# Deny access to other paths
+path "secret/data/*" {
+  capabilities = ["deny"]
+}
+```
+
+#### Migration from Environment Variables to Vault
+
+```bash
+# Script to migrate existing .env to Vault
+#!/bin/bash
+# backend/scripts/migrate_to_vault.sh
+
+# Read .env file and push to Vault
+while IFS='=' read -r key value; do
+    if [[ ! -z "$key" && ! "$key" =~ ^# ]]; then
+        # Convert key to lowercase for Vault
+        vault_key=$(echo "$key" | tr '[:upper:]' '[:lower:]')
+        # Remove quotes from value
+        clean_value=$(echo "$value" | sed 's/^"//;s/"$//')
+        # Store in Vault
+        docker-compose exec vault vault kv patch secret/saas-platform \
+            "${vault_key}=${clean_value}"
+    fi
+done < .env
+
+echo "Secrets migrated to Vault successfully"
+```
+
+### Environment Security Summary
+
+```
+Secret Management Architecture:
+├── Development Environment
+│   ├── Local Vault in dev mode
+│   └── Fallback to .env files
+├── Testing/Staging
+│   ├── Vault with file backend
+│   └── Separate namespace
+└── Production
+    ├── Vault cluster (HA mode)
+    ├── Auto-unseal with KMS
+    ├── Audit logging to SIEM
+    └── Secret rotation automation
 ```
 
 ---

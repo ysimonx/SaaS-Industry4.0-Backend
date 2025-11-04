@@ -21,6 +21,7 @@ A production-ready, scalable multi-tenant SaaS backend platform built with Flask
   - [Option 1: Docker (Recommended)](#option-1-docker-recommended)
   - [Option 2: Local Development](#option-2-local-development)
 - [Environment Variables](#environment-variables)
+- [HashiCorp Vault Integration](#hashicorp-vault-integration)
 - [Database Migrations](#database-migrations)
 - [API Documentation](#api-documentation)
 - [Testing](#testing)
@@ -124,6 +125,7 @@ This approach provides:
 - **Flask-JWT-Extended 4.6**: JWT token management
 - **bcrypt 4.1**: Password hashing
 - **cryptography 42.0**: Encryption utilities
+- **HashiCorp Vault**: Centralized secrets management and encryption
 
 ### Database
 - **PostgreSQL 14+**: Primary database (multi-database support)
@@ -676,6 +678,132 @@ LOG_FILE=logs/app.log              # Log file path
 
 ---
 
+## HashiCorp Vault Integration
+
+The platform supports **HashiCorp Vault** for centralized, secure secrets management as an alternative to environment variables.
+
+### Vault Features
+
+- **Centralized Secrets**: All secrets stored in one secure location
+- **Audit Logging**: Track all secret access and modifications
+- **Dynamic Rotation**: Automatically rotate secrets without downtime
+- **Encryption**: Secrets encrypted at rest and in transit
+- **Access Control**: Fine-grained policies for secret access
+
+### Vault Setup with Docker
+
+The platform includes Vault as an optional service in Docker Compose:
+
+```bash
+# Start all services including Vault
+docker-compose up -d
+
+# Vault will be available at http://localhost:8200
+# Default token (dev mode): root-token
+```
+
+### Storing Secrets in Vault
+
+```bash
+# Initialize secrets in Vault (run once)
+docker-compose exec vault sh -c '
+  vault kv put secret/saas-platform \
+    jwt_secret="$(openssl rand -base64 64)" \
+    db_password="secure_password_here" \
+    db_user="postgres" \
+    aws_access_key="AKIA..." \
+    aws_secret="secret_key_here"
+'
+
+# View stored secrets
+docker-compose exec vault vault kv get secret/saas-platform
+
+# Update a specific secret
+docker-compose exec vault vault kv patch secret/saas-platform \
+  jwt_secret="new_secret_value"
+```
+
+### Using Vault with Flask Commands
+
+**Important**: When using Vault, Flask commands in Docker must use the wrapper script `/app/flask-wrapper.sh`:
+
+```bash
+# Database migrations with Vault
+docker-compose exec api /app/flask-wrapper.sh db upgrade
+
+# Create new migration with Vault
+docker-compose exec api /app/flask-wrapper.sh db migrate -m "Add new field"
+
+# Any Flask command with Vault secrets
+docker-compose exec api /app/flask-wrapper.sh <command>
+```
+
+The wrapper script automatically:
+1. Connects to Vault
+2. Retrieves secrets
+3. Sets them as environment variables
+4. Executes the Flask command
+
+### Migrating from .env to Vault
+
+If you have existing `.env` files, you can migrate them to Vault:
+
+```bash
+# Use the migration script
+./backend/scripts/migrate_to_vault.sh
+
+# Or manually migrate specific secrets
+docker-compose exec vault vault kv put secret/saas-platform \
+  jwt_secret="$JWT_SECRET_KEY" \
+  db_password="$DATABASE_PASSWORD"
+```
+
+### Vault in Production
+
+For production deployments:
+
+1. **Use Production Mode**: Don't use dev mode
+   ```yaml
+   vault:
+     command: server  # Remove -dev flag
+   ```
+
+2. **Configure Storage Backend**: Use Consul, etcd, or integrated storage
+3. **Enable TLS**: Secure all Vault communications
+4. **Use AppRole Authentication**: Instead of root tokens
+5. **Set Up Policies**: Restrict access to specific paths
+6. **Enable Audit Logging**: Track all operations
+7. **Backup Regularly**: Ensure you can recover secrets
+
+Example production policy:
+```hcl
+# backend/vault/policies/app-policy.hcl
+path "secret/data/saas-platform/*" {
+  capabilities = ["read", "list"]
+}
+```
+
+### Application Integration
+
+The application automatically detects and uses Vault if configured:
+
+```python
+# backend/app/config.py
+# Automatically tries Vault first, falls back to env vars
+if vault_available():
+    load_secrets_from_vault()
+else:
+    load_from_environment()
+```
+
+### Vault UI Access
+
+Vault provides a web UI for managing secrets:
+- URL: http://localhost:8200/ui
+- Token: `root-token` (dev mode)
+
+---
+
 ## Database Migrations
 
 The platform uses two different migration systems depending on the tables:
@@ -1211,18 +1339,20 @@ Before deploying to production, ensure:
 
 - [ ] Change `JWT_SECRET_KEY` to a strong random value (64+ characters)
 - [ ] Use strong database passwords (16+ characters, mixed case, numbers, symbols)
-- [ ] Enable SSL/TLS for all connections (database, Kafka, S3)
+- [ ] Enable SSL/TLS for all connections (database, Kafka, S3, Vault)
 - [ ] Restrict CORS origins to production domains only
 - [ ] Set `FLASK_ENV=production` and `FLASK_DEBUG=0`
 - [ ] Configure rate limiting with Redis
 - [ ] Set up external logging service (Sentry, CloudWatch, etc.)
 - [ ] Configure monitoring and alerting (Prometheus, Grafana, etc.)
-- [ ] Implement backup strategy for databases and S3
+- [ ] Implement backup strategy for databases, S3, and Vault
 - [ ] Set up CDN for static assets
 - [ ] Configure load balancer with health checks
 - [ ] Enable auto-scaling policies
 - [ ] Document disaster recovery plan
-- [ ] Use secrets management solution (AWS Secrets Manager, Vault, etc.)
+- [ ] Configure HashiCorp Vault for production (no dev mode, proper backend, TLS)
+- [ ] Set up Vault policies and audit logging
+- [ ] Implement secret rotation strategy with Vault
 - [ ] Configure security headers (CSP, HSTS, etc.)
 - [ ] Set up email service (SendGrid, Mailgun, etc.)
 - [ ] Test all endpoints with production data volumes
