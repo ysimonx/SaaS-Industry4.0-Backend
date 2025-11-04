@@ -28,7 +28,7 @@ from app.config import config, get_config
 from app.extensions import db, migrate, jwt, cors
 
 
-def create_app(config_name=None):
+def create_app(config_name=None, vault_client=None):
     """
     Application factory function to create and configure Flask app instance.
 
@@ -38,16 +38,20 @@ def create_app(config_name=None):
     Args:
         config_name: Configuration name ('development', 'production', 'testing')
                     If None, uses FLASK_ENV environment variable or defaults to 'development'
+        vault_client: Optional VaultClient instance for loading secrets from Vault
+                     If provided and USE_VAULT=true, configuration will be loaded from Vault
 
     Returns:
         Flask: Configured Flask application instance
 
     Example:
-        # Create development app
+        # Create development app without Vault
         app = create_app('development')
 
-        # Create production app
-        app = create_app('production')
+        # Create production app with Vault
+        vault_client = VaultClient()
+        vault_client.authenticate()
+        app = create_app('production', vault_client=vault_client)
 
         # Create test app
         app = create_app('testing')
@@ -61,6 +65,23 @@ def create_app(config_name=None):
 
     config_class = config.get(config_name, config['default'])
     app.config.from_object(config_class)
+
+    # Load secrets from Vault if enabled and client provided
+    if vault_client and app.config.get('USE_VAULT', False):
+        app.logger.info("Loading configuration from Vault...")
+        try:
+            config_class.load_from_vault(vault_client)
+            # Reload config to get Vault values
+            app.config.from_object(config_class)
+            app.logger.info("Configuration loaded from Vault successfully")
+
+            # Store vault_client in app context for token renewal
+            app.vault_client = vault_client
+        except Exception as e:
+            app.logger.error(f"Failed to load configuration from Vault: {e}")
+            app.logger.warning("Falling back to environment variables")
+    else:
+        app.logger.info("Vault not enabled - using configuration from environment variables")
 
     # Initialize configuration (calls init_app on config class)
     config_class.init_app(app)
