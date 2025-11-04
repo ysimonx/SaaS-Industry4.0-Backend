@@ -75,12 +75,21 @@ COPY backend/ .
 # Copy swagger.yaml from project root for API documentation
 COPY swagger.yaml /app/swagger.yaml
 
+# Copy docker-entrypoint.sh for Vault integration
+COPY backend/docker-entrypoint.sh /docker-entrypoint.sh
+
 # Create necessary directories and set permissions
 RUN mkdir -p logs && \
     chown -R appuser:appuser /app
 
+# Make entrypoint executable (as root before switching user)
+RUN chmod +x /docker-entrypoint.sh
+
 # Switch to non-root user
 USER appuser
+
+# Set entrypoint for Vault credential loading
+ENTRYPOINT ["/docker-entrypoint.sh"]
 
 # Expose port 4999 (Flask API port)
 EXPOSE 4999
