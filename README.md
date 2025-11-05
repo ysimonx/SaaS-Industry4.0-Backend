@@ -59,37 +59,37 @@ This platform provides a complete SaaS backend solution with the following capab
 
 ```
 ┌─────────────────────────────────────────────────────────────────┐
-│                          Client Layer                            │
-│                     (Web/Mobile/Desktop)                         │
+│                          Client Layer                           │
+│                     (Web/Mobile/Desktop)                        │
 └────────────────────────────┬────────────────────────────────────┘
                              │ HTTPS/REST
                              ▼
 ┌─────────────────────────────────────────────────────────────────┐
-│                      Load Balancer / CDN                         │
+│                      Load Balancer / CDN                        │
 └────────────────────────────┬────────────────────────────────────┘
                              │
                              ▼
 ┌─────────────────────────────────────────────────────────────────┐
-│                    Flask API Server (Gunicorn)                   │
-│  ┌─────────────┐  ┌──────────────┐  ┌─────────────────────┐   │
-│  │   Routes    │→ │   Services   │→ │  Models/Schemas     │   │
-│  │ (REST APIs) │  │(Business Logic)│ │  (Validation)       │   │
-│  └─────────────┘  └──────────────┘  └─────────────────────┘   │
+│                    Flask API Server (Gunicorn)                  │
+│  ┌─────────────┐  ┌────────────────┐  ┌─────────────────────┐   │
+│  │   Routes    │→ │   Services     │→ │  Models/Schemas     │   │
+│  │ (REST APIs) │  │(Business Logic)│  │  (Validation)       │   │
+│  └─────────────┘  └────────────────┘  └─────────────────────┘   │
 └────────────────────────────┬────────────────────────────────────┘
                              │
-         ┌───────────────────┼───────────────────┐
-         │                   │                   │
-         ▼                   ▼                   ▼
-┌─────────────────┐  ┌──────────────┐  ┌─────────────────┐
-│   PostgreSQL    │  │    Kafka     │  │  MinIO (S3)     │
-│                 │  │              │  │                 │
-│  Main Database: │  │  Message     │  │  File Storage:  │
-│  - Users        │  │  Broker:     │  │  - Documents    │
-│  - Tenants      │  │  - Events    │  │  - Uploads      │
-│  - Associations │  │  - Async Jobs│  │  - Backups      │
-│                 │  │              │  │                 │
-│  Tenant DBs:    │  └──────┬───────┘  └─────────────────┘
-│  - Documents    │         │
+         ┌───────────────────┼───────────────────┬────────────────┐
+         │                   │                   │                │
+         ▼                   ▼                   ▼                ▼
+┌─────────────────┐  ┌──────────────┐  ┌─────────────────┐  ┌───────────────┐
+│   PostgreSQL    │  │    Kafka     │  │  MinIO (S3)     │  │HashiCorp Vault│
+│                 │  │              │  │                 │  │               │
+│  Main Database: │  │  Message     │  │  File Storage:  │  │Secrets Mgmt:  │
+│  - Users        │  │  Broker:     │  │  - Documents    │  │  - DB Creds   │
+│  - Tenants      │  │  - Events    │  │  - Uploads      │  │  - JWT Keys   │
+│  - Associations │  │  - Async Jobs│  │  - Backups      │  │  - S3 Keys    │
+│                 │  │              │  │                 │  │  - Encryption │
+│  Tenant DBs:    │  └──────┬───────┘  └─────────────────┘  │  - Audit Log  │
+│  - Documents    │         │                               └───────────────┘
 │  - Files        │         ▼
 │  (Isolated)     │  ┌──────────────┐
 └─────────────────┘  │Kafka Consumer│

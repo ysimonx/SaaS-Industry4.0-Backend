@@ -1318,58 +1318,231 @@ Benefits:
 - Fine-grained access control policies
 ```
 
-#### Vault Integration Components
+#### Vault Storage Backend Configuration
 
-```python
-# backend/vault-wrapper.sh
-#!/bin/sh
-# Wrapper script that loads secrets from Vault before starting the application
-# Used for Flask commands that need environment variables
+The platform uses HashiCorp Vault with **persistent file storage** for development and production, ensuring secrets survive container restarts.
 
-# 1. Authenticate with Vault
-vault login -method=token token=$VAULT_TOKEN
+```hcl
+# vault/config/vault.hcl - Configuration de Vault
 
-# 2. Load secrets into environment
-export JWT_SECRET_KEY=$(vault kv get -field=jwt_secret secret/saas-platform)
-export DATABASE_PASSWORD=$(vault kv get -field=db_password secret/saas-platform)
-export AWS_SECRET_ACCESS_KEY=$(vault kv get -field=aws_secret secret/saas-platform)
+# Interface d'écoute HTTP
+listener "tcp" {
+  address     = "0.0.0.0:8200"
+  tls_disable = 1  # TLS géré par le load balancer en production
+}
 
-# 3. Execute Flask command with loaded secrets
-exec flask "$@"
+# Backend de stockage persistant sur disque
+storage "file" {
+  path = "/vault/data"
+}
+
+# Configuration API
+api_addr = "http://0.0.0.0:8200"
+
+# Interface utilisateur Web activée
+ui = true
+
+# Désactiver mlock pour Docker (géré par IPC_LOCK capability)
+disable_mlock = true
+
+# Niveau de logs
+log_level = "info"
 ```
+
+**Bénéfices du stockage File:**
+- Persistance des secrets entre redémarrages de conteneurs
+- Simplicité de déploiement (pas de dépendance externe)
+- Facilite la sauvegarde (simple copie du répertoire `/vault/data`)
+- Convient pour développement et petite production
+
+**Note:** En production à grande échelle, envisager Consul ou Integrated Storage (Raft) pour haute disponibilité.
+
+#### Vault Initialization and Unseal Process
+
+Vault requires initialization and unsealing before use. The platform automates this with dedicated containers:
+
+**1. Initialization Process** ([vault/scripts/unseal-vault.sh](vault/scripts/unseal-vault.sh)):
+```bash
+# Automatically initializes Vault with:
+# - 5 unseal keys (Shamir's Secret Sharing)
+# - Threshold of 3 keys required to unseal
+# - Saves unseal keys to /vault/data/unseal-keys.json
+# - Saves root token to /vault/data/root-token.txt
+# - Automatically unseals Vault after initialization
+
+vault operator init -key-shares=5 -key-threshold=3 -format=json
+```
+
+**2. Auto-Unseal on Restart** ([vault/scripts/unseal-vault.sh](vault/scripts/unseal-vault.sh)):
+```bash
+# On container restart, automatically:
+# - Detects if Vault is sealed
+# - Reads unseal keys from persisted file
+# - Applies 3 of 5 keys to unseal Vault
+# - Makes Vault ready for application use
+
+vault operator unseal $UNSEAL_KEY_1
+vault operator unseal $UNSEAL_KEY_2
+vault operator unseal $UNSEAL_KEY_3
+```
+
+**3. Secrets Injection** ([vault/scripts/init-vault.sh](vault/scripts/init-vault.sh)):
+```bash
+# Injects application secrets into Vault from environment-specific files
+# Source: vault/init-data/{environment}.env (docker, dev, prod)
+
+# Database secrets
+vault kv put secret/saas-project/${VAULT_ENV}/database \
+  main_url="$DATABASE_URL" \
+  tenant_url_template="$TENANT_DATABASE_URL_TEMPLATE"
+
+# JWT secrets
+vault kv put secret/saas-project/${VAULT_ENV}/jwt \
+  secret_key="$JWT_SECRET_KEY" \
+  access_token_expires="900"
+
+# S3 secrets
+vault kv put secret/saas-project/${VAULT_ENV}/s3 \
+  endpoint_url="$S3_ENDPOINT_URL" \
+  access_key_id="$S3_ACCESS_KEY_ID" \
+  secret_access_key="$S3_SECRET_ACCESS_KEY" \
+  bucket_name="saas-documents" \
+  region="us-east-1"
+```
+
+#### AppRole Authentication Method
+
+The platform uses **AppRole** authentication (recommended for applications) instead of root tokens:
+
+```bash
+# 1. Enable AppRole authentication
+vault auth enable approle
+
+# 2. Create access policy for the application
+vault policy write saas-app-policy-${VAULT_ENV} - <<EOF
+# Read access to application secrets
+path "secret/data/saas-project/${VAULT_ENV}/*" {
+  capabilities = ["read"]
+}
+
+# List access to secret metadata
+path "secret/metadata/saas-project/${VAULT_ENV}/*" {
+  capabilities = ["list", "read"]
+}
+
+# Token renewal capability
+path "auth/token/renew-self" {
+  capabilities = ["update"]
+}
+
+# Token lookup capability
+path "auth/token/lookup-self" {
+  capabilities = ["read"]
+}
+EOF
+
+# 3. Create AppRole with policy
+vault write auth/approle/role/saas-app-role-${VAULT_ENV} \
+  token_policies="saas-app-policy-${VAULT_ENV}" \
+  token_ttl=1h \
+  token_max_ttl=4h \
+  secret_id_ttl=0 \
+  secret_id_num_uses=0
+
+# 4. Generate credentials for application
+ROLE_ID=$(vault read -field=role_id auth/approle/role/saas-app-role-${VAULT_ENV}/role-id)
+SECRET_ID=$(vault write -field=secret_id -f auth/approle/role/saas-app-role-${VAULT_ENV}/secret-id)
+```
+
+**AppRole Benefits:**
+- No need to distribute root token
+- Scoped permissions (least privilege)
+- Audit trail per role
+- Renewable tokens with TTL
+- Separate credentials per environment
 
 #### Docker Integration with Vault
 
 ```yaml
-# docker-compose.yml Vault service configuration
-vault:
-  image: hashicorp/vault:latest
-  container_name: vault
-  cap_add:
-    - IPC_LOCK
-  environment:
-    VAULT_DEV_ROOT_TOKEN_ID: root-token
-    VAULT_DEV_LISTEN_ADDRESS: 0.0.0.0:8200
-  ports:
-    - "8201:8200"  # Port 8201 on host (8200 often used by OneDrive on macOS)
-  command: server -dev
-  healthcheck:
-    test: ["CMD", "vault", "status"]
-    interval: 5s
-    timeout: 3s
-    retries: 5
+# docker-compose.yml - Complete Vault setup with auto-initialization
 
-# Application service configuration
-api:
-  depends_on:
-    vault:
-      condition: service_healthy
-  environment:
-    VAULT_ADDR: http://vault:8200
-    VAULT_TOKEN: root-token
-  volumes:
-    - ./backend/vault-wrapper.sh:/app/vault-wrapper.sh
-    - ./backend/flask-wrapper.sh:/app/flask-wrapper.sh
+services:
+  # 1. Main Vault Server with persistent storage
+  vault:
+    image: hashicorp/vault:1.15
+    container_name: saas-vault
+    cap_add:
+      - IPC_LOCK  # Prevent memory swapping for secrets
+    environment:
+      VAULT_ADDR: "http://0.0.0.0:8200"
+      VAULT_API_ADDR: "http://0.0.0.0:8200"
+    ports:
+      - "8201:8200"  # Port 8201 on host (8200 often used by OneDrive on macOS)
+    volumes:
+      - ./vault/config:/vault/config:ro      # Vault configuration
+      - ./vault/data:/vault/data             # Persistent storage for secrets
+      - ./vault/logs:/vault/logs             # Audit logs
+    command: sh -c "chown -R vault:vault /vault/data && exec su-exec vault vault server -config=/vault/config"
+    healthcheck:
+      test: ["CMD", "vault", "status", "-format=json"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # 2. Auto-unseal container (runs once on startup)
+  vault-unseal:
+    image: hashicorp/vault:1.15
+    container_name: saas-vault-unseal
+    depends_on:
+      vault:
+        condition: service_healthy
+    environment:
+      VAULT_ADDR: "http://vault:8200"
+    volumes:
+      - ./vault/scripts:/scripts:ro
+      - ./vault/data:/vault/data  # Access to unseal keys
+    command: /scripts/unseal-vault.sh
+    restart: "no"  # Run once only
+
+  # 3. Secrets initialization container (runs once after unseal)
+  vault-init:
+    image: hashicorp/vault:1.15
+    container_name: saas-vault-init
+    depends_on:
+      vault-unseal:
+        condition: service_completed_successfully
+    environment:
+      VAULT_ADDR: "http://vault:8200"
+      VAULT_ENV: "${VAULT_ENV:-docker}"  # Environment: dev, docker, prod
+    volumes:
+      - ./vault/scripts:/scripts:ro
+      - ./vault/init-data:/init-data:ro   # Source .env files with secrets
+      - ./vault/data:/vault/data          # Access to root token
+      - ./.env.vault:/.env.vault:rw       # Output AppRole credentials
+    command: /scripts/init-vault.sh
+    restart: "no"  # Run once only
+
+  # 4. Application API (uses Vault)
+  api:
+    depends_on:
+      vault:
+        condition: service_healthy
+      vault-init:
+        condition: service_completed_successfully
+    environment:
+      USE_VAULT: "true"
+      VAULT_ENVIRONMENT: "docker"
+    volumes:
+      - ./.env.vault:/.env.vault:ro  # AppRole credentials (read-only)
+      - ./backend/flask-wrapper.sh:/app/flask-wrapper.sh  # Loads Vault vars
+```
+
+**Container Orchestration Flow:**
+```
+1. vault          → Starts, healthcheck waits for ready
+2. vault-unseal   → Waits for vault healthy, then unseals
+3. vault-init     → Waits for unseal complete, injects secrets & creates AppRole
+4. api/worker     → Waits for init complete, connects with AppRole credentials
 ```
 
 #### Secret Storage Structure in Vault
@@ -1395,171 +1568,739 @@ secret/
 
 #### Vault Commands for Secret Management
 
+**Essential Vault CLI Commands:**
+
 ```bash
-# Initialize Vault secrets (run once during setup)
-docker-compose exec vault sh -c '
-  vault kv put secret/saas-platform \
-    jwt_secret="$(openssl rand -base64 64)" \
-    db_password="secure_password_here" \
-    db_user="postgres" \
-    aws_access_key="AKIA..." \
-    aws_secret="secret_key_here"
-'
+# 1. Check Vault status
+docker-compose exec vault vault status
 
-# Read a secret
-docker-compose exec vault vault kv get secret/saas-platform
+# 2. List all secrets (requires authentication)
+docker-compose exec vault vault kv list secret/saas-project/
 
-# Update a specific secret
-docker-compose exec vault vault kv patch secret/saas-platform \
-  jwt_secret="new_secret_value"
+# 3. Read secrets for a specific environment
+docker-compose exec vault vault kv get secret/saas-project/docker/database
+docker-compose exec vault vault kv get secret/saas-project/docker/jwt
+docker-compose exec vault vault kv get secret/saas-project/docker/s3
 
-# List all secrets
-docker-compose exec vault vault kv list secret/
+# 4. Update a specific secret field
+docker-compose exec vault vault kv patch secret/saas-project/docker/jwt \
+  secret_key="new_jwt_secret_$(openssl rand -base64 64)"
 
-# Enable audit logging
+# 5. Add a new secret category
+docker-compose exec vault vault kv put secret/saas-project/docker/email \
+  smtp_host="smtp.gmail.com" \
+  smtp_port="587" \
+  smtp_user="your-email@gmail.com" \
+  smtp_password="your-app-password"
+
+# 6. Delete a secret (use with caution!)
+docker-compose exec vault vault kv delete secret/saas-project/docker/database
+
+# 7. View secret metadata (versions, created_time, etc.)
+docker-compose exec vault vault kv metadata get secret/saas-project/docker/database
+
+# 8. Retrieve a specific secret version
+docker-compose exec vault vault kv get -version=2 secret/saas-project/docker/jwt
+
+# 9. Enable audit logging
 docker-compose exec vault vault audit enable file \
   file_path=/vault/logs/audit.log
+
+# 10. View Vault policies
+docker-compose exec vault vault policy list
+docker-compose exec vault vault policy read saas-app-policy-docker
+
+# 11. List AppRole roles
+docker-compose exec vault vault list auth/approle/role
+
+# 12. Rotate Secret ID for AppRole (invalidates old credentials)
+docker-compose exec vault vault write -f auth/approle/role/saas-app-role-docker/secret-id
+
+# 13. Access Vault Web UI
+# Navigate to: http://localhost:8201/ui
+# Login with root token from: ./vault/data/root-token.txt
+```
+
+**Secrets Initialization from File:**
+
+```bash
+# Create environment-specific secrets file
+cat > vault/init-data/docker.env <<EOF
+DATABASE_URL=postgresql://saas_user:saas_password@postgres:5432/saas_main
+TENANT_DATABASE_URL_TEMPLATE=postgresql://saas_user:saas_password@postgres:5432/{database_name}
+JWT_SECRET_KEY=$(openssl rand -base64 64)
+JWT_ACCESS_TOKEN_EXPIRES=900
+S3_ENDPOINT_URL=http://localstack:4566
+S3_ACCESS_KEY_ID=test_key
+S3_SECRET_ACCESS_KEY=test_secret
+S3_BUCKET=saas-documents
+S3_REGION=us-east-1
+EOF
+
+# Reinitialize Vault with new secrets (requires restart)
+docker-compose restart vault-init
 ```
 
 #### Flask Command Wrapper for Vault
 
-```bash
-# backend/flask-wrapper.sh
-#!/bin/sh
-# Wrapper for Flask commands that loads Vault secrets
+The Flask wrapper script simplifies running Flask CLI commands with Vault-sourced credentials.
 
-if [ -z "$VAULT_ADDR" ] || [ -z "$VAULT_TOKEN" ]; then
-    echo "Warning: Vault not configured, using environment variables directly"
-    exec flask "$@"
-    exit $?
+**Implementation** ([backend/flask-wrapper.sh](backend/flask-wrapper.sh)):
+
+```bash
+#!/bin/sh
+# Script wrapper pour exécuter les commandes Flask avec les variables Vault
+
+# Load Vault variables from .env.vault if file exists
+if [ -f /.env.vault ]; then
+    echo "Loading Vault variables..."
+
+    # Export each line from .env.vault
+    while IFS='=' read -r key value; do
+        # Ignore empty lines and comments
+        case "$key" in
+            ''|\#*) continue ;;
+        esac
+
+        # Remove spaces and potential quotes
+        key=$(echo "$key" | sed 's/^[ \t]*//;s/[ \t]*$//')
+        value=$(echo "$value" | sed 's/^[ \t]*//;s/[ \t]*$//')
+
+        # Export variable
+        if [ -n "$key" ] && [ -n "$value" ]; then
+            export "$key=$value"
+        fi
+    done < /.env.vault
+
+    echo "Vault variables loaded successfully"
 fi
 
-# Load secrets from Vault
-eval $(docker-compose exec -T vault sh -c "
-    vault kv get -format=json secret/saas-platform | \
-    jq -r '.data.data | to_entries[] | \"export \" + (.key | ascii_upcase) + \"=\" + (.value | @sh)'
-")
-
-# Execute Flask command with loaded secrets
+# Execute Flask command passed as argument
 exec flask "$@"
 ```
 
+**Usage:**
+
+```bash
+# Inside container, use wrapper for Flask commands
+docker-compose exec api /app/flask-wrapper.sh db upgrade
+docker-compose exec api /app/flask-wrapper.sh shell
+docker-compose exec api /app/flask-wrapper.sh routes
+
+# The wrapper:
+# 1. Loads VAULT_ADDR, VAULT_ROLE_ID, VAULT_SECRET_ID from .env.vault
+# 2. Application code authenticates with Vault using these credentials
+# 3. Secrets are loaded from Vault at runtime
+# 4. Flask command executes with full access to secrets
+```
+
+**Why This Approach:**
+
+- **Security**: No secrets in Docker environment variables
+- **Simplicity**: .env.vault contains only AppRole credentials (not actual secrets)
+- **Flexibility**: Same wrapper works for all Flask commands
+- **Auditability**: All secret access goes through Vault (can be audited)
+- **Fallback**: Application still works with .env if Vault unavailable
+
 #### Application Code Integration
 
+The platform provides a complete VaultClient implementation with AppRole authentication and automatic token renewal.
+
+**VaultClient Implementation** ([backend/app/utils/vault_client.py](backend/app/utils/vault_client.py)):
+
 ```python
-# backend/app/config.py
-import os
-from app.utils.vault_client import VaultClient
-
-class Config:
-    """Base configuration with Vault integration"""
-
-    def __init__(self):
-        # Try to load from Vault first, fallback to env vars
-        vault_client = VaultClient()
-        if vault_client.is_available():
-            secrets = vault_client.get_secrets('secret/saas-platform')
-            self.JWT_SECRET_KEY = secrets.get('jwt_secret',
-                                             os.getenv('JWT_SECRET_KEY'))
-            self.DATABASE_PASSWORD = secrets.get('db_password',
-                                                os.getenv('DATABASE_PASSWORD'))
-        else:
-            # Fallback to environment variables
-            self.JWT_SECRET_KEY = os.getenv('JWT_SECRET_KEY')
-            self.DATABASE_PASSWORD = os.getenv('DATABASE_PASSWORD')
-
-# backend/app/utils/vault_client.py
 import hvac
 import os
 import logging
+from typing import Dict, Any, Optional
+from hvac.exceptions import VaultError, InvalidPath
 
 logger = logging.getLogger(__name__)
 
 class VaultClient:
-    """Client for HashiCorp Vault integration"""
+    """
+    Client Vault pour l'authentification AppRole et la récupération de secrets.
 
-    def __init__(self):
-        self.vault_addr = os.getenv('VAULT_ADDR')
-        self.vault_token = os.getenv('VAULT_TOKEN')
-        self.client = None
+    Features:
+    - AppRole authentication (more secure than token-based)
+    - Automatic token renewal
+    - Multi-environment support (dev, docker, prod)
+    - Graceful fallback to environment variables
+    - Comprehensive error handling
+    """
 
-        if self.vault_addr and self.vault_token:
-            try:
-                self.client = hvac.Client(
-                    url=self.vault_addr,
-                    token=self.vault_token
-                )
-                if not self.client.is_authenticated():
-                    logger.warning("Vault authentication failed")
-                    self.client = None
-            except Exception as e:
-                logger.warning(f"Vault connection failed: {e}")
-                self.client = None
+    def __init__(
+        self,
+        vault_addr: Optional[str] = None,
+        role_id: Optional[str] = None,
+        secret_id: Optional[str] = None,
+    ):
+        """
+        Initialize Vault client with AppRole credentials.
 
-    def is_available(self):
-        """Check if Vault is available and authenticated"""
-        return self.client is not None and self.client.is_authenticated()
+        Args:
+            vault_addr: Vault server URL (e.g., http://vault:8200)
+            role_id: AppRole Role ID for authentication
+            secret_id: AppRole Secret ID for authentication
+        """
+        self.vault_addr = vault_addr or os.environ.get("VAULT_ADDR")
+        self.role_id = role_id or os.environ.get("VAULT_ROLE_ID")
+        self.secret_id = secret_id or os.environ.get("VAULT_SECRET_ID")
 
-    def get_secrets(self, path):
-        """Retrieve secrets from Vault KV store"""
-        if not self.is_available():
-            return {}
+        if not all([self.vault_addr, self.role_id, self.secret_id]):
+            raise ValueError(
+                "VAULT_ADDR, VAULT_ROLE_ID, and VAULT_SECRET_ID must be defined"
+            )
+
+        self.client: Optional[hvac.Client] = None
+        self.token: Optional[str] = None
+        self.token_ttl: int = 0
+
+        logger.info(f"VaultClient initialized with address: {self.vault_addr}")
+
+    def authenticate(self) -> str:
+        """
+        Authenticate with Vault using AppRole method.
+
+        Returns:
+            str: Vault token obtained from authentication
+
+        Raises:
+            VaultError: If authentication fails
+        """
+        try:
+            # Create unauthenticated client
+            self.client = hvac.Client(url=self.vault_addr)
+
+            # Check Vault status
+            if not self.client.sys.is_initialized():
+                raise VaultError("Vault is not initialized")
+
+            if self.client.sys.is_sealed():
+                raise VaultError("Vault is sealed")
+
+            logger.info("Connected to Vault, attempting AppRole authentication...")
+
+            # Authenticate with AppRole
+            auth_response = self.client.auth.approle.login(
+                role_id=self.role_id,
+                secret_id=self.secret_id,
+            )
+
+            # Extract token and TTL
+            self.token = auth_response["auth"]["client_token"]
+            self.token_ttl = auth_response["auth"]["lease_duration"]
+
+            # Set token on client
+            self.client.token = self.token
+
+            logger.info(
+                f"AppRole authentication successful. Token TTL: {self.token_ttl}s"
+            )
+
+            return self.token
+
+        except VaultError as e:
+            logger.error(f"Vault authentication error: {e}")
+            raise
+        except Exception as e:
+            logger.error(f"Unexpected error during Vault authentication: {e}")
+            raise VaultError(f"Unexpected error: {e}")
+
+    def get_secret(self, path: str) -> Dict[str, Any]:
+        """
+        Retrieve a secret from Vault KV v2 store.
+
+        Args:
+            path: Secret path (e.g., "saas-project/docker/database")
+
+        Returns:
+            Dict containing secret data
+
+        Raises:
+            VaultError: If secret retrieval fails
+        """
+        if not self.client or not self.client.is_authenticated():
+            logger.warning("Client not authenticated, attempting authentication...")
+            self.authenticate()
 
         try:
+            logger.debug(f"Reading secret: secret/data/{path}")
+
             response = self.client.secrets.kv.v2.read_secret_version(
-                path=path.replace('secret/', '')
+                path=path,
+                mount_point="secret",
             )
-            return response['data']['data']
-        except Exception as e:
-            logger.error(f"Failed to retrieve secrets from {path}: {e}")
-            return {}
 
-    def set_secret(self, path, key, value):
-        """Store a secret in Vault"""
-        if not self.is_available():
-            return False
+            secret_data = response["data"]["data"]
+            logger.info(f"Secret retrieved successfully: {path}")
+
+            return secret_data
+
+        except InvalidPath:
+            logger.error(f"Invalid or non-existent secret path: {path}")
+            raise VaultError(f"Secret not found: {path}")
+        except VaultError as e:
+            logger.error(f"Error retrieving secret {path}: {e}")
+            raise
+        except Exception as e:
+            logger.error(f"Unexpected error reading secret {path}: {e}")
+            raise VaultError(f"Unexpected error: {e}")
+
+    def get_all_secrets(self, environment: str = "docker") -> Dict[str, Any]:
+        """
+        Retrieve all application secrets for a given environment.
+
+        Args:
+            environment: Environment name (dev, docker, prod)
+
+        Returns:
+            Dict with all secrets organized by category
+        """
+        secrets = {}
+
+        # Define secret paths to retrieve
+        secret_paths = {
+            "database": f"saas-project/{environment}/database",
+            "jwt": f"saas-project/{environment}/jwt",
+            "s3": f"saas-project/{environment}/s3",
+        }
+
+        for category, path in secret_paths.items():
+            try:
+                secrets[category] = self.get_secret(path)
+            except VaultError as e:
+                logger.error(f"Failed to retrieve {category} secrets: {e}")
+                raise
+
+        logger.info(f"All secrets for environment '{environment}' retrieved")
+        return secrets
+
+    def renew_token(self) -> int:
+        """
+        Renew the current Vault token.
+
+        Returns:
+            int: New token TTL in seconds
+
+        Raises:
+            VaultError: If renewal fails
+        """
+        if not self.client or not self.token:
+            raise VaultError("Client not authenticated, cannot renew token")
 
         try:
-            current_secrets = self.get_secrets(path)
-            current_secrets[key] = value
-            self.client.secrets.kv.v2.create_or_update_secret(
-                path=path.replace('secret/', ''),
-                secret=current_secrets
-            )
-            return True
+            logger.info("Renewing Vault token...")
+
+            response = self.client.auth.token.renew_self()
+            self.token_ttl = response["auth"]["lease_duration"]
+
+            logger.info(f"Token renewed successfully. New TTL: {self.token_ttl}s")
+
+            return self.token_ttl
+
+        except VaultError as e:
+            logger.error(f"Error renewing token: {e}")
+            raise
         except Exception as e:
-            logger.error(f"Failed to store secret at {path}/{key}: {e}")
-            return False
+            logger.error(f"Unexpected error during renewal: {e}")
+            raise VaultError(f"Unexpected error: {e}")
+
+    def get_token_ttl(self) -> int:
+        """
+        Get remaining TTL of the current token.
+
+        Returns:
+            int: TTL in seconds
+        """
+        if not self.client or not self.token:
+            return 0
+
+        try:
+            response = self.client.auth.token.lookup_self()
+            return response["data"]["ttl"]
+        except Exception as e:
+            logger.warning(f"Cannot retrieve token TTL: {e}")
+            return 0
+
+    def is_authenticated(self) -> bool:
+        """
+        Check if client is authenticated.
+
+        Returns:
+            bool: True if authenticated, False otherwise
+        """
+        return self.client is not None and self.client.is_authenticated()
+```
+
+**Configuration Integration** ([backend/app/config.py](backend/app/config.py)):
+
+```python
+from app.utils.vault_client import VaultClient, VaultError
+import logging
+
+class Config:
+    """Base configuration with Vault integration"""
+
+    # Vault Configuration
+    USE_VAULT = os.environ.get('USE_VAULT', 'false').lower() == 'true'
+    VAULT_ENVIRONMENT = os.environ.get('VAULT_ENVIRONMENT', 'docker')
+
+    # Default configuration from environment variables
+    SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL') or \
+        'postgresql://postgres:postgres@localhost:5432/saas_platform'
+    JWT_SECRET_KEY = os.environ.get('JWT_SECRET_KEY') or secrets.token_urlsafe(32)
+    S3_ENDPOINT_URL = os.environ.get('S3_ENDPOINT_URL', 'https://s3.amazonaws.com')
+    # ... other default config ...
+
+    @classmethod
+    def load_from_vault(cls, vault_client):
+        """
+        Load configuration from HashiCorp Vault.
+
+        Args:
+            vault_client: Authenticated VaultClient instance
+        """
+        logger = logging.getLogger(__name__)
+
+        try:
+            logger.info(
+                f"Loading configuration from Vault (env: {cls.VAULT_ENVIRONMENT})"
+            )
+
+            # Retrieve all secrets
+            secrets = vault_client.get_all_secrets(environment=cls.VAULT_ENVIRONMENT)
+
+            # Database configuration
+            if "database" in secrets:
+                db_secrets = secrets["database"]
+                cls.SQLALCHEMY_DATABASE_URI = db_secrets.get("main_url")
+                cls.TENANT_DATABASE_URL_TEMPLATE = db_secrets.get("tenant_url_template")
+                logger.info("Database configuration loaded from Vault")
+
+            # JWT configuration
+            if "jwt" in secrets:
+                jwt_secrets = secrets["jwt"]
+                cls.JWT_SECRET_KEY = jwt_secrets.get("secret_key")
+                cls.SECRET_KEY = jwt_secrets.get("secret_key")  # Use same key
+
+                # Handle TTL
+                access_token_expires = jwt_secrets.get("access_token_expires")
+                if access_token_expires:
+                    cls.JWT_ACCESS_TOKEN_EXPIRES = timedelta(
+                        seconds=int(access_token_expires)
+                    )
+                logger.info("JWT configuration loaded from Vault")
+
+            # S3 configuration
+            if "s3" in secrets:
+                s3_secrets = secrets["s3"]
+                cls.S3_ENDPOINT_URL = s3_secrets.get("endpoint_url")
+                cls.S3_ACCESS_KEY_ID = s3_secrets.get("access_key_id")
+                cls.S3_SECRET_ACCESS_KEY = s3_secrets.get("secret_access_key")
+                cls.S3_BUCKET_NAME = s3_secrets.get("bucket_name")
+                cls.S3_REGION = s3_secrets.get("region")
+                logger.info("S3 configuration loaded from Vault")
+
+            logger.info("Complete configuration loaded from Vault successfully")
+
+        except VaultError as e:
+            logger.error(f"Error loading configuration from Vault: {e}")
+            logger.warning("Using default configuration (environment variables)")
+            # Keep default values loaded from .env
+        except Exception as e:
+            logger.error(f"Unexpected error loading from Vault: {e}")
+            raise
+```
+
+**Application Initialization with Vault** ([backend/app/\_\_init\_\_.py](backend/app/__init__.py)):
+
+```python
+from flask import Flask
+from app.config import get_config
+from app.utils.vault_client import VaultClient, VaultError
+import logging
+
+def create_app(config_name=None):
+    """Application factory with Vault integration"""
+
+    app = Flask(__name__)
+
+    # Load base configuration
+    config_class = get_config(config_name)
+    app.config.from_object(config_class)
+
+    # Initialize Vault if enabled
+    if app.config.get('USE_VAULT'):
+        try:
+            logger.info("Initializing Vault client...")
+            vault_client = VaultClient()
+            vault_client.authenticate()
+
+            # Load secrets from Vault
+            config_class.load_from_vault(vault_client)
+            app.config.from_object(config_class)
+
+            logger.info("Application configured with Vault secrets")
+
+        except VaultError as e:
+            logger.error(f"Vault initialization failed: {e}")
+            logger.warning("Falling back to environment variables")
+        except Exception as e:
+            logger.error(f"Unexpected Vault error: {e}")
+            raise
+
+    # Initialize extensions
+    db.init_app(app)
+    migrate.init_app(app, db)
+    # ...
+
+    return app
+```
+
+#### Vault Troubleshooting Guide
+
+**Common Issues and Solutions:**
+
+```bash
+# Problem: Vault is sealed after restart
+# Solution: Run the unseal script
+docker-compose up vault-unseal
+
+# Problem: Cannot authenticate with AppRole
+# Symptom: "permission denied" or "invalid role_id"
+# Solution 1: Check credentials in .env.vault
+cat .env.vault
+
+# Solution 2: Regenerate AppRole credentials
+docker-compose restart vault-init
+
+# Problem: Secrets not found
+# Symptom: "secret not found at path..."
+# Solution: Verify secrets exist
+docker-compose exec vault vault kv list secret/saas-project/docker/
+docker-compose exec vault vault kv get secret/saas-project/docker/database
+
+# Problem: Token expired
+# Symptom: "permission denied" after working previously
+# Solution: Token renewal is automatic, but check TTL
+# VaultClient automatically renews tokens, but verify:
+docker-compose logs api | grep -i "token"
+
+# Problem: Vault data lost after restart
+# Symptom: Vault requires reinitialization
+# Solution: Check persistent volume
+ls -la ./vault/data/
+# Should contain: unseal-keys.json, root-token.txt, vault.db
+
+# Problem: Application using env vars instead of Vault
+# Symptom: Old secrets still in use after Vault update
+# Solution: Verify USE_VAULT=true in environment
+docker-compose exec api env | grep USE_VAULT
+docker-compose exec api env | grep VAULT
+
+# Problem: Cannot access Vault UI
+# Solution: Check port mapping and token
+# URL: http://localhost:8201/ui
+# Token: cat ./vault/data/root-token.txt
+
+# Problem: High memory usage
+# Solution: Vault file backend has cache, adjust in production
+# For production, use Integrated Storage (Raft) instead of file
+```
+
+**Debugging Commands:**
+
+```bash
+# Check Vault container logs
+docker-compose logs -f vault
+
+# Check initialization logs
+docker-compose logs vault-init
+
+# Check unseal logs
+docker-compose logs vault-unseal
+
+# Verify Vault health
+docker-compose exec vault vault status
+
+# Check application Vault connection
+docker-compose exec api python -c "
+from app.utils.vault_client import VaultClient
+try:
+    client = VaultClient()
+    client.authenticate()
+    print('✓ Vault authentication successful')
+    secrets = client.get_all_secrets('docker')
+    print(f'✓ Loaded {len(secrets)} secret categories')
+except Exception as e:
+    print(f'✗ Error: {e}')
+"
+
+# Monitor Vault audit logs (if enabled)
+docker-compose exec vault tail -f /vault/logs/audit.log
 ```
 
 #### Security Best Practices with Vault
 
+**Development Environment:**
+
 ```
-Production Security Checklist with Vault:
+✓ Use file storage backend for simplicity
+✓ Auto-unseal for convenience
+✓ Separate .env.vault from version control (.gitignore)
+✓ Use docker environment for local testing
+✓ Commit vault/init-data/*.env.example templates (not actual secrets)
+✓ Document secret structure for team members
+```
+
+**Production Environment Checklist:**
+
+```
 ✓ Use Vault in production mode (not dev mode)
-✓ Configure proper Vault backend (Consul, etcd, or integrated storage)
-✓ Enable TLS for Vault API endpoints
-✓ Use AppRole or Kubernetes auth instead of root tokens
+✓ Configure proper Vault backend:
+  - Integrated Storage (Raft) for HA
+  - Or: Consul/etcd for existing infrastructure
+✓ Enable TLS for all Vault API endpoints
+✓ Use Auto-unseal with cloud KMS:
+  - AWS KMS
+  - Azure Key Vault
+  - GCP Cloud KMS
+✓ Use AppRole authentication (not root tokens)
 ✓ Implement secret rotation policies
-✓ Enable audit logging for all secret access
-✓ Use separate Vault namespaces for environments
+✓ Enable comprehensive audit logging
+✓ Use separate Vault namespaces per environment
 ✓ Implement least-privilege access policies
-✓ Regular backup of Vault data
-✓ Monitor Vault metrics and health
+✓ Regular backup of Vault data:
+  - Use vault operator raft snapshot save
+  - Store backups in encrypted, off-site location
+  - Test backup restoration regularly
+✓ Monitor Vault metrics and health:
+  - Token expiration rates
+  - Secret access patterns
+  - Seal/unseal events
+  - Authentication failures
+✓ Implement disaster recovery plan
+✓ Use Network policies to restrict Vault access
+✓ Enable MFA for Vault UI access
+✓ Rotate AppRole Secret IDs periodically
+✓ Review and audit Vault policies quarterly
+```
 
-Vault Policy Example (backend/vault/policies/app-policy.hcl):
-path "secret/data/saas-platform/*" {
-  capabilities = ["read", "list"]
+**Vault Policy Example** (vault/policies/saas-app-policy.hcl):
+
+```hcl
+# Production-ready policy for SaaS application
+
+# Allow reading application secrets for specific environment
+path "secret/data/saas-project/prod/*" {
+  capabilities = ["read"]
 }
 
-path "secret/metadata/saas-platform/*" {
-  capabilities = ["list"]
+# Allow listing secret metadata (for discovery)
+path "secret/metadata/saas-project/prod/*" {
+  capabilities = ["list", "read"]
 }
 
-# Deny access to other paths
+# Allow token renewal (keep sessions alive)
+path "auth/token/renew-self" {
+  capabilities = ["update"]
+}
+
+# Allow token lookup (check TTL)
+path "auth/token/lookup-self" {
+  capabilities = ["read"]
+}
+
+# Deny access to other environments
+path "secret/data/saas-project/dev/*" {
+  capabilities = ["deny"]
+}
+
+path "secret/data/saas-project/staging/*" {
+  capabilities = ["deny"]
+}
+
+# Deny write access (secrets managed separately)
 path "secret/data/*" {
   capabilities = ["deny"]
 }
+
+# Deny access to Vault system paths
+path "sys/*" {
+  capabilities = ["deny"]
+}
+```
+
+**Secret Rotation Strategy:**
+
+```bash
+# 1. Generate new secret
+NEW_JWT_SECRET=$(openssl rand -base64 64)
+
+# 2. Update Vault with new secret (creates new version)
+docker-compose exec vault vault kv put secret/saas-project/prod/jwt \
+  secret_key="$NEW_JWT_SECRET" \
+  access_token_expires="900"
+
+# 3. Restart application to load new secret
+docker-compose restart api worker
+
+# 4. Verify application using new secret
+docker-compose exec api python -c "
+from app import create_app
+app = create_app()
+print(f'JWT Secret (first 10 chars): {app.config[\"JWT_SECRET_KEY\"][:10]}...')
+"
+
+# 5. Old tokens remain valid until expiration
+# 6. After grace period, old secret version is deleted
+docker-compose exec vault vault kv delete -versions=1 secret/saas-project/prod/jwt
+```
+
+**Environment Separation:**
+
+```
+vault/
+└── init-data/
+    ├── docker.env       # Local development (committed as .example)
+    ├── staging.env      # Staging secrets (not committed)
+    └── prod.env         # Production secrets (not committed)
+
+Workflow:
+1. Developer creates docker.env from docker.env.example
+2. CI/CD pipeline uses staging.env for staging deployments
+3. Production uses prod.env (managed by DevOps/Security team)
+4. Each environment has separate AppRole with scoped policies
+```
+
+**Vault High Availability Setup (Production):**
+
+```yaml
+# Production Vault with Integrated Storage (Raft)
+vault-1:
+  image: hashicorp/vault:1.15
+  environment:
+    VAULT_CLUSTER_ADDR: https://vault-1:8201
+  volumes:
+    - ./vault/config/vault-raft.hcl:/vault/config/vault.hcl:ro
+  command: vault server -config=/vault/config/vault.hcl
+
+vault-2:
+  image: hashicorp/vault:1.15
+  environment:
+    VAULT_CLUSTER_ADDR: https://vault-2:8201
+  volumes:
+    - ./vault/config/vault-raft.hcl:/vault/config/vault.hcl:ro
+  command: vault server -config=/vault/config/vault.hcl
+
+vault-3:
+  image: hashicorp/vault:1.15
+  environment:
+    VAULT_CLUSTER_ADDR: https://vault-3:8201
+  volumes:
+    - ./vault/config/vault-raft.hcl:/vault/config/vault.hcl:ro
+  command: vault server -config=/vault/config/vault.hcl
 ```
 
 #### Migration from Environment Variables to Vault
@@ -1585,21 +2326,241 @@ done < .env
 echo "Secrets migrated to Vault successfully"
 ```
 
+### Vault Integration Complete Flow Diagram
+
+```
+┌─────────────────────────────────────────────────────────────────────────┐
+│                    Complete Vault Integration Flow                      │
+└─────────────────────────────────────────────────────────────────────────┘
+
+1. INITIALIZATION (First Time Setup)
+   ┌──────────────┐
+   │ docker-compose│
+   │     up        │
+   └───────┬───────┘
+           │
+           ▼
+   ┌──────────────────────────────────────────┐
+   │ Vault Container Starts                   │
+   │ - Loads vault.hcl config                 │
+   │ - Uses file storage: /vault/data         │
+   │ - Listens on port 8200                   │
+   └───────┬──────────────────────────────────┘
+           │
+           ▼
+   ┌──────────────────────────────────────────┐
+   │ vault-unseal Container                   │
+   │ - Checks if Vault initialized            │
+   │ - If NO: vault operator init             │
+   │   • Generates 5 unseal keys              │
+   │   • Generates root token                 │
+   │   • Saves to /vault/data/                │
+   │ - Unseals with 3 of 5 keys               │
+   └───────┬──────────────────────────────────┘
+           │
+           ▼
+   ┌──────────────────────────────────────────┐
+   │ vault-init Container                     │
+   │ 1. Authenticates with root token         │
+   │ 2. Enables KV v2 secrets engine          │
+   │ 3. Reads vault/init-data/{env}.env       │
+   │ 4. Injects secrets to Vault:             │
+   │    • secret/.../database                 │
+   │    • secret/.../jwt                      │
+   │    • secret/.../s3                       │
+   │ 5. Enables AppRole auth method           │
+   │ 6. Creates access policy                 │
+   │ 7. Creates AppRole role                  │
+   │ 8. Generates ROLE_ID and SECRET_ID       │
+   │ 9. Writes to .env.vault:                 │
+   │    VAULT_ADDR=http://vault:8200          │
+   │    VAULT_ROLE_ID=xxx                     │
+   │    VAULT_SECRET_ID=yyy                   │
+   └───────┬──────────────────────────────────┘
+           │
+           ▼
+   ✅ Vault Ready for Application Use
+
+
+2. APPLICATION STARTUP
+   ┌──────────────┐
+   │  api/worker  │
+   │  container   │
+   └───────┬───────┘
+           │
+           ▼
+   ┌──────────────────────────────────────────┐
+   │ Load .env.vault file                     │
+   │ - VAULT_ADDR                             │
+   │ - VAULT_ROLE_ID                          │
+   │ - VAULT_SECRET_ID                        │
+   └───────┬──────────────────────────────────┘
+           │
+           ▼
+   ┌──────────────────────────────────────────┐
+   │ VaultClient.__init__()                   │
+   │ - Reads env vars                         │
+   │ - Creates hvac.Client instance           │
+   └───────┬──────────────────────────────────┘
+           │
+           ▼
+   ┌──────────────────────────────────────────┐
+   │ VaultClient.authenticate()               │
+   │ - client.auth.approle.login()            │
+   │ - Receives temporary token (TTL: 1h)     │
+   │ - Sets client.token                      │
+   └───────┬──────────────────────────────────┘
+           │
+           ▼
+   ┌──────────────────────────────────────────┐
+   │ Config.load_from_vault()                 │
+   │ - get_all_secrets('docker')              │
+   │   • Reads database secrets               │
+   │   • Reads JWT secrets                    │
+   │   • Reads S3 secrets                     │
+   │ - Updates Flask config                   │
+   └───────┬──────────────────────────────────┘
+           │
+           ▼
+   ✅ Application Running with Vault Secrets
+
+
+3. RUNTIME OPERATIONS
+   ┌──────────────────────────────────────────┐
+   │ Token Management (automatic)             │
+   │ - VaultClient.get_token_ttl()            │
+   │ - If TTL < threshold:                    │
+   │   VaultClient.renew_token()              │
+   └──────────────────────────────────────────┘
+
+   ┌──────────────────────────────────────────┐
+   │ Secret Access (on-demand)                │
+   │ - VaultClient.get_secret(path)           │
+   │ - Auto-authenticate if needed            │
+   │ - Returns secret data as dict            │
+   └──────────────────────────────────────────┘
+
+
+4. RESTART/RECOVERY
+   ┌──────────────────────────────────────────┐
+   │ Container Restart                        │
+   │ - Vault data persisted in ./vault/data   │
+   │ - vault-unseal detects sealed state      │
+   │ - Reads unseal keys from file            │
+   │ - Auto-unseals Vault                     │
+   │ - Application reconnects                 │
+   └──────────────────────────────────────────┘
+```
+
+### Vault Integration Summary
+
+**Key Components:**
+
+| Component | Purpose | Persistence |
+|-----------|---------|-------------|
+| `vault` service | Main Vault server | Persistent (file backend) |
+| `vault-unseal` | Auto-unseal on restart | Run-once container |
+| `vault-init` | Inject secrets & create AppRole | Run-once container |
+| `.env.vault` | AppRole credentials | Generated, gitignored |
+| `VaultClient` | Python client for Vault | Application code |
+| `Config.load_from_vault()` | Load secrets to Flask config | Application startup |
+
+**Secret Paths:**
+
+| Path | Contents | Used By |
+|------|----------|---------|
+| `secret/saas-project/docker/database` | Database URLs | API, Worker |
+| `secret/saas-project/docker/jwt` | JWT signing key | API |
+| `secret/saas-project/docker/s3` | S3 credentials | API, Worker |
+
+**Authentication Flow:**
+
+1. **AppRole Credentials** (.env.vault) → **VaultClient.authenticate()** → **Temporary Token** (1h TTL)
+2. **Token** → **VaultClient.get_secret()** → **Application Secrets**
+3. **Token expiring** → **VaultClient.renew_token()** → **Extended Session**
+
+**Benefits of This Approach:**
+
+✅ **Security:**
+- Secrets never in code or Docker env vars
+- AppRole provides scoped, auditable access
+- Automatic token renewal prevents expiration
+- Secrets encrypted at rest in Vault
+
+✅ **Operational:**
+- Persistent storage survives restarts
+- Auto-unseal for convenience
+- Centralized secret management
+- Easy secret rotation without code changes
+
+✅ **Development:**
+- Simple local setup (docker-compose up)
+- Environment-specific secrets (dev/staging/prod)
+- Fallback to .env if Vault unavailable
+- Clear separation of concerns
+
+**Environment Variables Used:**
+
+| Variable | Source | Purpose |
+|----------|--------|---------|
+| `USE_VAULT` | .env | Enable/disable Vault integration |
+| `VAULT_ENVIRONMENT` | .env | Environment name (dev/docker/prod) |
+| `VAULT_ADDR` | .env.vault | Vault server URL |
+| `VAULT_ROLE_ID` | .env.vault | AppRole authentication |
+| `VAULT_SECRET_ID` | .env.vault | AppRole authentication |
+
+### Vault File Structure
+
+```
+SaaSBackendWithClaude/
+├── vault/
+│   ├── config/
+│   │   └── vault.hcl                    # Vault server configuration
+│   ├── data/                            # Persistent storage (DO NOT COMMIT)
+│   │   ├── unseal-keys.json             # 5 unseal keys (Shamir split)
+│   │   ├── root-token.txt               # Root token for admin access
+│   │   └── vault.db/                    # File backend database
+│   ├── scripts/
+│   │   ├── unseal-vault.sh              # Auto-unseal script
+│   │   └── init-vault.sh                # Secrets injection script
+│   ├── init-data/
+│   │   ├── docker.env.example           # Template (committed)
+│   │   ├── docker.env                   # Actual secrets (NOT committed)
+│   │   ├── staging.env                  # Staging secrets (NOT committed)
+│   │   └── prod.env                     # Production secrets (NOT committed)
+│   └── logs/
+│       └── audit.log                    # Vault audit logs (if enabled)
+├── .env.vault                           # AppRole credentials (NOT committed)
+└── backend/
+    ├── app/
+    │   ├── utils/
+    │   │   └── vault_client.py          # VaultClient implementation
+    │   └── config.py                    # Config with Vault integration
+    └── flask-wrapper.sh                 # CLI wrapper for Vault vars
+```
+
 ### Environment Security Summary
 
 ```
 Secret Management Architecture:
 ├── Development Environment
-│   ├── Local Vault in dev mode
-│   └── Fallback to .env files
+│   ├── HashiCorp Vault with file storage
+│   ├── Auto-unseal for convenience
+│   ├── AppRole authentication
+│   └── Fallback to .env files if Vault unavailable
 ├── Testing/Staging
 │   ├── Vault with file backend
-│   └── Separate namespace
+│   ├── Separate secret paths per environment
+│   ├── Environment-specific AppRole policies
+│   └── Separate .env.vault credentials
 └── Production
-    ├── Vault cluster (HA mode)
-    ├── Auto-unseal with KMS
-    ├── Audit logging to SIEM
-    └── Secret rotation automation
+    ├── Vault cluster (HA mode with Raft)
+    ├── Auto-unseal with cloud KMS (AWS/Azure/GCP)
+    ├── TLS-encrypted communication
+    ├── Comprehensive audit logging to SIEM
+    ├── Automated secret rotation
+    ├── Network isolation and access control
+    └── Regular backup and disaster recovery testing
 ```
 
 ---
