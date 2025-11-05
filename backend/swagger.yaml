@@ -1239,8 +1239,18 @@ paths:
     get:
       tags:
         - Documents
-      summary: Get document download URL
-      description: Generates a pre-signed download URL (placeholder for Phase 6)
+      summary: Download document file
+      description: |
+        Securely downloads the document file from S3 storage by proxying through the API.
+
+        The file is streamed in chunks to avoid memory issues with large files.
+        The response includes proper headers for file download with the original filename.
+
+        **Security:**
+        - Validates JWT authentication
+        - Verifies user has access to the tenant
+        - Does not expose direct S3 URLs
+        - All downloads are logged with user_id and document_id
       security:
         - BearerAuth: []
       parameters:
@@ -1258,47 +1268,42 @@ paths:
             type: string
             format: uuid
           description: UUID of the document
-        - name: expires_in
-          in: query
-          schema:
-            type: integer
-            minimum: 60
-            maximum: 86400
-            default: 3600
-          description: URL expiration time in seconds
       responses:
         '200':
-          description: Download URL generated successfully
+          description: File downloaded successfully
+          content:
+            application/octet-stream:
+              schema:
+                type: string
+                format: binary
+          headers:
+            Content-Type:
+              description: MIME type of the document
+              schema:
+                type: string
+                example: application/pdf
+            Content-Disposition:
+              description: Attachment header with original filename
+              schema:
+                type: string
+                example: 'attachment; filename="report.pdf"'
+            Content-Length:
+              description: Size of the file in bytes
+              schema:
+                type: integer
+                example: 1048576
+        '404':
+          description: Tenant, document not found, or access denied
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  success:
-                    type: boolean
-                    example: true
-                  message:
-                    type: string
-                    example: "Download URL generated successfully"
-                  data:
-                    type: object
-                    properties:
-                      download_url:
-                        type: string
-                        format: uri
-                        example: "https://s3.amazonaws.com/..."
-                      expires_in:
-                        type: integer
-                        example: 3600
-                      expires_at:
-                        type: string
-                        format: date-time
-                      filename:
-                        type: string
-                      file_size:
-                        type: integer
-                      mime_type:
-                        type: string
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Server error or S3 download failure
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
 
   /api/tenants/{tenant_id}/documents/health:
     get:

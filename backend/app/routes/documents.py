@@ -465,57 +465,72 @@ def get_document(tenant_id: str, document_id: str):
 @jwt_required_custom
 def download_document(tenant_id: str, document_id: str):
     """
-    Get pre-signed download URL for document
+    Download document file directly (proxy mode)
 
-    Generates a temporary pre-signed S3 URL for downloading the document file.
-    URL expires after 1 hour by default.
+    Securely downloads the document file from S3 storage by proxying through
+    the API. Verifies tenant access and streams the file with proper headers.
 
     **Authentication**: JWT required
-    **Authorization**: Must be a member of the tenant
+    **Authorization**: Must be a member of the tenant with read permission
 
     **URL Parameters**:
         tenant_id: UUID of the tenant
         document_id: UUID of the document
 
-    **Query Parameters**:
-        expires_in: URL expiration in seconds (default: 3600, max: 86400)
-
     **Response**:
-        200 OK:
-            {
-                "success": true,
-                "message": "Download URL generated successfully",
-                "data": {
-                    "download_url": "https://s3.amazonaws.com/...",
-                    "expires_in": 3600,
-                    "expires_at": "2024-01-01T01:00:00Z",
-                    "filename": "report.pdf",
-                    "file_size": 1024000
-                }
-            }
+        200 OK: Binary file stream with headers:
+            - Content-Type: document's MIME type
+            - Content-Disposition: attachment; filename="original_filename.ext"
+            - Content-Length: file size in bytes
 
+        403 Forbidden: User does not have permission to download files
         404 Not Found: Tenant, document not found, or access denied
-        500 Internal Server Error: Server error
+        500 Internal Server Error: Server error or S3 download failure
 
     **Example**:
         GET /api/tenants/123e4567-e89b-12d3-a456-426614174000/documents/456e7890-e89b-12d3-a456-426614174001/download
         Authorization: Bearer <access_token>
+
+    **Security**:
+        - Validates JWT authentication
+        - Verifies user has access to the tenant
+        - Verifies user has read permission (viewer, user, or admin)
+        - Does not expose direct S3 URLs
+        - All downloads are logged with user_id, document_id, and timestamp
+        - File is streamed through API (never direct S3 access)
     """
     try:
         user_id = g.user_id
-        logger.info(f"Generating download URL: tenant_id={tenant_id}, document_id={document_id}, user_id={user_id}")
+        logger.info(f"Download request: tenant_id={tenant_id}, document_id={document_id}, user_id={user_id}")
 
         # Check tenant access
         has_access, error_response = check_tenant_access(user_id, tenant_id)
         if not has_access:
+            logger.warning(f"Access denied: user_id={user_id}, tenant_id={tenant_id}")
             return error_response
 
-        # Get expiration parameter
-        expires_in = min(request.args.get('expires_in', 3600, type=int), 86400)
+        # Verify user has read permission
+        association = UserTenantAssociation.query.filter_by(
+            user_id=user_id,
+            tenant_id=tenant_id
+        ).first()
+
+        if not association.has_permission('read'):
+            logger.warning(
+                f"Permission denied: user_id={user_id}, tenant_id={tenant_id}, "
+                f"role={association.role}, action=download"
+            )
+            from app.utils.responses import forbidden
+            return forbidden('You do not have permission to download files from this tenant')
 
         # Get tenant database name
         tenant = Tenant.query.get(tenant_id)
         database_name = tenant.database_name
+
+        logger.info(
+            f"Access granted: user_id={user_id}, tenant_id={tenant_id}, "
+            f"role={association.role}, database={database_name}"
+        )
 
         # Switch to tenant database
         with tenant_db_manager.tenant_db_session(database_name) as session:
@@ -526,35 +541,98 @@ def download_document(tenant_id: str, document_id: str):
                 logger.warning(f"Document not found: document_id={document_id}")
                 return not_found('Document not found')
 
-            # Get download URL from document (delegates to file)
-            download_url, url_error = s3_client.generate_presigned_url(
-                s3_path=document.file.s3_path,
-                expires_in=expires_in,
-                response_content_disposition=f'attachment; filename="{document.filename}"'
+            # Verify document belongs to the tenant (additional security check)
+            # This should always be true due to tenant database isolation, but we verify anyway
+            if document.user_id and document.user_id not in [
+                assoc.user_id for assoc in
+                UserTenantAssociation.query.filter_by(tenant_id=tenant_id).all()
+            ]:
+                logger.error(
+                    f"Security violation: document.user_id={document.user_id} does not belong "
+                    f"to tenant_id={tenant_id}"
+                )
+                return not_found('Document not found')
+
+            # Get file details
+            s3_path = document.file.s3_path
+            filename = document.filename
+            mime_type = document.mime_type
+            file_size = document.file.file_size
+            md5_hash = document.file.md5_hash
+
+            # Audit log: record download attempt
+            logger.info(
+                f"AUDIT: Download initiated - "
+                f"user_id={user_id}, "
+                f"tenant_id={tenant_id}, "
+                f"document_id={document_id}, "
+                f"filename={filename}, "
+                f"size={file_size}, "
+                f"md5={md5_hash}, "
+                f"role={association.role}"
             )
 
-            if url_error:
-                logger.error(f"Failed to generate download URL: {url_error}")
-                return internal_error('Failed to generate download URL')
+            # Download file from S3 and stream to client
+            from flask import Response, stream_with_context
 
-            from datetime import datetime, timedelta
-            expires_at = datetime.utcnow() + timedelta(seconds=expires_in)
+            # Get S3 object for streaming
+            s3_object, s3_error = s3_client.get_object(s3_path)
+            if s3_error:
+                logger.error(
+                    f"S3 download failed - document_id={document_id}, "
+                    f"s3_path={s3_path}, error={s3_error}"
+                )
+                if 'not found' in s3_error.lower():
+                    return not_found('File not found in storage')
+                return internal_error(f'Failed to download file from storage: {s3_error}')
 
-            response_data = {
-                'download_url': download_url,
-                'expires_in': expires_in,
-                'expires_at': expires_at.isoformat() + 'Z',
-                'filename': document.filename,
-                'file_size': document.file.file_size,
-                'mime_type': document.mime_type
-            }
+            # Create streaming response
+            def generate():
+                """Stream file in chunks to avoid loading entire file in memory"""
+                try:
+                    # Read in 64KB chunks
+                    for chunk in s3_object['Body'].iter_chunks(chunk_size=65536):
+                        yield chunk
 
-            logger.info(f"Download URL generated: document_id={document_id}, expires_in={expires_in}s")
-            return ok(response_data, 'Download URL generated successfully')
+                    # Log successful completion
+                    logger.info(
+                        f"AUDIT: Download completed successfully - "
+                        f"user_id={user_id}, document_id={document_id}, "
+                        f"filename={filename}, size={file_size}"
+                    )
+                except Exception as e:
+                    logger.error(
+                        f"AUDIT: Download interrupted - "
+                        f"user_id={user_id}, document_id={document_id}, "
+                        f"error={str(e)}"
+                    )
+                    raise
+                finally:
+                    # Ensure S3 response body is closed
+                    s3_object['Body'].close()
+
+            response = Response(
+                stream_with_context(generate()),
+                mimetype=mime_type,
+                direct_passthrough=True
+            )
+
+            # Set headers for file download
+            response.headers['Content-Disposition'] = f'attachment; filename="{filename}"'
+            response.headers['Content-Length'] = str(file_size)
+
+            # Security headers
+            response.headers['X-Content-Type-Options'] = 'nosniff'
+            response.headers['X-Frame-Options'] = 'DENY'
+            response.headers['Cache-Control'] = 'no-store, no-cache, must-revalidate, private'
+            response.headers['Pragma'] = 'no-cache'
+
+            logger.info(f"Download stream started: document_id={document_id}, size={file_size} bytes")
+            return response
 
     except Exception as e:
-        logger.error(f"Error generating download URL: {str(e)}", exc_info=True)
-        return internal_error('Failed to generate download URL')
+        logger.error(f"Error downloading document: {str(e)}", exc_info=True)
+        return internal_error('Failed to download document')
 
 
 @documents_bp.route('/<tenant_id>/documents/<document_id>', methods=['PUT'])

@@ -490,6 +490,71 @@ class S3Client:
             )
             return False, f'File existence check failed: {str(e)}'
 
+    def get_object(self, s3_path: str):
+        """
+        Get S3 object for streaming download.
+
+        Retrieves an S3 object that can be streamed to the client. The caller
+        is responsible for closing the response body.
+
+        Args:
+            s3_path: S3 object key/path to download
+
+        Returns:
+            Tuple of (S3 response object, error message)
+            - If successful: (response_object, None)
+            - If error: (None, error_message)
+
+        Example:
+            s3_object, error = s3_client.get_object(
+                s3_path='tenants/123/files/2024/01/file.pdf'
+            )
+            if error:
+                return internal_error(error)
+
+            # Stream file in chunks
+            for chunk in s3_object['Body'].iter_chunks(chunk_size=65536):
+                yield chunk
+
+            # Don't forget to close
+            s3_object['Body'].close()
+
+        Business Rules:
+            - Returns streaming body that must be closed by caller
+            - File is not loaded into memory (streaming)
+            - Use iter_chunks() to read in chunks
+            - Suitable for large files
+        """
+        # Ensure S3 client is initialized
+        initialized, error = self._ensure_initialized()
+        if error:
+            return None, error
+
+        try:
+            # Get S3 object
+            from botocore.exceptions import ClientError
+            try:
+                response = self._client.get_object(
+                    Bucket=self._bucket,
+                    Key=s3_path
+                )
+                logger.info(f"Retrieved S3 object for streaming: {s3_path}")
+                return response, None
+            except ClientError as e:
+                error_code = e.response['Error']['Code']
+                if error_code == 'NoSuchKey':
+                    logger.error(f"File not found in S3: s3_path={s3_path}")
+                    return None, f'File not found in storage: {s3_path}'
+                else:
+                    raise
+
+        except Exception as e:
+            logger.error(
+                f"Error getting S3 object (path: {s3_path}): {str(e)}",
+                exc_info=True
+            )
+            return None, f'Failed to get S3 object: {str(e)}'
+
     def get_bucket_name(self) -> Optional[str]:
         """
         Get configured S3 bucket name.

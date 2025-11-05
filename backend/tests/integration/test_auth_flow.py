@@ -147,7 +147,7 @@ class TestLoginFlow:
         # Arrange
         login_data = {
             'email': 'nonexistent@example.com',
-            'password': 'SomePassword123'
+            'password': '12345678'
         }
 
         # Act
@@ -167,7 +167,7 @@ class TestLoginFlow:
         # Arrange
         login_data = {
             'email': test_user.email,
-            'password': 'WrongPassword123'
+            'password': 'WrongP12345678'
         }
 
         # Act
@@ -192,13 +192,13 @@ class TestLoginFlow:
             email='inactive@example.com',
             is_active=False
         )
-        inactive_user.set_password('Password123')
+        inactive_user.set_password('12345678')
         session.add(inactive_user)
         session.commit()
 
         login_data = {
             'email': 'inactive@example.com',
-            'password': 'Password123'
+            'password': '12345678'
         }
 
         # Act

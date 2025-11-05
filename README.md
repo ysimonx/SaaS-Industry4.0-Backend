@@ -363,7 +363,7 @@ docker-compose ps
 
 **Default Admin Credentials** (change immediately!):
 - Email: `admin@example.com`
-- Password: `password123`
+- Password: `12345678`
 
 **Access Services:**
 - **API Server**: http://localhost:4999
@@ -466,7 +466,7 @@ docker-compose ps
 
 **Default Admin Credentials** (change immediately!):
 - Email: `admin@example.com`
-- Password: `password123`
+- Password: `12345678`
 
 **Access Services:**
 - **API Server**: http://localhost:4999
@@ -816,7 +816,7 @@ curl http://localhost:4999/health
 # Test authentication
 curl -X POST http://localhost:4999/api/auth/login \
   -H "Content-Type: application/json" \
-  -d '{"email":"admin@example.com","password":"password123"}'
+  -d '{"email":"admin@example.com","password":"12345678"}'
 ```
 
 ---
@@ -1468,9 +1468,9 @@ tests/
 # Example unit test
 def test_user_password_hashing():
     user = User(email="test@example.com")
-    user.set_password("password123")
+    user.set_password("12345678")
 
-    assert user.check_password("password123") is True
+    assert user.check_password("12345678") is True
     assert user.check_password("wrongpassword") is False
 
 # Example integration test

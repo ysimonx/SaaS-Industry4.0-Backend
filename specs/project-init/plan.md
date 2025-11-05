@@ -2448,7 +2448,7 @@ python scripts/init_db.py --create-admin
 python scripts/init_db.py --create-admin --create-test-tenant
 
 # Non-interactive mode with environment variables
-ADMIN_EMAIL=admin@example.com ADMIN_PASSWORD=password123 \
+ADMIN_EMAIL=admin@example.com ADMIN_PASSWORD=12345678 \
 python scripts/init_db.py --create-admin --non-interactive
 
 # Full reset (DANGEROUS - deletes all data!)
