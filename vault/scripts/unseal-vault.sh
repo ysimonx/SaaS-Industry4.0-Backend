@@ -17,7 +17,9 @@ MAX_RETRIES=30
 RETRY_COUNT=0
 
 while [ $RETRY_COUNT -lt $MAX_RETRIES ]; do
-    if vault status >/dev/null 2>&1; then
+    # Vault status retourne un code != 0 si non initialisé, mais cela signifie qu'il répond
+    # On vérifie juste si la commande produit une sortie (pas le code de retour)
+    if vault status 2>&1 | grep -q "Seal Type"; then
         echo "✓ Vault est accessible"
         break
     fi
@@ -47,25 +49,25 @@ if vault status 2>&1 | grep -q "Initialized.*true"; then
     if vault status 2>&1 | grep -q "Sealed.*true"; then
         echo "🔒 Vault est scellé, déverrouillage en cours..."
 
-        # Extraire les clés d'unseal du fichier JSON
-        UNSEAL_KEY_1=$(cat "$UNSEAL_KEYS_FILE" | grep -o '"unseal_keys_b64":\[[^]]*\]' | grep -o '"[^"]*"' | sed -n '1p' | tr -d '"')
-        UNSEAL_KEY_2=$(cat "$UNSEAL_KEYS_FILE" | grep -o '"unseal_keys_b64":\[[^]]*\]' | grep -o '"[^"]*"' | sed -n '2p' | tr -d '"')
-        UNSEAL_KEY_3=$(cat "$UNSEAL_KEYS_FILE" | grep -o '"unseal_keys_b64":\[[^]]*\]' | grep -o '"[^"]*"' | sed -n '3p' | tr -d '"')
+        # Extraire les clés d'unseal du fichier JSON (parser simplement avec sed/grep)
+        UNSEAL_KEY_1=$(grep -A 5 '"unseal_keys_b64"' "$UNSEAL_KEYS_FILE" | sed -n '2p' | sed 's/.*"\([^"]*\)".*/\1/')
+        UNSEAL_KEY_2=$(grep -A 5 '"unseal_keys_b64"' "$UNSEAL_KEYS_FILE" | sed -n '3p' | sed 's/.*"\([^"]*\)".*/\1/')
+        UNSEAL_KEY_3=$(grep -A 5 '"unseal_keys_b64"' "$UNSEAL_KEYS_FILE" | sed -n '4p' | sed 's/.*"\([^"]*\)".*/\1/')
 
         if [ -z "$UNSEAL_KEY_1" ] || [ -z "$UNSEAL_KEY_2" ] || [ -z "$UNSEAL_KEY_3" ]; then
             echo "❌ ERREUR: Impossible d'extraire les clés d'unseal du fichier JSON"
             exit 1
         fi
 
-        # Unseal avec les 3 clés
+        # Unseal avec les 3 clés (utiliser vault CLI avec redirection stdin depuis /dev/null)
         echo "→ Application de la clé 1/3..."
-        vault operator unseal "$UNSEAL_KEY_1" >/dev/null
+        vault operator unseal "$UNSEAL_KEY_1" < /dev/null || echo "Erreur clé 1"
 
         echo "→ Application de la clé 2/3..."
-        vault operator unseal "$UNSEAL_KEY_2" >/dev/null
+        vault operator unseal "$UNSEAL_KEY_2" < /dev/null || echo "Erreur clé 2"
 
         echo "→ Application de la clé 3/3..."
-        vault operator unseal "$UNSEAL_KEY_3" >/dev/null
+        vault operator unseal "$UNSEAL_KEY_3" < /dev/null || echo "Erreur clé 3"
 
         echo "✅ Vault déverrouillé avec succès"
     else
@@ -82,7 +84,7 @@ else
     echo "$INIT_OUTPUT" > "$UNSEAL_KEYS_FILE"
     chmod 600 "$UNSEAL_KEYS_FILE"
 
-    ROOT_TOKEN=$(echo "$INIT_OUTPUT" | grep -o '"root_token":"[^"]*"' | cut -d'"' -f4)
+    ROOT_TOKEN=$(echo "$INIT_OUTPUT" | grep '"root_token"' | sed 's/.*"root_token": *"\([^"]*\)".*/\1/')
     echo "$ROOT_TOKEN" > "$ROOT_TOKEN_FILE"
     chmod 600 "$ROOT_TOKEN_FILE"
 
@@ -93,13 +95,13 @@ else
     # Unseal immédiatement après l'initialisation
     echo "→ Déverrouillage de Vault..."
 
-    UNSEAL_KEY_1=$(echo "$INIT_OUTPUT" | grep -o '"unseal_keys_b64":\[[^]]*\]' | grep -o '"[^"]*"' | sed -n '1p' | tr -d '"')
-    UNSEAL_KEY_2=$(echo "$INIT_OUTPUT" | grep -o '"unseal_keys_b64":\[[^]]*\]' | grep -o '"[^"]*"' | sed -n '2p' | tr -d '"')
-    UNSEAL_KEY_3=$(echo "$INIT_OUTPUT" | grep -o '"unseal_keys_b64":\[[^]]*\]' | grep -o '"[^"]*"' | sed -n '3p' | tr -d '"')
+    UNSEAL_KEY_1=$(echo "$INIT_OUTPUT" | grep -A 5 '"unseal_keys_b64"' | sed -n '2p' | sed 's/.*"\([^"]*\)".*/\1/')
+    UNSEAL_KEY_2=$(echo "$INIT_OUTPUT" | grep -A 5 '"unseal_keys_b64"' | sed -n '3p' | sed 's/.*"\([^"]*\)".*/\1/')
+    UNSEAL_KEY_3=$(echo "$INIT_OUTPUT" | grep -A 5 '"unseal_keys_b64"' | sed -n '4p' | sed 's/.*"\([^"]*\)".*/\1/')
 
-    vault operator unseal "$UNSEAL_KEY_1" >/dev/null
-    vault operator unseal "$UNSEAL_KEY_2" >/dev/null
-    vault operator unseal "$UNSEAL_KEY_3" >/dev/null
+    vault operator unseal "$UNSEAL_KEY_1" < /dev/null || echo "Erreur clé 1"
+    vault operator unseal "$UNSEAL_KEY_2" < /dev/null || echo "Erreur clé 2"
+    vault operator unseal "$UNSEAL_KEY_3" < /dev/null || echo "Erreur clé 3"
 
     echo "✅ Vault initialisé et déverrouillé avec succès"
 fi
@@ -119,7 +121,7 @@ echo ""
 echo "📝 Informations importantes:"
 echo "   - Clés d'unseal: $UNSEAL_KEYS_FILE"
 echo "   - Token root: $ROOT_TOKEN_FILE"
-echo "   - Interface Web: http://localhost:8200/ui"
+echo "   - Interface Web: http://localhost:8201/ui"
 echo ""
 echo "⚠️  SÉCURITÉ: Ces fichiers contiennent des secrets critiques"
 echo "   - NE PAS les commiter dans Git"

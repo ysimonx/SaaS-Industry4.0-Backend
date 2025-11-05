@@ -134,7 +134,7 @@ Après démarrage complet :
 
 - **API** : http://localhost:4999
 - **Swagger UI** : http://localhost:4999/api/docs
-- **Vault UI** : http://localhost:8200/ui (token dans `vault/data/root-token.txt`)
+- **Vault UI** : http://localhost:8201/ui (token dans `vault/data/root-token.txt`) - Port 8201 car 8200 est souvent utilisé par OneDrive sur macOS
 - **MinIO** : http://localhost:9001 (minioadmin / minioadmin)
 
 ## ✅ Vérifications

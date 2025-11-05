@@ -1351,7 +1351,7 @@ vault:
     VAULT_DEV_ROOT_TOKEN_ID: root-token
     VAULT_DEV_LISTEN_ADDRESS: 0.0.0.0:8200
   ports:
-    - "8200:8200"
+    - "8201:8200"  # Port 8201 on host (8200 often used by OneDrive on macOS)
   command: server -dev
   healthcheck:
     test: ["CMD", "vault", "status"]

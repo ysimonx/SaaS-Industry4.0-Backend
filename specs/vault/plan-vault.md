@@ -50,7 +50,7 @@ cat vault/data/root-token.txt
 - Les clés d'unseal sont dans `vault/data/unseal-keys.json` (NE PAS COMMITER)
 - Le token root est dans `vault/data/root-token.txt` (NE PAS COMMITER)
 - Vault se déverrouillera automatiquement à chaque redémarrage
-- Interface Web disponible sur: http://localhost:8200/ui
+- Interface Web disponible sur: http://localhost:8201/ui (port 8201 car 8200 est souvent utilisé par OneDrive sur macOS)
 
 **Pour initialiser les secrets dans Vault:**
 
@@ -161,7 +161,7 @@ services:
     image: hashicorp/vault:1.15
     container_name: saas-vault
     ports:
-      - "8200:8200"
+      - "8201:8200"  # Port 8201 on host (8200 often used by OneDrive on macOS)
     environment:
       VAULT_ADDR: "http://0.0.0.0:8200"
       VAULT_API_ADDR: "http://0.0.0.0:8200"
@@ -205,7 +205,7 @@ services:
 - **Stockage Persistant:** Les données sont stockées dans `./vault/data` (backend file)
 - **Auto-Unseal:** Le service `vault-unseal` déverrouille automatiquement Vault au démarrage
 - **Configuration HCL:** Vault utilise un fichier de configuration `/vault/config/vault.hcl`
-- **Port 8200:** Port standard de l'API Vault
+- **Port 8201 (hôte) -> 8200 (container):** Port standard de l'API Vault. Le port 8201 est utilisé sur l'hôte car 8200 est souvent occupé par OneDrive sur macOS
 - **IPC_LOCK:** Capability nécessaire pour éviter le swap de la mémoire Vault
 - **Health Check:** Permet aux autres services de démarrer après Vault
 - **Persistence:** Les clés d'unseal sont stockées dans `./vault/data/unseal-keys.json` (NE PAS COMMITER)
@@ -287,7 +287,7 @@ log_rotate_max_files = 7
 **Notes importantes:**
 - **TLS désactivé:** Pour le développement local (activer en production)
 - **Storage file:** Stockage persistant dans `/vault/data`
-- **UI activée:** Interface web accessible sur http://localhost:8200/ui
+- **UI activée:** Interface web accessible sur http://localhost:8201/ui (port 8201 car 8200 est souvent utilisé par OneDrive sur macOS)
 - **disable_mlock:** Nécessaire pour Docker, la sécurité est assurée par IPC_LOCK
 
 ### 2.3.2 Création du Script d'Auto-Unseal
@@ -416,7 +416,7 @@ echo ""
 echo "📝 Informations importantes:"
 echo "   - Clés d'unseal: $UNSEAL_KEYS_FILE"
 echo "   - Token root: $ROOT_TOKEN_FILE"
-echo "   - Interface Web: http://localhost:8200/ui"
+echo "   - Interface Web: http://localhost:8201/ui"
 echo ""
 echo "⚠️  SÉCURITÉ: Ces fichiers contiennent des secrets critiques"
 echo "   - NE PAS les commiter dans Git"
@@ -912,7 +912,7 @@ docker-compose up -d vault
 docker exec -it saas-vault vault status
 
 # Exporter les variables pour les commandes suivantes
-export VAULT_ADDR='http://localhost:8200'
+export VAULT_ADDR='http://localhost:8201'
 export VAULT_TOKEN='root-token-dev'
 ```
 
@@ -3361,7 +3361,7 @@ docker-compose logs api | grep "JWT"
 
 ```bash
 # 1. Se connecter à Vault
-export VAULT_ADDR="http://localhost:8200"
+export VAULT_ADDR="http://localhost:8201"
 export VAULT_TOKEN="root-token-dev"
 
 # 2. Mettre à jour un secret spécifique
@@ -3508,7 +3508,7 @@ docker-compose logs vault-init
 # vault-health-check.sh
 
 # 1. Vérifier que Vault répond
-curl -sf http://localhost:8200/v1/sys/health || echo "❌ Vault ne répond pas"
+curl -sf http://localhost:8201/v1/sys/health || echo "❌ Vault ne répond pas"
 
 # 2. Vérifier que l'API peut s'authentifier
 docker-compose exec api python -c "
@@ -3745,7 +3745,7 @@ docker-compose logs -f vault-init
 docker-compose logs -f api
 
 # Vérifier la santé de Vault
-curl http://localhost:8200/v1/sys/health | jq
+curl http://localhost:8201/v1/sys/health | jq
 ```
 
 ### A.3 Scénarios Courants
@@ -3837,7 +3837,7 @@ curl http://localhost:4999/health
 | `.env.vault` n'est pas généré | Vérifier `docker-compose logs vault-init`, vérifier que `vault/init-data/docker.env` existe |
 | API ne peut pas s'authentifier | Vérifier que `.env.vault` existe et contient `VAULT_ROLE_ID` et `VAULT_SECRET_ID` |
 | Secrets non chargés | Vérifier `docker-compose logs api`, vérifier `VAULT_ENVIRONMENT=docker` dans docker-compose.yml |
-| Vault ne démarre pas | Vérifier `docker-compose logs vault`, vérifier que le port 8200 n'est pas déjà utilisé |
+| Vault ne démarre pas | Vérifier `docker-compose logs vault`, vérifier que le port 8201 n'est pas déjà utilisé (8200 souvent occupé par OneDrive sur macOS) |
 | Token expiré | Vérifier le token renewal dans les logs, redémarrer l'API |
 
 ### A.5 Checklist de Production

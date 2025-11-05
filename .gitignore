@@ -20,3 +20,6 @@ vault/data/*.bin
 .env
 .env.local
 .env.*.local
+
+root-token.txt
+unseal-keys.json

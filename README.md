@@ -273,6 +273,13 @@ EOF
 # ÉTAPE 2: Démarrage de Vault avec auto-unseal
 # ============================================================================
 
+# 2.0. (Optional) Réinitialisation complète de Vault
+# ⚠️  ATTENTION: Cette opération supprime TOUTES les données Vault !
+# Utilisez ceci uniquement si vous voulez recommencer à zéro
+# rm -Rf vault/data 
+# docker-compose down vault vault-unseal
+# docker volume rm saasbackendwithclaude_vault_data 2>/dev/null || true
+
 # 2.1. Start Vault and auto-unseal services
 docker-compose up -d vault vault-unseal
 
@@ -322,6 +329,9 @@ docker-compose ps
 # ÉTAPE 5: Initialisation de la base de données
 # ============================================================================
 
+# 5.0. (IMPORTANT) Remove old migration files if any exist
+rm -f backend/migrations/versions/*
+
 # 5.1. Create main database
 docker-compose exec postgres psql -U postgres -c "CREATE DATABASE saas_platform;"
 
@@ -355,7 +365,8 @@ docker-compose ps
 **Access Services:**
 - **API Server**: http://localhost:4999
 - **API Documentation (Swagger)**: http://localhost:4999/api/docs
-- **Vault UI**: http://localhost:8200/ui (use token from `vault/data/root-token.txt`)
+- **Vault UI**: http://localhost:8201/ui (use token from `vault/data/root-token.txt`)
+  - Note: Port 8201 is used instead of the default 8200 to avoid conflicts with OneDrive on macOS
 - **MinIO Console**: http://localhost:9001 (minioadmin / minioadmin)
 - **PostgreSQL**: localhost:5432 (postgres / postgres)
 - **Kafka**: localhost:9092
@@ -423,6 +434,9 @@ docker-compose ps
 # ============================================================================
 # ÉTAPE 3: Initialisation de la base de données
 # ============================================================================
+
+# 3.0. (IMPORTANT) Remove old migration files if any exist
+rm -f backend/migrations/versions/*
 
 # 3.1. Create main database
 docker-compose exec postgres psql -U postgres -c "CREATE DATABASE saas_platform;"
@@ -553,6 +567,12 @@ docker-compose logs -f worker
 
 **Note**: The migrations directory is already included in the repository with the initial migration for User, Tenant, and UserTenantAssociation tables.
 
+**⚠️ IMPORTANT - Clean Migration Files**:
+Before initializing the database for the first time, remove any existing migration files:
+```bash
+rm -f backend/migrations/versions/*
+```
+
 **⚠️ Flask Commands with Vault**:
 - **If using Vault**: Use `/app/flask-wrapper.sh` to load secrets from Vault before running Flask commands
 - **If NOT using Vault**: Use `flask` directly (secrets are loaded from `.env`)
@@ -563,14 +583,17 @@ docker-compose logs -f worker
 docker-compose exec api python scripts/init_db.py --create-admin --create-test-tenant
 
 # Option 2: Step-by-step setup
-# Step 1: Apply migrations
+
+# Step 1: Generate 1st migrations:
+docker-compose exec api /app/flask-wrapper.sh db migrate -m "Initial migration"
+
+
+
+# Step 2: Apply migrations
 docker-compose exec api /app/flask-wrapper.sh db upgrade
 
-# Step 2: Create admin user and test tenant
+# Step 3: Create admin user and test tenant
 docker-compose exec api python scripts/init_db.py --create-admin --create-test-tenant
-
-# If you need to regenerate migrations:
-docker-compose exec api /app/flask-wrapper.sh db migrate -m "Initial migration"
 ```
 
 **Without Vault:**
@@ -579,14 +602,17 @@ docker-compose exec api /app/flask-wrapper.sh db migrate -m "Initial migration"
 docker-compose exec api python scripts/init_db.py --create-admin --create-test-tenant
 
 # Option 2: Step-by-step setup
+
+# Step 1 : Generate migrations:
+docker-compose exec api flask db migrate -m "Initial migration"
+
 # Step 1: Apply migrations
 docker-compose exec api flask db upgrade
 
 # Step 2: Create admin user and test tenant
 docker-compose exec api python scripts/init_db.py --create-admin --create-test-tenant
 
-# If you need to regenerate migrations:
-docker-compose exec api flask db migrate -m "Initial migration"
+
 ```
 
 The `init_db.py` script will:
@@ -920,7 +946,7 @@ The platform includes Vault as an optional service in Docker Compose:
 # Start all services including Vault
 docker-compose up -d
 
-# Vault will be available at http://localhost:8200
+# Vault will be available at http://localhost:8201
 # Default token (dev mode): root-token
 ```
 
@@ -1021,7 +1047,7 @@ else:
 ### Vault UI Access
 
 Vault provides a web UI for managing secrets:
-- URL: http://localhost:8200/ui
+- URL: http://localhost:8201/ui
 - Token: `root-token` (dev mode)
 
 ---

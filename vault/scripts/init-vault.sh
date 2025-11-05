@@ -1,9 +1,10 @@
-#!/bin/bash
+#!/bin/sh
 set -e
 
 VAULT_ENV=${VAULT_ENV:-docker}
 SECRETS_FILE="/init-data/${VAULT_ENV}.env"
 OUTPUT_FILE="/output/.env.vault"
+ROOT_TOKEN_FILE="/vault/data/root-token.txt"
 
 echo "=========================================="
 echo "🔐 Initialisation Automatique de Vault"
@@ -12,6 +13,20 @@ echo "Environnement : $VAULT_ENV"
 echo "Fichier source: $SECRETS_FILE"
 echo "=========================================="
 echo ""
+
+# Lire le token root depuis le fichier (mode production)
+if [ -f "$ROOT_TOKEN_FILE" ]; then
+    echo "→ Lecture du token root depuis $ROOT_TOKEN_FILE..."
+    export VAULT_TOKEN=$(cat "$ROOT_TOKEN_FILE")
+    echo "✓ Token root chargé"
+else
+    echo "⚠️  AVERTISSEMENT: Fichier token root introuvable"
+    echo "   Utilisation du VAULT_TOKEN de l'environnement"
+    if [ -z "$VAULT_TOKEN" ]; then
+        echo "❌ ERREUR: Aucun token Vault disponible"
+        exit 1
+    fi
+fi
 
 # Vérifier que le fichier de secrets existe
 if [ ! -f "$SECRETS_FILE" ]; then
@@ -28,7 +43,7 @@ if [ ! -f "$SECRETS_FILE" ]; then
 fi
 
 echo "✓ Chargement des secrets depuis $SECRETS_FILE"
-source "$SECRETS_FILE"
+. "$SECRETS_FILE"
 
 # Attendre que Vault soit vraiment prêt
 echo "→ Attente de Vault..."

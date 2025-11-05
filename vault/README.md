@@ -178,7 +178,7 @@ Ces fichiers contiennent des secrets critiques :
 
 Vault fournit une interface web pour gérer les secrets :
 
-- **URL**: http://localhost:8200/ui
+- **URL**: http://localhost:8201/ui
 - **Token**: Contenu de `vault/data/root-token.txt`
 
 ## 📚 Documentation

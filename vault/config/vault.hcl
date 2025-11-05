@@ -14,7 +14,8 @@ storage "file" {
 
 # Configuration de l'API
 api_addr = "http://0.0.0.0:8200"
-cluster_addr = "https://0.0.0.0:8201"
+# Désactivé pour éviter les conflits en mode standalone
+# cluster_addr = "https://0.0.0.0:8201"
 
 # Interface utilisateur Web
 ui = true
@@ -25,9 +26,5 @@ disable_mlock = true
 # Niveau de logs
 log_level = "info"
 
-# Fichier de logs
-log_file = "/vault/logs/vault.log"
-
-# Rotation des logs
-log_rotate_duration = "24h"
-log_rotate_max_files = 7
+# Les logs sont gérés par Docker (stdout/stderr)
+# Pas de fichier de logs pour éviter les problèmes de permissions
