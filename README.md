@@ -236,45 +236,116 @@ This approach provides:
 
 ## Quick Start
 
-Get the platform running in 5 minutes with Docker:
+Get the platform running in 5 minutes with Docker. **Choose your setup:**
+
+### Option A: With HashiCorp Vault (Recommended for Production-like Setup)
+
+**Why use Vault?** Centralized secrets management, encryption at rest/transit, audit logging, and automatic rotation.
 
 ```bash
-# 1. Clone the repository
+# ============================================================================
+# ÉTAPE 1: Configuration initiale
+# ============================================================================
+
+# 1.1. Clone the repository
 git clone https://github.com/your-org/SaaSBackendWithClaude.git
 cd SaaSBackendWithClaude
 
-# 2. Copy environment file
-cp .env.docker .env
+# 1.2. Copy minimal environment file (NO SECRETS - configuration only)
+cp .env.docker.minimal .env
+# Note: Secrets will be managed by Vault, NOT by .env file
 
-# 3. Generate secure JWT secret (IMPORTANT!)
-python -c "import secrets; print(f'JWT_SECRET_KEY={secrets.token_urlsafe(64)}')" >> .env
+# 1.3. Create secrets file for Vault (OBLIGATOIRE)
+# Les scripts Vault sont déjà dans le repo (vault/config/, vault/scripts/)
+cat > vault/init-data/docker.env <<'EOF'
+DATABASE_URL=postgresql://postgres:postgres@postgres:5432/saas_platform
+TENANT_DATABASE_URL_TEMPLATE=postgresql://postgres:postgres@postgres:5432/{database_name}
+JWT_SECRET_KEY=$(openssl rand -hex 32)
+JWT_ACCESS_TOKEN_EXPIRES=900
+S3_ENDPOINT_URL=http://minio:9000
+S3_ACCESS_KEY_ID=minioadmin
+S3_SECRET_ACCESS_KEY=minioadmin
+S3_BUCKET=saas-documents
+S3_REGION=us-east-1
+EOF
 
-# 4. Start all services
+# ============================================================================
+# ÉTAPE 2: Démarrage de Vault avec auto-unseal
+# ============================================================================
+
+# 2.1. Start Vault and auto-unseal services
+docker-compose up -d vault vault-unseal
+
+# 2.2. Wait for Vault to initialize and unseal (30 secondes environ)
+sleep 30
+docker logs saas-vault-unseal
+
+# 2.3. Verify Vault is unsealed and ready
+docker exec saas-vault vault status
+# Expected: "Sealed: false"
+
+# 2.4. IMPORTANT: Sauvegarder le token root (première fois seulement)
+cat vault/data/root-token.txt
+# ⚠️  Sauvegarder ce token dans un gestionnaire de mots de passe !
+
+# ============================================================================
+# ÉTAPE 3: Initialisation des secrets dans Vault
+# ============================================================================
+
+# 3.1. Start vault-init service to inject secrets
+docker-compose up -d vault-init
+
+# 3.2. Wait for initialization (20 secondes environ)
+sleep 20
+docker logs saas-vault-init
+
+# 3.3. Verify AppRole credentials were created
+cat .env.vault
+# Ce fichier contient VAULT_ROLE_ID et VAULT_SECRET_ID
+
+# 3.4. (Optional) Verify secrets are stored in Vault
+VAULT_TOKEN=$(cat vault/data/root-token.txt)
+docker exec -e VAULT_TOKEN=$VAULT_TOKEN saas-vault vault kv get secret/saas-project/docker/database
+
+# ============================================================================
+# ÉTAPE 4: Démarrage de l'application
+# ============================================================================
+
+# 4.1. Start all remaining services (API, Worker, PostgreSQL, Kafka, MinIO)
 docker-compose up -d
 
-docker-compose exec postgres psql -U postgres -c "DROP DATABASE IF EXISTS saas_platform;"
+# 4.2. Wait for services to be healthy (30 secondes environ)
+sleep 30
+docker-compose ps
 
+# ============================================================================
+# ÉTAPE 5: Initialisation de la base de données
+# ============================================================================
+
+# 5.1. Create main database
 docker-compose exec postgres psql -U postgres -c "CREATE DATABASE saas_platform;"
 
-docker-compose exec api /app/flask-wrapper.sh db init
-
-docker-compose exec api /app/flask-wrapper.sh db migrate -m "Initial migration: User, Tenant, UserTenantAssociation"
-
+# 5.2. Run database migrations (using Vault secrets)
 docker-compose exec api /app/flask-wrapper.sh db upgrade
 
-
-# 5. Initialize database (creates DB, applies migrations, creates admin user)
-# Note: Migrations are already in the repository
+# 5.3. Create admin user and test tenant
 docker-compose exec api python scripts/init_db.py --create-admin --create-test-tenant
 
-## 5.1 eventuellement migration des databases des tenants
+# 5.4. (Optional) Migrate tenant databases if needed
 docker-compose exec api python scripts/migrate_all_tenants.py
 
-# 6. Verify services
+# ============================================================================
+# ÉTAPE 6: Vérification
+# ============================================================================
+
+# 6.1. Check API health
 curl http://localhost:4999/health
 
-# 7. View logs (optional)
+# 6.2. View application logs
 docker-compose logs -f api
+
+# 6.3. Check all services status
+docker-compose ps
 ```
 
 **Default Admin Credentials** (change immediately!):
@@ -282,10 +353,115 @@ docker-compose logs -f api
 - Password: `password123`
 
 **Access Services:**
-- API Server: http://localhost:4999
-- MinIO Console: http://localhost:9001 (minioadmin / minioadmin)
-- PostgreSQL: localhost:5432 (postgres / postgres)
-- Kafka: localhost:9092
+- **API Server**: http://localhost:4999
+- **API Documentation (Swagger)**: http://localhost:4999/api/docs
+- **Vault UI**: http://localhost:8200/ui (use token from `vault/data/root-token.txt`)
+- **MinIO Console**: http://localhost:9001 (minioadmin / minioadmin)
+- **PostgreSQL**: localhost:5432 (postgres / postgres)
+- **Kafka**: localhost:9092
+
+**Important Vault Files** (NE JAMAIS COMMITER):
+- `vault/data/unseal-keys.json` - Clés pour déverrouiller Vault
+- `vault/data/root-token.txt` - Token administrateur Vault
+- `.env.vault` - Credentials AppRole pour l'application
+- `vault/init-data/docker.env` - Secrets injectés dans Vault
+
+**Au prochain redémarrage:**
+```bash
+# Tout redémarre automatiquement avec docker-compose up -d
+docker-compose up -d
+
+# Vault se déverrouille automatiquement (vault-unseal)
+# Les secrets ne sont PAS réinjectés (vault-init est idempotent)
+# L'application récupère automatiquement les secrets depuis Vault
+```
+
+**Notes importantes:**
+- **vault-unseal** : S'exécute à chaque démarrage et déverrouille Vault automatiquement
+- **vault-init** : S'exécute aussi mais ne modifie RIEN si les secrets existent déjà (idempotent)
+- **Secrets protégés** : Les secrets ne seront jamais écrasés accidentellement
+
+**Pour plus de détails sur Vault, consultez:**
+- [specs/vault/plan-vault.md](specs/vault/plan-vault.md) - Plan complet d'intégration Vault
+
+---
+
+### Option B: Without Vault (Simple Setup for Development)
+
+**When to use?** Quick local development, testing, or when you don't need enterprise-grade secrets management.
+
+**⚠️ WARNING**: This approach stores secrets in `.env` file. Never commit this file or use in production!
+
+```bash
+# ============================================================================
+# ÉTAPE 1: Configuration initiale
+# ============================================================================
+
+# 1.1. Clone the repository
+git clone https://github.com/your-org/SaaSBackendWithClaude.git
+cd SaaSBackendWithClaude
+
+# 1.2. Copy environment file WITH secrets (for development only)
+cp .env.docker .env
+
+# 1.3. (Optional) Generate secure JWT secret
+# Replace the JWT_SECRET_KEY in .env with this:
+python -c "import secrets; print(secrets.token_urlsafe(64))"
+
+# ============================================================================
+# ÉTAPE 2: Démarrage des services
+# ============================================================================
+
+# 2.1. Start all services (excluding Vault services)
+# The application will use secrets from .env file instead of Vault
+docker-compose up -d postgres kafka zookeeper minio api worker
+
+# 2.2. Wait for services to be healthy (30 secondes environ)
+sleep 30
+docker-compose ps
+
+# ============================================================================
+# ÉTAPE 3: Initialisation de la base de données
+# ============================================================================
+
+# 3.1. Create main database
+docker-compose exec postgres psql -U postgres -c "CREATE DATABASE saas_platform;"
+
+# 3.2. Run database migrations
+docker-compose exec api flask db upgrade
+
+# 3.3. Create admin user and test tenant
+docker-compose exec api python scripts/init_db.py --create-admin --create-test-tenant
+
+# ============================================================================
+# ÉTAPE 4: Vérification
+# ============================================================================
+
+# 4.1. Check API health
+curl http://localhost:4999/health
+
+# 4.2. View application logs
+docker-compose logs -f api
+
+# 4.3. Check all services status
+docker-compose ps
+```
+
+**Default Admin Credentials** (change immediately!):
+- Email: `admin@example.com`
+- Password: `password123`
+
+**Access Services:**
+- **API Server**: http://localhost:4999
+- **API Documentation (Swagger)**: http://localhost:4999/api/docs
+- **MinIO Console**: http://localhost:9001 (minioadmin / minioadmin)
+- **PostgreSQL**: localhost:5432 (postgres / postgres)
+- **Kafka**: localhost:9092
+
+**Important Security Notes:**
+- `.env` file contains sensitive secrets - never commit it to Git
+- Change default passwords before any real use
+- Use Option A (Vault) for production or production-like environments
 
 ---
 
@@ -295,21 +471,47 @@ docker-compose logs -f api
 
 Docker provides the easiest way to run the complete stack with all dependencies.
 
+**Two deployment approaches are available:**
+
+- **Approach A: With Vault** - See [Quick Start - Option A](#option-a-with-hashicorp-vault-recommended-for-production-like-setup) for detailed setup
+- **Approach B: Without Vault** - See [Quick Start - Option B](#option-b-without-vault-simple-setup-for-development) for simple development setup
+
+Below is the **detailed reference** for Option 1: Docker setup.
+
+---
+
 #### 1. Initial Setup
 
+**Choose your approach:**
+
+**If using Vault (Recommended):**
 ```bash
 # Clone repository
 git clone https://github.com/your-org/SaaSBackendWithClaude.git
 cd SaaSBackendWithClaude
 
-# Copy environment file
-cp .env.docker .env
+# Copy minimal environment file (NO secrets)
+cp .env.docker.minimal .env
 
-# Edit .env and set secure values
-nano .env  # Update JWT_SECRET_KEY, DATABASE_URL, etc.
+# Create secrets file for Vault injection
+# See Quick Start - Option A for complete instructions
 ```
 
-#### 2. Generate Secure Secrets
+**If NOT using Vault (Development only):**
+```bash
+# Clone repository
+git clone https://github.com/your-org/SaaSBackendWithClaude.git
+cd SaaSBackendWithClaude
+
+# Copy environment file WITH secrets
+cp .env.docker .env
+
+# ⚠️ WARNING: .env contains secrets - never commit to Git!
+```
+
+#### 2. Generate Secure Secrets (Only if NOT using Vault)
+
+**Skip this section if using Vault** - secrets are managed in `vault/init-data/docker.env`
 
 ```bash
 # Generate JWT secret (copy to .env)
@@ -321,10 +523,24 @@ python -c "import secrets; print(secrets.token_urlsafe(32))"
 
 #### 3. Start Services
 
+**With Vault:**
 ```bash
-# Start all services in background
+# Start Vault first, then all other services
+# See Quick Start - Option A for detailed Vault setup steps
 docker-compose up -d
+```
 
+**Without Vault:**
+```bash
+# Start only application services (excluding Vault)
+docker-compose up -d postgres kafka zookeeper minio api worker
+
+# Or start all services (Vault will be ignored if not configured)
+docker-compose up -d
+```
+
+**View logs:**
+```bash
 # View logs (all services)
 docker-compose logs -f
 
@@ -337,34 +553,40 @@ docker-compose logs -f worker
 
 **Note**: The migrations directory is already included in the repository with the initial migration for User, Tenant, and UserTenantAssociation tables.
 
-**⚠️ IMPORTANT**: If you deleted `migrations/versions/` manually, you must first regenerate the migration:
-```bash
-docker-compose exec api /app/flask-wrapper.sh db migrate -m "Initial migration"
-```
+**⚠️ Flask Commands with Vault**:
+- **If using Vault**: Use `/app/flask-wrapper.sh` to load secrets from Vault before running Flask commands
+- **If NOT using Vault**: Use `flask` directly (secrets are loaded from `.env`)
 
-**Note sur l'utilisation de Flask avec Vault**: Les commandes Flask doivent utiliser le script wrapper `/app/flask-wrapper.sh` pour charger les variables d'environnement Vault.
-
+**With Vault:**
 ```bash
 # Option 1: Quick setup (recommended for first-time setup)
-# This creates the database if it doesn't exist, applies migrations, and optionally creates admin user
 docker-compose exec api python scripts/init_db.py --create-admin --create-test-tenant
 
-# Option 2: Step-by-step setup (if migrations already exist in repository)
-# Step 1: Apply migrations only (database must exist)
+# Option 2: Step-by-step setup
+# Step 1: Apply migrations
 docker-compose exec api /app/flask-wrapper.sh db upgrade
 
 # Step 2: Create admin user and test tenant
 docker-compose exec api python scripts/init_db.py --create-admin --create-test-tenant
 
-# Option 3: If migrations/versions/ is empty (you deleted it)
-# Step 1: Generate migration from models
-docker-compose exec api /app/flask-wrapper.sh db migrate -m "Initial migration: User, Tenant, UserTenantAssociation"
+# If you need to regenerate migrations:
+docker-compose exec api /app/flask-wrapper.sh db migrate -m "Initial migration"
+```
 
-# Step 2: Apply migration
-docker-compose exec api /app/flask-wrapper.sh db upgrade
-
-# Step 3: Create admin user and test tenant
+**Without Vault:**
+```bash
+# Option 1: Quick setup
 docker-compose exec api python scripts/init_db.py --create-admin --create-test-tenant
+
+# Option 2: Step-by-step setup
+# Step 1: Apply migrations
+docker-compose exec api flask db upgrade
+
+# Step 2: Create admin user and test tenant
+docker-compose exec api python scripts/init_db.py --create-admin --create-test-tenant
+
+# If you need to regenerate migrations:
+docker-compose exec api flask db migrate -m "Initial migration"
 ```
 
 The `init_db.py` script will:

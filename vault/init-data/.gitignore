@@ -1,3 +1,4 @@
 # Ignorer TOUS les fichiers de secrets
 *
 !.gitignore
+!README.md

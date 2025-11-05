@@ -1,110 +1,126 @@
-# Vault Initial Secrets Directory
+# Vault Secrets Initialization Data
 
-⚠️ **IMPORTANT:** All files in this directory (except `.gitignore` and this `README.md`) are **git-ignored** and contain sensitive secrets.
+Ce répertoire contient les fichiers de secrets **sources** qui seront injectés dans Vault lors de l'initialisation.
 
-## Structure
+## ⚠️ SÉCURITÉ IMPORTANTE
 
-```
-vault/init-data/
-├── .gitignore           # Ignore all files except itself
-├── README.md            # This file
-├── docker.env           # ✅ Active secrets for Docker environment (git-ignored)
-├── docker.env.example   # Template for docker.env (committed to git)
-├── dev.env.example      # Template for dev.env (committed to git)
-└── prod.env.example     # Template for prod.env (committed to git)
-```
+**NE JAMAIS commiter les fichiers `.env` de ce répertoire dans Git !**
 
-## Files
+Les fichiers `.gitignore` sont configurés pour ignorer tous les fichiers sauf ce README.
 
-### Active Secret Files (Git-Ignored)
-- **`docker.env`** - Secrets for Docker Compose (default environment)
-- **`dev.env`** - Secrets for local development without Docker
-- **`prod.env`** - Secrets for production (create manually on prod server)
+## Fichiers de Secrets par Environnement
 
-### Example Templates (Committed to Git)
-- **`*.env.example`** - Templates showing the structure, safe to commit
+Créez un fichier pour chaque environnement :
 
-## Usage
+- `docker.env` - Pour l'environnement Docker Compose local
+- `dev.env` - Pour le développement local (sans Docker)
+- `prod.env` - Pour la production
 
-### For Docker Environment (Default)
-The `docker.env` file has been auto-generated with a random JWT key. You can start using it immediately:
+## Template docker.env (Développement Docker)
 
 ```bash
-docker-compose up -d
+# Créer le fichier de secrets pour Docker
+cat > vault/init-data/docker.env <<'SECRETS'
+# ============================================================================
+# Secrets pour Environnement DOCKER (Docker Compose Local)
+# ============================================================================
+# ⚠️  NE PAS COMMITER CE FICHIER
+# ⚠️  Ces secrets seront injectés automatiquement dans Vault au démarrage
+
+# Database
+DATABASE_URL=postgresql://postgres:postgres@postgres:5432/saas_platform
+TENANT_DATABASE_URL_TEMPLATE=postgresql://postgres:postgres@postgres:5432/{database_name}
+
+# JWT - IMPORTANT: Générer une nouvelle clé sécurisée
+# Générer avec: openssl rand -hex 32
+JWT_SECRET_KEY=$(openssl rand -hex 32)
+JWT_ACCESS_TOKEN_EXPIRES=900
+
+# S3/MinIO
+S3_ENDPOINT_URL=http://minio:9000
+S3_ACCESS_KEY_ID=minioadmin
+S3_SECRET_ACCESS_KEY=minioadmin
+S3_BUCKET=saas-documents
+S3_REGION=us-east-1
+SECRETS
 ```
 
-### For Dev Environment
-If you want to run without Docker:
+## Template dev.env (Développement Local)
 
 ```bash
-cp vault/init-data/dev.env.example vault/init-data/dev.env
-# Edit dev.env with your local configuration
-export VAULT_ENV=dev
-docker-compose up -d
+# Créer le fichier de secrets pour Dev local
+cat > vault/init-data/dev.env <<'SECRETS'
+# ============================================================================
+# Secrets pour Environnement DEV (Développement Local sans Docker)
+# ============================================================================
+
+# Database (localhost pour dev local)
+DATABASE_URL=postgresql://postgres:postgres@localhost:5432/saas_platform
+TENANT_DATABASE_URL_TEMPLATE=postgresql://postgres:postgres@localhost:5432/{database_name}
+
+# JWT
+JWT_SECRET_KEY=$(openssl rand -hex 32)
+JWT_ACCESS_TOKEN_EXPIRES=900
+
+# S3/MinIO (localhost pour dev local)
+S3_ENDPOINT_URL=http://localhost:9000
+S3_ACCESS_KEY_ID=minioadmin
+S3_SECRET_ACCESS_KEY=minioadmin
+S3_BUCKET=saas-documents-dev
+S3_REGION=us-east-1
+SECRETS
 ```
 
-### For Production
-On your production server only:
+## Template prod.env (Production)
 
 ```bash
-cp vault/init-data/prod.env.example vault/init-data/prod.env
-# Edit prod.env with strong, unique production secrets
-# Generate JWT key: openssl rand -hex 32
-# Use strong database passwords (20+ characters)
-# Use production S3 credentials
+# Créer le fichier de secrets pour Production
+cat > vault/init-data/prod.env <<'SECRETS'
+# ============================================================================
+# Secrets pour Environnement PROD (Production)
+# ============================================================================
+# ⚠️  NE PAS COMMITER CE FICHIER
+# ⚠️  À CONFIGURER MANUELLEMENT SUR LE SERVEUR DE PRODUCTION
 
-# Backup the file encrypted (IMPORTANT!)
-gpg --symmetric --cipher-algo AES256 vault/init-data/prod.env
-# Store the .gpg file in a secure location (vault, password manager)
+# Database - REMPLACER PAR LES VRAIES VALEURS
+DATABASE_URL=postgresql://prod_user:STRONG_PASSWORD@prod-db-host:5432/saas_platform_prod
+TENANT_DATABASE_URL_TEMPLATE=postgresql://prod_user:STRONG_PASSWORD@prod-db-host:5432/{database_name}
 
-export VAULT_ENV=prod
-docker-compose -f docker-compose.prod.yml up -d
+# JWT - GÉNÉRER UNE CLÉ FORTE UNIQUE
+# Générer avec: openssl rand -hex 32
+JWT_SECRET_KEY=REPLACE_WITH_STRONG_RANDOM_KEY
+JWT_ACCESS_TOKEN_EXPIRES=900
+
+# S3 - REMPLACER PAR LES VRAIES VALEURS AWS/S3
+S3_ENDPOINT_URL=https://s3.amazonaws.com
+S3_ACCESS_KEY_ID=REPLACE_WITH_AWS_ACCESS_KEY
+S3_SECRET_ACCESS_KEY=REPLACE_WITH_AWS_SECRET_KEY
+S3_BUCKET=saas-documents-production
+S3_REGION=us-east-1
+SECRETS
 ```
 
-## Security Best Practices
+## Utilisation
 
-✅ **DO:**
-- Keep `*.env` files git-ignored (already configured)
-- Generate strong JWT keys: `openssl rand -hex 32`
-- Use different secrets for dev/docker/prod
-- Backup prod.env encrypted outside the repository
-- Rotate secrets regularly (every 90 days for production)
+1. **Créer le fichier de secrets** pour votre environnement (par exemple `docker.env`)
+2. **Démarrer Vault** : `docker-compose up -d vault vault-unseal`
+3. **Initialiser les secrets** : `docker-compose up -d vault-init`
+4. **Vérifier** : `cat .env.vault` (credentials AppRole créés)
 
-❌ **DON'T:**
-- Never commit `*.env` files (only `*.env.example`)
-- Never reuse dev/docker secrets in production
-- Never share secrets via email or chat
-- Never hardcode secrets in application code
+## Vérification des Secrets dans Vault
 
-## How It Works
-
-1. **Startup**: `vault-init` container reads secrets from `{env}.env`
-2. **Injection**: Secrets are injected into Vault at startup
-3. **AppRole**: `vault-init` generates ROLE_ID and SECRET_ID
-4. **Output**: Credentials written to `.env.vault` (also git-ignored)
-5. **Application**: API/worker use `.env.vault` to authenticate with Vault
-6. **Runtime**: Application reads secrets from Vault (not from environment variables)
-
-## Troubleshooting
-
-**Error: "Fichier docker.env introuvable"**
-- Make sure `vault/init-data/docker.env` exists
-- Copy from `docker.env.example` if needed
-
-**Need to change environment?**
 ```bash
-# Switch to dev
-export VAULT_ENV=dev
-docker-compose up -d
+# Se connecter à Vault avec le token root
+VAULT_TOKEN=$(cat vault/data/root-token.txt)
+docker exec -e VAULT_TOKEN=$VAULT_TOKEN saas-vault vault kv get secret/saas-project/docker/database
 
-# Switch to prod
-export VAULT_ENV=prod
-docker-compose up -d
+# Lister tous les secrets
+docker exec -e VAULT_TOKEN=$VAULT_TOKEN saas-vault vault kv list secret/saas-project/docker
 ```
 
-**Reset everything?**
-```bash
-docker-compose down
-rm .env.vault
-docker-compose up -d
-```
+## Sécurité
+
+- Les fichiers `.env` de ce répertoire ne doivent **JAMAIS** être committés dans Git
+- Sauvegarder les secrets dans un gestionnaire de mots de passe (1Password, LastPass, etc.)
+- En production, créer le fichier `prod.env` directement sur le serveur
+- Utiliser des mots de passe forts et uniques pour chaque environnement
