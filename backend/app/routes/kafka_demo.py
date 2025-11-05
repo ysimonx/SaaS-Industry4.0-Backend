@@ -27,7 +27,7 @@ Architecture notes:
 import logging
 import uuid
 from datetime import datetime
-from flask import Blueprint, request, jsonify
+from flask import Blueprint, request, jsonify, g
 from marshmallow import Schema, fields, ValidationError
 
 from app.utils.responses import ok, created, bad_request, internal_error
@@ -181,7 +181,7 @@ def produce_message():
     """
     try:
         # Get current user from JWT token
-        user_id = request.user_id
+        user_id = g.user_id
 
         # Parse and validate request body
         try:
@@ -270,7 +270,7 @@ def consume_messages():
     """
     try:
         # Get current user from JWT token
-        user_id = request.user_id
+        user_id = g.user_id
 
         # Parse query parameters
         limit = request.args.get('limit', 10, type=int)
