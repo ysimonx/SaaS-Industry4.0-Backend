@@ -1,4 +1,4 @@
-# SaaS Multi-Tenant Backend Platform
+# SaaS Multi-Tenant Backend Industry 4.0 Platform
 
 A production-ready, scalable multi-tenant SaaS backend platform built with Flask, PostgreSQL, Kafka, and S3 storage. Features isolated tenant databases, JWT authentication, asynchronous document processing, and RESTful APIs.
 
