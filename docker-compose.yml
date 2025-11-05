@@ -1,8 +1,6 @@
 # Docker Compose configuration for SaaS Multi-Tenant Platform
 # This file defines all services needed to run the complete stack locally
 
-version: '3.8'
-
 services:
   # PostgreSQL Database - Main database for users, tenants, associations
   # Also serves as base for dynamically created tenant databases
@@ -36,6 +34,10 @@ services:
     environment:
       ZOOKEEPER_CLIENT_PORT: 2181
       ZOOKEEPER_TICK_TIME: 2000
+    volumes:
+      - zookeeper_data:/var/lib/zookeeper/data
+      - zookeeper_logs:/var/lib/zookeeper/log
+      - /tmp/zookeeper-secrets:/etc/zookeeper/secrets
     networks:
       - saas-network
     healthcheck:
@@ -65,6 +67,9 @@ services:
       KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
       KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
       KAFKA_AUTO_CREATE_TOPICS_ENABLE: "true"
+    volumes:
+      - kafka_data:/var/lib/kafka/data
+      - /tmp/kafka-secrets:/etc/kafka/secrets
     networks:
       - saas-network
     healthcheck:
@@ -112,48 +117,70 @@ services:
     networks:
       - saas-network
 
-  # HashiCorp Vault - Secrets management
+  # HashiCorp Vault - Secrets management (Production mode)
   vault:
     image: hashicorp/vault:1.15
     container_name: saas-vault
-    restart: unless-stopped
+    restart: "no"
     ports:
-      - "8200:8200"
+      - "8201:8200"
     environment:
-      VAULT_DEV_ROOT_TOKEN_ID: "root-token-dev"
-      VAULT_DEV_LISTEN_ADDRESS: "0.0.0.0:8200"
       VAULT_ADDR: "http://0.0.0.0:8200"
+      VAULT_API_ADDR: "http://0.0.0.0:8200"
+      SKIP_CHOWN: "true"
     cap_add:
       - IPC_LOCK
     networks:
       - saas-network
     healthcheck:
-      test: ["CMD", "vault", "status"]
+      test: ["CMD", "vault", "status", "-format=json"]
       interval: 10s
       timeout: 5s
       retries: 5
-      start_period: 10s
+      start_period: 20s
     volumes:
-      - ./vault/config:/vault/config
+      - ./vault/config:/vault/config:ro
       - ./vault/data:/vault/data
       - ./vault/logs:/vault/logs
-    command: server -dev -dev-root-token-id="root-token-dev"
+      - /tmp/vault-file:/vault/file  # Évite la création de volumes anonymes
+    command: sh -c "chown -R vault:vault /vault/data && exec su-exec vault vault server -config=/vault/config"
+
+  # Vault Unseal - Automatically unseals Vault after startup
+  vault-unseal:
+    image: hashicorp/vault:1.15
+    container_name: saas-vault-unseal
+    depends_on:
+      vault:
+        condition: service_started
+    environment:
+      VAULT_ADDR: "http://vault:8200"
+    volumes:
+      - ./vault/scripts:/scripts:ro
+      - ./vault/data:/vault/data
+      - /tmp/vault-unseal-file:/vault/file  # Évite la création de volumes anonymes
+      - /tmp/vault-unseal-logs:/vault/logs  # Évite la création de volumes anonymes
+    command: /scripts/unseal-vault.sh
+    networks:
+      - saas-network
+    restart: "no"
 
   # Vault Initialization - Auto-injects secrets and generates AppRole credentials
   vault-init:
     image: hashicorp/vault:1.15
     container_name: saas-vault-init
     depends_on:
-      vault:
-        condition: service_healthy
+      vault-unseal:
+        condition: service_completed_successfully
     environment:
       VAULT_ADDR: "http://vault:8200"
-      VAULT_TOKEN: "root-token-dev"
       VAULT_ENV: "${VAULT_ENV:-docker}"
     volumes:
       - ./vault/scripts:/scripts:ro
       - ./vault/init-data:/init-data:ro
+      - ./vault/data:/vault/data
       - .:/output
+      - /tmp/vault-init-file:/vault/file  # Évite la création de volumes anonymes
+      - /tmp/vault-init-logs:/vault/logs  # Évite la création de volumes anonymes
     command: /scripts/init-vault.sh
     networks:
       - saas-network
@@ -312,6 +339,13 @@ volumes:
     driver: local
   minio_data:
     driver: local
+  kafka_data:
+    driver: local
+  zookeeper_data:
+    driver: local
+  zookeeper_logs:
+    driver: local
+  # vault_data: Supprimé - utilisation de bind mount local ./vault/data
   # redis_data:
   #   driver: local
 

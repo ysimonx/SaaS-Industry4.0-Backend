@@ -1,4 +1,4 @@
-# Vault data (contient les secrets)
+# Vault data (contient les secrets et clés d'unseal)
 data/
 logs/
 

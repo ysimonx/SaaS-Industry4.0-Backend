@@ -1,8 +1,8 @@
-"""Initial migration: User, Tenant, UserTenantAssociation
+"""Initial migration
 
-Revision ID: b543dc848868
+Revision ID: 4a495dd738aa
 Revises: 
-Create Date: 2025-11-03 17:24:41.484311
+Create Date: 2025-11-05 14:37:59.875535
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = 'b543dc848868'
+revision = '4a495dd738aa'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -26,10 +26,11 @@ def upgrade():
     sa.Column('created_at', sa.DateTime(timezone=True), nullable=False, comment='Timestamp when record was created (UTC)'),
     sa.Column('updated_at', sa.DateTime(timezone=True), nullable=False, comment='Timestamp when record was last updated (UTC)'),
     sa.Column('created_by', sa.UUID(), nullable=True, comment='UUID of user who created this record (nullable for self-registration)'),
-    sa.PrimaryKeyConstraint('id')
+    sa.PrimaryKeyConstraint('id'),
+    sa.UniqueConstraint('database_name')
     )
     with op.batch_alter_table('tenants', schema=None) as batch_op:
-        batch_op.create_index(batch_op.f('ix_tenants_database_name'), ['database_name'], unique=True)
+        batch_op.create_index('ix_tenants_database_name', ['database_name'], unique=True)
         batch_op.create_index('ix_tenants_name_active', ['name', 'is_active'], unique=False)
 
     op.create_table('users',
@@ -81,7 +82,7 @@ def downgrade():
     op.drop_table('users')
     with op.batch_alter_table('tenants', schema=None) as batch_op:
         batch_op.drop_index('ix_tenants_name_active')
-        batch_op.drop_index(batch_op.f('ix_tenants_database_name'))
+        batch_op.drop_index('ix_tenants_database_name')
 
     op.drop_table('tenants')
     # ### end Alembic commands ###

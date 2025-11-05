@@ -7,5 +7,19 @@ vault/logs/
 vault/init-data/
 .env.vault
 
+# Clés d'unseal et tokens root (CRITIQUE)
+vault/data/unseal-keys.json
+vault/data/root-token.txt
+vault/data/*.db
+vault/data/*.bin
+
 # Backups temporaires des anciens .env (à supprimer après migration)
 .env.*.backup
+
+# Environment files (ne jamais commiter avec de vraies valeurs)
+.env
+.env.local
+.env.*.local
+
+root-token.txt
+unseal-keys.json
