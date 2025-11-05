@@ -335,13 +335,16 @@ rm -f backend/migrations/versions/*
 # 5.1. Create main database
 docker-compose exec postgres psql -U postgres -c "CREATE DATABASE saas_platform;"
 
-# 5.2. Run database migrations (using Vault secrets)
+# 5.2. migration initiale
+docker-compose exec api /app/flask-wrapper.sh db migrate -m "Initial migration"
+
+# 5.3. Run database migrations (using Vault secrets)
 docker-compose exec api /app/flask-wrapper.sh db upgrade
 
-# 5.3. Create admin user and test tenant
+# 5.4. Create admin user and test tenant
 docker-compose exec api python scripts/init_db.py --create-admin --create-test-tenant
 
-# 5.4. (Optional) Migrate tenant databases if needed
+# 5.5. (Optional) Migrate tenant databases if needed
 docker-compose exec api python scripts/migrate_all_tenants.py
 
 # ============================================================================
