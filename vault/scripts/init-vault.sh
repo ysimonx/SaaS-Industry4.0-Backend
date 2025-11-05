@@ -82,6 +82,7 @@ if [ "$SECRETS_EXIST" = "false" ]; then
     echo "  → Injection des secrets S3..."
     vault kv put "secret/saas-project/${VAULT_ENV}/s3" \
       endpoint_url="$S3_ENDPOINT_URL" \
+      public_url="${S3_PUBLIC_URL:-$S3_ENDPOINT_URL}" \
       access_key_id="$S3_ACCESS_KEY_ID" \
       secret_access_key="$S3_SECRET_ACCESS_KEY" \
       bucket_name="${S3_BUCKET:-saas-documents}" \

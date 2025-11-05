@@ -635,6 +635,175 @@ def download_document(tenant_id: str, document_id: str):
         return internal_error('Failed to download document')
 
 
+@documents_bp.route('/<tenant_id>/documents/<document_id>/download-url', methods=['GET'])
+@jwt_required_custom
+def get_download_url(tenant_id: str, document_id: str):
+    """
+    Generate pre-signed S3 URL for document download.
+
+    Returns a temporary URL that allows downloading the document without authentication.
+    The URL expires after the specified time (default: 1 hour, max: 24 hours).
+
+    This is useful for scenarios where including a Bearer Token in the URL is not
+    practical or secure (e.g., email links, browser downloads, external integrations).
+
+    **Workflow**:
+    1. Client calls this endpoint with JWT Bearer Token (authenticated)
+    2. API validates permissions and generates temporary S3 pre-signed URL
+    3. Client downloads file directly from S3 using the URL (no authentication needed)
+    4. URL expires after the specified time
+
+    **Authentication**: JWT required
+    **Authorization**: Must have read permission on tenant
+
+    **URL Parameters**:
+        tenant_id: UUID of the tenant
+        document_id: UUID of the document
+
+    **Query Parameters**:
+        expires_in: URL expiration time in seconds (default: 3600, min: 60, max: 86400)
+
+    **Response**:
+        200 OK:
+            {
+                "success": true,
+                "message": "Download URL generated successfully",
+                "data": {
+                    "download_url": "http://localhost:9000/saas-documents/tenants/.../file.pdf?Signature=...",
+                    "expires_in": 3600,
+                    "expires_at": "2024-01-01T01:00:00Z",
+                    "filename": "report.pdf",
+                    "mime_type": "application/pdf",
+                    "file_size": 1048576
+                }
+            }
+
+        400 Bad Request: Invalid expires_in parameter
+        403 Forbidden: User does not have read permission
+        404 Not Found: Tenant or document not found
+        500 Internal Server Error: Failed to generate URL
+
+    **Example**:
+        GET /api/tenants/123e4567-e89b-12d3-a456-426614174000/documents/456e7890-e89b-12d3-a456-426614174001/download-url?expires_in=3600
+        Authorization: Bearer <access_token>
+
+    **Security**:
+        - Requires JWT authentication to generate URL
+        - Verifies tenant access and read permission
+        - URLs are temporary and expire automatically
+        - Downloads are logged for audit purposes
+        - S3 bucket must be private (pre-signed URLs required)
+
+    **Use cases**:
+        - Email links for document sharing
+        - Browser downloads without custom headers
+        - Mobile app downloads
+        - External system integrations
+        - Temporary public access to private documents
+    """
+    try:
+        user_id = g.user_id
+
+        # Validate expires_in parameter
+        expires_in = request.args.get('expires_in', 3600, type=int)
+        if expires_in < 60 or expires_in > 86400:  # 1 min to 24 hours
+            logger.warning(f"Invalid expires_in parameter: {expires_in}")
+            return bad_request('expires_in must be between 60 and 86400 seconds (1 min to 24 hours)')
+
+        logger.info(
+            f"Download URL request: tenant_id={tenant_id}, document_id={document_id}, "
+            f"user_id={user_id}, expires_in={expires_in}s"
+        )
+
+        # Check tenant access
+        has_access, error_response = check_tenant_access(user_id, tenant_id)
+        if not has_access:
+            logger.warning(f"Tenant access denied: user_id={user_id}, tenant_id={tenant_id}")
+            return error_response
+
+        # Check read permission
+        association = UserTenantAssociation.query.filter_by(
+            user_id=user_id,
+            tenant_id=tenant_id
+        ).first()
+
+        if not association.has_permission('read'):
+            logger.warning(
+                f"Read permission denied: user_id={user_id}, tenant_id={tenant_id}, "
+                f"role={association.role}"
+            )
+            from app.utils.responses import forbidden
+            return forbidden('You do not have permission to download files from this tenant')
+
+        # Get tenant database name
+        tenant = Tenant.query.get(tenant_id)
+        database_name = tenant.database_name
+
+        logger.info(
+            f"Access granted: user_id={user_id}, tenant_id={tenant_id}, "
+            f"role={association.role}, database={database_name}"
+        )
+
+        # Switch to tenant database
+        with tenant_db_manager.tenant_db_session(database_name) as session:
+            # Fetch document with file relationship
+            document = session.query(Document).filter_by(id=document_id).first()
+
+            if not document:
+                logger.warning(f"Document not found: document_id={document_id}")
+                return not_found('Document not found')
+
+            # Get file details
+            s3_path = document.file.s3_path
+            filename = document.filename
+            mime_type = document.mime_type
+            file_size = document.file.file_size
+
+            # Generate pre-signed URL
+            from datetime import datetime, timedelta
+
+            presigned_url, error = s3_client.generate_presigned_url(
+                s3_path=s3_path,
+                expires_in=expires_in,
+                response_content_disposition=f'attachment; filename="{filename}"'
+            )
+
+            if error:
+                logger.error(
+                    f"Failed to generate pre-signed URL: document_id={document_id}, "
+                    f"s3_path={s3_path}, error={error}"
+                )
+                return internal_error(f'Failed to generate download URL: {error}')
+
+            # Build response
+            expires_at = datetime.utcnow() + timedelta(seconds=expires_in)
+            response_data = {
+                'download_url': presigned_url,
+                'expires_in': expires_in,
+                'expires_at': expires_at.isoformat() + 'Z',
+                'filename': filename,
+                'mime_type': mime_type,
+                'file_size': file_size
+            }
+
+            # Audit log: record URL generation
+            logger.info(
+                f"AUDIT: Download URL generated - "
+                f"user_id={user_id}, "
+                f"tenant_id={tenant_id}, "
+                f"document_id={document_id}, "
+                f"filename={filename}, "
+                f"expires_in={expires_in}s, "
+                f"role={association.role}"
+            )
+
+            return ok(response_data, 'Download URL generated successfully')
+
+    except Exception as e:
+        logger.error(f"Error generating download URL: {str(e)}", exc_info=True)
+        return internal_error('Failed to generate download URL')
+
+
 @documents_bp.route('/<tenant_id>/documents/<document_id>', methods=['PUT'])
 @jwt_required_custom
 def update_document(tenant_id: str, document_id: str):

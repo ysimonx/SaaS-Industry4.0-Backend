@@ -197,6 +197,41 @@ Flow:
 
 Implementation: [backend/app/services/file_service.py](backend/app/services/file_service.py)
 
+#### Pre-signed URLs for Download
+
+For downloading documents without Bearer Token in URL (useful for email links, browser downloads, external integrations):
+
+**Two-step workflow**:
+1. **Get pre-signed URL** (authenticated with JWT):
+   ```bash
+   curl -X GET \
+     "http://localhost:4999/api/tenants/{tenant_id}/documents/{doc_id}/download-url?expires_in=3600" \
+     -H "Authorization: Bearer $TOKEN"
+   ```
+
+2. **Download file** (public URL, no authentication required):
+   ```bash
+   curl -O "{download_url_from_response}"
+   ```
+
+**Configuration** (Docker internal vs. public URLs):
+- `S3_ENDPOINT_URL`: Internal URL for backend → MinIO communication (`http://minio:9000`)
+- `S3_PUBLIC_URL`: Public URL for client → MinIO downloads (`http://localhost:9000` in dev, `https://documents.example.com` in prod)
+
+The S3Client automatically replaces the internal endpoint URL with the public URL in generated pre-signed URLs.
+
+**Security**:
+- JWT required to generate URL (validates tenant access + read permission)
+- URLs expire after specified time (default: 3600s = 1 hour, max: 86400s = 24 hours)
+- MinIO bucket is **private** (pre-signed URLs required)
+- All URL generations are audit-logged
+
+**Routes**:
+- `GET /api/tenants/{id}/documents/{id}/download` - Direct download (proxy via Flask, Bearer Token required)
+- `GET /api/tenants/{id}/documents/{id}/download-url` - Generate pre-signed URL (Bearer Token required)
+
+**Documentation**: See [document_url_signee.md](document_url_signee.md) for complete implementation details, examples, and troubleshooting.
+
 ### Role-Based Access Control
 
 Three roles with hierarchical permissions:

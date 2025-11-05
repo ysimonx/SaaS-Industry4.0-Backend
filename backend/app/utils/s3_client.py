@@ -122,6 +122,7 @@ class S3Client:
             # Support both S3_BUCKET and S3_BUCKET_NAME
             self._bucket = config.get('S3_BUCKET') or config.get('S3_BUCKET_NAME', 'default-bucket')
             endpoint_url = config.get('S3_ENDPOINT_URL')
+            public_url = config.get('S3_PUBLIC_URL', endpoint_url)  # Public URL for pre-signed URLs
             region = config.get('S3_REGION', 'us-east-1')
             access_key = config.get('S3_ACCESS_KEY_ID')
             secret_key = config.get('S3_SECRET_ACCESS_KEY')
@@ -150,9 +151,32 @@ class S3Client:
                 config=boto_config
             )
 
+            # Create separate client for presigned URLs using public endpoint
+            # This ensures signatures are generated with the correct Host header
+            if endpoint_url != public_url:
+                self._presigned_client = boto3.client(
+                    's3',
+                    endpoint_url=public_url,
+                    aws_access_key_id=access_key,
+                    aws_secret_access_key=secret_key,
+                    use_ssl=use_ssl,
+                    config=boto_config
+                )
+                logger.debug(
+                    f"Created separate presigned URL client with public endpoint: {public_url}"
+                )
+            else:
+                # Same endpoint for both internal and public, use same client
+                self._presigned_client = self._client
+
+            # Store URLs for reference
+            self._endpoint_url = endpoint_url
+            self._public_url = public_url
+
             logger.debug(
                 f"S3 client initialized: bucket={self._bucket}, "
-                f"region={region}, endpoint={endpoint_url}, use_ssl={use_ssl}"
+                f"region={region}, endpoint={endpoint_url}, "
+                f"public_url={public_url}, use_ssl={use_ssl}"
             )
 
             self._initialized = True
@@ -389,8 +413,9 @@ class S3Client:
             if response_content_disposition:
                 params['ResponseContentDisposition'] = response_content_disposition
 
-            # Generate pre-signed URL
-            url = self._client.generate_presigned_url(
+            # Generate pre-signed URL using the presigned client (with public endpoint)
+            # This ensures the signature is computed with the correct Host header
+            url = self._presigned_client.generate_presigned_url(
                 ClientMethod='get_object',
                 Params=params,
                 ExpiresIn=expires_in,
@@ -398,7 +423,7 @@ class S3Client:
             )
 
             logger.debug(
-                f"Generated pre-signed URL: "
+                f"Generated pre-signed URL using public endpoint: "
                 f"bucket={self._bucket}, path={s3_path}, expires_in={expires_in}"
             )
 
