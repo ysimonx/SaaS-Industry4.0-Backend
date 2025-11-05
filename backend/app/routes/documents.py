@@ -33,6 +33,7 @@ from app.schemas.document_schema import (
 from app.utils.responses import ok, created, bad_request, not_found, internal_error
 from app.utils.decorators import jwt_required_custom
 from app.utils.database import tenant_db_manager
+from app.utils.s3_client import s3_client
 
 logger = logging.getLogger(__name__)
 
@@ -215,7 +216,7 @@ def upload_document(tenant_id: str):
 
     Handles multipart/form-data file upload with metadata.
     Performs MD5 deduplication - if file already exists, reuses it.
-    File is NOT uploaded to S3 in this implementation (placeholder for Phase 6).
+    File is uploaded to S3-compatible storage (MinIO).
 
     **Authentication**: JWT required
     **Authorization**: Must be a member of the tenant
@@ -323,12 +324,12 @@ def upload_document(tenant_id: str):
                 logger.info(f"Reusing existing file: file_id={file_id}, md5={md5_hash}")
             else:
                 # Create new file record
-                # Generate S3 path (placeholder - actual S3 upload in Phase 6)
-                s3_path = File.generate_s3_path(tenant_id, md5_hash, None)
+                # First create File with temporary s3_path to get file_id
+                temp_s3_path = File.generate_s3_path(database_name, md5_hash, 'temp')
 
                 new_file = File(
                     md5_hash=md5_hash,
-                    s3_path=s3_path,
+                    s3_path=temp_s3_path,
                     file_size=file_size,
                     created_by=user_id
                 )
@@ -336,10 +337,26 @@ def upload_document(tenant_id: str):
                 session.flush()  # Get file ID
 
                 file_id = new_file.id
+
+                # Now generate the final S3 path with the real file_id
+                s3_path = File.generate_s3_path(database_name, md5_hash, str(file_id))
+                new_file.s3_path = s3_path
+                session.flush()  # Update with final s3_path
+
                 logger.info(f"Created new file: file_id={file_id}, md5={md5_hash}, s3_path={s3_path}")
 
-                # TODO: Phase 6 - Upload to S3
-                # s3_client.upload_file(file_obj, s3_path)
+                # Upload to S3/MinIO with the correct path
+                success, upload_error = s3_client.upload_file(
+                    file_obj=file_obj,
+                    s3_path=s3_path,
+                    content_type=mime_type
+                )
+
+                if not success:
+                    logger.error(f"Failed to upload file to S3: {upload_error}")
+                    # Rollback the file record creation
+                    session.rollback()
+                    return internal_error(f'Failed to upload file to storage: {upload_error}')
 
             # Create document record
             document = Document(
@@ -510,8 +527,15 @@ def download_document(tenant_id: str, document_id: str):
                 return not_found('Document not found')
 
             # Get download URL from document (delegates to file)
-            # TODO: Phase 6 - Implement actual S3 pre-signed URL generation
-            download_url = f"https://s3.example.com/placeholder/{document.file.s3_path}"
+            download_url, url_error = s3_client.generate_presigned_url(
+                s3_path=document.file.s3_path,
+                expires_in=expires_in,
+                response_content_disposition=f'attachment; filename="{document.filename}"'
+            )
+
+            if url_error:
+                logger.error(f"Failed to generate download URL: {url_error}")
+                return internal_error('Failed to generate download URL')
 
             from datetime import datetime, timedelta
             expires_at = datetime.utcnow() + timedelta(seconds=expires_in)
@@ -647,7 +671,7 @@ def delete_document(tenant_id: str, document_id: str):
 
     Deletes the document record. If the underlying file becomes orphaned
     (no other documents reference it), it can be cleaned up separately.
-    File is NOT deleted from S3 in this implementation (placeholder for Phase 6).
+    Note: File is NOT automatically deleted from S3 in this implementation.
 
     **Authentication**: JWT required
     **Authorization**: Must be a member of the tenant
