@@ -1239,8 +1239,101 @@ paths:
     get:
       tags:
         - Documents
-      summary: Get document download URL
-      description: Generates a pre-signed download URL (placeholder for Phase 6)
+      summary: Download document file
+      description: |
+        Securely downloads the document file from S3 storage by proxying through the API.
+
+        The file is streamed in chunks to avoid memory issues with large files.
+        The response includes proper headers for file download with the original filename.
+
+        **Security:**
+        - Validates JWT authentication
+        - Verifies user has access to the tenant
+        - Does not expose direct S3 URLs
+        - All downloads are logged with user_id and document_id
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: tenant_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+          description: UUID of the tenant
+        - name: document_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+          description: UUID of the document
+      responses:
+        '200':
+          description: File downloaded successfully
+          content:
+            application/octet-stream:
+              schema:
+                type: string
+                format: binary
+          headers:
+            Content-Type:
+              description: MIME type of the document
+              schema:
+                type: string
+                example: application/pdf
+            Content-Disposition:
+              description: Attachment header with original filename
+              schema:
+                type: string
+                example: 'attachment; filename="report.pdf"'
+            Content-Length:
+              description: Size of the file in bytes
+              schema:
+                type: integer
+                example: 1048576
+        '404':
+          description: Tenant, document not found, or access denied
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Server error or S3 download failure
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /api/tenants/{tenant_id}/documents/{document_id}/download-url:
+    get:
+      tags:
+        - Documents
+      summary: Generate pre-signed download URL
+      description: |
+        Generates a temporary pre-signed S3 URL for downloading a document without authentication.
+
+        This endpoint requires JWT authentication to generate the URL, but the returned URL
+        can be used to download the file without any authentication headers for the specified duration.
+
+        **Use Cases:**
+        - Email links to documents
+        - Browser downloads without managing authentication
+        - External integrations that need temporary file access
+        - Sharing documents with systems that don't support Bearer tokens
+
+        **Security:**
+        - JWT authentication required to generate URL
+        - User must have read permission on the tenant
+        - Generated URLs expire after the specified duration (60s - 24 hours)
+        - S3 bucket is private - only signed URLs work
+        - All URL generations are logged with user_id and document_id
+
+        **Important Notes:**
+        - The generated URL is temporary and will expire
+        - The URL includes AWS signature parameters - do not modify it
+        - URLs are not reusable after expiration
+        - Default expiration: 1 hour (3600 seconds)
       security:
         - BearerAuth: []
       parameters:
@@ -1260,15 +1353,21 @@ paths:
           description: UUID of the document
         - name: expires_in
           in: query
+          required: false
           schema:
             type: integer
             minimum: 60
             maximum: 86400
             default: 3600
-          description: URL expiration time in seconds
+          description: |
+            URL expiration time in seconds.
+            - Minimum: 60 seconds (1 minute)
+            - Maximum: 86400 seconds (24 hours)
+            - Default: 3600 seconds (1 hour)
+          example: 3600
       responses:
         '200':
-          description: Download URL generated successfully
+          description: Pre-signed URL generated successfully
           content:
             application/json:
               schema:
@@ -1286,19 +1385,51 @@ paths:
                       download_url:
                         type: string
                         format: uri
-                        example: "https://s3.amazonaws.com/..."
+                        description: Pre-signed S3 URL for downloading the document
+                        example: "http://localhost:9000/saas-documents/tenants/tenant_acme_123/files/a1/b2/a1b2c3d4...?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=..."
                       expires_in:
                         type: integer
+                        description: Number of seconds until the URL expires
                         example: 3600
                       expires_at:
                         type: string
                         format: date-time
+                        description: ISO 8601 timestamp when the URL will expire
+                        example: "2024-01-01T13:00:00Z"
                       filename:
                         type: string
-                      file_size:
-                        type: integer
+                        description: Original filename of the document
+                        example: "report.pdf"
                       mime_type:
                         type: string
+                        description: MIME type of the document
+                        example: "application/pdf"
+                      file_size:
+                        type: integer
+                        description: Size of the file in bytes
+                        example: 1048576
+        '400':
+          description: Invalid expires_in parameter
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                success: false
+                error: "bad_request"
+                message: "expires_in must be between 60 and 86400 seconds"
+        '404':
+          description: Tenant or document not found, or access denied
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Server error or S3 URL generation failure
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
 
   /api/tenants/{tenant_id}/documents/health:
     get:

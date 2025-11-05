@@ -471,6 +471,46 @@ class DocumentWithFileResponseSchema(DocumentResponseSchema):
     file = fields.Dict(dump_only=True)
 
 
+class DocumentDownloadUrlResponseSchema(Schema):
+    """
+    Schema for pre-signed download URL response.
+
+    This schema validates the response from the GET /download-url endpoint.
+    It returns a temporary pre-signed URL that allows downloading the document
+    without authentication.
+
+    Fields:
+        download_url (str): Temporary pre-signed S3 URL for download
+        expires_in (int): Time until URL expires (seconds)
+        expires_at (datetime): Exact timestamp when URL expires (ISO 8601)
+        filename (str): Document filename
+        mime_type (str): MIME type of the document
+        file_size (int): File size in bytes
+
+    Example response:
+        {
+            "download_url": "http://localhost:9000/saas-documents/tenants/.../file.pdf?Signature=...",
+            "expires_in": 3600,
+            "expires_at": "2024-01-01T01:00:00Z",
+            "filename": "report.pdf",
+            "mime_type": "application/pdf",
+            "file_size": 1048576
+        }
+
+    Security notes:
+        - The download_url is temporary and expires after expires_in seconds
+        - Anyone with the URL can download the file until expiration
+        - URLs should not be logged or stored permanently
+        - Consider using short expiration times for sensitive documents
+    """
+    download_url = fields.Str(dump_only=True, required=True)
+    expires_in = fields.Int(dump_only=True)
+    expires_at = fields.DateTime(dump_only=True)
+    filename = fields.Str(dump_only=True)
+    mime_type = fields.Str(dump_only=True)
+    file_size = fields.Int(dump_only=True)
+
+
 # Pre-instantiated schema instances for convenient import
 # These can be imported and used directly in routes and services
 
@@ -484,6 +524,7 @@ document_update_schema = DocumentUpdateSchema()
 # Output serialization schemas
 document_response_schema = DocumentResponseSchema()
 document_with_file_response_schema = DocumentWithFileResponseSchema()
+document_download_url_schema = DocumentDownloadUrlResponseSchema()
 
 # For serializing lists of documents
 documents_response_schema = DocumentResponseSchema(many=True)
@@ -497,6 +538,7 @@ __all__ = [
     'DocumentUpdateSchema',
     'DocumentResponseSchema',
     'DocumentWithFileResponseSchema',
+    'DocumentDownloadUrlResponseSchema',
 
     # Pre-instantiated schema instances
     'document_schema',
@@ -504,5 +546,6 @@ __all__ = [
     'document_update_schema',
     'document_response_schema',
     'document_with_file_response_schema',
+    'document_download_url_schema',
     'documents_response_schema',
 ]

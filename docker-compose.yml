@@ -111,7 +111,7 @@ services:
       /bin/sh -c "
       /usr/bin/mc alias set myminio http://minio:9000 minioadmin minioadmin;
       /usr/bin/mc mb myminio/saas-documents --ignore-existing;
-      /usr/bin/mc policy set public myminio/saas-documents;
+      /usr/bin/mc policy set private myminio/saas-documents;
       exit 0;
       "
     networks:
@@ -234,6 +234,7 @@ services:
 
       # S3 (MinIO) (fallback values if Vault is disabled)
       S3_ENDPOINT_URL: http://minio:9000
+      S3_PUBLIC_URL: http://localhost:9000
       S3_ACCESS_KEY_ID: minioadmin
       S3_SECRET_ACCESS_KEY: minioadmin
       S3_BUCKET: saas-documents
@@ -294,6 +295,7 @@ services:
 
       # S3 (MinIO) (fallback values if Vault is disabled)
       S3_ENDPOINT_URL: http://minio:9000
+      S3_PUBLIC_URL: http://localhost:9000
       S3_ACCESS_KEY_ID: minioadmin
       S3_SECRET_ACCESS_KEY: minioadmin
       S3_BUCKET: saas-documents

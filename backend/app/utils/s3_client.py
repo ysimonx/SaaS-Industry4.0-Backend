@@ -119,43 +119,68 @@ class S3Client:
             config = current_app.config
 
             # Extract S3 configuration
-            self._bucket = config.get('S3_BUCKET', 'default-bucket')
+            # Support both S3_BUCKET and S3_BUCKET_NAME
+            self._bucket = config.get('S3_BUCKET') or config.get('S3_BUCKET_NAME', 'default-bucket')
             endpoint_url = config.get('S3_ENDPOINT_URL')
+            public_url = config.get('S3_PUBLIC_URL', endpoint_url)  # Public URL for pre-signed URLs
             region = config.get('S3_REGION', 'us-east-1')
             access_key = config.get('S3_ACCESS_KEY_ID')
             secret_key = config.get('S3_SECRET_ACCESS_KEY')
             use_ssl = config.get('S3_USE_SSL', True)
 
-            # TODO Phase 6: Create boto3 S3 client
-            # import boto3
-            # from botocore.config import Config
-            #
-            # boto_config = Config(
-            #     region_name=region,
-            #     signature_version='s3v4',
-            #     retries={
-            #         'max_attempts': 3,
-            #         'mode': 'adaptive'
-            #     },
-            #     max_pool_connections=50
-            # )
-            #
-            # self._client = boto3.client(
-            #     's3',
-            #     endpoint_url=endpoint_url,
-            #     aws_access_key_id=access_key,
-            #     aws_secret_access_key=secret_key,
-            #     use_ssl=use_ssl,
-            #     config=boto_config
-            # )
+            # Create boto3 S3 client
+            import boto3
+            from botocore.config import Config
+
+            boto_config = Config(
+                region_name=region,
+                signature_version='s3v4',
+                retries={
+                    'max_attempts': 3,
+                    'mode': 'adaptive'
+                },
+                max_pool_connections=50
+            )
+
+            self._client = boto3.client(
+                's3',
+                endpoint_url=endpoint_url,
+                aws_access_key_id=access_key,
+                aws_secret_access_key=secret_key,
+                use_ssl=use_ssl,
+                config=boto_config
+            )
+
+            # Create separate client for presigned URLs using public endpoint
+            # This ensures signatures are generated with the correct Host header
+            if endpoint_url != public_url:
+                self._presigned_client = boto3.client(
+                    's3',
+                    endpoint_url=public_url,
+                    aws_access_key_id=access_key,
+                    aws_secret_access_key=secret_key,
+                    use_ssl=use_ssl,
+                    config=boto_config
+                )
+                logger.debug(
+                    f"Created separate presigned URL client with public endpoint: {public_url}"
+                )
+            else:
+                # Same endpoint for both internal and public, use same client
+                self._presigned_client = self._client
+
+            # Store URLs for reference
+            self._endpoint_url = endpoint_url
+            self._public_url = public_url
 
             logger.debug(
-                f"[PLACEHOLDER] Would initialize S3 client: bucket={self._bucket}, "
-                f"region={region}, endpoint={endpoint_url}, use_ssl={use_ssl}"
+                f"S3 client initialized: bucket={self._bucket}, "
+                f"region={region}, endpoint={endpoint_url}, "
+                f"public_url={public_url}, use_ssl={use_ssl}"
             )
 
             self._initialized = True
-            logger.info(f"S3 client initialized (placeholder): bucket={self._bucket}")
+            logger.info(f"S3 client initialized: bucket={self._bucket}")
 
             return True, None
 
@@ -229,20 +254,20 @@ class S3Client:
                 extra_args['Metadata'] = metadata
             extra_args['ACL'] = 'private'  # Security: private by default
 
-            # TODO Phase 6: Upload file to S3
-            # self._client.upload_fileobj(
-            #     Fileobj=file_obj,
-            #     Bucket=self._bucket,
-            #     Key=s3_path,
-            #     ExtraArgs=extra_args
-            # )
+            # Upload file to S3
+            self._client.upload_fileobj(
+                Fileobj=file_obj,
+                Bucket=self._bucket,
+                Key=s3_path,
+                ExtraArgs=extra_args
+            )
 
             logger.debug(
-                f"[PLACEHOLDER] Would upload file to S3: "
+                f"Uploaded file to S3: "
                 f"bucket={self._bucket}, path={s3_path}, content_type={content_type}"
             )
 
-            logger.info(f"File uploaded to S3 (placeholder): {s3_path}")
+            logger.info(f"File uploaded to S3: {s3_path}")
             return True, None
 
         except Exception as e:
@@ -293,23 +318,23 @@ class S3Client:
             return False, error
 
         try:
-            # TODO Phase 6: Delete file from S3
-            # response = self._client.delete_object(
-            #     Bucket=self._bucket,
-            #     Key=s3_path
-            # )
-            #
-            # # Check if deletion was successful
-            # delete_marker = response.get('DeleteMarker', False)
-            # if delete_marker:
-            #     logger.info(f"S3 delete marker created: {s3_path}")
+            # Delete file from S3
+            response = self._client.delete_object(
+                Bucket=self._bucket,
+                Key=s3_path
+            )
+
+            # Check if deletion was successful
+            delete_marker = response.get('DeleteMarker', False)
+            if delete_marker:
+                logger.info(f"S3 delete marker created: {s3_path}")
 
             logger.debug(
-                f"[PLACEHOLDER] Would delete file from S3: "
+                f"Deleted file from S3: "
                 f"bucket={self._bucket}, path={s3_path}"
             )
 
-            logger.info(f"File deleted from S3 (placeholder): {s3_path}")
+            logger.info(f"File deleted from S3: {s3_path}")
             return True, None
 
         except Exception as e:
@@ -388,30 +413,26 @@ class S3Client:
             if response_content_disposition:
                 params['ResponseContentDisposition'] = response_content_disposition
 
-            # TODO Phase 6: Generate pre-signed URL
-            # url = self._client.generate_presigned_url(
-            #     ClientMethod='get_object',
-            #     Params=params,
-            #     ExpiresIn=expires_in,
-            #     HttpMethod='GET'
-            # )
-
-            placeholder_url = (
-                f"https://{self._bucket}.s3.amazonaws.com/{s3_path}"
-                f"?X-Amz-Expires={expires_in}&X-Amz-Signature=placeholder"
+            # Generate pre-signed URL using the presigned client (with public endpoint)
+            # This ensures the signature is computed with the correct Host header
+            url = self._presigned_client.generate_presigned_url(
+                ClientMethod='get_object',
+                Params=params,
+                ExpiresIn=expires_in,
+                HttpMethod='GET'
             )
 
             logger.debug(
-                f"[PLACEHOLDER] Would generate pre-signed URL: "
+                f"Generated pre-signed URL using public endpoint: "
                 f"bucket={self._bucket}, path={s3_path}, expires_in={expires_in}"
             )
 
             logger.info(
-                f"Pre-signed URL generated (placeholder): {s3_path} "
+                f"Pre-signed URL generated: {s3_path} "
                 f"(expires in {expires_in}s)"
             )
 
-            return placeholder_url, None
+            return url, None
 
         except Exception as e:
             logger.error(
@@ -466,27 +487,26 @@ class S3Client:
             return False, error
 
         try:
-            # TODO Phase 6: Check if file exists in S3
-            # try:
-            #     self._client.head_object(
-            #         Bucket=self._bucket,
-            #         Key=s3_path
-            #     )
-            #     return True, None
-            # except ClientError as e:
-            #     if e.response['Error']['Code'] == '404':
-            #         return False, None
-            #     else:
-            #         raise
+            # Check if file exists in S3
+            from botocore.exceptions import ClientError
+            try:
+                self._client.head_object(
+                    Bucket=self._bucket,
+                    Key=s3_path
+                )
+                logger.info(f"File exists in S3: {s3_path}")
+                return True, None
+            except ClientError as e:
+                if e.response['Error']['Code'] == '404':
+                    logger.info(f"File not found in S3: {s3_path}")
+                    return False, None
+                else:
+                    raise
 
             logger.debug(
-                f"[PLACEHOLDER] Would check file existence in S3: "
+                f"Checked file existence in S3: "
                 f"bucket={self._bucket}, path={s3_path}"
             )
-
-            # Placeholder: assume file exists for demo
-            logger.info(f"File existence check (placeholder): {s3_path} - exists=True")
-            return True, None
 
         except Exception as e:
             logger.error(
@@ -494,6 +514,71 @@ class S3Client:
                 exc_info=True
             )
             return False, f'File existence check failed: {str(e)}'
+
+    def get_object(self, s3_path: str):
+        """
+        Get S3 object for streaming download.
+
+        Retrieves an S3 object that can be streamed to the client. The caller
+        is responsible for closing the response body.
+
+        Args:
+            s3_path: S3 object key/path to download
+
+        Returns:
+            Tuple of (S3 response object, error message)
+            - If successful: (response_object, None)
+            - If error: (None, error_message)
+
+        Example:
+            s3_object, error = s3_client.get_object(
+                s3_path='tenants/123/files/2024/01/file.pdf'
+            )
+            if error:
+                return internal_error(error)
+
+            # Stream file in chunks
+            for chunk in s3_object['Body'].iter_chunks(chunk_size=65536):
+                yield chunk
+
+            # Don't forget to close
+            s3_object['Body'].close()
+
+        Business Rules:
+            - Returns streaming body that must be closed by caller
+            - File is not loaded into memory (streaming)
+            - Use iter_chunks() to read in chunks
+            - Suitable for large files
+        """
+        # Ensure S3 client is initialized
+        initialized, error = self._ensure_initialized()
+        if error:
+            return None, error
+
+        try:
+            # Get S3 object
+            from botocore.exceptions import ClientError
+            try:
+                response = self._client.get_object(
+                    Bucket=self._bucket,
+                    Key=s3_path
+                )
+                logger.info(f"Retrieved S3 object for streaming: {s3_path}")
+                return response, None
+            except ClientError as e:
+                error_code = e.response['Error']['Code']
+                if error_code == 'NoSuchKey':
+                    logger.error(f"File not found in S3: s3_path={s3_path}")
+                    return None, f'File not found in storage: {s3_path}'
+                else:
+                    raise
+
+        except Exception as e:
+            logger.error(
+                f"Error getting S3 object (path: {s3_path}): {str(e)}",
+                exc_info=True
+            )
+            return None, f'Failed to get S3 object: {str(e)}'
 
     def get_bucket_name(self) -> Optional[str]:
         """
@@ -537,15 +622,14 @@ class S3Client:
             return False, error
 
         try:
-            # TODO Phase 6: Check S3 health
-            # response = self._client.head_bucket(Bucket=self._bucket)
-            # return True, None
+            # Check S3 health
+            response = self._client.head_bucket(Bucket=self._bucket)
 
             logger.debug(
-                f"[PLACEHOLDER] Would check S3 health: bucket={self._bucket}"
+                f"S3 health check: bucket={self._bucket}"
             )
 
-            logger.info("S3 health check completed (placeholder)")
+            logger.info("S3 health check completed")
             return True, None
 
         except Exception as e:

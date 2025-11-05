@@ -32,7 +32,7 @@ class TestUserModel:
             last_name='Doe',
             email='john@example.com'
         )
-        user.set_password('password123')
+        user.set_password('12345678')
 
         session.add(user)
         session.commit()
@@ -74,7 +74,7 @@ class TestUserModel:
     def test_email_uniqueness(self, session):
         """Test email must be unique"""
         user1 = User(email='duplicate@example.com')
-        user1.set_password('password123')
+        user1.set_password('12345678')
 
         session.add(user1)
         session.commit()
@@ -95,7 +95,7 @@ class TestUserModel:
             last_name='Smith',
             email='jane@example.com'
         )
-        user.set_password('password123')
+        user.set_password('12345678')
 
         session.add(user)
         session.commit()
@@ -402,7 +402,7 @@ class TestModelRelationships:
         """Test cascade behavior on deletion"""
         # Create user and tenant
         user = User(email='cascade@example.com')
-        user.set_password('password123')
+        user.set_password('12345678')
         session.add(user)
 
         tenant = Tenant(name='Cascade Test')

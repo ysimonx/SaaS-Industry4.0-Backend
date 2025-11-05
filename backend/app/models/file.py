@@ -18,8 +18,8 @@ Storage strategy:
 - Deduplication: by MD5 hash within tenant boundary
 
 S3 Path format:
-  tenants/{tenant_id}/files/{md5_hash[:2]}/{md5_hash[2:4]}/{md5_hash}_{uuid}
-  Example: tenants/abc-123/files/3a/c5/3ac5f2e8a1b4c6d7e8f9a0b1c2d3e4f5_def-456
+  tenants/{database_name}/files/{md5_hash[:2]}/{md5_hash[2:4]}/{md5_hash}_{uuid}
+  Example: tenants/tenant_iter_45fca42c/files/3a/c5/3ac5f2e8a1b4c6d7e8f9a0b1c2d3e4f5_def-456
 """
 
 import re
@@ -273,17 +273,17 @@ class File(BaseModel, db.Model):
         return False  # Placeholder until S3 integration exists
 
     @staticmethod
-    def generate_s3_path(tenant_id: str, md5_hash: str, file_id: str) -> str:
+    def generate_s3_path(database_name: str, md5_hash: str, file_id: str) -> str:
         """
         Generate the S3 path for storing a file.
 
-        Path format: tenants/{tenant_id}/files/{md5[:2]}/{md5[2:4]}/{md5}_{file_id}
+        Path format: tenants/{database_name}/files/{md5[:2]}/{md5[2:4]}/{md5}_{file_id}
 
         This sharding strategy (using first 4 chars of MD5) prevents too many
         files in a single S3 "directory", which can slow down listing operations.
 
         Args:
-            tenant_id: Tenant's UUID
+            database_name: Tenant's database name (e.g., tenant_iter_45fca42c)
             md5_hash: MD5 hash of file content
             file_id: File's UUID
 
@@ -292,16 +292,16 @@ class File(BaseModel, db.Model):
 
         Example:
             generate_s3_path(
-                tenant_id='abc-123',
+                database_name='tenant_iter_45fca42c',
                 md5_hash='3ac5f2e8a1b4c6d7e8f9a0b1c2d3e4f5',
                 file_id='def-456'
             )
-            # Returns: tenants/abc-123/files/3a/c5/3ac5f2e8a1b4c6d7e8f9a0b1c2d3e4f5_def-456
+            # Returns: tenants/tenant_iter_45fca42c/files/3a/c5/3ac5f2e8a1b4c6d7e8f9a0b1c2d3e4f5_def-456
         """
         md5_lower = md5_hash.lower()
         shard1 = md5_lower[:2]
         shard2 = md5_lower[2:4]
-        s3_path = f"tenants/{tenant_id}/files/{shard1}/{shard2}/{md5_lower}_{file_id}"
+        s3_path = f"tenants/{database_name}/files/{shard1}/{shard2}/{md5_lower}_{file_id}"
         logger.debug(f"Generated S3 path: {s3_path}")
         return s3_path
 
@@ -407,7 +407,7 @@ class File(BaseModel, db.Model):
 
         Prevents changing critical fields after creation:
         - md5_hash (immutable - represents file content)
-        - s3_path (immutable - represents storage location)
+        - s3_path (immutable - except for initial placeholder replacement)
         """
         super().before_update()
 
@@ -426,10 +426,15 @@ class File(BaseModel, db.Model):
                 # Check if s3_path was changed
                 s3_history = db.inspect(self).attrs.s3_path.history
                 if s3_history.has_changes():
-                    raise ValueError(
-                        "Cannot change s3_path after file creation. "
-                        "Create a new file record instead."
-                    )
+                    # Allow updating s3_path if the old value was a temporary placeholder
+                    old_s3_path = s3_history.deleted[0] if s3_history.deleted else None
+                    if old_s3_path and '_temp' in old_s3_path:
+                        logger.debug(f"Allowing s3_path update from temporary placeholder: {old_s3_path} -> {self.s3_path}")
+                    else:
+                        raise ValueError(
+                            "Cannot change s3_path after file creation. "
+                            "Create a new file record instead."
+                        )
 
         logger.debug(f"File pre-update validation passed: {self.md5_hash}")
 

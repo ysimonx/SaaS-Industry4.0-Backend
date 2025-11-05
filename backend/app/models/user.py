@@ -38,7 +38,7 @@ class User(BaseModel, db.Model):
         ...     last_name='Doe',
         ...     email='john.doe@example.com'
         ... )
-        >>> user.set_password('secure_password123')
+        >>> user.set_password('12345678')
         >>> db.session.add(user)
         >>> db.session.commit()
     """

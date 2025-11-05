@@ -33,6 +33,7 @@ from app.schemas.document_schema import (
 from app.utils.responses import ok, created, bad_request, not_found, internal_error
 from app.utils.decorators import jwt_required_custom
 from app.utils.database import tenant_db_manager
+from app.utils.s3_client import s3_client
 
 logger = logging.getLogger(__name__)
 
@@ -215,7 +216,7 @@ def upload_document(tenant_id: str):
 
     Handles multipart/form-data file upload with metadata.
     Performs MD5 deduplication - if file already exists, reuses it.
-    File is NOT uploaded to S3 in this implementation (placeholder for Phase 6).
+    File is uploaded to S3-compatible storage (MinIO).
 
     **Authentication**: JWT required
     **Authorization**: Must be a member of the tenant
@@ -323,12 +324,12 @@ def upload_document(tenant_id: str):
                 logger.info(f"Reusing existing file: file_id={file_id}, md5={md5_hash}")
             else:
                 # Create new file record
-                # Generate S3 path (placeholder - actual S3 upload in Phase 6)
-                s3_path = File.generate_s3_path(tenant_id, md5_hash, None)
+                # First create File with temporary s3_path to get file_id
+                temp_s3_path = File.generate_s3_path(database_name, md5_hash, 'temp')
 
                 new_file = File(
                     md5_hash=md5_hash,
-                    s3_path=s3_path,
+                    s3_path=temp_s3_path,
                     file_size=file_size,
                     created_by=user_id
                 )
@@ -336,10 +337,26 @@ def upload_document(tenant_id: str):
                 session.flush()  # Get file ID
 
                 file_id = new_file.id
+
+                # Now generate the final S3 path with the real file_id
+                s3_path = File.generate_s3_path(database_name, md5_hash, str(file_id))
+                new_file.s3_path = s3_path
+                session.flush()  # Update with final s3_path
+
                 logger.info(f"Created new file: file_id={file_id}, md5={md5_hash}, s3_path={s3_path}")
 
-                # TODO: Phase 6 - Upload to S3
-                # s3_client.upload_file(file_obj, s3_path)
+                # Upload to S3/MinIO with the correct path
+                success, upload_error = s3_client.upload_file(
+                    file_obj=file_obj,
+                    s3_path=s3_path,
+                    content_type=mime_type
+                )
+
+                if not success:
+                    logger.error(f"Failed to upload file to S3: {upload_error}")
+                    # Rollback the file record creation
+                    session.rollback()
+                    return internal_error(f'Failed to upload file to storage: {upload_error}')
 
             # Create document record
             document = Document(
@@ -448,57 +465,72 @@ def get_document(tenant_id: str, document_id: str):
 @jwt_required_custom
 def download_document(tenant_id: str, document_id: str):
     """
-    Get pre-signed download URL for document
+    Download document file directly (proxy mode)
 
-    Generates a temporary pre-signed S3 URL for downloading the document file.
-    URL expires after 1 hour by default.
+    Securely downloads the document file from S3 storage by proxying through
+    the API. Verifies tenant access and streams the file with proper headers.
 
     **Authentication**: JWT required
-    **Authorization**: Must be a member of the tenant
+    **Authorization**: Must be a member of the tenant with read permission
 
     **URL Parameters**:
         tenant_id: UUID of the tenant
         document_id: UUID of the document
 
-    **Query Parameters**:
-        expires_in: URL expiration in seconds (default: 3600, max: 86400)
-
     **Response**:
-        200 OK:
-            {
-                "success": true,
-                "message": "Download URL generated successfully",
-                "data": {
-                    "download_url": "https://s3.amazonaws.com/...",
-                    "expires_in": 3600,
-                    "expires_at": "2024-01-01T01:00:00Z",
-                    "filename": "report.pdf",
-                    "file_size": 1024000
-                }
-            }
+        200 OK: Binary file stream with headers:
+            - Content-Type: document's MIME type
+            - Content-Disposition: attachment; filename="original_filename.ext"
+            - Content-Length: file size in bytes
 
+        403 Forbidden: User does not have permission to download files
         404 Not Found: Tenant, document not found, or access denied
-        500 Internal Server Error: Server error
+        500 Internal Server Error: Server error or S3 download failure
 
     **Example**:
         GET /api/tenants/123e4567-e89b-12d3-a456-426614174000/documents/456e7890-e89b-12d3-a456-426614174001/download
         Authorization: Bearer <access_token>
+
+    **Security**:
+        - Validates JWT authentication
+        - Verifies user has access to the tenant
+        - Verifies user has read permission (viewer, user, or admin)
+        - Does not expose direct S3 URLs
+        - All downloads are logged with user_id, document_id, and timestamp
+        - File is streamed through API (never direct S3 access)
     """
     try:
         user_id = g.user_id
-        logger.info(f"Generating download URL: tenant_id={tenant_id}, document_id={document_id}, user_id={user_id}")
+        logger.info(f"Download request: tenant_id={tenant_id}, document_id={document_id}, user_id={user_id}")
 
         # Check tenant access
         has_access, error_response = check_tenant_access(user_id, tenant_id)
         if not has_access:
+            logger.warning(f"Access denied: user_id={user_id}, tenant_id={tenant_id}")
             return error_response
 
-        # Get expiration parameter
-        expires_in = min(request.args.get('expires_in', 3600, type=int), 86400)
+        # Verify user has read permission
+        association = UserTenantAssociation.query.filter_by(
+            user_id=user_id,
+            tenant_id=tenant_id
+        ).first()
+
+        if not association.has_permission('read'):
+            logger.warning(
+                f"Permission denied: user_id={user_id}, tenant_id={tenant_id}, "
+                f"role={association.role}, action=download"
+            )
+            from app.utils.responses import forbidden
+            return forbidden('You do not have permission to download files from this tenant')
 
         # Get tenant database name
         tenant = Tenant.query.get(tenant_id)
         database_name = tenant.database_name
+
+        logger.info(
+            f"Access granted: user_id={user_id}, tenant_id={tenant_id}, "
+            f"role={association.role}, database={database_name}"
+        )
 
         # Switch to tenant database
         with tenant_db_manager.tenant_db_session(database_name) as session:
@@ -509,23 +541,262 @@ def download_document(tenant_id: str, document_id: str):
                 logger.warning(f"Document not found: document_id={document_id}")
                 return not_found('Document not found')
 
-            # Get download URL from document (delegates to file)
-            # TODO: Phase 6 - Implement actual S3 pre-signed URL generation
-            download_url = f"https://s3.example.com/placeholder/{document.file.s3_path}"
+            # Verify document belongs to the tenant (additional security check)
+            # This should always be true due to tenant database isolation, but we verify anyway
+            if document.user_id and document.user_id not in [
+                assoc.user_id for assoc in
+                UserTenantAssociation.query.filter_by(tenant_id=tenant_id).all()
+            ]:
+                logger.error(
+                    f"Security violation: document.user_id={document.user_id} does not belong "
+                    f"to tenant_id={tenant_id}"
+                )
+                return not_found('Document not found')
 
-            from datetime import datetime, timedelta
-            expires_at = datetime.utcnow() + timedelta(seconds=expires_in)
+            # Get file details
+            s3_path = document.file.s3_path
+            filename = document.filename
+            mime_type = document.mime_type
+            file_size = document.file.file_size
+            md5_hash = document.file.md5_hash
 
-            response_data = {
-                'download_url': download_url,
-                'expires_in': expires_in,
-                'expires_at': expires_at.isoformat() + 'Z',
-                'filename': document.filename,
-                'file_size': document.file.file_size,
-                'mime_type': document.mime_type
+            # Audit log: record download attempt
+            logger.info(
+                f"AUDIT: Download initiated - "
+                f"user_id={user_id}, "
+                f"tenant_id={tenant_id}, "
+                f"document_id={document_id}, "
+                f"filename={filename}, "
+                f"size={file_size}, "
+                f"md5={md5_hash}, "
+                f"role={association.role}"
+            )
+
+            # Download file from S3 and stream to client
+            from flask import Response, stream_with_context
+
+            # Get S3 object for streaming
+            s3_object, s3_error = s3_client.get_object(s3_path)
+            if s3_error:
+                logger.error(
+                    f"S3 download failed - document_id={document_id}, "
+                    f"s3_path={s3_path}, error={s3_error}"
+                )
+                if 'not found' in s3_error.lower():
+                    return not_found('File not found in storage')
+                return internal_error(f'Failed to download file from storage: {s3_error}')
+
+            # Create streaming response
+            def generate():
+                """Stream file in chunks to avoid loading entire file in memory"""
+                try:
+                    # Read in 64KB chunks
+                    for chunk in s3_object['Body'].iter_chunks(chunk_size=65536):
+                        yield chunk
+
+                    # Log successful completion
+                    logger.info(
+                        f"AUDIT: Download completed successfully - "
+                        f"user_id={user_id}, document_id={document_id}, "
+                        f"filename={filename}, size={file_size}"
+                    )
+                except Exception as e:
+                    logger.error(
+                        f"AUDIT: Download interrupted - "
+                        f"user_id={user_id}, document_id={document_id}, "
+                        f"error={str(e)}"
+                    )
+                    raise
+                finally:
+                    # Ensure S3 response body is closed
+                    s3_object['Body'].close()
+
+            response = Response(
+                stream_with_context(generate()),
+                mimetype=mime_type,
+                direct_passthrough=True
+            )
+
+            # Set headers for file download
+            response.headers['Content-Disposition'] = f'attachment; filename="{filename}"'
+            response.headers['Content-Length'] = str(file_size)
+
+            # Security headers
+            response.headers['X-Content-Type-Options'] = 'nosniff'
+            response.headers['X-Frame-Options'] = 'DENY'
+            response.headers['Cache-Control'] = 'no-store, no-cache, must-revalidate, private'
+            response.headers['Pragma'] = 'no-cache'
+
+            logger.info(f"Download stream started: document_id={document_id}, size={file_size} bytes")
+            return response
+
+    except Exception as e:
+        logger.error(f"Error downloading document: {str(e)}", exc_info=True)
+        return internal_error('Failed to download document')
+
+
+@documents_bp.route('/<tenant_id>/documents/<document_id>/download-url', methods=['GET'])
+@jwt_required_custom
+def get_download_url(tenant_id: str, document_id: str):
+    """
+    Generate pre-signed S3 URL for document download.
+
+    Returns a temporary URL that allows downloading the document without authentication.
+    The URL expires after the specified time (default: 1 hour, max: 24 hours).
+
+    This is useful for scenarios where including a Bearer Token in the URL is not
+    practical or secure (e.g., email links, browser downloads, external integrations).
+
+    **Workflow**:
+    1. Client calls this endpoint with JWT Bearer Token (authenticated)
+    2. API validates permissions and generates temporary S3 pre-signed URL
+    3. Client downloads file directly from S3 using the URL (no authentication needed)
+    4. URL expires after the specified time
+
+    **Authentication**: JWT required
+    **Authorization**: Must have read permission on tenant
+
+    **URL Parameters**:
+        tenant_id: UUID of the tenant
+        document_id: UUID of the document
+
+    **Query Parameters**:
+        expires_in: URL expiration time in seconds (default: 3600, min: 60, max: 86400)
+
+    **Response**:
+        200 OK:
+            {
+                "success": true,
+                "message": "Download URL generated successfully",
+                "data": {
+                    "download_url": "http://localhost:9000/saas-documents/tenants/.../file.pdf?Signature=...",
+                    "expires_in": 3600,
+                    "expires_at": "2024-01-01T01:00:00Z",
+                    "filename": "report.pdf",
+                    "mime_type": "application/pdf",
+                    "file_size": 1048576
+                }
             }
 
-            logger.info(f"Download URL generated: document_id={document_id}, expires_in={expires_in}s")
+        400 Bad Request: Invalid expires_in parameter
+        403 Forbidden: User does not have read permission
+        404 Not Found: Tenant or document not found
+        500 Internal Server Error: Failed to generate URL
+
+    **Example**:
+        GET /api/tenants/123e4567-e89b-12d3-a456-426614174000/documents/456e7890-e89b-12d3-a456-426614174001/download-url?expires_in=3600
+        Authorization: Bearer <access_token>
+
+    **Security**:
+        - Requires JWT authentication to generate URL
+        - Verifies tenant access and read permission
+        - URLs are temporary and expire automatically
+        - Downloads are logged for audit purposes
+        - S3 bucket must be private (pre-signed URLs required)
+
+    **Use cases**:
+        - Email links for document sharing
+        - Browser downloads without custom headers
+        - Mobile app downloads
+        - External system integrations
+        - Temporary public access to private documents
+    """
+    try:
+        user_id = g.user_id
+
+        # Validate expires_in parameter
+        expires_in = request.args.get('expires_in', 3600, type=int)
+        if expires_in < 60 or expires_in > 86400:  # 1 min to 24 hours
+            logger.warning(f"Invalid expires_in parameter: {expires_in}")
+            return bad_request('expires_in must be between 60 and 86400 seconds (1 min to 24 hours)')
+
+        logger.info(
+            f"Download URL request: tenant_id={tenant_id}, document_id={document_id}, "
+            f"user_id={user_id}, expires_in={expires_in}s"
+        )
+
+        # Check tenant access
+        has_access, error_response = check_tenant_access(user_id, tenant_id)
+        if not has_access:
+            logger.warning(f"Tenant access denied: user_id={user_id}, tenant_id={tenant_id}")
+            return error_response
+
+        # Check read permission
+        association = UserTenantAssociation.query.filter_by(
+            user_id=user_id,
+            tenant_id=tenant_id
+        ).first()
+
+        if not association.has_permission('read'):
+            logger.warning(
+                f"Read permission denied: user_id={user_id}, tenant_id={tenant_id}, "
+                f"role={association.role}"
+            )
+            from app.utils.responses import forbidden
+            return forbidden('You do not have permission to download files from this tenant')
+
+        # Get tenant database name
+        tenant = Tenant.query.get(tenant_id)
+        database_name = tenant.database_name
+
+        logger.info(
+            f"Access granted: user_id={user_id}, tenant_id={tenant_id}, "
+            f"role={association.role}, database={database_name}"
+        )
+
+        # Switch to tenant database
+        with tenant_db_manager.tenant_db_session(database_name) as session:
+            # Fetch document with file relationship
+            document = session.query(Document).filter_by(id=document_id).first()
+
+            if not document:
+                logger.warning(f"Document not found: document_id={document_id}")
+                return not_found('Document not found')
+
+            # Get file details
+            s3_path = document.file.s3_path
+            filename = document.filename
+            mime_type = document.mime_type
+            file_size = document.file.file_size
+
+            # Generate pre-signed URL
+            from datetime import datetime, timedelta
+
+            presigned_url, error = s3_client.generate_presigned_url(
+                s3_path=s3_path,
+                expires_in=expires_in,
+                response_content_disposition=f'attachment; filename="{filename}"'
+            )
+
+            if error:
+                logger.error(
+                    f"Failed to generate pre-signed URL: document_id={document_id}, "
+                    f"s3_path={s3_path}, error={error}"
+                )
+                return internal_error(f'Failed to generate download URL: {error}')
+
+            # Build response
+            expires_at = datetime.utcnow() + timedelta(seconds=expires_in)
+            response_data = {
+                'download_url': presigned_url,
+                'expires_in': expires_in,
+                'expires_at': expires_at.isoformat() + 'Z',
+                'filename': filename,
+                'mime_type': mime_type,
+                'file_size': file_size
+            }
+
+            # Audit log: record URL generation
+            logger.info(
+                f"AUDIT: Download URL generated - "
+                f"user_id={user_id}, "
+                f"tenant_id={tenant_id}, "
+                f"document_id={document_id}, "
+                f"filename={filename}, "
+                f"expires_in={expires_in}s, "
+                f"role={association.role}"
+            )
+
             return ok(response_data, 'Download URL generated successfully')
 
     except Exception as e:
@@ -647,7 +918,7 @@ def delete_document(tenant_id: str, document_id: str):
 
     Deletes the document record. If the underlying file becomes orphaned
     (no other documents reference it), it can be cleaned up separately.
-    File is NOT deleted from S3 in this implementation (placeholder for Phase 6).
+    Note: File is NOT automatically deleted from S3 in this implementation.
 
     **Authentication**: JWT required
     **Authorization**: Must be a member of the tenant
