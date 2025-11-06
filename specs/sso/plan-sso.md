@@ -1,4 +1,10 @@
-# Plan d'implémentation Azure SSO Multi-Tenant
+# Plan d'implémentation Azure SSO Multi-Tenant (Mode Public Application)
+
+> **⚠️ IMPORTANT**: Cette implémentation utilise exclusivement le mode **Public Application** d'Azure AD/Microsoft Entra ID.
+> - **Pas de client_secret** à gérer ou stocker
+> - Utilisation de **PKCE** (Proof Key for Code Exchange) pour sécuriser le flow OAuth2
+> - Configuration simplifiée : seulement `client_id` et `azure_tenant_id` requis
+> - Idéal pour les SPA (Single Page Applications) et applications mobiles
 
 ## Contexte
 
@@ -32,6 +38,7 @@ class TenantSSOConfig(db.Model):
     """
     Configuration SSO pour chaque tenant.
     Chaque tenant peut avoir sa propre configuration Azure AD.
+    Utilise le mode "Application publique" (Public Client) sans client_secret.
     """
     __tablename__ = 'tenant_sso_configs'
 
@@ -39,10 +46,9 @@ class TenantSSOConfig(db.Model):
     tenant_id = db.Column(UUID(as_uuid=True), db.ForeignKey('tenants.id', ondelete='CASCADE'), nullable=False)
     provider_type = db.Column(db.String(50), nullable=False, default='azure_ad')
 
-    # Configuration Azure AD spécifique au tenant
-    azure_tenant_id = db.Column(db.String(255), nullable=False)  # Ex: companya.onmicrosoft.com
-    client_id = db.Column(db.String(255), nullable=False)  # Application ID Azure AD
-    client_secret_encrypted = db.Column(db.Text)  # Secret chiffré avec Vault
+    # Configuration Azure AD spécifique au tenant (mode Public Application)
+    azure_tenant_id = db.Column(db.String(255), nullable=False)  # GUID ou domaine: 12345678-1234-1234-1234-123456789abc ou contoso.onmicrosoft.com
+    client_id = db.Column(db.String(255), nullable=False)  # Application (client) ID depuis Azure Portal
     redirect_uri = db.Column(db.String(500), nullable=False)
 
     is_enabled = db.Column(db.Boolean, default=False)
@@ -122,138 +128,88 @@ class UserAzureIdentity(db.Model):
         return identity
 ```
 
-#### Modifications des modèles SQLAlchemy existants
-
-> **⚠️ Important** : Les modifications sont faites via les modèles SQLAlchemy et Flask-Migrate, PAS avec des ALTER TABLE directs.
-
-##### Modèle `Tenant` (app/models/tenant.py)
+#### Modèle complet `Tenant` (app/models/tenant.py)
 
 ```python
+from app import db
+from sqlalchemy.dialects.postgresql import UUID, ARRAY, JSONB
+import uuid
+from datetime import datetime
+
 class Tenant(db.Model):
+    """Modèle Tenant avec support SSO intégré"""
     __tablename__ = 'tenants'
 
-    # Colonnes existantes...
+    # Colonnes existantes
     id = db.Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
     name = db.Column(db.String(100), nullable=False)
-    # ...
+    slug = db.Column(db.String(100), unique=True, nullable=False)
+    is_active = db.Column(db.Boolean, default=True)
+    created_at = db.Column(db.DateTime(timezone=True), default=datetime.utcnow)
+    updated_at = db.Column(db.DateTime(timezone=True), default=datetime.utcnow, onupdate=datetime.utcnow)
 
-    # NOUVELLES COLONNES pour SSO
+    # Nouvelles colonnes pour SSO
     auth_method = db.Column(db.String(20), default='local', nullable=False)
-    # Valeurs possibles : 'local', 'sso', 'both'
+    # Valeurs: 'local' (password only), 'sso' (SSO only), 'both' (SSO + password)
 
     sso_domain_whitelist = db.Column(ARRAY(db.String), default=list)
     # Domaines email autorisés pour SSO (ex: ['@company.com'])
 
-    sso_auto_provisioning = db.Column(db.Boolean, default=True)
+    sso_auto_provisioning = db.Column(db.Boolean, default=False)
     # Création automatique des utilisateurs lors du premier login SSO
 
     sso_default_role = db.Column(db.String(20), default='viewer')
     # Rôle par défaut pour les nouveaux utilisateurs SSO
 
-    # Relation avec la configuration SSO
+    # Relations
     sso_config = db.relationship('TenantSSOConfig',
                                  back_populates='tenant',
                                  uselist=False,
                                  cascade='all, delete-orphan')
+    user_associations = db.relationship('UserTenantAssociation',
+                                        back_populates='tenant',
+                                        cascade='all, delete-orphan')
 ```
 
-##### Modèle `User` (app/models/user.py)
+#### Modèle complet `User` (app/models/user.py)
 
 ```python
+from app import db
+from sqlalchemy.dialects.postgresql import UUID, JSONB
+import uuid
+from datetime import datetime
+
 class User(db.Model):
+    """Modèle User avec support SSO intégré"""
     __tablename__ = 'users'
 
-    # Colonnes existantes...
+    # Colonnes existantes
     id = db.Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
     email = db.Column(db.String(255), unique=True, nullable=False)
-    # ...
+    password_hash = db.Column(db.String(255), nullable=True)  # Nullable pour SSO-only users
+    first_name = db.Column(db.String(100))
+    last_name = db.Column(db.String(100))
+    is_active = db.Column(db.Boolean, default=True)
+    created_at = db.Column(db.DateTime(timezone=True), default=datetime.utcnow)
+    updated_at = db.Column(db.DateTime(timezone=True), default=datetime.utcnow, onupdate=datetime.utcnow)
 
-    # NOUVELLES COLONNES pour SSO
-    # Note: PAS de colonne azure_object_id ici car un utilisateur peut avoir plusieurs Object IDs
+    # Nouvelles colonnes pour SSO
     auth_provider = db.Column(db.String(50), default='local')
-    # Indique le dernier mode d'authentification utilisé
+    # Dernier mode d'authentification utilisé: 'local' ou 'azure_ad'
 
     last_sso_login = db.Column(db.DateTime(timezone=True))
     # Dernière connexion SSO (tous tenants confondus)
 
-    sso_metadata = db.Column(db.JSON)
-    # Métadonnées SSO globales (optionnel)
+    sso_metadata = db.Column(JSONB)
+    # Métadonnées SSO globales (préférences, attributs synchronisés, etc.)
 
-    # Relation avec les identités Azure
+    # Relations
     azure_identities = db.relationship('UserAzureIdentity',
                                        back_populates='user',
                                        cascade='all, delete-orphan')
-```
-
-### 1.5 Processus de migration avec Flask-Migrate
-
-#### Étapes de migration de la base de données
-
-```bash
-# 1. Créer les nouveaux fichiers de modèles
-touch app/models/tenant_sso_config.py
-touch app/models/user_azure_identity.py
-
-# 2. Importer les nouveaux modèles dans app/models/__init__.py
-# from .tenant_sso_config import TenantSSOConfig
-# from .user_azure_identity import UserAzureIdentity
-
-# 3. Modifier les modèles existants (User et Tenant)
-# Ajouter les nouvelles colonnes comme montré ci-dessus
-
-# 4. Générer la migration automatiquement
-flask db migrate -m "Add SSO support with multi-tenant Azure AD"
-
-# 5. Vérifier la migration générée
-# migrations/versions/xxxx_add_sso_support.py devrait contenir :
-# - CREATE TABLE tenant_sso_configs
-# - CREATE TABLE user_azure_identities
-# - ALTER TABLE tenants ADD COLUMN auth_method, sso_domain_whitelist, etc.
-# - ALTER TABLE users ADD COLUMN auth_provider, last_sso_login, sso_metadata
-
-# 6. Optionnel : éditer la migration si nécessaire
-# Par exemple, pour ajouter des données de migration
-
-# 7. Appliquer la migration en développement
-flask db upgrade
-
-# 8. Pour la production, générer le script SQL
-flask db upgrade --sql > sso_migration.sql
-# Réviser et appliquer manuellement si nécessaire
-```
-
-#### Migration des données existantes (optionnel)
-
-```python
-# Dans le fichier de migration migrations/versions/xxxx_add_sso_support.py
-def upgrade():
-    # ... création des tables et colonnes ...
-
-    # Optionnel : définir des valeurs par défaut pour les tenants existants
-    op.execute("""
-        UPDATE tenants
-        SET auth_method = 'local',
-            sso_auto_provisioning = false,
-            sso_default_role = 'viewer'
-        WHERE auth_method IS NULL
-    """)
-
-    # Optionnel : marquer tous les users existants comme 'local'
-    op.execute("""
-        UPDATE users
-        SET auth_provider = 'local'
-        WHERE auth_provider IS NULL
-    """)
-
-def downgrade():
-    # Supprimer les nouvelles tables
-    op.drop_table('user_azure_identities')
-    op.drop_table('tenant_sso_configs')
-
-    # Supprimer les nouvelles colonnes
-    op.drop_column('tenants', 'auth_method')
-    op.drop_column('tenants', 'sso_domain_whitelist')
-    # ... etc ...
+    tenant_associations = db.relationship('UserTenantAssociation',
+                                          back_populates='user',
+                                          cascade='all, delete-orphan')
 ```
 
 ### 2. Services Azure SSO
@@ -276,51 +232,94 @@ backend/app/
 #### Service AzureSSOService
 
 ```python
+import msal
+from flask import session
+import secrets
+
 class AzureSSOService:
     """
-    Gère l'authentification Azure AD via MSAL
-    Utilise les credentials spécifiques au tenant depuis la DB
+    Gère l'authentification Azure AD via MSAL en mode Public Application.
+    Utilise PKCE (Proof Key for Code Exchange) pour sécuriser le flow OAuth2.
+    Ne nécessite PAS de client_secret.
     """
 
     def __init__(self, tenant_id: str):
         """
         Initialise le service pour un tenant spécifique
-        Récupère les credentials Azure AD depuis tenant_sso_configs
+        Récupère la configuration Azure AD depuis tenant_sso_configs
         """
         self.tenant_id = tenant_id
         self.config = TenantSSOConfigService.get_azure_config(tenant_id)
 
-        # Initialisation MSAL avec les credentials du tenant
-        self.app = msal.ConfidentialClientApplication(
+        # Initialisation MSAL en mode Public Client (sans client_secret)
+        self.app = msal.PublicClientApplication(
             client_id=self.config['client_id'],
-            client_credential=self.config['client_secret'],
             authority=f"https://login.microsoftonline.com/{self.config['azure_tenant_id']}"
         )
 
-    def get_auth_url(self) -> str:
-        """Génère l'URL de redirection vers Azure AD du tenant"""
-        return self.app.get_authorization_request_url(
-            scopes=["User.Read"],
+    def get_auth_url(self) -> dict:
+        """
+        Génère l'URL de redirection vers Azure AD du tenant avec PKCE.
+        Retourne le flow complet qui doit être stocké pour le callback.
+        """
+        # Initier le flow d'autorisation avec PKCE
+        flow = self.app.initiate_auth_code_flow(
+            scopes=["User.Read", "email", "openid", "profile"],
             redirect_uri=self.config['redirect_uri'],
             state=self._generate_state_token()
         )
 
-    def exchange_code_for_token(self, code: str) -> dict:
-        """Échange le code d'autorisation contre un token"""
-        return self.app.acquire_token_by_authorization_code(
-            code=code,
-            scopes=["User.Read"],
-            redirect_uri=self.config['redirect_uri']
+        # Stocker le flow en session ou cache (Redis) pour le callback
+        # Le flow contient le code_verifier nécessaire pour PKCE
+        self._store_auth_flow(flow)
+
+        return {
+            'auth_url': flow['auth_uri'],
+            'flow_id': flow.get('state')  # Identifiant unique du flow
+        }
+
+    def exchange_code_for_token(self, auth_response: dict) -> dict:
+        """
+        Échange le code d'autorisation contre un token en utilisant PKCE.
+        auth_response doit contenir le code et le state de la réponse Azure AD.
+        """
+        # Récupérer le flow stocké via le state
+        flow = self._get_stored_flow(auth_response.get('state'))
+
+        if not flow:
+            raise ValueError("Invalid or expired authentication flow")
+
+        # Échanger le code en utilisant le flow avec PKCE
+        result = self.app.acquire_token_by_auth_code_flow(
+            auth_code_flow=flow,
+            auth_response=auth_response
         )
+
+        # Nettoyer le flow stocké
+        self._delete_stored_flow(auth_response.get('state'))
+
+        return result
 
     def validate_token(self, token: str) -> dict:
         """Valide et décode le token Azure AD"""
+        # Validation côté serveur des tokens ID
+        # Utilise les clés publiques Microsoft pour vérifier la signature
+        return self._validate_id_token(token)
 
     def get_user_info(self, access_token: str) -> dict:
         """Récupère les informations utilisateur depuis Microsoft Graph"""
+        import requests
+        headers = {'Authorization': f'Bearer {access_token}'}
+        response = requests.get('https://graph.microsoft.com/v1.0/me', headers=headers)
+        return response.json()
 
     def refresh_token(self, refresh_token: str) -> dict:
         """Rafraîchit le token d'accès"""
+        # Les Public Applications peuvent aussi utiliser les refresh tokens
+        return self.app.acquire_token_by_refresh_token(
+            refresh_token=refresh_token,
+            scopes=["User.Read", "email", "openid", "profile"]
+        )
 
     def _generate_state_token(self) -> str:
         """Génère un state token incluant le tenant_id"""
@@ -331,6 +330,34 @@ class AzureSSOService:
         }
         # Stocké en Redis avec TTL court
         return base64.urlsafe_b64encode(json.dumps(state_data).encode()).decode()
+
+    def _store_auth_flow(self, flow: dict) -> None:
+        """
+        Stocke le flow d'authentification en cache (Redis recommandé).
+        Le flow contient le code_verifier pour PKCE.
+        """
+        # En production: utiliser Redis avec TTL de 10 minutes
+        # redis_client.setex(f"auth_flow:{flow['state']}", 600, json.dumps(flow))
+
+        # En développement: peut utiliser la session Flask
+        session[f"auth_flow:{flow['state']}"] = flow
+
+    def _get_stored_flow(self, state: str) -> dict:
+        """Récupère le flow stocké par son state"""
+        # En production: depuis Redis
+        # flow_data = redis_client.get(f"auth_flow:{state}")
+        # return json.loads(flow_data) if flow_data else None
+
+        # En développement: depuis la session
+        return session.get(f"auth_flow:{state}")
+
+    def _delete_stored_flow(self, state: str) -> None:
+        """Supprime le flow stocké après utilisation"""
+        # En production: depuis Redis
+        # redis_client.delete(f"auth_flow:{state}")
+
+        # En développement: depuis la session
+        session.pop(f"auth_flow:{state}", None)
 ```
 
 ### 3. Flow d'authentification SSO Multi-Tenant
@@ -559,19 +586,23 @@ GET /api/tenants/{tenant_id}/sso/config
 
 POST /api/tenants/{tenant_id}/sso/config
   body:
-    azure_tenant_id: string
-    client_id: string
-    client_secret: string
+    azure_tenant_id: string  # GUID ou domaine Azure AD
+    client_id: string         # Application (client) ID
     metadata: {
-      auto_provisioning: {...}
-      role_mapping: {...}
+      auto_provisioning: {
+        enabled: boolean
+        default_role: string
+        allowed_domains: string[]
+      }
     }
   response:
     config: TenantSSOConfig
 
 PUT /api/tenants/{tenant_id}/sso/config
   body:
-    # Mêmes champs que POST
+    azure_tenant_id?: string
+    client_id?: string
+    metadata?: {...}
   response:
     config: TenantSSOConfig
 
@@ -749,17 +780,22 @@ def map_azure_attributes_to_user(user: User, azure_claims: dict, tenant_config: 
 - Vérifier expiration
 - Valider nonce pour prévenir replay attacks
 
-#### 6.2 Protection CSRF
+#### 6.2 Protection CSRF et PKCE
 
 - Générer state token unique par requête
 - Stocker en Redis avec TTL court (5 minutes)
 - Valider lors du callback
+- **PKCE (Proof Key for Code Exchange)** : Protection automatique pour les Public Applications
+  - Code verifier généré et stocké dans le flow
+  - Code challenge envoyé à Azure AD
+  - Validation automatique par MSAL
 
-#### 6.3 Chiffrement des secrets
+#### 6.3 Sécurité des Public Applications
 
-- Client secrets Azure AD chiffrés avec Vault
-- Rotation régulière des secrets
-- Audit trail des accès
+- **Pas de client_secret** : Aucun secret à stocker ou gérer
+- **Redirect URI whitelist** : Azure AD valide strictement les URIs de redirection
+- **Configuration Azure Portal** : Configurer l'application comme "Public client"
+- **Token storage** : Utiliser des méthodes sécurisées côté client
 
 #### 6.4 Single Logout (SLO)
 
@@ -801,39 +837,38 @@ def map_azure_attributes_to_user(user: User, azure_claims: dict, tenant_config: 
 #### 8.1 Variables d'environnement
 
 ```bash
-# IMPORTANT : Les credentials Azure AD (CLIENT_ID, CLIENT_SECRET, etc.)
-# NE SONT PAS des variables d'environnement mais sont stockés PAR TENANT
-# dans la table tenant_sso_configs (voir section 1)
+# Configuration Azure AD Public Application
+# Les CLIENT_ID et TENANT_ID sont stockés PAR TENANT dans la table tenant_sso_configs
+# PAS de CLIENT_SECRET car nous utilisons le mode Public Application
 
-# Redis pour sessions SSO
+# Redis pour sessions SSO et stockage des flows PKCE
 REDIS_SSO_URL=redis://localhost:6379/2
-REDIS_SSO_TTL=300              # 5 minutes pour state tokens
+REDIS_SSO_TTL=600              # 10 minutes pour auth flows PKCE
 
 # Feature flags globaux
 SSO_ENABLED=true                # Active/désactive SSO globalement
-SSO_AUTO_PROVISIONING=true      # Valeur par défaut, surchargeable par tenant
+SSO_AUTO_PROVISIONING=false     # Valeur par défaut, surchargeable par tenant
 SSO_DEBUG_MODE=false
 
 # URLs de base (utilisées pour construire les redirect_uri par tenant)
 APP_BASE_URL=https://api.saasplatform.com
 SSO_CALLBACK_PATH=/api/auth/sso/azure/callback
 
-# Chiffrement des secrets Azure AD dans la DB
-VAULT_KEY=                      # Clé de chiffrement pour les client_secret
+# CORS pour Public Applications
+CORS_ALLOWED_ORIGINS=https://app.saasplatform.com,http://localhost:3000
 ```
 
-#### 8.1.1 Stockage des credentials Azure AD par tenant
+#### 8.1.1 Stockage de la configuration Azure AD par tenant
 
-Les credentials Azure AD sont stockés dans la table `tenant_sso_configs` :
+La configuration Azure AD est stockée dans la table `tenant_sso_configs` :
 
 ```sql
--- Chaque tenant a ses propres credentials Azure AD
+-- Chaque tenant a sa propre configuration Azure AD (mode Public App)
 SELECT
     tenant_id,
-    azure_tenant_id,      -- Ex: companya.onmicrosoft.com
-    client_id,            -- Application ID spécifique au tenant
-    client_secret_encrypted,  -- Secret chiffré avec Vault
-    redirect_uri          -- URL de callback construite dynamiquement
+    azure_tenant_id,      -- GUID ou domaine: 12345678-... ou contoso.onmicrosoft.com
+    client_id,            -- Application (client) ID depuis Azure Portal
+    redirect_uri          -- URL de callback configurée dans Azure Portal
 FROM tenant_sso_configs
 WHERE tenant_id = 'uuid-tenant-a';
 ```
@@ -843,45 +878,49 @@ Exemple de configuration pour un tenant :
 {
     "tenant_id": "uuid-tenant-a",
     "provider_type": "azure_ad",
-    "azure_tenant_id": "companya.onmicrosoft.com",
-    "client_id": "12345678-abcd-efgh-ijkl-1234567890ab",
-    "client_secret_encrypted": "vault:v1:encrypted_secret_here...",
+    "azure_tenant_id": "12345678-1234-1234-1234-123456789abc",
+    "client_id": "87654321-abcd-efgh-ijkl-098765432109",
     "redirect_uri": "https://api.saasplatform.com/api/auth/sso/azure/callback",
     "metadata": {
         "auto_provisioning": {
             "enabled": true,
-            "default_role": "viewer"
-        }
+            "default_role": "viewer",
+            "allowed_domains": ["@company.com", "@partner.com"]
+        },
+        "app_type": "public"  // Indique que c'est une Public Application
     }
 }
 ```
 
-#### 8.2 Configuration par environnement et récupération des credentials
+#### 8.2 Configuration par environnement
 
 ```python
 class Config:
     # Development
-    APP_BASE_URL = "http://localhost:5000"
+    APP_BASE_URL = "http://localhost:4999"
     SSO_CALLBACK_PATH = "/api/auth/sso/azure/callback"
     SSO_REQUIRE_HTTPS = False
+    CORS_ALLOWED_ORIGINS = ["http://localhost:3000"]
 
 class ProductionConfig(Config):
     # Production
     APP_BASE_URL = "https://api.saasplatform.com"
     SSO_REQUIRE_HTTPS = True
     SSO_COOKIE_SECURE = True
+    CORS_ALLOWED_ORIGINS = ["https://app.saasplatform.com"]
 
-# Service pour récupérer les credentials depuis la DB
+# Service pour gérer la configuration SSO des tenants
 class TenantSSOConfigService:
     @staticmethod
     def get_azure_config(tenant_id: str) -> dict:
         """
-        Récupère la configuration Azure AD pour un tenant donné
-        Les secrets sont déchiffrés à la volée avec Vault
+        Récupère la configuration Azure AD pour un tenant donné.
+        Mode Public Application: pas de client_secret à gérer.
         """
         config = TenantSSOConfig.query.filter_by(
             tenant_id=tenant_id,
-            provider_type='azure_ad'
+            provider_type='azure_ad',
+            is_enabled=True
         ).first()
 
         if not config:
@@ -891,17 +930,16 @@ class TenantSSOConfigService:
             'tenant_id': config.tenant_id,
             'azure_tenant_id': config.azure_tenant_id,
             'client_id': config.client_id,
-            'client_secret': vault.decrypt(config.client_secret_encrypted),
             'redirect_uri': config.redirect_uri,
-            'metadata': config.metadata
+            'metadata': config.metadata or {}
         }
 
     @staticmethod
-    def save_azure_config(tenant_id: str, client_id: str, client_secret: str,
-                         azure_tenant_id: str) -> TenantSSOConfig:
+    def save_azure_config(tenant_id: str, client_id: str, azure_tenant_id: str,
+                         metadata: dict = None) -> TenantSSOConfig:
         """
-        Sauvegarde ou met à jour la configuration Azure AD d'un tenant
-        Les secrets sont chiffrés avant stockage
+        Sauvegarde ou met à jour la configuration Azure AD d'un tenant.
+        Mode Public Application: aucun secret à stocker.
         """
         config = TenantSSOConfig.query.filter_by(
             tenant_id=tenant_id,
@@ -916,12 +954,39 @@ class TenantSSOConfigService:
 
         config.azure_tenant_id = azure_tenant_id
         config.client_id = client_id
-        config.client_secret_encrypted = vault.encrypt(client_secret)
         config.redirect_uri = f"{current_app.config['APP_BASE_URL']}{current_app.config['SSO_CALLBACK_PATH']}"
+        config.is_enabled = True
+
+        # Définir les métadonnées avec app_type = 'public'
+        if metadata is None:
+            metadata = {}
+        metadata['app_type'] = 'public'
+        config.metadata = metadata
 
         db.session.add(config)
         db.session.commit()
         return config
+
+    @staticmethod
+    def validate_config(tenant_id: str) -> bool:
+        """
+        Valide qu'une configuration Azure AD est complète et active
+        """
+        config = TenantSSOConfig.query.filter_by(
+            tenant_id=tenant_id,
+            provider_type='azure_ad',
+            is_enabled=True
+        ).first()
+
+        if not config:
+            return False
+
+        # Vérifier les champs requis pour une Public App
+        return all([
+            config.azure_tenant_id,
+            config.client_id,
+            config.redirect_uri
+        ])
 ```
 
 ### 9. Monitoring et observabilité
@@ -983,11 +1048,44 @@ logger.info("SSO authentication attempt", extra={
 
 ### 11. Documentation
 
-#### 11.1 Documentation administrateur tenant
+#### 11.1 Guide de configuration Azure Portal (Public Application)
 
-- Guide configuration Azure AD
-- Création App Registration
-- Configuration permissions Graph API
+**Étapes pour configurer l'application dans Azure Portal:**
+
+1. **Créer une App Registration**
+   - Aller dans Azure Portal → Azure Active Directory → App registrations
+   - Cliquer sur "New registration"
+   - Nom: "SaaS Platform SSO"
+   - Supported account types: selon vos besoins
+
+2. **Configurer comme Public Application**
+   - Dans Authentication → Advanced settings
+   - **Allow public client flows**: `Yes` ✅
+   - Pas de Client Secret à générer
+
+3. **Configurer les Redirect URIs**
+   - Type: `Web` (même pour une Public App)
+   - URIs:
+     - `https://api.saasplatform.com/api/auth/sso/azure/callback`
+     - `http://localhost:4999/api/auth/sso/azure/callback` (dev)
+
+4. **Permissions API**
+   - Microsoft Graph → Delegated permissions:
+     - `User.Read`
+     - `email`
+     - `openid`
+     - `profile`
+
+5. **Récupérer les informations**
+   - **Application (client) ID**: `xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx`
+   - **Directory (tenant) ID**: `yyyyyyyy-yyyy-yyyy-yyyy-yyyyyyyyyyyy`
+   - **Pas de secret à récupérer!**
+
+#### 11.2 Documentation administrateur tenant
+
+- Configuration de l'application Azure AD en mode Public
+- Gestion des domaines autorisés
+- Auto-provisioning des utilisateurs
 - Troubleshooting commun
 
 #### 11.2 Documentation utilisateur final
@@ -1200,6 +1298,7 @@ def create_guest_access(email: str, tenant_id: str, duration_days: int):
 
 Cette architecture multi-tenant avancée pour Azure AD SSO offre une flexibilité maximale pour gérer des scénarios complexes :
 
+- **Mode Public Application uniquement** : Pas de client_secret à gérer, sécurité via PKCE
 - **Support des identités multiples** : Un même utilisateur peut avoir différents Object IDs selon le tenant Azure AD
 - **Isolation par tenant** : Chaque tenant peut configurer indépendamment son Azure AD sans impact sur les autres
 - **Migration progressive** : Les tenants peuvent passer du mode local au SSO à leur rythme
@@ -1207,3 +1306,66 @@ Cette architecture multi-tenant avancée pour Azure AD SSO offre une flexibilit�
 - **Évolutivité** : L'architecture supporte l'ajout de nouveaux providers SSO (Google, Okta, etc.)
 
 La table `user_azure_identities` est la clé de voûte permettant de mapper un utilisateur unique (par email) vers ses multiples identités Azure AD, offrant ainsi une solution robuste pour les organisations complexes avec des besoins d'authentification variés.
+
+## 15. Mises à jour de la documentation existante
+
+### README.md
+- [ ] Ajouter une section "Authentication" décrivant les modes supportés
+- [ ] Mentionner le support Azure AD SSO multi-tenant
+- [ ] Ajouter les variables d'environnement SSO dans la section configuration
+- [ ] Mettre à jour les prérequis (Redis pour PKCE flows)
+
+### docs/ARCHITECTURE.md
+- [ ] Ajouter une section "SSO Architecture" détaillant:
+  - Le flow d'authentification Azure AD avec PKCE
+  - La gestion multi-tenant des identités
+  - Le mapping utilisateur → identités Azure multiples
+  - L'utilisation de Redis pour les flows PKCE
+- [ ] Mettre à jour le diagramme d'architecture pour inclure Azure AD
+- [ ] Documenter les nouvelles tables: `tenant_sso_configs` et `user_azure_identities`
+- [ ] Ajouter les nouveaux services: `AzureSSOService` et `TenantSSOConfigService`
+
+### backend/swagger.yaml
+- [ ] Ajouter les nouveaux endpoints SSO:
+  ```yaml
+  /api/auth/sso/detect:
+    post:
+      summary: Detect authentication options for email
+      tags: [Authentication, SSO]
+
+  /api/auth/sso/azure/login/{tenant_id}:
+    get:
+      summary: Initiate Azure AD login for tenant
+      tags: [Authentication, SSO]
+
+  /api/auth/sso/azure/callback:
+    get:
+      summary: Azure AD OAuth callback
+      tags: [Authentication, SSO]
+
+  /api/tenants/{tenant_id}/sso/config:
+    get:
+      summary: Get tenant SSO configuration
+      tags: [Tenant Management, SSO]
+    post:
+      summary: Configure Azure AD for tenant
+      tags: [Tenant Management, SSO]
+    put:
+      summary: Update tenant SSO configuration
+      tags: [Tenant Management, SSO]
+    delete:
+      summary: Remove tenant SSO configuration
+      tags: [Tenant Management, SSO]
+  ```
+- [ ] Documenter les nouveaux modèles/schemas:
+  - `TenantSSOConfig`
+  - `UserAzureIdentity`
+  - `AzureAuthResponse`
+- [ ] Ajouter les codes d'erreur SSO spécifiques
+- [ ] Mettre à jour les exemples avec le flow SSO
+
+### Configuration des tests
+- [ ] Ajouter des tests unitaires pour `AzureSSOService`
+- [ ] Tests d'intégration pour les flows PKCE
+- [ ] Mocks pour MSAL PublicClientApplication
+- [ ] Tests de sécurité pour la validation des tokens
