@@ -7,6 +7,7 @@ tenant associations, and authentication methods.
 
 import bcrypt
 from sqlalchemy import Column, String, Boolean, Index
+from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.orm import relationship
 from typing import List, Optional
 import logging
@@ -69,8 +70,8 @@ class User(BaseModel, db.Model):
 
     password_hash = Column(
         String(255),
-        nullable=False,
-        comment="Bcrypt hashed password"
+        nullable=True,  # Nullable pour les utilisateurs SSO-only
+        comment="Bcrypt hashed password (optional for SSO-only users)"
     )
 
     is_active = Column(
@@ -80,9 +81,28 @@ class User(BaseModel, db.Model):
         comment="Whether user account is active (can login)"
     )
 
+    # SSO Fields
+    sso_provider = Column(
+        String(50),
+        nullable=True,
+        comment="SSO provider used by this user (e.g., 'azure_ad')"
+    )
+
+    sso_metadata = Column(
+        JSONB,
+        default=dict,
+        comment="Additional SSO metadata (job title, department, etc.)"
+    )
+
     # Relationships
     tenant_associations = relationship(
         'UserTenantAssociation',
+        back_populates='user',
+        cascade='all, delete-orphan'
+    )
+
+    azure_identities = relationship(
+        'UserAzureIdentity',
         back_populates='user',
         cascade='all, delete-orphan'
     )
@@ -228,6 +248,58 @@ class User(BaseModel, db.Model):
             >>> print(user.get_full_name())  # "John Doe"
         """
         return f"{self.first_name} {self.last_name}"
+
+    def has_password(self) -> bool:
+        """
+        Check if user has a password set.
+
+        Returns:
+            True if user has password, False if SSO-only user
+
+        Example:
+            >>> user = User.query.get(user_id)
+            >>> if not user.has_password():
+            ...     print('This is an SSO-only user')
+        """
+        return bool(self.password_hash)
+
+    def get_azure_identity_for_tenant(self, tenant_id: str):
+        """
+        Get user's Azure identity for a specific tenant.
+
+        Args:
+            tenant_id: UUID of the tenant
+
+        Returns:
+            UserAzureIdentity object or None
+
+        Example:
+            >>> user = User.query.get(user_id)
+            >>> azure_identity = user.get_azure_identity_for_tenant(tenant_id)
+            >>> if azure_identity:
+            ...     print(f'Azure Object ID: {azure_identity.azure_object_id}')
+        """
+        for identity in self.azure_identities:
+            if str(identity.tenant_id) == str(tenant_id):
+                return identity
+        return None
+
+    def has_sso_access_to_tenant(self, tenant_id: str) -> bool:
+        """
+        Check if user has SSO access to a specific tenant.
+
+        Args:
+            tenant_id: UUID of tenant to check
+
+        Returns:
+            True if user has SSO identity for this tenant
+
+        Example:
+            >>> user = User.query.get(user_id)
+            >>> if user.has_sso_access_to_tenant(tenant_id):
+            ...     print('User can login via SSO to this tenant')
+        """
+        return self.get_azure_identity_for_tenant(tenant_id) is not None
 
     def to_dict(self, exclude: Optional[list] = None) -> dict:
         """

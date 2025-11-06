@@ -2710,3 +2710,60 @@ AttributeError: 'NoneType' object has no attribute 'get_object'
 2025-11-05 23:04:16,004 - app.utils.s3_client - INFO - Pre-signed URL generated: tenants/tenant_iter_45fca42c/files/b5/d7/b5d774f77e1742d1a18c7a34e85323fb_c6ed5667-2a23-4201-b3f5-2c7dc05b4c03 (expires in 3600s)
 2025-11-05 23:04:16,004 - app.routes.documents - INFO - AUDIT: Download URL generated - user_id=08786958-ab2a-4ab8-91c0-3b8702daeac0, tenant_id=9b2cf18a-243d-4ceb-8b87-9fcc4babbb54, document_id=9c6e6031-5abf-4845-a56a-b319e33f44f8, filename=test.pdf, expires_in=3600s, role=admin
 2025-11-05 23:04:16,004 - app.utils.database - DEBUG - Committed transaction for tenant: tenant_iter_45fca42c
+2025-11-06 22:11:11,086 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-06 22:11:11,086 - app - INFO - Flask app created with config: development
+2025-11-06 22:11:11,086 - app - INFO - Debug mode: True
+2025-11-06 22:11:11,088 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-06 22:11:11,093 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-06 22:11:11,093 - app - INFO - Flask app created with config: development
+2025-11-06 22:11:11,093 - app - INFO - Debug mode: True
+2025-11-06 22:11:11,094 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-06 22:11:11,151 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-06 22:11:11,152 - app - INFO - Flask app created with config: development
+2025-11-06 22:11:11,152 - app - INFO - Debug mode: True
+2025-11-06 22:11:11,152 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-06 22:11:11,213 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-06 22:11:11,214 - app - INFO - Flask app created with config: development
+2025-11-06 22:11:11,214 - app - INFO - Debug mode: True
+2025-11-06 22:11:11,214 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-06 22:13:14,081 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-06 22:13:14,082 - app - INFO - Flask app created with config: development
+2025-11-06 22:13:14,083 - app - INFO - Debug mode: True
+2025-11-06 22:13:14,083 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-06 22:13:14,141 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-06 22:13:14,142 - app - INFO - Flask app created with config: development
+2025-11-06 22:13:14,142 - app - INFO - Debug mode: True
+2025-11-06 22:13:14,143 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-06 22:13:14,158 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-06 22:13:14,158 - app - INFO - Flask app created with config: development
+2025-11-06 22:13:14,159 - app - INFO - Debug mode: True
+2025-11-06 22:13:14,159 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-06 22:13:14,179 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-06 22:13:14,179 - app - INFO - Flask app created with config: development
+2025-11-06 22:13:14,179 - app - INFO - Debug mode: True
+2025-11-06 22:13:14,179 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-06 22:14:23,873 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-06 22:14:23,873 - app - INFO - Flask app created with config: development
+2025-11-06 22:14:23,873 - app - INFO - Debug mode: True
+2025-11-06 22:14:23,873 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-06 22:14:32,157 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-06 22:14:32,157 - app - INFO - Flask app created with config: development
+2025-11-06 22:14:32,158 - app - INFO - Debug mode: True
+2025-11-06 22:14:32,158 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-06 22:14:43,007 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-06 22:14:43,007 - app - INFO - Flask app created with config: development
+2025-11-06 22:14:43,008 - app - INFO - Debug mode: True
+2025-11-06 22:14:43,008 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-06 22:15:03,057 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-06 22:15:03,058 - app - INFO - Flask app created with config: development
+2025-11-06 22:15:03,058 - app - INFO - Debug mode: True
+2025-11-06 22:15:03,058 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-06 22:15:03,073 - app.tenant_db.tenant_migrations - DEBUG - Schema version table doesn't exist yet: (psycopg2.errors.UndefinedTable) relation "tenant_schema_version" does not exist
+LINE 1: SELECT version FROM tenant_schema_version ORDER BY version D...
+                            ^
+
+[SQL: SELECT version FROM tenant_schema_version ORDER BY version DESC LIMIT 1]
+(Background on this error at: https://sqlalche.me/e/20/f405)
+2025-11-06 22:15:03,077 - app.tenant_db.tenant_migrations - INFO - Created tenant_schema_version table
+2025-11-06 22:15:03,077 - app.tenant_db.tenant_migrations - INFO - Applying migration v1: initial_schema
+2025-11-06 22:15:03,078 - app.tenant_db.tenant_migrations - INFO - ✓ Migration v1 applied successfully

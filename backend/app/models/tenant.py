@@ -22,6 +22,7 @@ import logging
 from datetime import datetime
 from typing import List, Optional
 from sqlalchemy import String, Boolean, Index
+from sqlalchemy.dialects.postgresql import ARRAY
 from sqlalchemy.orm import relationship
 
 from .base import BaseModel
@@ -63,10 +64,30 @@ class Tenant(BaseModel, db.Model):
     database_name = db.Column(String(63), unique=True, nullable=False)
     is_active = db.Column(Boolean, default=True, nullable=False)
 
+    # SSO Fields
+    auth_method = db.Column(String(20), default='local', nullable=False)
+    # Valeurs: 'local' (password only), 'sso' (SSO only), 'both' (SSO + password)
+
+    sso_domain_whitelist = db.Column(ARRAY(String), default=list)
+    # Domaines email autorisés pour SSO (ex: ['@company.com'])
+
+    sso_auto_provisioning = db.Column(Boolean, default=False)
+    # Création automatique des utilisateurs lors du premier login SSO
+
+    sso_default_role = db.Column(String(20), default='viewer')
+    # Rôle par défaut pour les nouveaux utilisateurs SSO
+
     # Relationships
     user_associations = relationship(
         'UserTenantAssociation',
         back_populates='tenant',
+        cascade='all, delete-orphan'
+    )
+
+    sso_config = relationship(
+        'TenantSSOConfig',
+        back_populates='tenant',
+        uselist=False,
         cascade='all, delete-orphan'
     )
 
