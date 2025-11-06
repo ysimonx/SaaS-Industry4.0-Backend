@@ -2390,6 +2390,11 @@ La table `user_azure_identities` est la clé de voûte permettant de mapper un u
 - [ ] Mentionner le support Azure AD SSO multi-tenant
 - [ ] Ajouter les variables d'environnement SSO dans la section configuration
 - [ ] Mettre à jour les prérequis (Redis pour PKCE flows)
+- [ ] **Expliquer l'utilisation de Redis et Celery pour les processus SSO** :
+  - Installation et configuration de Redis
+  - Configuration de Celery et Celery Beat
+  - Variables d'environnement pour Redis et Celery
+  - Tâches planifiées pour le refresh des tokens et la maintenance
 
 ### docs/ARCHITECTURE.md
 - [ ] Ajouter une section "SSO Architecture" détaillant:
@@ -2397,6 +2402,11 @@ La table `user_azure_identities` est la clé de voûte permettant de mapper un u
   - La gestion multi-tenant des identités
   - Le mapping utilisateur → identités Azure multiples
   - L'utilisation de Redis pour les flows PKCE
+  - **L'utilisation de Redis et Celery pour les processus SSO** :
+    - Redis comme backend pour les tâches Celery
+    - Celery Beat pour les tâches planifiées (refresh tokens, cleanup, rotation des clés)
+    - Cache Redis pour optimiser les performances SSO
+    - Files de tâches pour le traitement asynchrone des événements SSO
 - [ ] Mettre à jour le diagramme d'architecture pour inclure Azure AD
 - [ ] Documenter les nouvelles tables: `tenant_sso_configs` et `user_azure_identities`
 - [ ] Ajouter les nouveaux services: `AzureSSOService` et `TenantSSOConfigService`
