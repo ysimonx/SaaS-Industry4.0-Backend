@@ -2,45 +2,6 @@
 
 **A Production-Ready Foundation for Industry 4.0 SaaS Applications**
 
-This platform is specifically designed to support the development of backend systems for Industry 4.0 SaaS applications. As of today, it provides:
-
-- **Mobile Application Foundation**: Serves as the backbone for modern mobile and web applications in industrial contexts
-- **Flexible Cloud Deployment**: Can be hosted on French sovereign cloud, European cloud providers, or GAFAM platforms (AWS, Azure, GCP)
-- **Multi-Tenant Architecture**: Complete data and file isolation between tenants for maximum security and compliance
-- **Enterprise Security Standards**: Uses HashiCorp Vault for secrets management and data encryption at rest and in transit
-- **Enterprise SSO Integration**: Seamlessly integrates with Microsoft Entra ID (Azure SSO) for enterprise authentication
-- **Comprehensive API Documentation**: Fully documented RESTful APIs with OpenAPI/Swagger specification
-
-A production-ready, scalable multi-tenant SaaS backend platform built with Flask, PostgreSQL, Kafka, and S3 storage. Features isolated tenant databases, JWT authentication, asynchronous document processing, and RESTful APIs.
-
-[![Python 3.11+](https://img.shields.io/badge/python-3.11+-blue.svg)](https://www.python.org/downloads/)
-[![Flask 3.0](https://img.shields.io/badge/flask-3.0-green.svg)](https://flask.palletsprojects.com/)
-[![PostgreSQL 14+](https://img.shields.io/badge/postgresql-14+-blue.svg)](https://www.postgresql.org/)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-
----
-
-## Table of Contents
-
-- [Project Overview](#project-overview)
-- [Architecture](#architecture)
-- [Tech Stack](#tech-stack)
-- [Features](#features)
-- [Prerequisites](#prerequisites)
-- [Quick Start avec Docker (Recommended)](#quick-start)
-- [Installation Sans Docker](#installation)
-- [Environment Variables](#environment-variables)
-- [HashiCorp Vault Integration](#hashicorp-vault-integration)
-- [Database Migrations](#database-migrations)
-- [API Documentation](#api-documentation)
-- [Testing](#testing)
-- [Project Structure](#project-structure)
-- [Deployment](#deployment)
-- [Contributing](#contributing)
-- [License](#license)
-
----
-
 
 
 ## Features
@@ -121,6 +82,48 @@ A production-ready, scalable multi-tenant SaaS backend platform built with Flask
 - Logging and monitoring hooks
 - Environment-based configuration
 - Database migration system
+
+## SaaS Backend for Industry 4.0
+
+This platform is specifically designed to support the development of backend systems for Industry 4.0 SaaS applications. As of today, it provides:
+
+- **Mobile Application Foundation**: Serves as the backbone for modern mobile and web applications in industrial contexts
+- **Flexible Cloud Deployment**: Can be hosted on French sovereign cloud, European cloud providers, or GAFAM platforms (AWS, Azure, GCP)
+- **Multi-Tenant Architecture**: Complete data and file isolation between tenants for maximum security and compliance
+- **Enterprise Security Standards**: Uses HashiCorp Vault for secrets management and data encryption at rest and in transit
+- **Enterprise SSO Integration**: Seamlessly integrates with Microsoft Entra ID (Azure SSO) for enterprise authentication
+- **Comprehensive API Documentation**: Fully documented RESTful APIs with OpenAPI/Swagger specification
+
+A production-ready, scalable multi-tenant SaaS backend platform built with Flask, PostgreSQL, Kafka, and S3 storage. Features isolated tenant databases, JWT authentication, asynchronous document processing, and RESTful APIs.
+
+[![Python 3.11+](https://img.shields.io/badge/python-3.11+-blue.svg)](https://www.python.org/downloads/)
+[![Flask 3.0](https://img.shields.io/badge/flask-3.0-green.svg)](https://flask.palletsprojects.com/)
+[![PostgreSQL 14+](https://img.shields.io/badge/postgresql-14+-blue.svg)](https://www.postgresql.org/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+
+---
+
+## Table of Contents
+
+- [Project Overview](#project-overview)
+- [Architecture](#architecture)
+- [Tech Stack](#tech-stack)
+- [Features](#features)
+- [Prerequisites](#prerequisites)
+- [Quick Start avec Docker (Recommended)](#quick-start)
+- [Installation Sans Docker](#installation)
+- [Environment Variables](#environment-variables)
+- [HashiCorp Vault Integration](#hashicorp-vault-integration)
+- [Database Migrations](#database-migrations)
+- [API Documentation](#api-documentation)
+- [Testing](#testing)
+- [Project Structure](#project-structure)
+- [Deployment](#deployment)
+- [Contributing](#contributing)
+- [License](#license)
+
+---
+
 
 ---
 
