@@ -11,6 +11,8 @@ import logging
 from datetime import datetime
 from typing import Dict, Any
 
+from sqlalchemy import text
+
 from celery import current_task
 from app.celery_app import celery_app
 from app.extensions import db, redis_manager
@@ -36,7 +38,7 @@ def health_check() -> Dict[str, Any]:
 
     # Check database
     try:
-        db.session.execute('SELECT 1')
+        db.session.execute(text('SELECT 1'))
         health_status['components']['database'] = {
             'status': 'healthy',
             'message': 'Database connection successful'

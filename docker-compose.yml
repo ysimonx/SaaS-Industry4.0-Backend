@@ -399,6 +399,11 @@ services:
       - ./.env.vault:/.env.vault:ro
     networks:
       - saas-network
+    healthcheck:
+      test: ["CMD", "celery", "-A", "celery_worker:celery", "inspect", "ping"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
 
   # Celery Beat scheduler
   celery-beat:
@@ -413,6 +418,10 @@ services:
         condition: service_healthy
       celery-worker-sso:
         condition: service_started
+      vault:
+        condition: service_healthy
+      vault-init:
+        condition: service_completed_successfully
     environment:
       # Flask/Celery
       FLASK_ENV: development
@@ -422,8 +431,15 @@ services:
       CELERY_BROKER_URL: redis://redis:6379/3
       CELERY_RESULT_BACKEND: redis://redis:6379/4
 
+      # Vault Configuration
+      USE_VAULT: "true"
+      VAULT_ENVIRONMENT: "docker"
+
       # Database (for task scheduling)
       DATABASE_URL: postgresql://postgres:postgres@postgres:5432/saas_platform
+
+      # Redis
+      REDIS_URL: redis://redis:6379/0
 
       # Logging
       LOG_LEVEL: INFO

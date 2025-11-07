@@ -3560,7 +3560,7 @@ def health_check():
 
     # Database check
     try:
-        db.session.execute('SELECT 1')
+        db.session.execute(text('SELECT 1'))
         health['checks']['database'] = 'ok'
     except Exception as e:
         health['status'] = 'unhealthy'
