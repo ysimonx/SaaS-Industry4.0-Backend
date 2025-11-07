@@ -64,12 +64,15 @@ class TenantSSOConfig(BaseModel, db.Model):
     # Provider configuration
     provider_type = db.Column(String(50), nullable=False, default='azure_ad', index=True)
 
-    # Azure AD specific configuration (Public Application mode)
+    # Azure AD specific configuration
     provider_tenant_id = db.Column(String(255), nullable=False)
     # For Azure: GUID (12345678-1234-1234-1234-123456789abc) or domain (contoso.onmicrosoft.com)
 
     client_id = db.Column(String(255), nullable=False)
     # Application (client) ID from Azure Portal
+
+    client_secret = db.Column(String(500), nullable=True)
+    # Client secret (optional - for confidential apps, not needed for public apps with PKCE)
 
     redirect_uri = db.Column(String(500), nullable=False)
     # OAuth2 callback URL

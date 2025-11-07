@@ -167,15 +167,23 @@ class AzureADService:
         if not self.sso_config:
             raise ValueError("SSO configuration not available")
 
-        # Prepare token request (no client_secret for public application)
+        # Prepare token request
         token_data = {
             'client_id': self.sso_config.client_id,
             'grant_type': 'authorization_code',
             'code': code,
             'redirect_uri': redirect_uri,
-            'code_verifier': code_verifier,
             'scope': ' '.join(self.DEFAULT_SCOPES)
         }
+
+        # Add client_secret if configured (confidential app)
+        # Otherwise use PKCE code_verifier (public app)
+        if hasattr(self.sso_config, 'client_secret') and self.sso_config.client_secret:
+            token_data['client_secret'] = self.sso_config.client_secret
+            logger.info("Using client_secret for token exchange (confidential app)")
+        else:
+            token_data['code_verifier'] = code_verifier
+            logger.info("Using PKCE code_verifier for token exchange (public app)")
 
         try:
             # Request tokens from Azure AD
@@ -242,13 +250,17 @@ class AzureADService:
         if not self.sso_config:
             raise ValueError("SSO configuration not available")
 
-        # Prepare refresh request (no client_secret for public application)
+        # Prepare refresh request
         token_data = {
             'client_id': self.sso_config.client_id,
             'grant_type': 'refresh_token',
             'refresh_token': refresh_token,
             'scope': ' '.join(self.DEFAULT_SCOPES)
         }
+
+        # Add client_secret if configured (confidential app)
+        if hasattr(self.sso_config, 'client_secret') and self.sso_config.client_secret:
+            token_data['client_secret'] = self.sso_config.client_secret
 
         try:
             response = requests.post(

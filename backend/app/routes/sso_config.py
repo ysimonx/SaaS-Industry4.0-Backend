@@ -6,12 +6,11 @@ Only tenant admins can manage SSO settings for their tenant.
 """
 
 import logging
-from flask import Blueprint, request, jsonify, current_app
-from flask_jwt_extended import jwt_required, get_jwt_identity
+from flask import Blueprint, request, jsonify, current_app, g
 
 from app.models import Tenant, TenantSSOConfig
 from app.services.tenant_sso_config_service import TenantSSOConfigService
-from app.utils.decorators import tenant_required, role_required
+from app.utils.decorators import jwt_required_custom, tenant_required, role_required
 from app.extensions import db
 
 logger = logging.getLogger(__name__)
@@ -20,7 +19,7 @@ bp = Blueprint('sso_config', __name__, url_prefix='/api/tenants')
 
 
 @bp.route('/<string:tenant_id>/sso/config', methods=['GET'])
-@jwt_required()
+@jwt_required_custom
 @tenant_required()
 @role_required(['admin', 'user'])
 def get_sso_config(tenant_id):
@@ -45,7 +44,7 @@ def get_sso_config(tenant_id):
 
 
 @bp.route('/<string:tenant_id>/sso/config', methods=['POST'])
-@jwt_required()
+@jwt_required_custom
 @tenant_required()
 @role_required(['admin'])
 def create_sso_config(tenant_id):
@@ -97,7 +96,7 @@ def create_sso_config(tenant_id):
 
 
 @bp.route('/<string:tenant_id>/sso/config', methods=['PUT'])
-@jwt_required()
+@jwt_required_custom
 @tenant_required()
 @role_required(['admin'])
 def update_sso_config(tenant_id):
@@ -134,7 +133,7 @@ def update_sso_config(tenant_id):
 
 
 @bp.route('/<string:tenant_id>/sso/config', methods=['DELETE'])
-@jwt_required()
+@jwt_required_custom
 @tenant_required()
 @role_required(['admin'])
 def delete_sso_config(tenant_id):
@@ -168,7 +167,7 @@ def delete_sso_config(tenant_id):
 
 
 @bp.route('/<string:tenant_id>/sso/config/enable', methods=['POST'])
-@jwt_required()
+@jwt_required_custom
 @tenant_required()
 @role_required(['admin'])
 def enable_sso(tenant_id):
@@ -202,7 +201,7 @@ def enable_sso(tenant_id):
 
 
 @bp.route('/<string:tenant_id>/sso/config/disable', methods=['POST'])
-@jwt_required()
+@jwt_required_custom
 @tenant_required()
 @role_required(['admin'])
 def disable_sso(tenant_id):
@@ -236,7 +235,7 @@ def disable_sso(tenant_id):
 
 
 @bp.route('/<string:tenant_id>/sso/config/validate', methods=['GET'])
-@jwt_required()
+@jwt_required_custom
 @tenant_required()
 @role_required(['admin'])
 def validate_sso_config(tenant_id):
@@ -256,7 +255,7 @@ def validate_sso_config(tenant_id):
 
 
 @bp.route('/<string:tenant_id>/sso/config/auto-provisioning', methods=['PUT'])
-@jwt_required()
+@jwt_required_custom
 @tenant_required()
 @role_required(['admin'])
 def update_auto_provisioning(tenant_id):
@@ -297,7 +296,7 @@ def update_auto_provisioning(tenant_id):
 
 
 @bp.route('/<string:tenant_id>/sso/statistics', methods=['GET'])
-@jwt_required()
+@jwt_required_custom
 @tenant_required()
 @role_required(['admin'])
 def get_sso_statistics(tenant_id):
@@ -317,7 +316,7 @@ def get_sso_statistics(tenant_id):
 
 
 @bp.route('/sso/configs', methods=['GET'])
-@jwt_required()
+@jwt_required_custom
 def get_all_sso_configs():
     """
     Get all SSO configurations (super admin only).
@@ -330,7 +329,7 @@ def get_all_sso_configs():
     """
     try:
         # Check if user is super admin (you may need to implement this)
-        current_user_id = get_jwt_identity()
+        current_user_id = g.user_id
         # TODO: Implement super admin check
         # if not is_super_admin(current_user_id):
         #     return jsonify({'error': 'Unauthorized'}), 403

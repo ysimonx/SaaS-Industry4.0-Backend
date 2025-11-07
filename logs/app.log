@@ -3076,3 +3076,1103 @@ HINT:  You must specify an operator class for the index or define a default oper
 2025-11-07 17:51:49,485 - app - INFO - Flask app created with config: development
 2025-11-07 17:51:49,485 - app - INFO - Debug mode: True
 2025-11-07 17:51:49,485 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-07 19:01:00,906 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-07 19:01:00,908 - app - INFO - Flask app created with config: development
+2025-11-07 19:01:00,908 - app - INFO - Debug mode: True
+2025-11-07 19:01:00,908 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-07 19:01:00,966 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-07 19:01:00,966 - app - INFO - Flask app created with config: development
+2025-11-07 19:01:00,966 - app - INFO - Debug mode: True
+2025-11-07 19:01:00,966 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-07 19:01:01,023 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-07 19:01:01,024 - app - INFO - Flask app created with config: development
+2025-11-07 19:01:01,024 - app - INFO - Debug mode: True
+2025-11-07 19:01:01,024 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-07 19:01:01,061 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-07 19:01:01,061 - app - INFO - Flask app created with config: development
+2025-11-07 19:01:01,061 - app - INFO - Debug mode: True
+2025-11-07 19:01:01,061 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-07 19:06:00,127 - app.utils.decorators - ERROR - tenant_required used without jwt_required_custom
+2025-11-07 19:18:57,961 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-07 19:18:57,963 - app - INFO - Flask app created with config: development
+2025-11-07 19:18:57,963 - app - INFO - Debug mode: True
+2025-11-07 19:18:57,965 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-07 19:18:58,027 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-07 19:18:58,027 - app - INFO - Flask app created with config: development
+2025-11-07 19:18:58,027 - app - INFO - Debug mode: True
+2025-11-07 19:18:58,028 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-07 19:18:58,040 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-07 19:18:58,041 - app - INFO - Flask app created with config: development
+2025-11-07 19:18:58,041 - app - INFO - Debug mode: True
+2025-11-07 19:18:58,041 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-07 19:18:58,088 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-07 19:18:58,088 - app - INFO - Flask app created with config: development
+2025-11-07 19:18:58,088 - app - INFO - Debug mode: True
+2025-11-07 19:18:58,088 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-07 19:19:08,402 - app.utils.decorators - ERROR - JWT validation failed: Not enough segments
+2025-11-07 19:19:51,349 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-07 19:19:51,350 - app - INFO - Flask app created with config: development
+2025-11-07 19:19:51,350 - app - INFO - Debug mode: True
+2025-11-07 19:19:51,350 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-07 19:21:23,563 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-07 19:21:23,563 - app - INFO - Flask app created with config: development
+2025-11-07 19:21:23,564 - app - INFO - Debug mode: True
+2025-11-07 19:21:23,565 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-07 19:21:23,676 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-07 19:21:23,676 - app - INFO - Flask app created with config: development
+2025-11-07 19:21:23,677 - app - INFO - Debug mode: True
+2025-11-07 19:21:23,677 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-07 19:21:23,760 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-07 19:21:23,760 - app - INFO - Flask app created with config: development
+2025-11-07 19:21:23,760 - app - INFO - Debug mode: True
+2025-11-07 19:21:23,760 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-07 19:21:23,840 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-07 19:21:23,840 - app - INFO - Flask app created with config: development
+2025-11-07 19:21:23,840 - app - INFO - Debug mode: True
+2025-11-07 19:21:23,840 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-07 19:23:47,806 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-07 19:23:47,806 - app - INFO - Flask app created with config: development
+2025-11-07 19:23:47,806 - app - INFO - Debug mode: True
+2025-11-07 19:23:47,806 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-07 19:23:57,827 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-07 19:23:57,827 - app - INFO - Flask app created with config: development
+2025-11-07 19:23:57,827 - app - INFO - Debug mode: True
+2025-11-07 19:23:57,828 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-07 19:24:05,063 - app.utils.decorators - ERROR - JWT validation failed: Not enough segments
+2025-11-07 19:24:47,093 - app.utils.decorators - ERROR - JWT validation failed: Missing Authorization Header
+2025-11-07 19:24:47,097 - app.utils.decorators - ERROR - JWT validation failed: Missing Authorization Header
+2025-11-07 19:57:55,546 - app.utils.decorators - ERROR - JWT validation failed: Missing Authorization Header
+2025-11-07 19:58:32,297 - app.utils.decorators - DEBUG - Authenticated user: a67180bf-e078-4e86-a7dd-44f7c6e871f8
+2025-11-07 19:58:32,297 - app.routes.users - INFO - Fetching SSO identities for user_id=a67180bf-e078-4e86-a7dd-44f7c6e871f8
+2025-11-07 19:58:32,332 - app.routes.users - INFO - Retrieved 0 SSO identities for user_id=a67180bf-e078-4e86-a7dd-44f7c6e871f8
+2025-11-07 20:15:33,696 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-07 20:15:33,696 - app - INFO - Flask app created with config: testing
+2025-11-07 20:15:33,696 - app - INFO - Debug mode: True
+2025-11-07 20:15:33,696 - app - INFO - Database URI: sqlite:///:memory:...
+2025-11-07 20:15:33,947 - app - INFO - Vault not enabled - using configuration from environment variables
+2025-11-07 20:15:33,948 - app.extensions - INFO - Redis connected successfully at redis://redis:6379/0
+2025-11-07 20:15:33,948 - app - INFO - Extensions initialized: db, migrate, jwt, cors, tenant_db_manager, redis
+2025-11-07 20:15:33,949 - app - INFO - Registered blueprint: auth (/api/auth)
+2025-11-07 20:15:33,950 - app - INFO - Registered blueprint: users (/api/users)
+2025-11-07 20:15:33,951 - app - INFO - Registered blueprint: tenants (/api/tenants)
+2025-11-07 20:15:33,952 - app - INFO - Registered blueprint: documents (/api/documents)
+2025-11-07 20:15:33,952 - app - INFO - Registered blueprint: files (/api/files)
+2025-11-07 20:15:33,953 - app - INFO - Registered blueprint: kafka_demo (/api/demo/kafka)
+2025-11-07 20:15:33,953 - app - INFO - Registered blueprint: swagger_ui (/api/docs)
+2025-11-07 20:15:33,954 - app - INFO - Registered blueprint: sso_config (/api/tenants)
+2025-11-07 20:15:33,955 - app - INFO - Registered blueprint: sso_auth (/api/auth/sso)
+2025-11-07 20:15:33,956 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-07 20:15:33,956 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-07 20:15:33,956 - app - INFO - Flask app created with config: testing
+2025-11-07 20:15:33,956 - app - INFO - Flask app created with config: testing
+2025-11-07 20:15:33,956 - app - INFO - Debug mode: True
+2025-11-07 20:15:33,956 - app - INFO - Debug mode: True
+2025-11-07 20:15:33,956 - app - INFO - Database URI: sqlite:///:memory:...
+2025-11-07 20:15:33,956 - app - INFO - Database URI: sqlite:///:memory:...
+2025-11-07 20:15:34,162 - app - INFO - Vault not enabled - using configuration from environment variables
+2025-11-07 20:15:34,162 - app - INFO - Vault not enabled - using configuration from environment variables
+2025-11-07 20:15:34,163 - app.extensions - INFO - Redis connected successfully at redis://redis:6379/0
+2025-11-07 20:15:34,163 - app.extensions - INFO - Redis connected successfully at redis://redis:6379/0
+2025-11-07 20:15:34,163 - app - INFO - Extensions initialized: db, migrate, jwt, cors, tenant_db_manager, redis
+2025-11-07 20:15:34,163 - app - INFO - Extensions initialized: db, migrate, jwt, cors, tenant_db_manager, redis
+2025-11-07 20:15:34,164 - app - INFO - Registered blueprint: auth (/api/auth)
+2025-11-07 20:15:34,164 - app - INFO - Registered blueprint: auth (/api/auth)
+2025-11-07 20:15:34,164 - app - INFO - Registered blueprint: users (/api/users)
+2025-11-07 20:15:34,164 - app - INFO - Registered blueprint: users (/api/users)
+2025-11-07 20:15:34,165 - app - INFO - Registered blueprint: tenants (/api/tenants)
+2025-11-07 20:15:34,165 - app - INFO - Registered blueprint: tenants (/api/tenants)
+2025-11-07 20:15:34,167 - app - INFO - Registered blueprint: documents (/api/documents)
+2025-11-07 20:15:34,167 - app - INFO - Registered blueprint: documents (/api/documents)
+2025-11-07 20:15:34,167 - app - INFO - Registered blueprint: files (/api/files)
+2025-11-07 20:15:34,167 - app - INFO - Registered blueprint: files (/api/files)
+2025-11-07 20:15:34,168 - app - INFO - Registered blueprint: kafka_demo (/api/demo/kafka)
+2025-11-07 20:15:34,168 - app - INFO - Registered blueprint: kafka_demo (/api/demo/kafka)
+2025-11-07 20:15:34,168 - app - INFO - Registered blueprint: swagger_ui (/api/docs)
+2025-11-07 20:15:34,168 - app - INFO - Registered blueprint: swagger_ui (/api/docs)
+2025-11-07 20:15:34,170 - app - INFO - Registered blueprint: sso_config (/api/tenants)
+2025-11-07 20:15:34,170 - app - INFO - Registered blueprint: sso_config (/api/tenants)
+2025-11-07 20:15:34,171 - app - INFO - Registered blueprint: sso_auth (/api/auth/sso)
+2025-11-07 20:15:34,171 - app - INFO - Registered blueprint: sso_auth (/api/auth/sso)
+2025-11-07 20:15:34,171 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-07 20:15:34,171 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-07 20:15:34,171 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-07 20:15:34,171 - app - INFO - Flask app created with config: testing
+2025-11-07 20:15:34,171 - app - INFO - Flask app created with config: testing
+2025-11-07 20:15:34,171 - app - INFO - Flask app created with config: testing
+2025-11-07 20:15:34,172 - app - INFO - Debug mode: True
+2025-11-07 20:15:34,172 - app - INFO - Debug mode: True
+2025-11-07 20:15:34,172 - app - INFO - Debug mode: True
+2025-11-07 20:15:34,172 - app - INFO - Database URI: sqlite:///:memory:...
+2025-11-07 20:15:34,172 - app - INFO - Database URI: sqlite:///:memory:...
+2025-11-07 20:15:34,172 - app - INFO - Database URI: sqlite:///:memory:...
+2025-11-07 20:15:34,399 - app - INFO - Vault not enabled - using configuration from environment variables
+2025-11-07 20:15:34,399 - app - INFO - Vault not enabled - using configuration from environment variables
+2025-11-07 20:15:34,399 - app - INFO - Vault not enabled - using configuration from environment variables
+2025-11-07 20:15:34,401 - app.extensions - INFO - Redis connected successfully at redis://redis:6379/0
+2025-11-07 20:15:34,401 - app.extensions - INFO - Redis connected successfully at redis://redis:6379/0
+2025-11-07 20:15:34,401 - app.extensions - INFO - Redis connected successfully at redis://redis:6379/0
+2025-11-07 20:15:34,401 - app - INFO - Extensions initialized: db, migrate, jwt, cors, tenant_db_manager, redis
+2025-11-07 20:15:34,401 - app - INFO - Extensions initialized: db, migrate, jwt, cors, tenant_db_manager, redis
+2025-11-07 20:15:34,401 - app - INFO - Extensions initialized: db, migrate, jwt, cors, tenant_db_manager, redis
+2025-11-07 20:15:34,401 - app - INFO - Registered blueprint: auth (/api/auth)
+2025-11-07 20:15:34,401 - app - INFO - Registered blueprint: auth (/api/auth)
+2025-11-07 20:15:34,401 - app - INFO - Registered blueprint: auth (/api/auth)
+2025-11-07 20:15:34,402 - app - INFO - Registered blueprint: users (/api/users)
+2025-11-07 20:15:34,402 - app - INFO - Registered blueprint: users (/api/users)
+2025-11-07 20:15:34,402 - app - INFO - Registered blueprint: users (/api/users)
+2025-11-07 20:15:34,403 - app - INFO - Registered blueprint: tenants (/api/tenants)
+2025-11-07 20:15:34,403 - app - INFO - Registered blueprint: tenants (/api/tenants)
+2025-11-07 20:15:34,403 - app - INFO - Registered blueprint: tenants (/api/tenants)
+2025-11-07 20:15:34,405 - app - INFO - Registered blueprint: documents (/api/documents)
+2025-11-07 20:15:34,405 - app - INFO - Registered blueprint: documents (/api/documents)
+2025-11-07 20:15:34,405 - app - INFO - Registered blueprint: documents (/api/documents)
+2025-11-07 20:15:34,406 - app - INFO - Registered blueprint: files (/api/files)
+2025-11-07 20:15:34,406 - app - INFO - Registered blueprint: files (/api/files)
+2025-11-07 20:15:34,406 - app - INFO - Registered blueprint: files (/api/files)
+2025-11-07 20:15:34,406 - app - INFO - Registered blueprint: kafka_demo (/api/demo/kafka)
+2025-11-07 20:15:34,406 - app - INFO - Registered blueprint: kafka_demo (/api/demo/kafka)
+2025-11-07 20:15:34,406 - app - INFO - Registered blueprint: kafka_demo (/api/demo/kafka)
+2025-11-07 20:15:34,407 - app - INFO - Registered blueprint: swagger_ui (/api/docs)
+2025-11-07 20:15:34,407 - app - INFO - Registered blueprint: swagger_ui (/api/docs)
+2025-11-07 20:15:34,407 - app - INFO - Registered blueprint: swagger_ui (/api/docs)
+2025-11-07 20:15:34,408 - app - INFO - Registered blueprint: sso_config (/api/tenants)
+2025-11-07 20:15:34,408 - app - INFO - Registered blueprint: sso_config (/api/tenants)
+2025-11-07 20:15:34,408 - app - INFO - Registered blueprint: sso_config (/api/tenants)
+2025-11-07 20:15:34,409 - app - INFO - Registered blueprint: sso_auth (/api/auth/sso)
+2025-11-07 20:15:34,409 - app - INFO - Registered blueprint: sso_auth (/api/auth/sso)
+2025-11-07 20:15:34,409 - app - INFO - Registered blueprint: sso_auth (/api/auth/sso)
+2025-11-07 20:15:34,410 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-07 20:15:34,410 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-07 20:15:34,410 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-07 20:15:34,410 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-07 20:15:34,410 - app - INFO - Flask app created with config: testing
+2025-11-07 20:15:34,410 - app - INFO - Flask app created with config: testing
+2025-11-07 20:15:34,410 - app - INFO - Flask app created with config: testing
+2025-11-07 20:15:34,410 - app - INFO - Flask app created with config: testing
+2025-11-07 20:15:34,410 - app - INFO - Debug mode: True
+2025-11-07 20:15:34,410 - app - INFO - Debug mode: True
+2025-11-07 20:15:34,410 - app - INFO - Debug mode: True
+2025-11-07 20:15:34,410 - app - INFO - Debug mode: True
+2025-11-07 20:15:34,410 - app - INFO - Database URI: sqlite:///:memory:...
+2025-11-07 20:15:34,410 - app - INFO - Database URI: sqlite:///:memory:...
+2025-11-07 20:15:34,410 - app - INFO - Database URI: sqlite:///:memory:...
+2025-11-07 20:15:34,410 - app - INFO - Database URI: sqlite:///:memory:...
+2025-11-07 20:15:34,612 - app - INFO - Vault not enabled - using configuration from environment variables
+2025-11-07 20:15:34,612 - app - INFO - Vault not enabled - using configuration from environment variables
+2025-11-07 20:15:34,612 - app - INFO - Vault not enabled - using configuration from environment variables
+2025-11-07 20:15:34,612 - app - INFO - Vault not enabled - using configuration from environment variables
+2025-11-07 20:15:34,613 - app.extensions - INFO - Redis connected successfully at redis://redis:6379/0
+2025-11-07 20:15:34,613 - app.extensions - INFO - Redis connected successfully at redis://redis:6379/0
+2025-11-07 20:15:34,613 - app.extensions - INFO - Redis connected successfully at redis://redis:6379/0
+2025-11-07 20:15:34,613 - app.extensions - INFO - Redis connected successfully at redis://redis:6379/0
+2025-11-07 20:15:34,614 - app - INFO - Extensions initialized: db, migrate, jwt, cors, tenant_db_manager, redis
+2025-11-07 20:15:34,614 - app - INFO - Extensions initialized: db, migrate, jwt, cors, tenant_db_manager, redis
+2025-11-07 20:15:34,614 - app - INFO - Extensions initialized: db, migrate, jwt, cors, tenant_db_manager, redis
+2025-11-07 20:15:34,614 - app - INFO - Extensions initialized: db, migrate, jwt, cors, tenant_db_manager, redis
+2025-11-07 20:15:34,614 - app - INFO - Registered blueprint: auth (/api/auth)
+2025-11-07 20:15:34,614 - app - INFO - Registered blueprint: auth (/api/auth)
+2025-11-07 20:15:34,614 - app - INFO - Registered blueprint: auth (/api/auth)
+2025-11-07 20:15:34,614 - app - INFO - Registered blueprint: auth (/api/auth)
+2025-11-07 20:15:34,615 - app - INFO - Registered blueprint: users (/api/users)
+2025-11-07 20:15:34,615 - app - INFO - Registered blueprint: users (/api/users)
+2025-11-07 20:15:34,615 - app - INFO - Registered blueprint: users (/api/users)
+2025-11-07 20:15:34,615 - app - INFO - Registered blueprint: users (/api/users)
+2025-11-07 20:15:34,616 - app - INFO - Registered blueprint: tenants (/api/tenants)
+2025-11-07 20:15:34,616 - app - INFO - Registered blueprint: tenants (/api/tenants)
+2025-11-07 20:15:34,616 - app - INFO - Registered blueprint: tenants (/api/tenants)
+2025-11-07 20:15:34,616 - app - INFO - Registered blueprint: tenants (/api/tenants)
+2025-11-07 20:15:34,618 - app - INFO - Registered blueprint: documents (/api/documents)
+2025-11-07 20:15:34,618 - app - INFO - Registered blueprint: documents (/api/documents)
+2025-11-07 20:15:34,618 - app - INFO - Registered blueprint: documents (/api/documents)
+2025-11-07 20:15:34,618 - app - INFO - Registered blueprint: documents (/api/documents)
+2025-11-07 20:15:34,619 - app - INFO - Registered blueprint: files (/api/files)
+2025-11-07 20:15:34,619 - app - INFO - Registered blueprint: files (/api/files)
+2025-11-07 20:15:34,619 - app - INFO - Registered blueprint: files (/api/files)
+2025-11-07 20:15:34,619 - app - INFO - Registered blueprint: files (/api/files)
+2025-11-07 20:15:34,619 - app - INFO - Registered blueprint: kafka_demo (/api/demo/kafka)
+2025-11-07 20:15:34,619 - app - INFO - Registered blueprint: kafka_demo (/api/demo/kafka)
+2025-11-07 20:15:34,619 - app - INFO - Registered blueprint: kafka_demo (/api/demo/kafka)
+2025-11-07 20:15:34,619 - app - INFO - Registered blueprint: kafka_demo (/api/demo/kafka)
+2025-11-07 20:15:34,620 - app - INFO - Registered blueprint: swagger_ui (/api/docs)
+2025-11-07 20:15:34,620 - app - INFO - Registered blueprint: swagger_ui (/api/docs)
+2025-11-07 20:15:34,620 - app - INFO - Registered blueprint: swagger_ui (/api/docs)
+2025-11-07 20:15:34,620 - app - INFO - Registered blueprint: swagger_ui (/api/docs)
+2025-11-07 20:15:34,621 - app - INFO - Registered blueprint: sso_config (/api/tenants)
+2025-11-07 20:15:34,621 - app - INFO - Registered blueprint: sso_config (/api/tenants)
+2025-11-07 20:15:34,621 - app - INFO - Registered blueprint: sso_config (/api/tenants)
+2025-11-07 20:15:34,621 - app - INFO - Registered blueprint: sso_config (/api/tenants)
+2025-11-07 20:15:34,622 - app - INFO - Registered blueprint: sso_auth (/api/auth/sso)
+2025-11-07 20:15:34,622 - app - INFO - Registered blueprint: sso_auth (/api/auth/sso)
+2025-11-07 20:15:34,622 - app - INFO - Registered blueprint: sso_auth (/api/auth/sso)
+2025-11-07 20:15:34,622 - app - INFO - Registered blueprint: sso_auth (/api/auth/sso)
+2025-11-07 20:15:34,623 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-07 20:15:34,623 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-07 20:15:34,623 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-07 20:15:34,623 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-07 20:15:34,623 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-07 20:15:34,623 - app - INFO - Flask app created with config: testing
+2025-11-07 20:15:34,623 - app - INFO - Flask app created with config: testing
+2025-11-07 20:15:34,623 - app - INFO - Flask app created with config: testing
+2025-11-07 20:15:34,623 - app - INFO - Flask app created with config: testing
+2025-11-07 20:15:34,623 - app - INFO - Flask app created with config: testing
+2025-11-07 20:15:34,623 - app - INFO - Debug mode: True
+2025-11-07 20:15:34,623 - app - INFO - Debug mode: True
+2025-11-07 20:15:34,623 - app - INFO - Debug mode: True
+2025-11-07 20:15:34,623 - app - INFO - Debug mode: True
+2025-11-07 20:15:34,623 - app - INFO - Debug mode: True
+2025-11-07 20:15:34,624 - app - INFO - Database URI: sqlite:///:memory:...
+2025-11-07 20:15:34,624 - app - INFO - Database URI: sqlite:///:memory:...
+2025-11-07 20:15:34,624 - app - INFO - Database URI: sqlite:///:memory:...
+2025-11-07 20:15:34,624 - app - INFO - Database URI: sqlite:///:memory:...
+2025-11-07 20:15:34,624 - app - INFO - Database URI: sqlite:///:memory:...
+2025-11-07 20:15:34,845 - app - INFO - Vault not enabled - using configuration from environment variables
+2025-11-07 20:15:34,845 - app - INFO - Vault not enabled - using configuration from environment variables
+2025-11-07 20:15:34,845 - app - INFO - Vault not enabled - using configuration from environment variables
+2025-11-07 20:15:34,845 - app - INFO - Vault not enabled - using configuration from environment variables
+2025-11-07 20:15:34,845 - app - INFO - Vault not enabled - using configuration from environment variables
+2025-11-07 20:15:34,846 - app.extensions - INFO - Redis connected successfully at redis://redis:6379/0
+2025-11-07 20:15:34,846 - app.extensions - INFO - Redis connected successfully at redis://redis:6379/0
+2025-11-07 20:15:34,846 - app.extensions - INFO - Redis connected successfully at redis://redis:6379/0
+2025-11-07 20:15:34,846 - app.extensions - INFO - Redis connected successfully at redis://redis:6379/0
+2025-11-07 20:15:34,846 - app.extensions - INFO - Redis connected successfully at redis://redis:6379/0
+2025-11-07 20:15:34,846 - app - INFO - Extensions initialized: db, migrate, jwt, cors, tenant_db_manager, redis
+2025-11-07 20:15:34,846 - app - INFO - Extensions initialized: db, migrate, jwt, cors, tenant_db_manager, redis
+2025-11-07 20:15:34,846 - app - INFO - Extensions initialized: db, migrate, jwt, cors, tenant_db_manager, redis
+2025-11-07 20:15:34,846 - app - INFO - Extensions initialized: db, migrate, jwt, cors, tenant_db_manager, redis
+2025-11-07 20:15:34,846 - app - INFO - Extensions initialized: db, migrate, jwt, cors, tenant_db_manager, redis
+2025-11-07 20:15:34,847 - app - INFO - Registered blueprint: auth (/api/auth)
+2025-11-07 20:15:34,847 - app - INFO - Registered blueprint: auth (/api/auth)
+2025-11-07 20:15:34,847 - app - INFO - Registered blueprint: auth (/api/auth)
+2025-11-07 20:15:34,847 - app - INFO - Registered blueprint: auth (/api/auth)
+2025-11-07 20:15:34,847 - app - INFO - Registered blueprint: auth (/api/auth)
+2025-11-07 20:15:34,848 - app - INFO - Registered blueprint: users (/api/users)
+2025-11-07 20:15:34,848 - app - INFO - Registered blueprint: users (/api/users)
+2025-11-07 20:15:34,848 - app - INFO - Registered blueprint: users (/api/users)
+2025-11-07 20:15:34,848 - app - INFO - Registered blueprint: users (/api/users)
+2025-11-07 20:15:34,848 - app - INFO - Registered blueprint: users (/api/users)
+2025-11-07 20:15:34,849 - app - INFO - Registered blueprint: tenants (/api/tenants)
+2025-11-07 20:15:34,849 - app - INFO - Registered blueprint: tenants (/api/tenants)
+2025-11-07 20:15:34,849 - app - INFO - Registered blueprint: tenants (/api/tenants)
+2025-11-07 20:15:34,849 - app - INFO - Registered blueprint: tenants (/api/tenants)
+2025-11-07 20:15:34,849 - app - INFO - Registered blueprint: tenants (/api/tenants)
+2025-11-07 20:15:34,851 - app - INFO - Registered blueprint: documents (/api/documents)
+2025-11-07 20:15:34,851 - app - INFO - Registered blueprint: documents (/api/documents)
+2025-11-07 20:15:34,851 - app - INFO - Registered blueprint: documents (/api/documents)
+2025-11-07 20:15:34,851 - app - INFO - Registered blueprint: documents (/api/documents)
+2025-11-07 20:15:34,851 - app - INFO - Registered blueprint: documents (/api/documents)
+2025-11-07 20:15:34,851 - app - INFO - Registered blueprint: files (/api/files)
+2025-11-07 20:15:34,851 - app - INFO - Registered blueprint: files (/api/files)
+2025-11-07 20:15:34,851 - app - INFO - Registered blueprint: files (/api/files)
+2025-11-07 20:15:34,851 - app - INFO - Registered blueprint: files (/api/files)
+2025-11-07 20:15:34,851 - app - INFO - Registered blueprint: files (/api/files)
+2025-11-07 20:15:34,852 - app - INFO - Registered blueprint: kafka_demo (/api/demo/kafka)
+2025-11-07 20:15:34,852 - app - INFO - Registered blueprint: kafka_demo (/api/demo/kafka)
+2025-11-07 20:15:34,852 - app - INFO - Registered blueprint: kafka_demo (/api/demo/kafka)
+2025-11-07 20:15:34,852 - app - INFO - Registered blueprint: kafka_demo (/api/demo/kafka)
+2025-11-07 20:15:34,852 - app - INFO - Registered blueprint: kafka_demo (/api/demo/kafka)
+2025-11-07 20:15:34,853 - app - INFO - Registered blueprint: swagger_ui (/api/docs)
+2025-11-07 20:15:34,853 - app - INFO - Registered blueprint: swagger_ui (/api/docs)
+2025-11-07 20:15:34,853 - app - INFO - Registered blueprint: swagger_ui (/api/docs)
+2025-11-07 20:15:34,853 - app - INFO - Registered blueprint: swagger_ui (/api/docs)
+2025-11-07 20:15:34,853 - app - INFO - Registered blueprint: swagger_ui (/api/docs)
+2025-11-07 20:15:34,854 - app - INFO - Registered blueprint: sso_config (/api/tenants)
+2025-11-07 20:15:34,854 - app - INFO - Registered blueprint: sso_config (/api/tenants)
+2025-11-07 20:15:34,854 - app - INFO - Registered blueprint: sso_config (/api/tenants)
+2025-11-07 20:15:34,854 - app - INFO - Registered blueprint: sso_config (/api/tenants)
+2025-11-07 20:15:34,854 - app - INFO - Registered blueprint: sso_config (/api/tenants)
+2025-11-07 20:15:34,855 - app - INFO - Registered blueprint: sso_auth (/api/auth/sso)
+2025-11-07 20:15:34,855 - app - INFO - Registered blueprint: sso_auth (/api/auth/sso)
+2025-11-07 20:15:34,855 - app - INFO - Registered blueprint: sso_auth (/api/auth/sso)
+2025-11-07 20:15:34,855 - app - INFO - Registered blueprint: sso_auth (/api/auth/sso)
+2025-11-07 20:15:34,855 - app - INFO - Registered blueprint: sso_auth (/api/auth/sso)
+2025-11-07 20:15:34,856 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-07 20:15:34,856 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-07 20:15:34,856 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-07 20:15:34,856 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-07 20:15:34,856 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-07 20:15:34,856 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-07 20:15:34,856 - app - INFO - Flask app created with config: testing
+2025-11-07 20:15:34,856 - app - INFO - Flask app created with config: testing
+2025-11-07 20:15:34,856 - app - INFO - Flask app created with config: testing
+2025-11-07 20:15:34,856 - app - INFO - Flask app created with config: testing
+2025-11-07 20:15:34,856 - app - INFO - Flask app created with config: testing
+2025-11-07 20:15:34,856 - app - INFO - Flask app created with config: testing
+2025-11-07 20:15:34,857 - app - INFO - Debug mode: True
+2025-11-07 20:15:34,857 - app - INFO - Debug mode: True
+2025-11-07 20:15:34,857 - app - INFO - Debug mode: True
+2025-11-07 20:15:34,857 - app - INFO - Debug mode: True
+2025-11-07 20:15:34,857 - app - INFO - Debug mode: True
+2025-11-07 20:15:34,857 - app - INFO - Debug mode: True
+2025-11-07 20:15:34,857 - app - INFO - Database URI: sqlite:///:memory:...
+2025-11-07 20:15:34,857 - app - INFO - Database URI: sqlite:///:memory:...
+2025-11-07 20:15:34,857 - app - INFO - Database URI: sqlite:///:memory:...
+2025-11-07 20:15:34,857 - app - INFO - Database URI: sqlite:///:memory:...
+2025-11-07 20:15:34,857 - app - INFO - Database URI: sqlite:///:memory:...
+2025-11-07 20:15:34,857 - app - INFO - Database URI: sqlite:///:memory:...
+2025-11-07 20:15:35,083 - app - INFO - Vault not enabled - using configuration from environment variables
+2025-11-07 20:15:35,083 - app - INFO - Vault not enabled - using configuration from environment variables
+2025-11-07 20:15:35,083 - app - INFO - Vault not enabled - using configuration from environment variables
+2025-11-07 20:15:35,083 - app - INFO - Vault not enabled - using configuration from environment variables
+2025-11-07 20:15:35,083 - app - INFO - Vault not enabled - using configuration from environment variables
+2025-11-07 20:15:35,083 - app - INFO - Vault not enabled - using configuration from environment variables
+2025-11-07 20:15:35,084 - app.extensions - INFO - Redis connected successfully at redis://redis:6379/0
+2025-11-07 20:15:35,084 - app.extensions - INFO - Redis connected successfully at redis://redis:6379/0
+2025-11-07 20:15:35,084 - app.extensions - INFO - Redis connected successfully at redis://redis:6379/0
+2025-11-07 20:15:35,084 - app.extensions - INFO - Redis connected successfully at redis://redis:6379/0
+2025-11-07 20:15:35,084 - app.extensions - INFO - Redis connected successfully at redis://redis:6379/0
+2025-11-07 20:15:35,084 - app.extensions - INFO - Redis connected successfully at redis://redis:6379/0
+2025-11-07 20:15:35,085 - app - INFO - Extensions initialized: db, migrate, jwt, cors, tenant_db_manager, redis
+2025-11-07 20:15:35,085 - app - INFO - Extensions initialized: db, migrate, jwt, cors, tenant_db_manager, redis
+2025-11-07 20:15:35,085 - app - INFO - Extensions initialized: db, migrate, jwt, cors, tenant_db_manager, redis
+2025-11-07 20:15:35,085 - app - INFO - Extensions initialized: db, migrate, jwt, cors, tenant_db_manager, redis
+2025-11-07 20:15:35,085 - app - INFO - Extensions initialized: db, migrate, jwt, cors, tenant_db_manager, redis
+2025-11-07 20:15:35,085 - app - INFO - Extensions initialized: db, migrate, jwt, cors, tenant_db_manager, redis
+2025-11-07 20:15:35,085 - app - INFO - Registered blueprint: auth (/api/auth)
+2025-11-07 20:15:35,085 - app - INFO - Registered blueprint: auth (/api/auth)
+2025-11-07 20:15:35,085 - app - INFO - Registered blueprint: auth (/api/auth)
+2025-11-07 20:15:35,085 - app - INFO - Registered blueprint: auth (/api/auth)
+2025-11-07 20:15:35,085 - app - INFO - Registered blueprint: auth (/api/auth)
+2025-11-07 20:15:35,085 - app - INFO - Registered blueprint: auth (/api/auth)
+2025-11-07 20:15:35,086 - app - INFO - Registered blueprint: users (/api/users)
+2025-11-07 20:15:35,086 - app - INFO - Registered blueprint: users (/api/users)
+2025-11-07 20:15:35,086 - app - INFO - Registered blueprint: users (/api/users)
+2025-11-07 20:15:35,086 - app - INFO - Registered blueprint: users (/api/users)
+2025-11-07 20:15:35,086 - app - INFO - Registered blueprint: users (/api/users)
+2025-11-07 20:15:35,086 - app - INFO - Registered blueprint: users (/api/users)
+2025-11-07 20:15:35,088 - app - INFO - Registered blueprint: tenants (/api/tenants)
+2025-11-07 20:15:35,088 - app - INFO - Registered blueprint: tenants (/api/tenants)
+2025-11-07 20:15:35,088 - app - INFO - Registered blueprint: tenants (/api/tenants)
+2025-11-07 20:15:35,088 - app - INFO - Registered blueprint: tenants (/api/tenants)
+2025-11-07 20:15:35,088 - app - INFO - Registered blueprint: tenants (/api/tenants)
+2025-11-07 20:15:35,088 - app - INFO - Registered blueprint: tenants (/api/tenants)
+2025-11-07 20:15:35,089 - app - INFO - Registered blueprint: documents (/api/documents)
+2025-11-07 20:15:35,089 - app - INFO - Registered blueprint: documents (/api/documents)
+2025-11-07 20:15:35,089 - app - INFO - Registered blueprint: documents (/api/documents)
+2025-11-07 20:15:35,089 - app - INFO - Registered blueprint: documents (/api/documents)
+2025-11-07 20:15:35,089 - app - INFO - Registered blueprint: documents (/api/documents)
+2025-11-07 20:15:35,089 - app - INFO - Registered blueprint: documents (/api/documents)
+2025-11-07 20:15:35,090 - app - INFO - Registered blueprint: files (/api/files)
+2025-11-07 20:15:35,090 - app - INFO - Registered blueprint: files (/api/files)
+2025-11-07 20:15:35,090 - app - INFO - Registered blueprint: files (/api/files)
+2025-11-07 20:15:35,090 - app - INFO - Registered blueprint: files (/api/files)
+2025-11-07 20:15:35,090 - app - INFO - Registered blueprint: files (/api/files)
+2025-11-07 20:15:35,090 - app - INFO - Registered blueprint: files (/api/files)
+2025-11-07 20:15:35,090 - app - INFO - Registered blueprint: kafka_demo (/api/demo/kafka)
+2025-11-07 20:15:35,090 - app - INFO - Registered blueprint: kafka_demo (/api/demo/kafka)
+2025-11-07 20:15:35,090 - app - INFO - Registered blueprint: kafka_demo (/api/demo/kafka)
+2025-11-07 20:15:35,090 - app - INFO - Registered blueprint: kafka_demo (/api/demo/kafka)
+2025-11-07 20:15:35,090 - app - INFO - Registered blueprint: kafka_demo (/api/demo/kafka)
+2025-11-07 20:15:35,090 - app - INFO - Registered blueprint: kafka_demo (/api/demo/kafka)
+2025-11-07 20:15:35,091 - app - INFO - Registered blueprint: swagger_ui (/api/docs)
+2025-11-07 20:15:35,091 - app - INFO - Registered blueprint: swagger_ui (/api/docs)
+2025-11-07 20:15:35,091 - app - INFO - Registered blueprint: swagger_ui (/api/docs)
+2025-11-07 20:15:35,091 - app - INFO - Registered blueprint: swagger_ui (/api/docs)
+2025-11-07 20:15:35,091 - app - INFO - Registered blueprint: swagger_ui (/api/docs)
+2025-11-07 20:15:35,091 - app - INFO - Registered blueprint: swagger_ui (/api/docs)
+2025-11-07 20:15:35,093 - app - INFO - Registered blueprint: sso_config (/api/tenants)
+2025-11-07 20:15:35,093 - app - INFO - Registered blueprint: sso_config (/api/tenants)
+2025-11-07 20:15:35,093 - app - INFO - Registered blueprint: sso_config (/api/tenants)
+2025-11-07 20:15:35,093 - app - INFO - Registered blueprint: sso_config (/api/tenants)
+2025-11-07 20:15:35,093 - app - INFO - Registered blueprint: sso_config (/api/tenants)
+2025-11-07 20:15:35,093 - app - INFO - Registered blueprint: sso_config (/api/tenants)
+2025-11-07 20:15:35,094 - app - INFO - Registered blueprint: sso_auth (/api/auth/sso)
+2025-11-07 20:15:35,094 - app - INFO - Registered blueprint: sso_auth (/api/auth/sso)
+2025-11-07 20:15:35,094 - app - INFO - Registered blueprint: sso_auth (/api/auth/sso)
+2025-11-07 20:15:35,094 - app - INFO - Registered blueprint: sso_auth (/api/auth/sso)
+2025-11-07 20:15:35,094 - app - INFO - Registered blueprint: sso_auth (/api/auth/sso)
+2025-11-07 20:15:35,094 - app - INFO - Registered blueprint: sso_auth (/api/auth/sso)
+2025-11-07 20:15:35,095 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-07 20:15:35,095 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-07 20:15:35,095 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-07 20:15:35,095 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-07 20:15:35,095 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-07 20:15:35,095 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-07 20:15:35,095 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-07 20:15:35,095 - app - INFO - Flask app created with config: testing
+2025-11-07 20:15:35,095 - app - INFO - Flask app created with config: testing
+2025-11-07 20:15:35,095 - app - INFO - Flask app created with config: testing
+2025-11-07 20:15:35,095 - app - INFO - Flask app created with config: testing
+2025-11-07 20:15:35,095 - app - INFO - Flask app created with config: testing
+2025-11-07 20:15:35,095 - app - INFO - Flask app created with config: testing
+2025-11-07 20:15:35,095 - app - INFO - Flask app created with config: testing
+2025-11-07 20:15:35,095 - app - INFO - Debug mode: True
+2025-11-07 20:15:35,095 - app - INFO - Debug mode: True
+2025-11-07 20:15:35,095 - app - INFO - Debug mode: True
+2025-11-07 20:15:35,095 - app - INFO - Debug mode: True
+2025-11-07 20:15:35,095 - app - INFO - Debug mode: True
+2025-11-07 20:15:35,095 - app - INFO - Debug mode: True
+2025-11-07 20:15:35,095 - app - INFO - Debug mode: True
+2025-11-07 20:15:35,096 - app - INFO - Database URI: sqlite:///:memory:...
+2025-11-07 20:15:35,096 - app - INFO - Database URI: sqlite:///:memory:...
+2025-11-07 20:15:35,096 - app - INFO - Database URI: sqlite:///:memory:...
+2025-11-07 20:15:35,096 - app - INFO - Database URI: sqlite:///:memory:...
+2025-11-07 20:15:35,096 - app - INFO - Database URI: sqlite:///:memory:...
+2025-11-07 20:15:35,096 - app - INFO - Database URI: sqlite:///:memory:...
+2025-11-07 20:15:35,096 - app - INFO - Database URI: sqlite:///:memory:...
+2025-11-07 20:15:35,302 - app - INFO - Vault not enabled - using configuration from environment variables
+2025-11-07 20:15:35,302 - app - INFO - Vault not enabled - using configuration from environment variables
+2025-11-07 20:15:35,302 - app - INFO - Vault not enabled - using configuration from environment variables
+2025-11-07 20:15:35,302 - app - INFO - Vault not enabled - using configuration from environment variables
+2025-11-07 20:15:35,302 - app - INFO - Vault not enabled - using configuration from environment variables
+2025-11-07 20:15:35,302 - app - INFO - Vault not enabled - using configuration from environment variables
+2025-11-07 20:15:35,302 - app - INFO - Vault not enabled - using configuration from environment variables
+2025-11-07 20:15:35,303 - app.extensions - INFO - Redis connected successfully at redis://redis:6379/0
+2025-11-07 20:15:35,303 - app.extensions - INFO - Redis connected successfully at redis://redis:6379/0
+2025-11-07 20:15:35,303 - app.extensions - INFO - Redis connected successfully at redis://redis:6379/0
+2025-11-07 20:15:35,303 - app.extensions - INFO - Redis connected successfully at redis://redis:6379/0
+2025-11-07 20:15:35,303 - app.extensions - INFO - Redis connected successfully at redis://redis:6379/0
+2025-11-07 20:15:35,303 - app.extensions - INFO - Redis connected successfully at redis://redis:6379/0
+2025-11-07 20:15:35,303 - app.extensions - INFO - Redis connected successfully at redis://redis:6379/0
+2025-11-07 20:15:35,304 - app - INFO - Extensions initialized: db, migrate, jwt, cors, tenant_db_manager, redis
+2025-11-07 20:15:35,304 - app - INFO - Extensions initialized: db, migrate, jwt, cors, tenant_db_manager, redis
+2025-11-07 20:15:35,304 - app - INFO - Extensions initialized: db, migrate, jwt, cors, tenant_db_manager, redis
+2025-11-07 20:15:35,304 - app - INFO - Extensions initialized: db, migrate, jwt, cors, tenant_db_manager, redis
+2025-11-07 20:15:35,304 - app - INFO - Extensions initialized: db, migrate, jwt, cors, tenant_db_manager, redis
+2025-11-07 20:15:35,304 - app - INFO - Extensions initialized: db, migrate, jwt, cors, tenant_db_manager, redis
+2025-11-07 20:15:35,304 - app - INFO - Extensions initialized: db, migrate, jwt, cors, tenant_db_manager, redis
+2025-11-07 20:15:35,305 - app - INFO - Registered blueprint: auth (/api/auth)
+2025-11-07 20:15:35,305 - app - INFO - Registered blueprint: auth (/api/auth)
+2025-11-07 20:15:35,305 - app - INFO - Registered blueprint: auth (/api/auth)
+2025-11-07 20:15:35,305 - app - INFO - Registered blueprint: auth (/api/auth)
+2025-11-07 20:15:35,305 - app - INFO - Registered blueprint: auth (/api/auth)
+2025-11-07 20:15:35,305 - app - INFO - Registered blueprint: auth (/api/auth)
+2025-11-07 20:15:35,305 - app - INFO - Registered blueprint: auth (/api/auth)
+2025-11-07 20:15:35,306 - app - INFO - Registered blueprint: users (/api/users)
+2025-11-07 20:15:35,306 - app - INFO - Registered blueprint: users (/api/users)
+2025-11-07 20:15:35,306 - app - INFO - Registered blueprint: users (/api/users)
+2025-11-07 20:15:35,306 - app - INFO - Registered blueprint: users (/api/users)
+2025-11-07 20:15:35,306 - app - INFO - Registered blueprint: users (/api/users)
+2025-11-07 20:15:35,306 - app - INFO - Registered blueprint: users (/api/users)
+2025-11-07 20:15:35,306 - app - INFO - Registered blueprint: users (/api/users)
+2025-11-07 20:15:35,307 - app - INFO - Registered blueprint: tenants (/api/tenants)
+2025-11-07 20:15:35,307 - app - INFO - Registered blueprint: tenants (/api/tenants)
+2025-11-07 20:15:35,307 - app - INFO - Registered blueprint: tenants (/api/tenants)
+2025-11-07 20:15:35,307 - app - INFO - Registered blueprint: tenants (/api/tenants)
+2025-11-07 20:15:35,307 - app - INFO - Registered blueprint: tenants (/api/tenants)
+2025-11-07 20:15:35,307 - app - INFO - Registered blueprint: tenants (/api/tenants)
+2025-11-07 20:15:35,307 - app - INFO - Registered blueprint: tenants (/api/tenants)
+2025-11-07 20:15:35,309 - app - INFO - Registered blueprint: documents (/api/documents)
+2025-11-07 20:15:35,309 - app - INFO - Registered blueprint: documents (/api/documents)
+2025-11-07 20:15:35,309 - app - INFO - Registered blueprint: documents (/api/documents)
+2025-11-07 20:15:35,309 - app - INFO - Registered blueprint: documents (/api/documents)
+2025-11-07 20:15:35,309 - app - INFO - Registered blueprint: documents (/api/documents)
+2025-11-07 20:15:35,309 - app - INFO - Registered blueprint: documents (/api/documents)
+2025-11-07 20:15:35,309 - app - INFO - Registered blueprint: documents (/api/documents)
+2025-11-07 20:15:35,310 - app - INFO - Registered blueprint: files (/api/files)
+2025-11-07 20:15:35,310 - app - INFO - Registered blueprint: files (/api/files)
+2025-11-07 20:15:35,310 - app - INFO - Registered blueprint: files (/api/files)
+2025-11-07 20:15:35,310 - app - INFO - Registered blueprint: files (/api/files)
+2025-11-07 20:15:35,310 - app - INFO - Registered blueprint: files (/api/files)
+2025-11-07 20:15:35,310 - app - INFO - Registered blueprint: files (/api/files)
+2025-11-07 20:15:35,310 - app - INFO - Registered blueprint: files (/api/files)
+2025-11-07 20:15:35,310 - app - INFO - Registered blueprint: kafka_demo (/api/demo/kafka)
+2025-11-07 20:15:35,310 - app - INFO - Registered blueprint: kafka_demo (/api/demo/kafka)
+2025-11-07 20:15:35,310 - app - INFO - Registered blueprint: kafka_demo (/api/demo/kafka)
+2025-11-07 20:15:35,310 - app - INFO - Registered blueprint: kafka_demo (/api/demo/kafka)
+2025-11-07 20:15:35,310 - app - INFO - Registered blueprint: kafka_demo (/api/demo/kafka)
+2025-11-07 20:15:35,310 - app - INFO - Registered blueprint: kafka_demo (/api/demo/kafka)
+2025-11-07 20:15:35,310 - app - INFO - Registered blueprint: kafka_demo (/api/demo/kafka)
+2025-11-07 20:15:35,311 - app - INFO - Registered blueprint: swagger_ui (/api/docs)
+2025-11-07 20:15:35,311 - app - INFO - Registered blueprint: swagger_ui (/api/docs)
+2025-11-07 20:15:35,311 - app - INFO - Registered blueprint: swagger_ui (/api/docs)
+2025-11-07 20:15:35,311 - app - INFO - Registered blueprint: swagger_ui (/api/docs)
+2025-11-07 20:15:35,311 - app - INFO - Registered blueprint: swagger_ui (/api/docs)
+2025-11-07 20:15:35,311 - app - INFO - Registered blueprint: swagger_ui (/api/docs)
+2025-11-07 20:15:35,311 - app - INFO - Registered blueprint: swagger_ui (/api/docs)
+2025-11-07 20:15:35,313 - app - INFO - Registered blueprint: sso_config (/api/tenants)
+2025-11-07 20:15:35,313 - app - INFO - Registered blueprint: sso_config (/api/tenants)
+2025-11-07 20:15:35,313 - app - INFO - Registered blueprint: sso_config (/api/tenants)
+2025-11-07 20:15:35,313 - app - INFO - Registered blueprint: sso_config (/api/tenants)
+2025-11-07 20:15:35,313 - app - INFO - Registered blueprint: sso_config (/api/tenants)
+2025-11-07 20:15:35,313 - app - INFO - Registered blueprint: sso_config (/api/tenants)
+2025-11-07 20:15:35,313 - app - INFO - Registered blueprint: sso_config (/api/tenants)
+2025-11-07 20:15:35,314 - app - INFO - Registered blueprint: sso_auth (/api/auth/sso)
+2025-11-07 20:15:35,314 - app - INFO - Registered blueprint: sso_auth (/api/auth/sso)
+2025-11-07 20:15:35,314 - app - INFO - Registered blueprint: sso_auth (/api/auth/sso)
+2025-11-07 20:15:35,314 - app - INFO - Registered blueprint: sso_auth (/api/auth/sso)
+2025-11-07 20:15:35,314 - app - INFO - Registered blueprint: sso_auth (/api/auth/sso)
+2025-11-07 20:15:35,314 - app - INFO - Registered blueprint: sso_auth (/api/auth/sso)
+2025-11-07 20:15:35,314 - app - INFO - Registered blueprint: sso_auth (/api/auth/sso)
+2025-11-07 20:15:35,315 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-07 20:15:35,315 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-07 20:15:35,315 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-07 20:15:35,315 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-07 20:15:35,315 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-07 20:15:35,315 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-07 20:15:35,315 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-07 20:15:35,315 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-07 20:15:35,316 - app - INFO - Flask app created with config: testing
+2025-11-07 20:15:35,316 - app - INFO - Flask app created with config: testing
+2025-11-07 20:15:35,316 - app - INFO - Flask app created with config: testing
+2025-11-07 20:15:35,316 - app - INFO - Flask app created with config: testing
+2025-11-07 20:15:35,316 - app - INFO - Flask app created with config: testing
+2025-11-07 20:15:35,316 - app - INFO - Flask app created with config: testing
+2025-11-07 20:15:35,316 - app - INFO - Flask app created with config: testing
+2025-11-07 20:15:35,316 - app - INFO - Flask app created with config: testing
+2025-11-07 20:15:35,316 - app - INFO - Debug mode: True
+2025-11-07 20:15:35,316 - app - INFO - Debug mode: True
+2025-11-07 20:15:35,316 - app - INFO - Debug mode: True
+2025-11-07 20:15:35,316 - app - INFO - Debug mode: True
+2025-11-07 20:15:35,316 - app - INFO - Debug mode: True
+2025-11-07 20:15:35,316 - app - INFO - Debug mode: True
+2025-11-07 20:15:35,316 - app - INFO - Debug mode: True
+2025-11-07 20:15:35,316 - app - INFO - Debug mode: True
+2025-11-07 20:15:35,317 - app - INFO - Database URI: sqlite:///:memory:...
+2025-11-07 20:15:35,317 - app - INFO - Database URI: sqlite:///:memory:...
+2025-11-07 20:15:35,317 - app - INFO - Database URI: sqlite:///:memory:...
+2025-11-07 20:15:35,317 - app - INFO - Database URI: sqlite:///:memory:...
+2025-11-07 20:15:35,317 - app - INFO - Database URI: sqlite:///:memory:...
+2025-11-07 20:15:35,317 - app - INFO - Database URI: sqlite:///:memory:...
+2025-11-07 20:15:35,317 - app - INFO - Database URI: sqlite:///:memory:...
+2025-11-07 20:15:35,317 - app - INFO - Database URI: sqlite:///:memory:...
+2025-11-07 20:15:35,546 - app - INFO - Vault not enabled - using configuration from environment variables
+2025-11-07 20:15:35,546 - app - INFO - Vault not enabled - using configuration from environment variables
+2025-11-07 20:15:35,546 - app - INFO - Vault not enabled - using configuration from environment variables
+2025-11-07 20:15:35,546 - app - INFO - Vault not enabled - using configuration from environment variables
+2025-11-07 20:15:35,546 - app - INFO - Vault not enabled - using configuration from environment variables
+2025-11-07 20:15:35,546 - app - INFO - Vault not enabled - using configuration from environment variables
+2025-11-07 20:15:35,546 - app - INFO - Vault not enabled - using configuration from environment variables
+2025-11-07 20:15:35,546 - app - INFO - Vault not enabled - using configuration from environment variables
+2025-11-07 20:15:35,547 - app.extensions - INFO - Redis connected successfully at redis://redis:6379/0
+2025-11-07 20:15:35,547 - app.extensions - INFO - Redis connected successfully at redis://redis:6379/0
+2025-11-07 20:15:35,547 - app.extensions - INFO - Redis connected successfully at redis://redis:6379/0
+2025-11-07 20:15:35,547 - app.extensions - INFO - Redis connected successfully at redis://redis:6379/0
+2025-11-07 20:15:35,547 - app.extensions - INFO - Redis connected successfully at redis://redis:6379/0
+2025-11-07 20:15:35,547 - app.extensions - INFO - Redis connected successfully at redis://redis:6379/0
+2025-11-07 20:15:35,547 - app.extensions - INFO - Redis connected successfully at redis://redis:6379/0
+2025-11-07 20:15:35,547 - app.extensions - INFO - Redis connected successfully at redis://redis:6379/0
+2025-11-07 20:15:35,547 - app - INFO - Extensions initialized: db, migrate, jwt, cors, tenant_db_manager, redis
+2025-11-07 20:15:35,547 - app - INFO - Extensions initialized: db, migrate, jwt, cors, tenant_db_manager, redis
+2025-11-07 20:15:35,547 - app - INFO - Extensions initialized: db, migrate, jwt, cors, tenant_db_manager, redis
+2025-11-07 20:15:35,547 - app - INFO - Extensions initialized: db, migrate, jwt, cors, tenant_db_manager, redis
+2025-11-07 20:15:35,547 - app - INFO - Extensions initialized: db, migrate, jwt, cors, tenant_db_manager, redis
+2025-11-07 20:15:35,547 - app - INFO - Extensions initialized: db, migrate, jwt, cors, tenant_db_manager, redis
+2025-11-07 20:15:35,547 - app - INFO - Extensions initialized: db, migrate, jwt, cors, tenant_db_manager, redis
+2025-11-07 20:15:35,547 - app - INFO - Extensions initialized: db, migrate, jwt, cors, tenant_db_manager, redis
+2025-11-07 20:15:35,548 - app - INFO - Registered blueprint: auth (/api/auth)
+2025-11-07 20:15:35,548 - app - INFO - Registered blueprint: auth (/api/auth)
+2025-11-07 20:15:35,548 - app - INFO - Registered blueprint: auth (/api/auth)
+2025-11-07 20:15:35,548 - app - INFO - Registered blueprint: auth (/api/auth)
+2025-11-07 20:15:35,548 - app - INFO - Registered blueprint: auth (/api/auth)
+2025-11-07 20:15:35,548 - app - INFO - Registered blueprint: auth (/api/auth)
+2025-11-07 20:15:35,548 - app - INFO - Registered blueprint: auth (/api/auth)
+2025-11-07 20:15:35,548 - app - INFO - Registered blueprint: auth (/api/auth)
+2025-11-07 20:15:35,549 - app - INFO - Registered blueprint: users (/api/users)
+2025-11-07 20:15:35,549 - app - INFO - Registered blueprint: users (/api/users)
+2025-11-07 20:15:35,549 - app - INFO - Registered blueprint: users (/api/users)
+2025-11-07 20:15:35,549 - app - INFO - Registered blueprint: users (/api/users)
+2025-11-07 20:15:35,549 - app - INFO - Registered blueprint: users (/api/users)
+2025-11-07 20:15:35,549 - app - INFO - Registered blueprint: users (/api/users)
+2025-11-07 20:15:35,549 - app - INFO - Registered blueprint: users (/api/users)
+2025-11-07 20:15:35,549 - app - INFO - Registered blueprint: users (/api/users)
+2025-11-07 20:15:35,551 - app - INFO - Registered blueprint: tenants (/api/tenants)
+2025-11-07 20:15:35,551 - app - INFO - Registered blueprint: tenants (/api/tenants)
+2025-11-07 20:15:35,551 - app - INFO - Registered blueprint: tenants (/api/tenants)
+2025-11-07 20:15:35,551 - app - INFO - Registered blueprint: tenants (/api/tenants)
+2025-11-07 20:15:35,551 - app - INFO - Registered blueprint: tenants (/api/tenants)
+2025-11-07 20:15:35,551 - app - INFO - Registered blueprint: tenants (/api/tenants)
+2025-11-07 20:15:35,551 - app - INFO - Registered blueprint: tenants (/api/tenants)
+2025-11-07 20:15:35,551 - app - INFO - Registered blueprint: tenants (/api/tenants)
+2025-11-07 20:15:35,552 - app - INFO - Registered blueprint: documents (/api/documents)
+2025-11-07 20:15:35,552 - app - INFO - Registered blueprint: documents (/api/documents)
+2025-11-07 20:15:35,552 - app - INFO - Registered blueprint: documents (/api/documents)
+2025-11-07 20:15:35,552 - app - INFO - Registered blueprint: documents (/api/documents)
+2025-11-07 20:15:35,552 - app - INFO - Registered blueprint: documents (/api/documents)
+2025-11-07 20:15:35,552 - app - INFO - Registered blueprint: documents (/api/documents)
+2025-11-07 20:15:35,552 - app - INFO - Registered blueprint: documents (/api/documents)
+2025-11-07 20:15:35,552 - app - INFO - Registered blueprint: documents (/api/documents)
+2025-11-07 20:15:35,553 - app - INFO - Registered blueprint: files (/api/files)
+2025-11-07 20:15:35,553 - app - INFO - Registered blueprint: files (/api/files)
+2025-11-07 20:15:35,553 - app - INFO - Registered blueprint: files (/api/files)
+2025-11-07 20:15:35,553 - app - INFO - Registered blueprint: files (/api/files)
+2025-11-07 20:15:35,553 - app - INFO - Registered blueprint: files (/api/files)
+2025-11-07 20:15:35,553 - app - INFO - Registered blueprint: files (/api/files)
+2025-11-07 20:15:35,553 - app - INFO - Registered blueprint: files (/api/files)
+2025-11-07 20:15:35,553 - app - INFO - Registered blueprint: files (/api/files)
+2025-11-07 20:15:35,554 - app - INFO - Registered blueprint: kafka_demo (/api/demo/kafka)
+2025-11-07 20:15:35,554 - app - INFO - Registered blueprint: kafka_demo (/api/demo/kafka)
+2025-11-07 20:15:35,554 - app - INFO - Registered blueprint: kafka_demo (/api/demo/kafka)
+2025-11-07 20:15:35,554 - app - INFO - Registered blueprint: kafka_demo (/api/demo/kafka)
+2025-11-07 20:15:35,554 - app - INFO - Registered blueprint: kafka_demo (/api/demo/kafka)
+2025-11-07 20:15:35,554 - app - INFO - Registered blueprint: kafka_demo (/api/demo/kafka)
+2025-11-07 20:15:35,554 - app - INFO - Registered blueprint: kafka_demo (/api/demo/kafka)
+2025-11-07 20:15:35,554 - app - INFO - Registered blueprint: kafka_demo (/api/demo/kafka)
+2025-11-07 20:15:35,555 - app - INFO - Registered blueprint: swagger_ui (/api/docs)
+2025-11-07 20:15:35,555 - app - INFO - Registered blueprint: swagger_ui (/api/docs)
+2025-11-07 20:15:35,555 - app - INFO - Registered blueprint: swagger_ui (/api/docs)
+2025-11-07 20:15:35,555 - app - INFO - Registered blueprint: swagger_ui (/api/docs)
+2025-11-07 20:15:35,555 - app - INFO - Registered blueprint: swagger_ui (/api/docs)
+2025-11-07 20:15:35,555 - app - INFO - Registered blueprint: swagger_ui (/api/docs)
+2025-11-07 20:15:35,555 - app - INFO - Registered blueprint: swagger_ui (/api/docs)
+2025-11-07 20:15:35,555 - app - INFO - Registered blueprint: swagger_ui (/api/docs)
+2025-11-07 20:15:35,556 - app - INFO - Registered blueprint: sso_config (/api/tenants)
+2025-11-07 20:15:35,556 - app - INFO - Registered blueprint: sso_config (/api/tenants)
+2025-11-07 20:15:35,556 - app - INFO - Registered blueprint: sso_config (/api/tenants)
+2025-11-07 20:15:35,556 - app - INFO - Registered blueprint: sso_config (/api/tenants)
+2025-11-07 20:15:35,556 - app - INFO - Registered blueprint: sso_config (/api/tenants)
+2025-11-07 20:15:35,556 - app - INFO - Registered blueprint: sso_config (/api/tenants)
+2025-11-07 20:15:35,556 - app - INFO - Registered blueprint: sso_config (/api/tenants)
+2025-11-07 20:15:35,556 - app - INFO - Registered blueprint: sso_config (/api/tenants)
+2025-11-07 20:15:35,558 - app - INFO - Registered blueprint: sso_auth (/api/auth/sso)
+2025-11-07 20:15:35,558 - app - INFO - Registered blueprint: sso_auth (/api/auth/sso)
+2025-11-07 20:15:35,558 - app - INFO - Registered blueprint: sso_auth (/api/auth/sso)
+2025-11-07 20:15:35,558 - app - INFO - Registered blueprint: sso_auth (/api/auth/sso)
+2025-11-07 20:15:35,558 - app - INFO - Registered blueprint: sso_auth (/api/auth/sso)
+2025-11-07 20:15:35,558 - app - INFO - Registered blueprint: sso_auth (/api/auth/sso)
+2025-11-07 20:15:35,558 - app - INFO - Registered blueprint: sso_auth (/api/auth/sso)
+2025-11-07 20:15:35,558 - app - INFO - Registered blueprint: sso_auth (/api/auth/sso)
+2025-11-07 20:15:35,558 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-07 20:15:35,558 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-07 20:15:35,558 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-07 20:15:35,558 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-07 20:15:35,558 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-07 20:15:35,558 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-07 20:15:35,558 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-07 20:15:35,558 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-07 20:15:35,558 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-07 20:15:35,559 - app - INFO - Flask app created with config: testing
+2025-11-07 20:15:35,559 - app - INFO - Flask app created with config: testing
+2025-11-07 20:15:35,559 - app - INFO - Flask app created with config: testing
+2025-11-07 20:15:35,559 - app - INFO - Flask app created with config: testing
+2025-11-07 20:15:35,559 - app - INFO - Flask app created with config: testing
+2025-11-07 20:15:35,559 - app - INFO - Flask app created with config: testing
+2025-11-07 20:15:35,559 - app - INFO - Flask app created with config: testing
+2025-11-07 20:15:35,559 - app - INFO - Flask app created with config: testing
+2025-11-07 20:15:35,559 - app - INFO - Flask app created with config: testing
+2025-11-07 20:15:35,559 - app - INFO - Debug mode: True
+2025-11-07 20:15:35,559 - app - INFO - Debug mode: True
+2025-11-07 20:15:35,559 - app - INFO - Debug mode: True
+2025-11-07 20:15:35,559 - app - INFO - Debug mode: True
+2025-11-07 20:15:35,559 - app - INFO - Debug mode: True
+2025-11-07 20:15:35,559 - app - INFO - Debug mode: True
+2025-11-07 20:15:35,559 - app - INFO - Debug mode: True
+2025-11-07 20:15:35,559 - app - INFO - Debug mode: True
+2025-11-07 20:15:35,559 - app - INFO - Debug mode: True
+2025-11-07 20:15:35,560 - app - INFO - Database URI: sqlite:///:memory:...
+2025-11-07 20:15:35,560 - app - INFO - Database URI: sqlite:///:memory:...
+2025-11-07 20:15:35,560 - app - INFO - Database URI: sqlite:///:memory:...
+2025-11-07 20:15:35,560 - app - INFO - Database URI: sqlite:///:memory:...
+2025-11-07 20:15:35,560 - app - INFO - Database URI: sqlite:///:memory:...
+2025-11-07 20:15:35,560 - app - INFO - Database URI: sqlite:///:memory:...
+2025-11-07 20:15:35,560 - app - INFO - Database URI: sqlite:///:memory:...
+2025-11-07 20:15:35,560 - app - INFO - Database URI: sqlite:///:memory:...
+2025-11-07 20:15:35,560 - app - INFO - Database URI: sqlite:///:memory:...
+2025-11-07 20:15:35,798 - app - INFO - Vault not enabled - using configuration from environment variables
+2025-11-07 20:15:35,798 - app - INFO - Vault not enabled - using configuration from environment variables
+2025-11-07 20:15:35,798 - app - INFO - Vault not enabled - using configuration from environment variables
+2025-11-07 20:15:35,798 - app - INFO - Vault not enabled - using configuration from environment variables
+2025-11-07 20:15:35,798 - app - INFO - Vault not enabled - using configuration from environment variables
+2025-11-07 20:15:35,798 - app - INFO - Vault not enabled - using configuration from environment variables
+2025-11-07 20:15:35,798 - app - INFO - Vault not enabled - using configuration from environment variables
+2025-11-07 20:15:35,798 - app - INFO - Vault not enabled - using configuration from environment variables
+2025-11-07 20:15:35,798 - app - INFO - Vault not enabled - using configuration from environment variables
+2025-11-07 20:15:35,800 - app.extensions - INFO - Redis connected successfully at redis://redis:6379/0
+2025-11-07 20:15:35,800 - app.extensions - INFO - Redis connected successfully at redis://redis:6379/0
+2025-11-07 20:15:35,800 - app.extensions - INFO - Redis connected successfully at redis://redis:6379/0
+2025-11-07 20:15:35,800 - app.extensions - INFO - Redis connected successfully at redis://redis:6379/0
+2025-11-07 20:15:35,800 - app.extensions - INFO - Redis connected successfully at redis://redis:6379/0
+2025-11-07 20:15:35,800 - app.extensions - INFO - Redis connected successfully at redis://redis:6379/0
+2025-11-07 20:15:35,800 - app.extensions - INFO - Redis connected successfully at redis://redis:6379/0
+2025-11-07 20:15:35,800 - app.extensions - INFO - Redis connected successfully at redis://redis:6379/0
+2025-11-07 20:15:35,800 - app.extensions - INFO - Redis connected successfully at redis://redis:6379/0
+2025-11-07 20:15:35,800 - app - INFO - Extensions initialized: db, migrate, jwt, cors, tenant_db_manager, redis
+2025-11-07 20:15:35,800 - app - INFO - Extensions initialized: db, migrate, jwt, cors, tenant_db_manager, redis
+2025-11-07 20:15:35,800 - app - INFO - Extensions initialized: db, migrate, jwt, cors, tenant_db_manager, redis
+2025-11-07 20:15:35,800 - app - INFO - Extensions initialized: db, migrate, jwt, cors, tenant_db_manager, redis
+2025-11-07 20:15:35,800 - app - INFO - Extensions initialized: db, migrate, jwt, cors, tenant_db_manager, redis
+2025-11-07 20:15:35,800 - app - INFO - Extensions initialized: db, migrate, jwt, cors, tenant_db_manager, redis
+2025-11-07 20:15:35,800 - app - INFO - Extensions initialized: db, migrate, jwt, cors, tenant_db_manager, redis
+2025-11-07 20:15:35,800 - app - INFO - Extensions initialized: db, migrate, jwt, cors, tenant_db_manager, redis
+2025-11-07 20:15:35,800 - app - INFO - Extensions initialized: db, migrate, jwt, cors, tenant_db_manager, redis
+2025-11-07 20:15:35,801 - app - INFO - Registered blueprint: auth (/api/auth)
+2025-11-07 20:15:35,801 - app - INFO - Registered blueprint: auth (/api/auth)
+2025-11-07 20:15:35,801 - app - INFO - Registered blueprint: auth (/api/auth)
+2025-11-07 20:15:35,801 - app - INFO - Registered blueprint: auth (/api/auth)
+2025-11-07 20:15:35,801 - app - INFO - Registered blueprint: auth (/api/auth)
+2025-11-07 20:15:35,801 - app - INFO - Registered blueprint: auth (/api/auth)
+2025-11-07 20:15:35,801 - app - INFO - Registered blueprint: auth (/api/auth)
+2025-11-07 20:15:35,801 - app - INFO - Registered blueprint: auth (/api/auth)
+2025-11-07 20:15:35,801 - app - INFO - Registered blueprint: auth (/api/auth)
+2025-11-07 20:15:35,802 - app - INFO - Registered blueprint: users (/api/users)
+2025-11-07 20:15:35,802 - app - INFO - Registered blueprint: users (/api/users)
+2025-11-07 20:15:35,802 - app - INFO - Registered blueprint: users (/api/users)
+2025-11-07 20:15:35,802 - app - INFO - Registered blueprint: users (/api/users)
+2025-11-07 20:15:35,802 - app - INFO - Registered blueprint: users (/api/users)
+2025-11-07 20:15:35,802 - app - INFO - Registered blueprint: users (/api/users)
+2025-11-07 20:15:35,802 - app - INFO - Registered blueprint: users (/api/users)
+2025-11-07 20:15:35,802 - app - INFO - Registered blueprint: users (/api/users)
+2025-11-07 20:15:35,802 - app - INFO - Registered blueprint: users (/api/users)
+2025-11-07 20:15:35,803 - app - INFO - Registered blueprint: tenants (/api/tenants)
+2025-11-07 20:15:35,803 - app - INFO - Registered blueprint: tenants (/api/tenants)
+2025-11-07 20:15:35,803 - app - INFO - Registered blueprint: tenants (/api/tenants)
+2025-11-07 20:15:35,803 - app - INFO - Registered blueprint: tenants (/api/tenants)
+2025-11-07 20:15:35,803 - app - INFO - Registered blueprint: tenants (/api/tenants)
+2025-11-07 20:15:35,803 - app - INFO - Registered blueprint: tenants (/api/tenants)
+2025-11-07 20:15:35,803 - app - INFO - Registered blueprint: tenants (/api/tenants)
+2025-11-07 20:15:35,803 - app - INFO - Registered blueprint: tenants (/api/tenants)
+2025-11-07 20:15:35,803 - app - INFO - Registered blueprint: tenants (/api/tenants)
+2025-11-07 20:15:35,805 - app - INFO - Registered blueprint: documents (/api/documents)
+2025-11-07 20:15:35,805 - app - INFO - Registered blueprint: documents (/api/documents)
+2025-11-07 20:15:35,805 - app - INFO - Registered blueprint: documents (/api/documents)
+2025-11-07 20:15:35,805 - app - INFO - Registered blueprint: documents (/api/documents)
+2025-11-07 20:15:35,805 - app - INFO - Registered blueprint: documents (/api/documents)
+2025-11-07 20:15:35,805 - app - INFO - Registered blueprint: documents (/api/documents)
+2025-11-07 20:15:35,805 - app - INFO - Registered blueprint: documents (/api/documents)
+2025-11-07 20:15:35,805 - app - INFO - Registered blueprint: documents (/api/documents)
+2025-11-07 20:15:35,805 - app - INFO - Registered blueprint: documents (/api/documents)
+2025-11-07 20:15:35,806 - app - INFO - Registered blueprint: files (/api/files)
+2025-11-07 20:15:35,806 - app - INFO - Registered blueprint: files (/api/files)
+2025-11-07 20:15:35,806 - app - INFO - Registered blueprint: files (/api/files)
+2025-11-07 20:15:35,806 - app - INFO - Registered blueprint: files (/api/files)
+2025-11-07 20:15:35,806 - app - INFO - Registered blueprint: files (/api/files)
+2025-11-07 20:15:35,806 - app - INFO - Registered blueprint: files (/api/files)
+2025-11-07 20:15:35,806 - app - INFO - Registered blueprint: files (/api/files)
+2025-11-07 20:15:35,806 - app - INFO - Registered blueprint: files (/api/files)
+2025-11-07 20:15:35,806 - app - INFO - Registered blueprint: files (/api/files)
+2025-11-07 20:15:35,806 - app - INFO - Registered blueprint: kafka_demo (/api/demo/kafka)
+2025-11-07 20:15:35,806 - app - INFO - Registered blueprint: kafka_demo (/api/demo/kafka)
+2025-11-07 20:15:35,806 - app - INFO - Registered blueprint: kafka_demo (/api/demo/kafka)
+2025-11-07 20:15:35,806 - app - INFO - Registered blueprint: kafka_demo (/api/demo/kafka)
+2025-11-07 20:15:35,806 - app - INFO - Registered blueprint: kafka_demo (/api/demo/kafka)
+2025-11-07 20:15:35,806 - app - INFO - Registered blueprint: kafka_demo (/api/demo/kafka)
+2025-11-07 20:15:35,806 - app - INFO - Registered blueprint: kafka_demo (/api/demo/kafka)
+2025-11-07 20:15:35,806 - app - INFO - Registered blueprint: kafka_demo (/api/demo/kafka)
+2025-11-07 20:15:35,806 - app - INFO - Registered blueprint: kafka_demo (/api/demo/kafka)
+2025-11-07 20:15:35,807 - app - INFO - Registered blueprint: swagger_ui (/api/docs)
+2025-11-07 20:15:35,807 - app - INFO - Registered blueprint: swagger_ui (/api/docs)
+2025-11-07 20:15:35,807 - app - INFO - Registered blueprint: swagger_ui (/api/docs)
+2025-11-07 20:15:35,807 - app - INFO - Registered blueprint: swagger_ui (/api/docs)
+2025-11-07 20:15:35,807 - app - INFO - Registered blueprint: swagger_ui (/api/docs)
+2025-11-07 20:15:35,807 - app - INFO - Registered blueprint: swagger_ui (/api/docs)
+2025-11-07 20:15:35,807 - app - INFO - Registered blueprint: swagger_ui (/api/docs)
+2025-11-07 20:15:35,807 - app - INFO - Registered blueprint: swagger_ui (/api/docs)
+2025-11-07 20:15:35,807 - app - INFO - Registered blueprint: swagger_ui (/api/docs)
+2025-11-07 20:15:35,809 - app - INFO - Registered blueprint: sso_config (/api/tenants)
+2025-11-07 20:15:35,809 - app - INFO - Registered blueprint: sso_config (/api/tenants)
+2025-11-07 20:15:35,809 - app - INFO - Registered blueprint: sso_config (/api/tenants)
+2025-11-07 20:15:35,809 - app - INFO - Registered blueprint: sso_config (/api/tenants)
+2025-11-07 20:15:35,809 - app - INFO - Registered blueprint: sso_config (/api/tenants)
+2025-11-07 20:15:35,809 - app - INFO - Registered blueprint: sso_config (/api/tenants)
+2025-11-07 20:15:35,809 - app - INFO - Registered blueprint: sso_config (/api/tenants)
+2025-11-07 20:15:35,809 - app - INFO - Registered blueprint: sso_config (/api/tenants)
+2025-11-07 20:15:35,809 - app - INFO - Registered blueprint: sso_config (/api/tenants)
+2025-11-07 20:15:35,810 - app - INFO - Registered blueprint: sso_auth (/api/auth/sso)
+2025-11-07 20:15:35,810 - app - INFO - Registered blueprint: sso_auth (/api/auth/sso)
+2025-11-07 20:15:35,810 - app - INFO - Registered blueprint: sso_auth (/api/auth/sso)
+2025-11-07 20:15:35,810 - app - INFO - Registered blueprint: sso_auth (/api/auth/sso)
+2025-11-07 20:15:35,810 - app - INFO - Registered blueprint: sso_auth (/api/auth/sso)
+2025-11-07 20:15:35,810 - app - INFO - Registered blueprint: sso_auth (/api/auth/sso)
+2025-11-07 20:15:35,810 - app - INFO - Registered blueprint: sso_auth (/api/auth/sso)
+2025-11-07 20:15:35,810 - app - INFO - Registered blueprint: sso_auth (/api/auth/sso)
+2025-11-07 20:15:35,810 - app - INFO - Registered blueprint: sso_auth (/api/auth/sso)
+2025-11-07 20:15:35,811 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-07 20:15:35,811 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-07 20:15:35,811 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-07 20:15:35,811 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-07 20:15:35,811 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-07 20:15:35,811 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-07 20:15:35,811 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-07 20:15:35,811 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-07 20:15:35,811 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-07 20:15:35,811 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-07 20:15:35,811 - app - INFO - Flask app created with config: testing
+2025-11-07 20:15:35,811 - app - INFO - Flask app created with config: testing
+2025-11-07 20:15:35,811 - app - INFO - Flask app created with config: testing
+2025-11-07 20:15:35,811 - app - INFO - Flask app created with config: testing
+2025-11-07 20:15:35,811 - app - INFO - Flask app created with config: testing
+2025-11-07 20:15:35,811 - app - INFO - Flask app created with config: testing
+2025-11-07 20:15:35,811 - app - INFO - Flask app created with config: testing
+2025-11-07 20:15:35,811 - app - INFO - Flask app created with config: testing
+2025-11-07 20:15:35,811 - app - INFO - Flask app created with config: testing
+2025-11-07 20:15:35,811 - app - INFO - Flask app created with config: testing
+2025-11-07 20:15:35,812 - app - INFO - Debug mode: True
+2025-11-07 20:15:35,812 - app - INFO - Debug mode: True
+2025-11-07 20:15:35,812 - app - INFO - Debug mode: True
+2025-11-07 20:15:35,812 - app - INFO - Debug mode: True
+2025-11-07 20:15:35,812 - app - INFO - Debug mode: True
+2025-11-07 20:15:35,812 - app - INFO - Debug mode: True
+2025-11-07 20:15:35,812 - app - INFO - Debug mode: True
+2025-11-07 20:15:35,812 - app - INFO - Debug mode: True
+2025-11-07 20:15:35,812 - app - INFO - Debug mode: True
+2025-11-07 20:15:35,812 - app - INFO - Debug mode: True
+2025-11-07 20:15:35,812 - app - INFO - Database URI: sqlite:///:memory:...
+2025-11-07 20:15:35,812 - app - INFO - Database URI: sqlite:///:memory:...
+2025-11-07 20:15:35,812 - app - INFO - Database URI: sqlite:///:memory:...
+2025-11-07 20:15:35,812 - app - INFO - Database URI: sqlite:///:memory:...
+2025-11-07 20:15:35,812 - app - INFO - Database URI: sqlite:///:memory:...
+2025-11-07 20:15:35,812 - app - INFO - Database URI: sqlite:///:memory:...
+2025-11-07 20:15:35,812 - app - INFO - Database URI: sqlite:///:memory:...
+2025-11-07 20:15:35,812 - app - INFO - Database URI: sqlite:///:memory:...
+2025-11-07 20:15:35,812 - app - INFO - Database URI: sqlite:///:memory:...
+2025-11-07 20:15:35,812 - app - INFO - Database URI: sqlite:///:memory:...
+2025-11-07 20:19:05,353 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-07 20:19:05,353 - app - INFO - Flask app created with config: testing
+2025-11-07 20:19:05,353 - app - INFO - Debug mode: True
+2025-11-07 20:19:05,354 - app - INFO - Database URI: sqlite:///:memory:...
+2025-11-07 20:19:20,017 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-07 20:19:20,017 - app - INFO - Flask app created with config: testing
+2025-11-07 20:19:20,017 - app - INFO - Debug mode: True
+2025-11-07 20:19:20,017 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-07 20:19:36,688 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-07 20:19:36,688 - app - INFO - Flask app created with config: testing
+2025-11-07 20:19:36,688 - app - INFO - Debug mode: True
+2025-11-07 20:19:36,688 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-07 20:19:49,946 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-07 20:19:49,946 - app - INFO - Flask app created with config: development
+2025-11-07 20:19:49,946 - app - INFO - Debug mode: True
+2025-11-07 20:19:49,947 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-07 20:19:49,968 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-07 20:19:49,969 - app - INFO - Flask app created with config: development
+2025-11-07 20:19:49,969 - app - INFO - Debug mode: True
+2025-11-07 20:19:49,969 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-07 20:19:49,970 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-07 20:19:49,970 - app - INFO - Flask app created with config: development
+2025-11-07 20:19:49,970 - app - INFO - Debug mode: True
+2025-11-07 20:19:49,970 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-07 20:19:50,023 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-07 20:19:50,023 - app - INFO - Flask app created with config: development
+2025-11-07 20:19:50,023 - app - INFO - Debug mode: True
+2025-11-07 20:19:50,023 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-07 20:26:49,802 - app.utils.decorators - ERROR - tenant_required used without jwt_required_custom
+2025-11-07 20:27:00,752 - app.utils.decorators - ERROR - tenant_required used without jwt_required_custom
+2025-11-07 20:27:27,261 - app.utils.decorators - ERROR - tenant_required used without jwt_required_custom
+2025-11-07 20:28:08,690 - app.utils.decorators - ERROR - tenant_required used without jwt_required_custom
+2025-11-07 20:31:20,247 - app.utils.decorators - ERROR - tenant_required used without jwt_required_custom
+2025-11-07 20:33:20,010 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-07 20:33:20,011 - app - INFO - Flask app created with config: development
+2025-11-07 20:33:20,011 - app - INFO - Debug mode: True
+2025-11-07 20:33:20,013 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-07 20:33:20,013 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-07 20:33:20,013 - app - INFO - Flask app created with config: development
+2025-11-07 20:33:20,013 - app - INFO - Debug mode: True
+2025-11-07 20:33:20,014 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-07 20:33:20,047 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-07 20:33:20,047 - app - INFO - Flask app created with config: development
+2025-11-07 20:33:20,048 - app - INFO - Debug mode: True
+2025-11-07 20:33:20,048 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-07 20:33:20,049 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-07 20:33:20,049 - app - INFO - Flask app created with config: development
+2025-11-07 20:33:20,049 - app - INFO - Debug mode: True
+2025-11-07 20:33:20,049 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-07 20:33:57,967 - app.utils.decorators - DEBUG - Authenticated user: a67180bf-e078-4e86-a7dd-44f7c6e871f8
+2025-11-07 20:33:57,968 - app.utils.decorators - DEBUG - User a67180bf-e078-4e86-a7dd-44f7c6e871f8 accessing tenant cb859f98-291e-41b2-b30f-2287c2699205 with role admin
+2025-11-07 20:33:57,968 - app.utils.decorators - DEBUG - Role check passed: admin in ['admin']
+2025-11-07 20:33:57,999 - app.models.tenant_sso_config - INFO - TenantSSOConfig initialized for tenant_id=cb859f98-291e-41b2-b30f-2287c2699205
+2025-11-07 20:33:58,002 - app.services.tenant_sso_config_service - INFO - Created SSO configuration for tenant cb859f98-291e-41b2-b30f-2287c2699205
+2025-11-07 20:34:39,605 - app.utils.decorators - DEBUG - Authenticated user: a67180bf-e078-4e86-a7dd-44f7c6e871f8
+2025-11-07 20:34:39,606 - app.utils.decorators - DEBUG - User a67180bf-e078-4e86-a7dd-44f7c6e871f8 accessing tenant cb859f98-291e-41b2-b30f-2287c2699205 with role admin
+2025-11-07 20:34:39,606 - app.utils.decorators - DEBUG - Role check passed: admin in ['admin', 'user']
+2025-11-07 20:34:57,906 - app.utils.decorators - DEBUG - Authenticated user: a67180bf-e078-4e86-a7dd-44f7c6e871f8
+2025-11-07 20:34:57,906 - app.utils.decorators - DEBUG - User a67180bf-e078-4e86-a7dd-44f7c6e871f8 accessing tenant cb859f98-291e-41b2-b30f-2287c2699205 with role admin
+2025-11-07 20:34:57,907 - app.utils.decorators - DEBUG - Role check passed: admin in ['admin']
+2025-11-07 20:34:57,911 - app.services.tenant_sso_config_service - INFO - Updated SSO configuration for tenant cb859f98-291e-41b2-b30f-2287c2699205
+2025-11-07 20:35:13,083 - app.utils.decorators - DEBUG - Authenticated user: a67180bf-e078-4e86-a7dd-44f7c6e871f8
+2025-11-07 20:35:13,083 - app.utils.decorators - DEBUG - User a67180bf-e078-4e86-a7dd-44f7c6e871f8 accessing tenant cb859f98-291e-41b2-b30f-2287c2699205 with role admin
+2025-11-07 20:35:13,083 - app.utils.decorators - DEBUG - Role check passed: admin in ['admin']
+2025-11-07 20:35:13,088 - app.services.tenant_sso_config_service - INFO - Updated SSO configuration for tenant cb859f98-291e-41b2-b30f-2287c2699205
+2025-11-07 20:36:00,608 - app.utils.decorators - DEBUG - Authenticated user: a67180bf-e078-4e86-a7dd-44f7c6e871f8
+2025-11-07 20:36:00,609 - app.utils.decorators - DEBUG - User a67180bf-e078-4e86-a7dd-44f7c6e871f8 accessing tenant cb859f98-291e-41b2-b30f-2287c2699205 with role admin
+2025-11-07 20:36:00,610 - app.utils.decorators - DEBUG - Role check passed: admin in ['admin']
+2025-11-07 20:36:23,451 - app.utils.decorators - ERROR - JWT validation failed: Not enough segments
+2025-11-07 20:37:30,411 - app.utils.decorators - DEBUG - Authenticated user: a67180bf-e078-4e86-a7dd-44f7c6e871f8
+2025-11-07 20:37:30,411 - app.utils.decorators - DEBUG - User a67180bf-e078-4e86-a7dd-44f7c6e871f8 accessing tenant cb859f98-291e-41b2-b30f-2287c2699205 with role admin
+2025-11-07 20:37:30,412 - app.utils.decorators - DEBUG - Role check passed: admin in ['admin']
+2025-11-07 20:37:30,424 - app.services.tenant_sso_config_service - INFO - Reset tenant cb859f98-291e-41b2-b30f-2287c2699205 to local authentication
+2025-11-07 20:37:30,430 - app.services.tenant_sso_config_service - INFO - Deleted SSO configuration for tenant cb859f98-291e-41b2-b30f-2287c2699205
+2025-11-07 20:37:34,739 - app.utils.decorators - DEBUG - Authenticated user: a67180bf-e078-4e86-a7dd-44f7c6e871f8
+2025-11-07 20:37:34,739 - app.utils.decorators - DEBUG - User a67180bf-e078-4e86-a7dd-44f7c6e871f8 accessing tenant cb859f98-291e-41b2-b30f-2287c2699205 with role admin
+2025-11-07 20:37:34,740 - app.utils.decorators - DEBUG - Role check passed: admin in ['admin']
+2025-11-07 20:37:34,744 - app.models.tenant_sso_config - INFO - TenantSSOConfig initialized for tenant_id=cb859f98-291e-41b2-b30f-2287c2699205
+2025-11-07 20:43:23,327 - app.utils.decorators - DEBUG - Authenticated user: a67180bf-e078-4e86-a7dd-44f7c6e871f8
+2025-11-07 20:43:23,329 - app.utils.decorators - DEBUG - User a67180bf-e078-4e86-a7dd-44f7c6e871f8 accessing tenant cb859f98-291e-41b2-b30f-2287c2699205 with role admin
+2025-11-07 20:43:23,330 - app.utils.decorators - DEBUG - Role check passed: admin in ['admin']
+2025-11-07 20:43:23,344 - app.models.tenant_sso_config - INFO - TenantSSOConfig initialized for tenant_id=cb859f98-291e-41b2-b30f-2287c2699205
+2025-11-07 20:43:23,353 - app.services.tenant_sso_config_service - INFO - Created SSO configuration for tenant cb859f98-291e-41b2-b30f-2287c2699205
+2025-11-07 20:44:03,147 - app.utils.decorators - DEBUG - Authenticated user: a67180bf-e078-4e86-a7dd-44f7c6e871f8
+2025-11-07 20:44:03,148 - app.utils.decorators - DEBUG - User a67180bf-e078-4e86-a7dd-44f7c6e871f8 accessing tenant cb859f98-291e-41b2-b30f-2287c2699205 with role admin
+2025-11-07 20:44:03,148 - app.utils.decorators - DEBUG - Role check passed: admin in ['admin']
+2025-11-07 20:46:01,409 - app.utils.decorators - DEBUG - Authenticated user: a67180bf-e078-4e86-a7dd-44f7c6e871f8
+2025-11-07 20:46:01,410 - app.utils.decorators - DEBUG - User a67180bf-e078-4e86-a7dd-44f7c6e871f8 accessing tenant cb859f98-291e-41b2-b30f-2287c2699205 with role admin
+2025-11-07 20:46:01,411 - app.utils.decorators - DEBUG - Role check passed: admin in ['admin']
+2025-11-07 20:46:02,335 - app.utils.decorators - DEBUG - Authenticated user: a67180bf-e078-4e86-a7dd-44f7c6e871f8
+2025-11-07 20:46:02,335 - app.utils.decorators - DEBUG - User a67180bf-e078-4e86-a7dd-44f7c6e871f8 accessing tenant cb859f98-291e-41b2-b30f-2287c2699205 with role admin
+2025-11-07 20:46:02,335 - app.utils.decorators - DEBUG - Role check passed: admin in ['admin']
+2025-11-07 20:46:07,301 - app.utils.decorators - DEBUG - Authenticated user: a67180bf-e078-4e86-a7dd-44f7c6e871f8
+2025-11-07 20:46:07,302 - app.utils.decorators - DEBUG - User a67180bf-e078-4e86-a7dd-44f7c6e871f8 accessing tenant cb859f98-291e-41b2-b30f-2287c2699205 with role admin
+2025-11-07 20:46:07,302 - app.utils.decorators - DEBUG - Role check passed: admin in ['admin']
+2025-11-07 20:46:07,306 - app.services.tenant_sso_config_service - INFO - Updated SSO configuration for tenant cb859f98-291e-41b2-b30f-2287c2699205
+2025-11-07 20:46:23,410 - app.utils.decorators - DEBUG - Authenticated user: a67180bf-e078-4e86-a7dd-44f7c6e871f8
+2025-11-07 20:46:23,410 - app.utils.decorators - DEBUG - User a67180bf-e078-4e86-a7dd-44f7c6e871f8 accessing tenant cb859f98-291e-41b2-b30f-2287c2699205 with role admin
+2025-11-07 20:46:23,411 - app.utils.decorators - DEBUG - Role check passed: admin in ['admin']
+2025-11-07 20:46:39,644 - app.utils.decorators - DEBUG - Authenticated user: a67180bf-e078-4e86-a7dd-44f7c6e871f8
+2025-11-07 20:46:39,644 - app.utils.decorators - DEBUG - User a67180bf-e078-4e86-a7dd-44f7c6e871f8 accessing tenant cb859f98-291e-41b2-b30f-2287c2699205 with role admin
+2025-11-07 20:46:39,645 - app.utils.decorators - DEBUG - Role check passed: admin in ['admin']
+2025-11-07 20:47:11,414 - app.utils.decorators - DEBUG - Authenticated user: a67180bf-e078-4e86-a7dd-44f7c6e871f8
+2025-11-07 20:47:11,415 - app.utils.decorators - DEBUG - User a67180bf-e078-4e86-a7dd-44f7c6e871f8 accessing tenant cb859f98-291e-41b2-b30f-2287c2699205 with role admin
+2025-11-07 20:47:11,415 - app.utils.decorators - DEBUG - Role check passed: admin in ['admin']
+2025-11-07 20:47:11,422 - app.services.tenant_sso_config_service - INFO - Deleted SSO configuration for tenant cb859f98-291e-41b2-b30f-2287c2699205
+2025-11-07 20:47:16,843 - app.utils.decorators - DEBUG - Authenticated user: a67180bf-e078-4e86-a7dd-44f7c6e871f8
+2025-11-07 20:47:16,844 - app.utils.decorators - DEBUG - User a67180bf-e078-4e86-a7dd-44f7c6e871f8 accessing tenant cb859f98-291e-41b2-b30f-2287c2699205 with role admin
+2025-11-07 20:47:16,844 - app.utils.decorators - DEBUG - Role check passed: admin in ['admin']
+2025-11-07 20:47:16,847 - app.models.tenant_sso_config - INFO - TenantSSOConfig initialized for tenant_id=cb859f98-291e-41b2-b30f-2287c2699205
+2025-11-07 20:47:16,848 - app.services.tenant_sso_config_service - INFO - Updated tenant cb859f98-291e-41b2-b30f-2287c2699205 auth_method to 'both'
+2025-11-07 20:47:16,857 - app.services.tenant_sso_config_service - INFO - Created SSO configuration for tenant cb859f98-291e-41b2-b30f-2287c2699205
+2025-11-07 20:48:26,250 - app.services.azure_ad_service - DEBUG - Generated PKCE pair: verifier length=43, challenge length=43
+2025-11-07 20:48:26,251 - app.services.azure_ad_service - DEBUG - Stored PKCE parameters in Redis with key: sso_session:fkgM6B57ni6zef9DUBN-ES9yDj8W3aQNLKsYQYse6sw
+2025-11-07 20:48:26,252 - app.services.azure_ad_service - INFO - Generated authorization URL for tenant cb859f98-291e-41b2-b30f-2287c2699205
+2025-11-07 20:48:26,252 - app.routes.sso_auth - INFO - Initiating Azure AD login for tenant cb859f98-291e-41b2-b30f-2287c2699205
+2025-11-07 20:57:07,981 - app.services.azure_ad_service - DEBUG - Generated PKCE pair: verifier length=43, challenge length=43
+2025-11-07 20:57:07,983 - app.services.azure_ad_service - DEBUG - Stored PKCE parameters in Redis with key: sso_session:C8Y6TiKgs9t5re1e-VoWw7bdYX0U98z_PGtz4H1h7ag
+2025-11-07 20:57:07,983 - app.services.azure_ad_service - INFO - Generated authorization URL for tenant cb859f98-291e-41b2-b30f-2287c2699205
+2025-11-07 20:57:07,984 - app.routes.sso_auth - INFO - Initiating Azure AD login for tenant cb859f98-291e-41b2-b30f-2287c2699205
+2025-11-07 20:58:38,796 - app.services.azure_ad_service - DEBUG - Generated PKCE pair: verifier length=43, challenge length=43
+2025-11-07 20:58:38,798 - app.services.azure_ad_service - DEBUG - Stored PKCE parameters in Redis with key: sso_session:O_fjN5GtYvXWYkd09kIm524TJAJda6rB462Yz4Hkk1I
+2025-11-07 20:58:38,799 - app.services.azure_ad_service - INFO - Generated authorization URL for tenant cb859f98-291e-41b2-b30f-2287c2699205
+2025-11-07 20:58:38,799 - app.routes.sso_auth - INFO - Initiating Azure AD login for tenant cb859f98-291e-41b2-b30f-2287c2699205
+2025-11-07 20:59:49,374 - app.services.azure_ad_service - DEBUG - Generated PKCE pair: verifier length=43, challenge length=43
+2025-11-07 20:59:49,378 - app.services.azure_ad_service - DEBUG - Stored PKCE parameters in Redis with key: sso_session:YLRQ-vLvZwpDKJjyX90KKdyaEEjomOor7a5wGg-pf4I
+2025-11-07 20:59:49,379 - app.services.azure_ad_service - INFO - Generated authorization URL for tenant cb859f98-291e-41b2-b30f-2287c2699205
+2025-11-07 20:59:49,380 - app.routes.sso_auth - INFO - Initiating Azure AD login for tenant cb859f98-291e-41b2-b30f-2287c2699205
+2025-11-07 21:08:17,100 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-07 21:08:17,100 - app - INFO - Flask app created with config: development
+2025-11-07 21:08:17,100 - app - INFO - Debug mode: True
+2025-11-07 21:08:17,100 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-07 21:08:27,886 - app.services.azure_ad_service - DEBUG - Generated PKCE pair: verifier length=43, challenge length=43
+2025-11-07 21:08:27,887 - app.services.azure_ad_service - DEBUG - Stored PKCE parameters in Redis with key: sso_session:ApuNwYdJ6yv4PLcqiUYCzJ0WerQ1NzDLwumL2KZyqLs
+2025-11-07 21:08:27,887 - app.services.azure_ad_service - INFO - Generated authorization URL for tenant cb859f98-291e-41b2-b30f-2287c2699205
+2025-11-07 21:08:27,888 - app.routes.sso_auth - INFO - Initiating Azure AD login for tenant cb859f98-291e-41b2-b30f-2287c2699205
+2025-11-07 21:08:50,563 - app.services.azure_ad_service - DEBUG - Generated PKCE pair: verifier length=43, challenge length=43
+2025-11-07 21:08:50,565 - app.services.azure_ad_service - DEBUG - Stored PKCE parameters in Redis with key: sso_session:F7K4JFaTSftkSDYYhbGJ9gUrpvjY6GXRaBR8L1pFYlg
+2025-11-07 21:08:50,566 - app.services.azure_ad_service - INFO - Generated authorization URL for tenant cb859f98-291e-41b2-b30f-2287c2699205
+2025-11-07 21:08:50,566 - app.routes.sso_auth - INFO - Initiating Azure AD login for tenant cb859f98-291e-41b2-b30f-2287c2699205
+2025-11-07 21:14:54,188 - app.services.azure_ad_service - DEBUG - Generated PKCE pair: verifier length=43, challenge length=43
+2025-11-07 21:14:54,190 - app.services.azure_ad_service - DEBUG - Stored PKCE parameters in Redis with key: sso_session:niylwGKp8qB07WV9zuh5-5MRDltNX-BJcG-wBTmmT-8
+2025-11-07 21:14:54,190 - app.services.azure_ad_service - INFO - Generated authorization URL for tenant cb859f98-291e-41b2-b30f-2287c2699205
+2025-11-07 21:14:54,191 - app.routes.sso_auth - INFO - Initiating Azure AD login for tenant cb859f98-291e-41b2-b30f-2287c2699205
+2025-11-07 21:15:35,784 - app.services.azure_ad_service - DEBUG - Generated PKCE pair: verifier length=43, challenge length=43
+2025-11-07 21:15:35,786 - app.services.azure_ad_service - DEBUG - Stored PKCE parameters in Redis with key: sso_session:AVDs9lgnAE6sEvJ2AdGZdOBtWPWLddeRZ4o5XkGL1Ps
+2025-11-07 21:15:35,788 - app.services.azure_ad_service - INFO - Generated authorization URL for tenant cb859f98-291e-41b2-b30f-2287c2699205
+2025-11-07 21:15:35,788 - app.routes.sso_auth - INFO - Initiating Azure AD login for tenant cb859f98-291e-41b2-b30f-2287c2699205
+2025-11-07 21:16:32,552 - app.services.azure_ad_service - DEBUG - Generated PKCE pair: verifier length=43, challenge length=43
+2025-11-07 21:16:32,554 - app.services.azure_ad_service - DEBUG - Stored PKCE parameters in Redis with key: sso_session:Zt_MYDOZzbaZIVRjg0OaLaGDEFHn3OJOZkI12CQ012Q
+2025-11-07 21:16:32,555 - app.services.azure_ad_service - INFO - Generated authorization URL for tenant cb859f98-291e-41b2-b30f-2287c2699205
+2025-11-07 21:16:32,555 - app.routes.sso_auth - INFO - Initiating Azure AD login for tenant cb859f98-291e-41b2-b30f-2287c2699205
+2025-11-07 21:16:51,725 - app.services.azure_ad_service - WARNING - Missing state token for validation
+2025-11-07 21:20:24,607 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-07 21:20:24,607 - app - INFO - Flask app created with config: development
+2025-11-07 21:20:24,607 - app - INFO - Debug mode: True
+2025-11-07 21:20:24,608 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-07 21:20:40,020 - app.services.azure_ad_service - DEBUG - Generated PKCE pair: verifier length=43, challenge length=43
+2025-11-07 21:20:40,022 - app.services.azure_ad_service - DEBUG - Stored PKCE parameters in Redis with key: sso_session:l8uKXjEaTBZl5hc7-obOaywjyoxh-yZ5Rx4FW3m6KiU
+2025-11-07 21:20:40,023 - app.services.azure_ad_service - INFO - Generated authorization URL for tenant cb859f98-291e-41b2-b30f-2287c2699205
+2025-11-07 21:20:40,023 - app.routes.sso_auth - INFO - Initiating Azure AD login for tenant cb859f98-291e-41b2-b30f-2287c2699205
+2025-11-07 21:20:43,491 - app.services.azure_ad_service - DEBUG - Retrieved PKCE parameters from Redis and deleted key: sso_session:l8uKXjEaTBZl5hc7-obOaywjyoxh-yZ5Rx4FW3m6KiU
+2025-11-07 21:20:43,892 - app.services.azure_ad_service - ERROR - Token exchange failed: 400 - {'error': 'invalid_request', 'error_description': "AADSTS9002327: Tokens issued for the 'Single-Page Application' client-type may only be redeemed via cross-origin requests. Trace ID: d7639fdb-fb63-43c9-8e35-fd96a8930e00 Correlation ID: 8bf4f431-423d-4db5-9239-ce24d7c41317 Timestamp: 2025-11-07 21:20:43Z", 'error_codes': [9002327], 'timestamp': '2025-11-07 21:20:43Z', 'trace_id': 'd7639fdb-fb63-43c9-8e35-fd96a8930e00', 'correlation_id': '8bf4f431-423d-4db5-9239-ce24d7c41317'}
+2025-11-07 21:20:43,893 - app.routes.sso_auth - ERROR - SSO login error: Token exchange failed: AADSTS9002327: Tokens issued for the 'Single-Page Application' client-type may only be redeemed via cross-origin requests. Trace ID: d7639fdb-fb63-43c9-8e35-fd96a8930e00 Correlation ID: 8bf4f431-423d-4db5-9239-ce24d7c41317 Timestamp: 2025-11-07 21:20:43Z
+2025-11-07 21:22:20,929 - app.services.azure_ad_service - DEBUG - Generated PKCE pair: verifier length=43, challenge length=43
+2025-11-07 21:22:20,931 - app.services.azure_ad_service - DEBUG - Stored PKCE parameters in Redis with key: sso_session:X_yORcTofFMpAuYNb_f-h6DvjfXnOeUqv0SBBnMpvwc
+2025-11-07 21:22:20,932 - app.services.azure_ad_service - INFO - Generated authorization URL for tenant cb859f98-291e-41b2-b30f-2287c2699205
+2025-11-07 21:22:20,932 - app.routes.sso_auth - INFO - Initiating Azure AD login for tenant cb859f98-291e-41b2-b30f-2287c2699205
+2025-11-07 21:22:22,981 - app.services.azure_ad_service - DEBUG - Retrieved PKCE parameters from Redis and deleted key: sso_session:X_yORcTofFMpAuYNb_f-h6DvjfXnOeUqv0SBBnMpvwc
+2025-11-07 21:22:23,359 - app.services.azure_ad_service - ERROR - Token exchange failed: 400 - {'error': 'invalid_request', 'error_description': "AADSTS9002327: Tokens issued for the 'Single-Page Application' client-type may only be redeemed via cross-origin requests. Trace ID: ad2f468e-15d0-41d9-ae67-2b76b5940e00 Correlation ID: d5495415-a18a-452a-be64-3dce5bcabfe9 Timestamp: 2025-11-07 21:22:23Z", 'error_codes': [9002327], 'timestamp': '2025-11-07 21:22:23Z', 'trace_id': 'ad2f468e-15d0-41d9-ae67-2b76b5940e00', 'correlation_id': 'd5495415-a18a-452a-be64-3dce5bcabfe9'}
+2025-11-07 21:22:23,360 - app.routes.sso_auth - ERROR - SSO login error: Token exchange failed: AADSTS9002327: Tokens issued for the 'Single-Page Application' client-type may only be redeemed via cross-origin requests. Trace ID: ad2f468e-15d0-41d9-ae67-2b76b5940e00 Correlation ID: d5495415-a18a-452a-be64-3dce5bcabfe9 Timestamp: 2025-11-07 21:22:23Z
+2025-11-07 21:25:47,519 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-07 21:25:47,519 - app - INFO - Flask app created with config: development
+2025-11-07 21:25:47,520 - app - INFO - Debug mode: True
+2025-11-07 21:25:47,520 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-07 21:25:47,881 - app.services.azure_ad_service - DEBUG - Generated PKCE pair: verifier length=43, challenge length=43
+2025-11-07 21:25:47,882 - app.services.azure_ad_service - INFO - Generated authorization URL for tenant cb859f98-291e-41b2-b30f-2287c2699205
+2025-11-07 21:28:45,985 - app.services.azure_ad_service - DEBUG - Generated PKCE pair: verifier length=43, challenge length=43
+2025-11-07 21:28:45,988 - app.services.azure_ad_service - DEBUG - Stored PKCE parameters in Redis with key: sso_session:9QNPFGLo86k-hs8F0wGVkDkAFHSy3ZhJ5MKfg3YUdkU
+2025-11-07 21:28:45,989 - app.services.azure_ad_service - INFO - Generated authorization URL for tenant cb859f98-291e-41b2-b30f-2287c2699205
+2025-11-07 21:28:45,990 - app.routes.sso_auth - INFO - Initiating Azure AD login for tenant cb859f98-291e-41b2-b30f-2287c2699205
+2025-11-07 21:28:48,039 - app.services.azure_ad_service - DEBUG - Retrieved PKCE parameters from Redis and deleted key: sso_session:9QNPFGLo86k-hs8F0wGVkDkAFHSy3ZhJ5MKfg3YUdkU
+2025-11-07 21:28:48,457 - app.services.azure_ad_service - ERROR - Token exchange failed: 400 - {'error': 'invalid_request', 'error_description': "AADSTS9002327: Tokens issued for the 'Single-Page Application' client-type may only be redeemed via cross-origin requests. Trace ID: 9d27ee8e-7398-41d0-8ef2-229f76551300 Correlation ID: f2eff8ec-1714-4bed-88a4-84a9d65c46bd Timestamp: 2025-11-07 21:28:48Z", 'error_codes': [9002327], 'timestamp': '2025-11-07 21:28:48Z', 'trace_id': '9d27ee8e-7398-41d0-8ef2-229f76551300', 'correlation_id': 'f2eff8ec-1714-4bed-88a4-84a9d65c46bd'}
+2025-11-07 21:28:48,458 - app.routes.sso_auth - ERROR - SSO login error: Token exchange failed: AADSTS9002327: Tokens issued for the 'Single-Page Application' client-type may only be redeemed via cross-origin requests. Trace ID: 9d27ee8e-7398-41d0-8ef2-229f76551300 Correlation ID: f2eff8ec-1714-4bed-88a4-84a9d65c46bd Timestamp: 2025-11-07 21:28:48Z
+2025-11-07 21:30:45,578 - app.routes.sso_auth - ERROR - Error initiating Azure login: (psycopg2.errors.InvalidTextRepresentation) invalid input syntax for type uuid: ":tenant_id"
+LINE 3: WHERE tenants.id = ':tenant_id'::UUID
+                           ^
+
+[SQL: SELECT tenants.name AS tenants_name, tenants.database_name AS tenants_database_name, tenants.is_active AS tenants_is_active, tenants.auth_method AS tenants_auth_method, tenants.sso_domain_whitelist AS tenants_sso_domain_whitelist, tenants.sso_auto_provisioning AS tenants_sso_auto_provisioning, tenants.sso_default_role AS tenants_sso_default_role, tenants.id AS tenants_id, tenants.created_at AS tenants_created_at, tenants.updated_at AS tenants_updated_at, tenants.created_by AS tenants_created_by 
+FROM tenants 
+WHERE tenants.id = %(pk_1)s::UUID]
+[parameters: {'pk_1': ':tenant_id'}]
+(Background on this error at: https://sqlalche.me/e/20/9h9h)
+2025-11-07 21:31:03,121 - app.services.azure_ad_service - DEBUG - Generated PKCE pair: verifier length=43, challenge length=43
+2025-11-07 21:31:03,123 - app.services.azure_ad_service - DEBUG - Stored PKCE parameters in Redis with key: sso_session:Q0kxcv2JQK1ATgeof-TrhcT8PKDXjMV9SH_DWj-AM7k
+2025-11-07 21:31:03,124 - app.services.azure_ad_service - INFO - Generated authorization URL for tenant cb859f98-291e-41b2-b30f-2287c2699205
+2025-11-07 21:31:03,124 - app.routes.sso_auth - INFO - Initiating Azure AD login for tenant cb859f98-291e-41b2-b30f-2287c2699205
+2025-11-07 21:31:19,428 - app.services.azure_ad_service - WARNING - Missing state token for validation
+2025-11-07 21:31:40,686 - app.services.azure_ad_service - DEBUG - Generated PKCE pair: verifier length=43, challenge length=43
+2025-11-07 21:31:40,687 - app.services.azure_ad_service - DEBUG - Stored PKCE parameters in Redis with key: sso_session:5oRDwkl-6afOdYTwJ9Y3S_rwvZoAdh-kt0CrmwmV2pw
+2025-11-07 21:31:40,688 - app.services.azure_ad_service - INFO - Generated authorization URL for tenant cb859f98-291e-41b2-b30f-2287c2699205
+2025-11-07 21:31:40,688 - app.routes.sso_auth - INFO - Initiating Azure AD login for tenant cb859f98-291e-41b2-b30f-2287c2699205
+2025-11-07 21:32:47,708 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-07 21:32:47,708 - app - INFO - Flask app created with config: development
+2025-11-07 21:32:47,708 - app - INFO - Debug mode: True
+2025-11-07 21:32:47,708 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-07 21:35:07,145 - app.services.azure_ad_service - DEBUG - Retrieved PKCE parameters from Redis and deleted key: sso_session:5oRDwkl-6afOdYTwJ9Y3S_rwvZoAdh-kt0CrmwmV2pw
+2025-11-07 21:35:07,147 - app.services.azure_ad_service - WARNING - State token mismatch - possible CSRF attempt
+2025-11-07 21:35:31,024 - app.services.azure_ad_service - DEBUG - Generated PKCE pair: verifier length=43, challenge length=43
+2025-11-07 21:35:31,027 - app.services.azure_ad_service - DEBUG - Stored PKCE parameters in Redis with key: sso_session:6-drtLDy0Wex2C8CMTwHCanThceCGJ9-tvl7rxr6h80
+2025-11-07 21:35:31,028 - app.services.azure_ad_service - INFO - Generated authorization URL for tenant cb859f98-291e-41b2-b30f-2287c2699205
+2025-11-07 21:35:31,028 - app.routes.sso_auth - INFO - Initiating Azure AD login for tenant cb859f98-291e-41b2-b30f-2287c2699205
+2025-11-07 21:35:32,944 - app.services.azure_ad_service - DEBUG - Retrieved PKCE parameters from Redis and deleted key: sso_session:6-drtLDy0Wex2C8CMTwHCanThceCGJ9-tvl7rxr6h80
+2025-11-07 21:35:33,449 - app.services.azure_ad_service - ERROR - Token exchange failed: 401 - {'error': 'invalid_client', 'error_description': "AADSTS7000218: The request body must contain the following parameter: 'client_assertion' or 'client_secret'. Trace ID: 1def9698-d3f5-4fd3-8509-af922d661200 Correlation ID: 3367512b-740c-4a61-9aee-a2a57fadb345 Timestamp: 2025-11-07 21:35:33Z", 'error_codes': [7000218], 'timestamp': '2025-11-07 21:35:33Z', 'trace_id': '1def9698-d3f5-4fd3-8509-af922d661200', 'correlation_id': '3367512b-740c-4a61-9aee-a2a57fadb345', 'error_uri': 'https://login.microsoftonline.com/error?code=7000218'}
+2025-11-07 21:35:33,450 - app.routes.sso_auth - ERROR - SSO login error: Token exchange failed: AADSTS7000218: The request body must contain the following parameter: 'client_assertion' or 'client_secret'. Trace ID: 1def9698-d3f5-4fd3-8509-af922d661200 Correlation ID: 3367512b-740c-4a61-9aee-a2a57fadb345 Timestamp: 2025-11-07 21:35:33Z
+2025-11-07 21:37:59,280 - app.services.azure_ad_service - DEBUG - Generated PKCE pair: verifier length=43, challenge length=43
+2025-11-07 21:37:59,282 - app.services.azure_ad_service - DEBUG - Stored PKCE parameters in Redis with key: sso_session:H2yOzlLm1fwLlDLgZAPTQd_hNPiViOXf-OXdqBNxwN4
+2025-11-07 21:37:59,283 - app.services.azure_ad_service - INFO - Generated authorization URL for tenant cb859f98-291e-41b2-b30f-2287c2699205
+2025-11-07 21:37:59,283 - app.routes.sso_auth - INFO - Initiating Azure AD login for tenant cb859f98-291e-41b2-b30f-2287c2699205
+2025-11-07 21:39:22,059 - app.services.azure_ad_service - DEBUG - Retrieved PKCE parameters from Redis and deleted key: sso_session:H2yOzlLm1fwLlDLgZAPTQd_hNPiViOXf-OXdqBNxwN4
+2025-11-07 21:39:22,500 - app.services.azure_ad_service - ERROR - Token exchange failed: 401 - {'error': 'invalid_client', 'error_description': "AADSTS7000218: The request body must contain the following parameter: 'client_assertion' or 'client_secret'. Trace ID: ad2f468e-15d0-41d9-ae67-2b7685f80e00 Correlation ID: c16bd024-a2d2-481d-8556-51f76da1df0e Timestamp: 2025-11-07 21:39:22Z", 'error_codes': [7000218], 'timestamp': '2025-11-07 21:39:22Z', 'trace_id': 'ad2f468e-15d0-41d9-ae67-2b7685f80e00', 'correlation_id': 'c16bd024-a2d2-481d-8556-51f76da1df0e', 'error_uri': 'https://login.microsoftonline.com/error?code=7000218'}
+2025-11-07 21:39:22,501 - app.routes.sso_auth - ERROR - SSO login error: Token exchange failed: AADSTS7000218: The request body must contain the following parameter: 'client_assertion' or 'client_secret'. Trace ID: ad2f468e-15d0-41d9-ae67-2b7685f80e00 Correlation ID: c16bd024-a2d2-481d-8556-51f76da1df0e Timestamp: 2025-11-07 21:39:22Z
+2025-11-07 21:39:35,533 - app.services.azure_ad_service - WARNING - Missing state token for validation
+2025-11-07 21:39:48,082 - app.services.azure_ad_service - DEBUG - Generated PKCE pair: verifier length=43, challenge length=43
+2025-11-07 21:39:48,085 - app.services.azure_ad_service - DEBUG - Stored PKCE parameters in Redis with key: sso_session:c8d2jncSykwsE9o8adCPNHtjSY9IjRpNX2BYHW-lw7k
+2025-11-07 21:39:48,085 - app.services.azure_ad_service - INFO - Generated authorization URL for tenant cb859f98-291e-41b2-b30f-2287c2699205
+2025-11-07 21:39:48,086 - app.routes.sso_auth - INFO - Initiating Azure AD login for tenant cb859f98-291e-41b2-b30f-2287c2699205
+2025-11-07 21:39:50,384 - app.services.azure_ad_service - DEBUG - Retrieved PKCE parameters from Redis and deleted key: sso_session:c8d2jncSykwsE9o8adCPNHtjSY9IjRpNX2BYHW-lw7k
+2025-11-07 21:39:50,824 - app.services.azure_ad_service - ERROR - Token exchange failed: 401 - {'error': 'invalid_client', 'error_description': "AADSTS7000218: The request body must contain the following parameter: 'client_assertion' or 'client_secret'. Trace ID: 28420ac8-2efe-4ad9-b778-39f10f1a1200 Correlation ID: a88994ff-1397-48e0-884f-427b205e32a6 Timestamp: 2025-11-07 21:39:50Z", 'error_codes': [7000218], 'timestamp': '2025-11-07 21:39:50Z', 'trace_id': '28420ac8-2efe-4ad9-b778-39f10f1a1200', 'correlation_id': 'a88994ff-1397-48e0-884f-427b205e32a6', 'error_uri': 'https://login.microsoftonline.com/error?code=7000218'}
+2025-11-07 21:39:50,825 - app.routes.sso_auth - ERROR - SSO login error: Token exchange failed: AADSTS7000218: The request body must contain the following parameter: 'client_assertion' or 'client_secret'. Trace ID: 28420ac8-2efe-4ad9-b778-39f10f1a1200 Correlation ID: a88994ff-1397-48e0-884f-427b205e32a6 Timestamp: 2025-11-07 21:39:50Z
+2025-11-07 21:40:37,069 - app.services.azure_ad_service - WARNING - Missing state token for validation
+2025-11-07 21:40:52,047 - app.services.azure_ad_service - DEBUG - Generated PKCE pair: verifier length=43, challenge length=43
+2025-11-07 21:40:52,049 - app.services.azure_ad_service - DEBUG - Stored PKCE parameters in Redis with key: sso_session:a2jfSXlmzknGHibnCj_LpMJIgqDVcA7Z6YfaVGuaR5k
+2025-11-07 21:40:52,049 - app.services.azure_ad_service - INFO - Generated authorization URL for tenant cb859f98-291e-41b2-b30f-2287c2699205
+2025-11-07 21:40:52,050 - app.routes.sso_auth - INFO - Initiating Azure AD login for tenant cb859f98-291e-41b2-b30f-2287c2699205
+2025-11-07 21:40:54,118 - app.services.azure_ad_service - DEBUG - Retrieved PKCE parameters from Redis and deleted key: sso_session:a2jfSXlmzknGHibnCj_LpMJIgqDVcA7Z6YfaVGuaR5k
+2025-11-07 21:40:54,633 - app.services.azure_ad_service - ERROR - Token exchange failed: 401 - {'error': 'invalid_client', 'error_description': "AADSTS7000218: The request body must contain the following parameter: 'client_assertion' or 'client_secret'. Trace ID: 943ede2f-c742-47e9-bd65-948379dd0f00 Correlation ID: a34dbfe5-a0ed-4ae2-ae4a-fb8b173c4708 Timestamp: 2025-11-07 21:40:54Z", 'error_codes': [7000218], 'timestamp': '2025-11-07 21:40:54Z', 'trace_id': '943ede2f-c742-47e9-bd65-948379dd0f00', 'correlation_id': 'a34dbfe5-a0ed-4ae2-ae4a-fb8b173c4708', 'error_uri': 'https://login.microsoftonline.com/error?code=7000218'}
+2025-11-07 21:40:54,634 - app.routes.sso_auth - ERROR - SSO login error: Token exchange failed: AADSTS7000218: The request body must contain the following parameter: 'client_assertion' or 'client_secret'. Trace ID: 943ede2f-c742-47e9-bd65-948379dd0f00 Correlation ID: a34dbfe5-a0ed-4ae2-ae4a-fb8b173c4708 Timestamp: 2025-11-07 21:40:54Z
+2025-11-07 21:43:52,026 - app.services.azure_ad_service - DEBUG - Generated PKCE pair: verifier length=43, challenge length=43
+2025-11-07 21:43:52,027 - app.services.azure_ad_service - DEBUG - Stored PKCE parameters in Redis with key: sso_session:NyBkZ90CcgvHnA9WYE5ZcBMT78FQzX9J87rPzi7Sn9o
+2025-11-07 21:43:52,028 - app.services.azure_ad_service - INFO - Generated authorization URL for tenant cb859f98-291e-41b2-b30f-2287c2699205
+2025-11-07 21:43:52,028 - app.routes.sso_auth - INFO - Initiating Azure AD login for tenant cb859f98-291e-41b2-b30f-2287c2699205
+2025-11-07 21:43:54,478 - app.services.azure_ad_service - DEBUG - Retrieved PKCE parameters from Redis and deleted key: sso_session:NyBkZ90CcgvHnA9WYE5ZcBMT78FQzX9J87rPzi7Sn9o
+2025-11-07 21:43:54,947 - app.services.azure_ad_service - ERROR - Token exchange failed: 401 - {'error': 'invalid_client', 'error_description': "AADSTS7000218: The request body must contain the following parameter: 'client_assertion' or 'client_secret'. Trace ID: b7972a50-46c9-4f80-9dbd-9bb08f740f00 Correlation ID: e0abe381-af63-4561-a292-cfef529878ba Timestamp: 2025-11-07 21:43:54Z", 'error_codes': [7000218], 'timestamp': '2025-11-07 21:43:54Z', 'trace_id': 'b7972a50-46c9-4f80-9dbd-9bb08f740f00', 'correlation_id': 'e0abe381-af63-4561-a292-cfef529878ba', 'error_uri': 'https://login.microsoftonline.com/error?code=7000218'}
+2025-11-07 21:43:54,948 - app.routes.sso_auth - ERROR - SSO login error: Token exchange failed: AADSTS7000218: The request body must contain the following parameter: 'client_assertion' or 'client_secret'. Trace ID: b7972a50-46c9-4f80-9dbd-9bb08f740f00 Correlation ID: e0abe381-af63-4561-a292-cfef529878ba Timestamp: 2025-11-07 21:43:54Z
+2025-11-07 21:46:06,002 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-07 21:46:06,002 - app - INFO - Flask app created with config: development
+2025-11-07 21:46:06,003 - app - INFO - Debug mode: True
+2025-11-07 21:46:06,003 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-07 21:46:13,487 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-07 21:46:13,487 - app - INFO - Flask app created with config: development
+2025-11-07 21:46:13,487 - app - INFO - Debug mode: True
+2025-11-07 21:46:13,487 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-07 21:49:41,082 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-07 21:49:41,082 - app - INFO - Flask app created with config: development
+2025-11-07 21:49:41,083 - app - INFO - Debug mode: True
+2025-11-07 21:49:41,083 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-07 21:50:51,104 - app.services.azure_ad_service - DEBUG - Generated PKCE pair: verifier length=43, challenge length=43
+2025-11-07 21:50:51,106 - app.services.azure_ad_service - DEBUG - Stored PKCE parameters in Redis with key: sso_session:KKJ9ZxB-5HVXdCfVJiO5EwN_JSJV_LXNF6kjpXZSN1Y
+2025-11-07 21:50:51,107 - app.services.azure_ad_service - INFO - Generated authorization URL for tenant cb859f98-291e-41b2-b30f-2287c2699205
+2025-11-07 21:50:51,107 - app.routes.sso_auth - INFO - Initiating Azure AD login for tenant cb859f98-291e-41b2-b30f-2287c2699205
+2025-11-07 21:50:53,604 - app.services.azure_ad_service - DEBUG - Retrieved PKCE parameters from Redis and deleted key: sso_session:KKJ9ZxB-5HVXdCfVJiO5EwN_JSJV_LXNF6kjpXZSN1Y
+2025-11-07 21:50:53,991 - app.services.azure_ad_service - ERROR - Token exchange failed: 401 - {'error': 'invalid_client', 'error_description': "AADSTS7000218: The request body must contain the following parameter: 'client_assertion' or 'client_secret'. Trace ID: 72059b92-bf8a-4bd9-aad7-52b56b591200 Correlation ID: e950fa82-e363-4f96-8230-5fd26168abe4 Timestamp: 2025-11-07 21:50:54Z", 'error_codes': [7000218], 'timestamp': '2025-11-07 21:50:54Z', 'trace_id': '72059b92-bf8a-4bd9-aad7-52b56b591200', 'correlation_id': 'e950fa82-e363-4f96-8230-5fd26168abe4', 'error_uri': 'https://login.microsoftonline.com/error?code=7000218'}
+2025-11-07 21:50:53,992 - app.routes.sso_auth - ERROR - SSO login error: Token exchange failed: AADSTS7000218: The request body must contain the following parameter: 'client_assertion' or 'client_secret'. Trace ID: 72059b92-bf8a-4bd9-aad7-52b56b591200 Correlation ID: e950fa82-e363-4f96-8230-5fd26168abe4 Timestamp: 2025-11-07 21:50:54Z
+2025-11-07 21:52:33,874 - app.services.azure_ad_service - DEBUG - Generated PKCE pair: verifier length=43, challenge length=43
+2025-11-07 21:52:33,877 - app.services.azure_ad_service - DEBUG - Stored PKCE parameters in Redis with key: sso_session:lzfRUN3Vt8l4GV-7j18G61skYOc4loxAN7yjiI0e7bk
+2025-11-07 21:52:33,878 - app.services.azure_ad_service - INFO - Generated authorization URL for tenant cb859f98-291e-41b2-b30f-2287c2699205
+2025-11-07 21:52:33,878 - app.routes.sso_auth - INFO - Initiating Azure AD login for tenant cb859f98-291e-41b2-b30f-2287c2699205
+2025-11-07 21:52:40,475 - app.services.azure_ad_service - DEBUG - Retrieved PKCE parameters from Redis and deleted key: sso_session:lzfRUN3Vt8l4GV-7j18G61skYOc4loxAN7yjiI0e7bk
+2025-11-07 21:52:40,880 - app.services.azure_ad_service - ERROR - Token exchange failed: 401 - {'error': 'invalid_client', 'error_description': "AADSTS7000218: The request body must contain the following parameter: 'client_assertion' or 'client_secret'. Trace ID: 6b652043-d2a8-47ff-980c-2b27e93f1400 Correlation ID: 679769fd-cda1-46f4-9b06-6e41d42a1bae Timestamp: 2025-11-07 21:52:40Z", 'error_codes': [7000218], 'timestamp': '2025-11-07 21:52:40Z', 'trace_id': '6b652043-d2a8-47ff-980c-2b27e93f1400', 'correlation_id': '679769fd-cda1-46f4-9b06-6e41d42a1bae', 'error_uri': 'https://login.microsoftonline.com/error?code=7000218'}
+2025-11-07 21:52:40,880 - app.routes.sso_auth - ERROR - SSO login error: Token exchange failed: AADSTS7000218: The request body must contain the following parameter: 'client_assertion' or 'client_secret'. Trace ID: 6b652043-d2a8-47ff-980c-2b27e93f1400 Correlation ID: 679769fd-cda1-46f4-9b06-6e41d42a1bae Timestamp: 2025-11-07 21:52:40Z
