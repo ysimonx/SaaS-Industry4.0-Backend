@@ -88,6 +88,13 @@ class Config:
                       'pdf,doc,docx,xls,xlsx,ppt,pptx,txt,jpg,jpeg,png,gif').split(',')
     )
 
+    # Redis Configuration
+    REDIS_URL = os.environ.get('REDIS_URL', 'redis://localhost:6379/0')
+    REDIS_MAX_CONNECTIONS = int(os.environ.get('REDIS_MAX_CONNECTIONS', 20))
+    REDIS_DECODE_RESPONSES = os.environ.get('REDIS_DECODE_RESPONSES', 'True').lower() == 'true'
+    REDIS_TOKEN_BLACKLIST_EXPIRE = int(os.environ.get('REDIS_TOKEN_BLACKLIST_EXPIRE', 86400))  # 24 hours
+    REDIS_SESSION_EXPIRE = int(os.environ.get('REDIS_SESSION_EXPIRE', 3600))  # 1 hour
+
     # CORS Configuration
     CORS_ORIGINS = os.environ.get('CORS_ORIGINS', 'http://localhost:3000').split(',')
     CORS_ALLOW_CREDENTIALS = os.environ.get('CORS_ALLOW_CREDENTIALS', 'True').lower() == 'true'

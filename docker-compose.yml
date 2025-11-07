@@ -200,6 +200,8 @@ services:
         condition: service_healthy
       minio:
         condition: service_healthy
+      redis:
+        condition: service_healthy
       vault:
         condition: service_healthy
       vault-init:
@@ -241,6 +243,15 @@ services:
       S3_REGION: us-east-1
       S3_USE_SSL: "false"
 
+      # Redis
+      REDIS_URL: redis://redis:6379/0
+      REDIS_MAX_CONNECTIONS: 20
+      REDIS_DECODE_RESPONSES: "true"
+
+      # Celery configuration
+      CELERY_BROKER_URL: redis://redis:6379/3
+      CELERY_RESULT_BACKEND: redis://redis:6379/4
+
       # CORS
       CORS_ORIGINS: http://localhost:3000,http://localhost:4999
 
@@ -273,6 +284,8 @@ services:
         condition: service_healthy
       minio:
         condition: service_healthy
+      redis:
+        condition: service_healthy
       vault:
         condition: service_healthy
       vault-init:
@@ -302,6 +315,11 @@ services:
       S3_REGION: us-east-1
       S3_USE_SSL: "false"
 
+      # Redis
+      REDIS_URL: redis://redis:6379/0
+      REDIS_MAX_CONNECTIONS: 20
+      REDIS_DECODE_RESPONSES: "true"
+
       # Logging
       LOG_LEVEL: DEBUG
     volumes:
@@ -317,23 +335,130 @@ services:
       retries: 3
       start_period: 60s
 
-  # Redis - Optional: For caching and token blacklist
-  # Uncomment to enable Redis support
-  # redis:
-  #   image: redis:7-alpine
-  #   container_name: saas-redis
-  #   restart: unless-stopped
-  #   ports:
-  #     - "6379:6379"
-  #   volumes:
-  #     - redis_data:/data
-  #   networks:
-  #     - saas-network
-  #   healthcheck:
-  #     test: ["CMD", "redis-cli", "ping"]
-  #     interval: 10s
-  #     timeout: 5s
-  #     retries: 5
+  # Redis - For caching, session storage, token blacklist and Celery broker
+  redis:
+    image: redis:7-alpine
+    container_name: saas-redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    networks:
+      - saas-network
+    command: redis-server --appendonly yes --maxmemory 256mb --maxmemory-policy allkeys-lru --databases 16
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Celery Worker for SSO tasks
+  celery-worker-sso:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.api
+    container_name: saas-celery-worker-sso
+    restart: unless-stopped
+    command: celery -A celery_worker:celery worker --loglevel=info -Q sso,maintenance -n worker-sso@%h
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      vault:
+        condition: service_healthy
+      vault-init:
+        condition: service_completed_successfully
+    environment:
+      # Flask/Celery
+      FLASK_ENV: development
+      FLASK_APP: run.py
+
+      # Celery configuration
+      CELERY_BROKER_URL: redis://redis:6379/3
+      CELERY_RESULT_BACKEND: redis://redis:6379/4
+
+      # Vault Configuration
+      USE_VAULT: "true"
+      VAULT_ENVIRONMENT: "docker"
+
+      # Database
+      DATABASE_URL: postgresql://postgres:postgres@postgres:5432/saas_platform
+      TENANT_DATABASE_URL_TEMPLATE: postgresql://postgres:postgres@postgres:5432/{database_name}
+
+      # Redis for SSO sessions
+      REDIS_URL: redis://redis:6379/0
+      REDIS_SSO_URL: redis://redis:6379/2
+
+      # Logging
+      LOG_LEVEL: INFO
+    volumes:
+      - ./backend:/app
+      - ./logs:/app/logs
+      - ./.env.vault:/.env.vault:ro
+    networks:
+      - saas-network
+
+  # Celery Beat scheduler
+  celery-beat:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.api
+    container_name: saas-celery-beat
+    restart: unless-stopped
+    command: celery -A celery_worker:celery beat --loglevel=info --pidfile=/tmp/celerybeat.pid
+    depends_on:
+      redis:
+        condition: service_healthy
+      celery-worker-sso:
+        condition: service_started
+    environment:
+      # Flask/Celery
+      FLASK_ENV: development
+      FLASK_APP: run.py
+
+      # Celery configuration
+      CELERY_BROKER_URL: redis://redis:6379/3
+      CELERY_RESULT_BACKEND: redis://redis:6379/4
+
+      # Database (for task scheduling)
+      DATABASE_URL: postgresql://postgres:postgres@postgres:5432/saas_platform
+
+      # Logging
+      LOG_LEVEL: INFO
+    volumes:
+      - ./backend:/app
+      - celery_beat_schedule:/var/lib/celery
+      - ./.env.vault:/.env.vault:ro
+    networks:
+      - saas-network
+
+  # Flower - Celery monitoring dashboard (optional)
+  flower:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.api
+    container_name: saas-celery-flower
+    restart: unless-stopped
+    command: celery -A app.celery_app:celery_app flower --port=5555 --broker_api=redis://redis:6379/3
+    ports:
+      - "5555:5555"
+    depends_on:
+      redis:
+        condition: service_healthy
+      celery-worker-sso:
+        condition: service_started
+    environment:
+      # Celery configuration
+      CELERY_BROKER_URL: redis://redis:6379/3
+      CELERY_RESULT_BACKEND: redis://redis:6379/4
+
+      # Flower configuration
+      FLOWER_UNAUTHENTICATED_API: "true"  # For development only
+      FLOWER_BASIC_AUTH: "admin:admin"  # Change in production
+    networks:
+      - saas-network
 
 # Named volumes for data persistence
 volumes:
@@ -348,8 +473,10 @@ volumes:
   zookeeper_logs:
     driver: local
   # vault_data: Supprimé - utilisation de bind mount local ./vault/data
-  # redis_data:
-  #   driver: local
+  redis_data:
+    driver: local
+  celery_beat_schedule:
+    driver: local
 
 # Custom network for service communication
 networks:

@@ -90,11 +90,14 @@ This platform provides a complete SaaS backend solution with the following capab
 │                 │  │              │  │                 │  │  - Encryption │
 │  Tenant DBs:    │  └──────┬───────┘  └─────────────────┘  │  - Audit Log  │
 │  - Documents    │         │                               └───────────────┘
-│  - Files        │         ▼
-│  (Isolated)     │  ┌──────────────┐
-└─────────────────┘  │Kafka Consumer│
-                     │   Worker     │
-                     │ (Background) │
+│  - Files        │         │         ┌─────────────────┐
+│  (Isolated)     │         │         │     Redis       │
+└─────────────────┘         │         │                 │
+                           │         │  Cache & Session│
+                     ┌──────▼───────┐ │  - Token Blacklist
+                     │Kafka Consumer│ │  - SSO Sessions │
+                     │   Worker     │ │  - API Cache    │
+                     │ (Background) │ └─────────────────┘
                      └──────────────┘
 ```
 
@@ -131,10 +134,19 @@ This approach provides:
 - **PostgreSQL 14+**: Primary database (multi-database support)
 - **psycopg2-binary 2.9**: PostgreSQL adapter
 
-### Message Queue
+### Cache & Session Store
+- **Redis 7.0**: High-performance cache and session store
+- **redis-py 5.0**: Python Redis client
+- Token blacklist storage with TTL
+- SSO session management
+- API response caching (planned)
+
+### Message Queue & Task Processing
 - **Apache Kafka**: Event streaming and async processing
 - **kafka-python 2.0**: Python Kafka client
 - **Zookeeper**: Kafka coordination
+- **Celery 5.3**: Distributed task queue for scheduled jobs
+- **Flower 2.0**: Real-time Celery monitoring dashboard
 
 ### Object Storage
 - **MinIO**: S3-compatible object storage
@@ -172,6 +184,17 @@ This approach provides:
 - User-tenant associations
 - Tenant member management
 
+### ✅ Enterprise Authentication (SSO)
+- Azure AD / Microsoft Entra ID integration
+- Per-tenant SSO configuration
+- Public Application mode (no client_secret needed)
+- OAuth 2.0 Authorization Code Flow with PKCE
+- Auto-provisioning with configurable rules
+- Azure AD group to role mapping
+- Hybrid authentication modes (local, SSO, or both)
+- Encrypted token storage via HashiCorp Vault
+- Multi-tenant identity mapping (different Azure IDs per tenant)
+
 ### ✅ Document Management
 - Document upload with multipart/form-data
 - MD5-based file deduplication (storage optimization)
@@ -187,9 +210,15 @@ This approach provides:
 - Storage statistics per tenant
 
 ### ✅ Async Processing
-- Kafka-based event streaming
-- Background worker for async tasks
-- Event topics: tenant.created, document.uploaded, etc.
+- **Kafka**: Event streaming for real-time data processing
+  - Event topics: tenant.created, document.uploaded, etc.
+  - Background worker for event consumption
+- **Celery**: Distributed task queue for scheduled jobs
+  - SSO token refresh (automatic renewal before expiry)
+  - Expired token cleanup
+  - Encryption key rotation
+  - Scheduled maintenance tasks
+- **Flower**: Real-time monitoring dashboard for Celery tasks
 
 ### ✅ API Features
 - RESTful API design
@@ -202,6 +231,9 @@ This approach provides:
 ### ✅ Security
 - JWT-based authentication
 - Password strength validation
+- Azure AD / Microsoft Entra ID SSO support
+- OAuth 2.0 with PKCE (Public Application mode)
+- Multi-factor authentication (via Azure AD)
 - Rate limiting (configurable)
 - SQL injection prevention (SQLAlchemy ORM)
 - XSS protection
@@ -223,11 +255,12 @@ This approach provides:
 - **Docker**: 20.10 or higher
 - **Docker Compose**: 2.0 or higher
 - **System Requirements**: 4GB RAM minimum
-- **Ports**: 4999, 5432, 9000, 9001, 9092, 9093 available
+- **Ports**: 4999, 5432, 6379, 9000, 9001, 9092, 9093 available
 
 ### For Local Development
 - **Python**: 3.11 or higher
 - **PostgreSQL**: 14 or higher
+- **Redis**: 7.0 or higher
 - **Kafka**: 3.0+ with Zookeeper
 - **MinIO**: Latest version (or AWS S3 account)
 - **virtualenv**: For Python virtual environment
@@ -371,7 +404,9 @@ docker-compose ps
 - **Vault UI**: http://localhost:8201/ui (use token from `vault/data/root-token.txt`)
   - Note: Port 8201 is used instead of the default 8200 to avoid conflicts with OneDrive on macOS
 - **MinIO Console**: http://localhost:9001 (minioadmin / minioadmin)
+- **Flower (Celery Monitor)**: http://localhost:5555 (real-time task monitoring)
 - **PostgreSQL**: localhost:5432 (postgres / postgres)
+- **Redis**: localhost:6379 (no authentication in dev)
 - **Kafka**: localhost:9092
 
 **Important Vault Files** (NE JAMAIS COMMITER):
@@ -428,7 +463,7 @@ python -c "import secrets; print(secrets.token_urlsafe(64))"
 
 # 2.1. Start all services (excluding Vault services)
 # The application will use secrets from .env file instead of Vault
-docker-compose up -d postgres kafka zookeeper minio api worker
+docker-compose up -d postgres kafka zookeeper minio redis api worker celery-worker-sso celery-beat flower
 
 # 2.2. Wait for services to be healthy (30 secondes environ)
 sleep 30
@@ -472,7 +507,9 @@ docker-compose ps
 - **API Server**: http://localhost:4999
 - **API Documentation (Swagger)**: http://localhost:4999/api/docs
 - **MinIO Console**: http://localhost:9001 (minioadmin / minioadmin)
+- **Flower (Celery Monitor)**: http://localhost:5555 (real-time task monitoring)
 - **PostgreSQL**: localhost:5432 (postgres / postgres)
+- **Redis**: localhost:6379 (no authentication in dev)
 - **Kafka**: localhost:9092
 
 **Important Security Notes:**
@@ -550,7 +587,7 @@ docker-compose up -d
 **Without Vault:**
 ```bash
 # Start only application services (excluding Vault)
-docker-compose up -d postgres kafka zookeeper minio api worker
+docker-compose up -d postgres kafka zookeeper minio redis api worker celery-worker-sso celery-beat flower
 
 # Or start all services (Vault will be ignored if not configured)
 docker-compose up -d
@@ -721,7 +758,23 @@ sudo -u postgres psql -c "CREATE USER saas_user WITH PASSWORD 'your_password';"
 sudo -u postgres psql -c "GRANT ALL PRIVILEGES ON DATABASE saas_platform TO saas_user;"
 ```
 
-#### 4. Install and Configure Kafka
+#### 4. Install and Configure Redis
+
+```bash
+# Install Redis (Ubuntu/Debian)
+sudo apt-get update
+sudo apt-get install redis-server
+
+# Start Redis service
+sudo systemctl start redis-server
+sudo systemctl enable redis-server
+
+# Verify Redis is running
+redis-cli ping
+# Should return: PONG
+```
+
+#### 5. Install and Configure Kafka
 
 ```bash
 # Download Kafka (adjust version as needed)
@@ -736,7 +789,7 @@ bin/zookeeper-server-start.sh config/zookeeper.properties
 bin/kafka-server-start.sh config/server.properties
 ```
 
-#### 5. Install and Configure MinIO
+#### 6. Install and Configure MinIO
 
 ```bash
 # Download MinIO (Linux)
@@ -756,7 +809,7 @@ chmod +x mc
 ./mc mb myminio/saas-documents
 ```
 
-#### 6. Configure Environment
+#### 7. Configure Environment
 
 ```bash
 # Copy development environment file
@@ -768,11 +821,12 @@ nano .env
 # Important: Update these values
 # - JWT_SECRET_KEY (generate with: python -c "import secrets; print(secrets.token_urlsafe(64))")
 # - DATABASE_URL (postgresql://user:password@localhost:5432/saas_platform)
+# - REDIS_URL (redis://localhost:6379/0)
 # - KAFKA_BOOTSTRAP_SERVERS (localhost:9092)
 # - S3_ENDPOINT_URL (http://localhost:9000)
 ```
 
-#### 7. Initialize Database
+#### 8. Initialize Database
 
 ```bash
 # Navigate to backend directory
@@ -784,7 +838,7 @@ python scripts/init_db.py --create-admin --create-test-tenant
 # Follow prompts to create admin user
 ```
 
-#### 8. Run Development Server
+#### 9. Run Development Server
 
 ```bash
 # Start Flask development server
@@ -794,7 +848,7 @@ python run.py
 gunicorn -w 4 -b 0.0.0.0:4999 run:app
 ```
 
-#### 9. Run Kafka Consumer Worker (Separate Terminal)
+#### 10. Run Kafka Consumer Worker (Separate Terminal)
 
 ```bash
 # Activate virtual environment
@@ -807,7 +861,7 @@ cd backend
 python -m app.worker.consumer
 ```
 
-#### 10. Verify Installation
+#### 11. Verify Installation
 
 ```bash
 # Test API
@@ -818,6 +872,209 @@ curl -X POST http://localhost:4999/api/auth/login \
   -H "Content-Type: application/json" \
   -d '{"email":"admin@example.com","password":"12345678"}'
 ```
+
+---
+
+## Azure SSO Configuration
+
+The platform supports **Azure AD / Microsoft Entra ID** Single Sign-On (SSO) for enterprise authentication. Each tenant can independently configure SSO.
+
+### Setting up Azure AD Application
+
+1. **Register a Public Application in Azure AD**:
+   ```bash
+   # In Azure Portal (portal.azure.com):
+   1. Go to Azure Active Directory → App registrations → New registration
+   2. Name: "Your SaaS Platform"
+   3. Supported account types: "Accounts in this organizational directory only"
+   4. Redirect URI:
+      - Type: Web
+      - URI: http://localhost:4999/api/auth/sso/azure/callback (development)
+      - URI: https://yourapp.com/api/auth/sso/azure/callback (production)
+   5. Register the application
+   ```
+
+2. **Configure the Azure Application**:
+   ```bash
+   # In Azure App Registration:
+   1. Authentication tab:
+      - Enable "Public client flows" (no client_secret needed)
+      - Add redirect URIs for all environments
+      - Enable ID tokens and Access tokens
+
+   2. API Permissions tab:
+      - Microsoft Graph → User.Read (default)
+      - Microsoft Graph → email (optional)
+      - Microsoft Graph → profile (optional)
+      - Grant admin consent if required
+
+   3. Copy these values:
+      - Application (client) ID
+      - Directory (tenant) ID
+   ```
+
+### Configuring SSO for a Tenant
+
+1. **Create SSO Configuration via API**:
+   ```bash
+   # As tenant admin, configure SSO:
+   curl -X POST http://localhost:4999/api/tenants/{tenant_id}/sso/config \
+     -H "Authorization: Bearer $TOKEN" \
+     -H "Content-Type: application/json" \
+     -d '{
+       "client_id": "your-azure-app-client-id",
+       "provider_tenant_id": "your-azure-tenant-id",
+       "enable": true,
+       "config_metadata": {
+         "auto_provisioning": {
+           "enabled": true,
+           "default_role": "viewer",
+           "sync_attributes_on_login": true,
+           "allowed_email_domains": ["@yourcompany.com"],
+           "allowed_azure_groups": ["All-Employees"],
+           "group_role_mapping": {
+             "IT-Admins": "admin",
+             "Developers": "user",
+             "Support": "viewer"
+           }
+         }
+       }
+     }'
+   ```
+
+2. **Set Authentication Mode**:
+   ```bash
+   # Enable SSO for the tenant:
+   curl -X POST http://localhost:4999/api/tenants/{tenant_id}/sso/config/enable \
+     -H "Authorization: Bearer $TOKEN" \
+     -H "Content-Type: application/json" \
+     -d '{
+       "auth_method": "both"  # Options: "sso", "local", "both"
+     }'
+   ```
+
+### SSO Login Flow
+
+1. **Initiate SSO Login**:
+   ```javascript
+   // Frontend redirects user to SSO login:
+   window.location.href = `${API_URL}/api/auth/sso/azure/login/${tenantId}`;
+   ```
+
+2. **Handle Callback**:
+   ```javascript
+   // After Azure AD authentication, user returns with tokens:
+   // GET /api/auth/sso/azure/callback?code=...&state=...
+
+   // Response includes JWT tokens:
+   {
+     "access_token": "eyJ...",
+     "refresh_token": "eyJ...",
+     "user": {
+       "id": "user-uuid",
+       "email": "user@company.com",
+       "first_name": "John",
+       "last_name": "Doe"
+     }
+   }
+   ```
+
+### Auto-Provisioning Configuration
+
+The platform can automatically create user accounts during SSO login:
+
+```json
+{
+  "auto_provisioning": {
+    "enabled": true,
+    "default_role": "viewer",
+    "sync_attributes_on_login": true,
+    "allowed_email_domains": ["@company.com", "@partner.com"],
+    "allowed_azure_groups": ["All-Employees", "Contractors"],
+    "group_role_mapping": {
+      "IT-Admins": "admin",
+      "Developers": "user",
+      "Support": "viewer",
+      "Contractors": "viewer"
+    }
+  }
+}
+```
+
+### Security Features
+
+- **PKCE (Proof Key for Code Exchange)**: Prevents authorization code interception
+- **No Client Secret**: Public Application mode for enhanced security
+- **State Token**: CSRF protection during OAuth flow
+- **Encrypted Token Storage**: Azure tokens encrypted via HashiCorp Vault
+- **Token Refresh**: Automatic token refresh before expiration
+- **Multi-Factor Authentication**: Inherited from Azure AD configuration
+
+### SSO Management Endpoints
+
+```bash
+# Configuration Management
+GET    /api/tenants/{id}/sso/config          # Get current configuration
+POST   /api/tenants/{id}/sso/config          # Create configuration
+PUT    /api/tenants/{id}/sso/config          # Update configuration
+DELETE /api/tenants/{id}/sso/config          # Remove configuration
+
+# Enable/Disable SSO
+POST   /api/tenants/{id}/sso/config/enable   # Enable SSO
+POST   /api/tenants/{id}/sso/config/disable  # Disable SSO
+GET    /api/tenants/{id}/sso/config/validate # Validate configuration
+
+# Authentication Flow
+GET    /api/auth/sso/azure/login/{tenant_id}       # Initiate login
+GET    /api/auth/sso/azure/callback                # OAuth callback
+POST   /api/auth/sso/azure/refresh                 # Refresh tokens
+POST   /api/auth/sso/azure/logout/{tenant_id}      # SSO logout
+
+# User Information
+GET    /api/auth/sso/azure/user-info              # Get Azure profile
+GET    /api/auth/sso/identities                   # List user's Azure identities
+GET    /api/auth/sso/check-availability/{tenant_id} # Check SSO status
+
+# Statistics
+GET    /api/tenants/{id}/sso/statistics           # SSO usage stats
+```
+
+### Testing SSO Integration
+
+A test script is provided to verify SSO configuration:
+
+```bash
+# Run the SSO setup test:
+cd backend
+python scripts/setup_sso_test.py
+
+# The script will:
+# 1. Create a test tenant with SSO configuration
+# 2. Display the Azure AD login URL
+# 3. Guide you through the authentication flow
+# 4. Verify token exchange and user provisioning
+```
+
+### Troubleshooting SSO
+
+Common issues and solutions:
+
+1. **"redirect_uri_mismatch" error**:
+   - Ensure the callback URL in Azure AD matches exactly
+   - Check for trailing slashes and protocol (http vs https)
+
+2. **"invalid_client" error**:
+   - Verify the client_id is correct
+   - Ensure "Public client flows" is enabled in Azure AD
+
+3. **Auto-provisioning not working**:
+   - Check email domain is in allowed list
+   - Verify Azure AD group membership
+   - Ensure tenant has auto_provisioning enabled
+
+4. **Token refresh failing**:
+   - Check if refresh token has expired (90 days)
+   - Verify Azure AD app permissions haven't changed
 
 ---
 
@@ -885,6 +1142,15 @@ S3_SECRET_ACCESS_KEY=minioadmin     # Secret key
 S3_BUCKET=saas-documents            # Bucket name
 S3_REGION=us-east-1                 # Region
 S3_USE_SSL=false                    # Use SSL/TLS (true for production)
+```
+
+#### Redis Configuration
+```bash
+REDIS_URL=redis://redis:6379/0      # Redis connection URL
+REDIS_MAX_CONNECTIONS=20            # Maximum connection pool size
+REDIS_DECODE_RESPONSES=true         # Auto-decode responses to strings
+REDIS_TOKEN_BLACKLIST_EXPIRE=86400  # Token blacklist TTL (24 hours)
+REDIS_SESSION_EXPIRE=600            # SSO session TTL (10 minutes)
 ```
 
 #### CORS Configuration
@@ -1590,9 +1856,10 @@ Before deploying to production, ensure:
 
 - [ ] Change `JWT_SECRET_KEY` to a strong random value (64+ characters)
 - [ ] Use strong database passwords (16+ characters, mixed case, numbers, symbols)
-- [ ] Enable SSL/TLS for all connections (database, Kafka, S3, Vault)
+- [ ] Enable SSL/TLS for all connections (database, Redis, Kafka, S3, Vault)
 - [ ] Restrict CORS origins to production domains only
 - [ ] Set `FLASK_ENV=production` and `FLASK_DEBUG=0`
+- [ ] Configure Redis for production (persistence, authentication, clustering if needed)
 - [ ] Configure rate limiting with Redis
 - [ ] Set up external logging service (Sentry, CloudWatch, etc.)
 - [ ] Configure monitoring and alerting (Prometheus, Grafana, etc.)
@@ -1661,11 +1928,15 @@ For Kubernetes deployment:
 ### Performance Optimization
 
 - **Database**: Use connection pooling, read replicas, query optimization
-- **Caching**: Add Redis for session storage, API response caching
+- **Caching with Redis**:
+  - Session storage for horizontal scaling
+  - API response caching to reduce database load
+  - Token blacklist management across instances
+  - Rate limiting implementation
 - **CDN**: Use CloudFront, Cloudflare for static assets
 - **Load Balancing**: Distribute traffic across multiple API instances
 - **Async Processing**: Offload heavy operations to Kafka workers
-- **Monitoring**: Track API response times, database queries, error rates
+- **Monitoring**: Track API response times, database queries, error rates, Redis memory usage
 
 ---
 

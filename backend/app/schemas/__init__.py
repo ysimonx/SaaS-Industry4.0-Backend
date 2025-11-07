@@ -75,6 +75,25 @@ from app.schemas.user_tenant_association_schema import (
     VALID_ROLES,
 )
 
+from app.schemas.sso_config_schema import (
+    TenantSSOConfigSchema,
+    TenantSSOConfigCreateSchema,
+    TenantSSOConfigUpdateSchema,
+    AutoProvisioningSchema,
+    ConfigMetadataSchema,
+    SSOStatisticsSchema,
+    SSOAvailabilitySchema,
+)
+
+from app.schemas.user_azure_identity_schema import (
+    UserAzureIdentitySchema,
+    UserAzureIdentityCreateSchema,
+    UserAzureIdentityUpdateSchema,
+    UserAzureIdentityListSchema,
+    AzureTokenRefreshRequestSchema,
+    AzureTokenRefreshResponseSchema,
+)
+
 __all__ = [
     # User schemas
     'UserSchema',
@@ -138,4 +157,19 @@ __all__ = [
     'ROLE_USER',
     'ROLE_VIEWER',
     'VALID_ROLES',
+    # SSO Config schemas
+    'TenantSSOConfigSchema',
+    'TenantSSOConfigCreateSchema',
+    'TenantSSOConfigUpdateSchema',
+    'AutoProvisioningSchema',
+    'ConfigMetadataSchema',
+    'SSOStatisticsSchema',
+    'SSOAvailabilitySchema',
+    # Azure Identity schemas
+    'UserAzureIdentitySchema',
+    'UserAzureIdentityCreateSchema',
+    'UserAzureIdentityUpdateSchema',
+    'UserAzureIdentityListSchema',
+    'AzureTokenRefreshRequestSchema',
+    'AzureTokenRefreshResponseSchema',
 ]

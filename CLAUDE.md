@@ -4,11 +4,168 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-This is a **production-ready multi-tenant SaaS backend platform** built with Flask, PostgreSQL, Kafka, and S3 storage. The platform provides complete data isolation between tenants using separate PostgreSQL databases per tenant.
+This is a **production-ready multi-tenant SaaS backend platform** built with Flask, PostgreSQL, Kafka, MinIO (S3), Redis, and Celery. The platform provides complete data isolation between tenants using separate PostgreSQL databases per tenant, with enterprise SSO support via Azure AD.
 
-**Key Architecture Pattern**: Strict layered architecture
+**Key Architecture Pattern**: Strict layered architecture with clear separation
 ```
-Routes (HTTP) → Services (Business Logic) → Models (Data) → Database
+Routes (HTTP handlers) → Services (Business Logic) → Models (Data) → Database
+         ↓                       ↓                        ↓
+    Schemas (Validation)   Kafka/Celery (Async)    TenantDBManager (Isolation)
+```
+
+## Common Commands
+
+### Build and Run
+
+```bash
+# Start all services (with Vault for production-like setup)
+cp .env.docker.minimal .env
+docker-compose up -d
+
+# Start services (simple development without Vault)
+cp .env.docker .env
+docker-compose up -d postgres redis kafka zookeeper minio api worker celery-worker-sso celery-beat flower
+
+# Rebuild specific service after code changes
+docker-compose build api && docker-compose up -d api
+
+# View logs
+docker-compose logs -f api              # API logs
+docker-compose logs -f celery-worker-sso # SSO worker logs
+docker-compose logs -f celery-beat      # Scheduler logs
+
+# Access containers
+docker-compose exec api bash
+docker-compose exec postgres psql -U postgres -d saas_platform
+```
+
+### Database Operations
+
+```bash
+# Generate new migration (with Vault)
+docker-compose exec api /app/flask-wrapper.sh db migrate -m "Description"
+
+# Generate new migration (without Vault)
+docker-compose exec api flask db migrate -m "Description"
+
+# Apply migrations to main database
+docker-compose exec api /app/flask-wrapper.sh db upgrade
+
+# Apply migrations to all tenant databases
+docker-compose exec api python scripts/migrate_all_tenants.py
+
+# Initialize database with test data
+docker-compose exec api python scripts/init_db.py --create-admin --create-test-tenant
+
+# Setup SSO test tenant
+docker-compose exec api python scripts/setup_sso_test.py
+
+# Reset database (CAUTION: deletes all data)
+./backend/scripts/reset_db.sh
+```
+
+### Testing
+
+```bash
+# Run all tests
+docker-compose exec api pytest
+
+# Run with coverage report
+docker-compose exec api pytest --cov=app --cov-report=html --cov-report=term
+
+# Run specific test file
+docker-compose exec api pytest tests/unit/test_auth.py
+
+# Run specific test function
+docker-compose exec api pytest tests/unit/test_auth.py::TestAuthService::test_login_success
+
+# Run tests matching pattern
+docker-compose exec api pytest -k "test_user"
+
+# Run only unit tests
+docker-compose exec api pytest tests/unit/
+
+# Run only integration tests
+docker-compose exec api pytest tests/integration/
+
+# Run tests with verbose output
+docker-compose exec api pytest -v
+
+# Run tests and stop on first failure
+docker-compose exec api pytest -x
+```
+
+### Code Quality
+
+```bash
+# Format code with Black
+docker-compose exec api black app/ tests/
+
+# Check formatting without changes
+docker-compose exec api black --check app/ tests/
+
+# Run linting with flake8
+docker-compose exec api flake8 app/ tests/
+
+# Type checking with mypy
+docker-compose exec api mypy app/
+
+# Run all quality checks
+docker-compose exec api sh -c "black --check app/ tests/ && flake8 app/ tests/ && mypy app/"
+```
+
+### Monitoring and Debugging
+
+```bash
+# Access Flower (Celery monitoring dashboard)
+open http://localhost:5555
+
+# Access MinIO Console
+open http://localhost:9001
+# Username: minioadmin
+# Password: minioadmin
+
+# Access Vault UI (if using Vault)
+open http://localhost:8201
+# Use root token from vault/init-data/.vault-token
+
+# Monitor Redis
+docker-compose exec redis redis-cli
+> KEYS *              # List all keys
+> MONITOR            # Real-time command stream
+> INFO               # Server statistics
+
+# Monitor Kafka topics
+docker-compose exec kafka kafka-topics.sh --list --bootstrap-server localhost:9092
+docker-compose exec kafka kafka-console-consumer.sh --topic tenant.created --from-beginning --bootstrap-server localhost:9092
+
+# Check API health
+curl http://localhost:4999/health
+
+# Test SSO availability
+curl http://localhost:4999/api/auth/sso/check-availability/{tenant_id}
+```
+
+### Flask CLI Commands
+
+```bash
+# List all Flask commands
+docker-compose exec api flask --help
+
+# Database commands
+docker-compose exec api flask db init      # Initialize migrations
+docker-compose exec api flask db migrate   # Create migration
+docker-compose exec api flask db upgrade   # Apply migrations
+docker-compose exec api flask db downgrade # Rollback migration
+docker-compose exec api flask db current   # Show current revision
+docker-compose exec api flask db history   # Show migration history
+
+# Flask shell with app context
+docker-compose exec api flask shell
+>>> from app.models import User, Tenant
+>>> User.query.all()
+>>> tenant = Tenant.query.first()
+>>> tenant.create_database()
 ```
 
 ## Core Architecture Principles
@@ -273,6 +430,75 @@ Configuration: [backend/app/__init__.py](backend/app/__init__.py:158-223) `confi
 
 Enable/disable: `ENABLE_KAFKA_EVENTS` environment variable
 
+### Azure AD SSO (Single Sign-On)
+
+The platform supports **multi-tenant Azure AD SSO** with per-tenant configuration:
+
+**Architecture**:
+- **Public Application Mode**: Uses OAuth2 with PKCE (no client_secret required)
+- **Multi-Tenant Support**: Each tenant configures their own Azure AD instance
+- **User Identity Mapping**: Users can have different Azure Object IDs per tenant
+- **Auto-Provisioning**: Automatically create users on first SSO login (configurable)
+- **Hybrid Authentication**: Support both SSO and local password authentication
+
+**Models**:
+- `TenantSSOConfig`: Stores SSO configuration per tenant (1-to-1 relationship)
+- `UserAzureIdentity`: Maps users to Azure AD identities per tenant
+- Extended `Tenant` model: Added `auth_method`, `sso_domain_whitelist`, `auto_provisioning_enabled`
+- Extended `User` model: Added `sso_provider`, nullable `password_hash` for SSO-only users
+
+**Services**:
+- [backend/app/services/azure_ad_service.py](backend/app/services/azure_ad_service.py) - OAuth2 flow with PKCE, token management
+- [backend/app/services/tenant_sso_config_service.py](backend/app/services/tenant_sso_config_service.py) - SSO configuration management
+- [backend/app/services/microsoft_graph_service.py](backend/app/services/microsoft_graph_service.py) - Microsoft Graph API integration
+
+**Key Endpoints**:
+- `GET /api/auth/sso/azure/login/{tenant_id}` - Initiate Azure AD login
+- `GET /api/auth/sso/azure/callback` - OAuth2 callback handler
+- `POST /api/auth/sso/detect` - Detect SSO for email domain
+- `GET /api/tenants/{id}/sso/config` - Manage SSO configuration
+
+**Token Management**:
+- **Vault Transit Engine**: Encrypts Azure AD tokens at rest
+- **Redis Session Store**: Manages PKCE parameters and state tokens
+- **Celery Background Tasks**: Automated token refresh before expiry
+- **Hybrid Refresh Strategy**: Proactive (30 min before expiry) + Lazy (on API call)
+
+**Setup for Testing**:
+```bash
+# Set Azure AD credentials
+export AZURE_CLIENT_ID="your-client-id"
+export AZURE_TENANT_ID="your-azure-tenant-id"
+
+# Run setup script
+docker-compose exec api python scripts/setup_sso_test.py
+
+# Test SSO availability
+curl http://localhost:4999/api/auth/sso/check-availability/{tenant_id}
+```
+
+**Security Features**:
+- PKCE (Proof Key for Code Exchange) for secure public client flow
+- State token validation prevents CSRF attacks
+- Token encryption with Vault Transit Engine
+- Domain whitelisting for auto-provisioning
+- Azure AD group to role mapping
+
+**Celery Tasks**:
+The platform includes Celery workers for SSO token management:
+- `celery-worker-sso`: Handles SSO token refresh tasks
+- `celery-beat`: Schedules periodic token refresh checks
+- `flower`: Web dashboard for monitoring tasks (http://localhost:5555)
+
+```bash
+# Monitor Celery tasks
+docker-compose logs -f celery-worker-sso
+docker-compose logs -f celery-beat
+
+# Access Flower dashboard
+open http://localhost:5555
+```
+
 ## Key Files to Understand
 
 When making changes, review these files first:
@@ -289,15 +515,20 @@ When making changes, review these files first:
 
 **Models** (carefully consider which database):
 - Main DB: [backend/app/models/user.py](backend/app/models/user.py), [backend/app/models/tenant.py](backend/app/models/tenant.py), [backend/app/models/user_tenant_association.py](backend/app/models/user_tenant_association.py)
+- Main DB (SSO): [backend/app/models/tenant_sso_config.py](backend/app/models/tenant_sso_config.py), [backend/app/models/user_azure_identity.py](backend/app/models/user_azure_identity.py)
 - Tenant DB: [backend/app/models/file.py](backend/app/models/file.py), [backend/app/models/document.py](backend/app/models/document.py)
 
 **Security**:
 - [backend/app/utils/decorators.py](backend/app/utils/decorators.py) - JWT and RBAC decorators
 - [backend/app/services/auth_service.py](backend/app/services/auth_service.py) - Token blacklist, login logic
+- [backend/app/services/azure_ad_service.py](backend/app/services/azure_ad_service.py) - Azure AD OAuth2 with PKCE
+- [backend/app/services/microsoft_graph_service.py](backend/app/services/microsoft_graph_service.py) - Microsoft Graph API client
 
 **Infrastructure**:
-- [docker-compose.yml](docker-compose.yml) - Service orchestration (7 services)
+- [docker-compose.yml](docker-compose.yml) - Service orchestration (11 services including Celery, Redis, Flower)
 - [backend/migrations/env.py](backend/migrations/env.py) - Migration configuration with table exclusion
+- [backend/app/celery_app.py](backend/app/celery_app.py) - Celery application factory
+- [backend/app/tasks/sso_tasks.py](backend/app/tasks/sso_tasks.py) - SSO token refresh tasks
 
 ## Development Workflow
 
@@ -425,13 +656,43 @@ docker-compose logs minio-init
 
 ## Port Mappings
 
-- **4999**: Flask API (NOT 5000!)
-- **5432**: PostgreSQL
+- **4999**: Flask API (NOT 5000 - avoids Airplay conflict on macOS)
+- **5432**: PostgreSQL database
+- **5555**: Flower dashboard (Celery monitoring)
+- **6379**: Redis (cache, sessions, Celery broker)
 - **8201**: Vault UI (NOT 8200 - avoids OneDrive conflict on macOS)
-- **9000**: MinIO API
-- **9001**: MinIO Console
-- **9092**: Kafka broker
-- **2181**: Zookeeper
+- **9000**: MinIO API (S3-compatible storage)
+- **9001**: MinIO Console (web UI)
+- **9092**: Kafka broker (event streaming)
+- **2181**: Zookeeper (Kafka coordination)
+
+## Critical Architecture Decisions
+
+### Database Isolation Strategy
+- **Main DB**: Only stores Users, Tenants, UserTenantAssociations, TenantSSOConfig, UserAzureIdentity
+- **Tenant DBs**: Only store Files and Documents (never in main DB)
+- **Migration Filter**: The `include_object` filter in migrations/env.py prevents File/Document tables from being created in main DB
+
+### Service Dependencies
+When working with services, understand their dependencies:
+```python
+# Services should NEVER import from routes
+# Services can import from: models, schemas, utils, other services
+# Routes should import from: services, schemas, decorators
+```
+
+### Flask Context in Celery
+Celery workers need a minimal Flask app without routes to avoid conflicts:
+```python
+# backend/celery_worker.py creates minimal app
+# backend/app/celery_app.py manages Celery configuration
+```
+
+### Token Storage Strategy
+- **JWT Access Tokens**: Short-lived (15 min), stateless
+- **JWT Refresh Tokens**: Long-lived (7 days), tracked in blacklist
+- **Azure AD Tokens**: Encrypted with Vault Transit, stored in UserAzureIdentity
+- **SSO Sessions**: Stored in Redis with TTL
 
 ## Additional Resources
 

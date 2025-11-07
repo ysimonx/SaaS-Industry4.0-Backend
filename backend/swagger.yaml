@@ -49,6 +49,8 @@ servers:
 tags:
   - name: Authentication
     description: User authentication and session management
+  - name: SSO
+    description: Single Sign-On configuration and authentication
   - name: Users
     description: User profile and management
   - name: Tenants
@@ -214,6 +216,162 @@ components:
         pages:
           type: integer
           example: 5
+
+    SSOConfig:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          example: "123e4567-e89b-12d3-a456-426614174000"
+        tenant_id:
+          type: string
+          format: uuid
+          example: "456e7890-e89b-12d3-a456-426614174000"
+        provider:
+          type: string
+          enum: [azure_ad]
+          example: "azure_ad"
+        client_id:
+          type: string
+          example: "your-azure-client-id"
+        provider_tenant_id:
+          type: string
+          example: "your-azure-tenant-id"
+        is_enabled:
+          type: boolean
+          example: true
+        config_metadata:
+          type: object
+          properties:
+            auto_provisioning:
+              type: object
+              properties:
+                enabled:
+                  type: boolean
+                  example: true
+                default_role:
+                  type: string
+                  enum: [admin, user, viewer]
+                  example: "viewer"
+                sync_attributes_on_login:
+                  type: boolean
+                  example: true
+                allowed_email_domains:
+                  type: array
+                  items:
+                    type: string
+                  example: ["@company.com"]
+                allowed_azure_groups:
+                  type: array
+                  items:
+                    type: string
+                  example: ["All-Employees"]
+                group_role_mapping:
+                  type: object
+                  additionalProperties:
+                    type: string
+                  example:
+                    IT-Admins: "admin"
+                    Developers: "user"
+                    Readers: "viewer"
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+
+    UserAzureIdentity:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        user_id:
+          type: string
+          format: uuid
+        tenant_id:
+          type: string
+          format: uuid
+        azure_object_id:
+          type: string
+          example: "azure-object-id-123"
+        azure_upn:
+          type: string
+          format: email
+          example: "user@company.com"
+        azure_display_name:
+          type: string
+          example: "John Doe"
+        refresh_token_encrypted:
+          type: string
+          description: Encrypted refresh token stored with Vault Transit Engine
+        access_token_encrypted:
+          type: string
+          description: Encrypted access token stored with Vault Transit Engine
+        token_expires_at:
+          type: string
+          format: date-time
+        last_login:
+          type: string
+          format: date-time
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+
+    SSOAvailability:
+      type: object
+      properties:
+        available:
+          type: boolean
+          example: true
+        auth_method:
+          type: string
+          enum: [local, sso, both]
+          example: "both"
+        provider:
+          type: string
+          enum: [azure_ad, null]
+          example: "azure_ad"
+        auto_provisioning:
+          type: boolean
+          example: true
+        login_url:
+          type: string
+          format: uri
+          example: "/api/auth/sso/azure/login/123e4567-e89b-12d3-a456-426614174000"
+
+    SSOLoginResponse:
+      type: object
+      properties:
+        access_token:
+          type: string
+          example: "jwt-access-token"
+        refresh_token:
+          type: string
+          example: "jwt-refresh-token"
+        user:
+          $ref: '#/components/schemas/User'
+        tenant_id:
+          type: string
+          format: uuid
+        auth_method:
+          type: string
+          enum: [sso, local]
+          example: "sso"
+        azure_identity:
+          type: object
+          properties:
+            object_id:
+              type: string
+            upn:
+              type: string
+            display_name:
+              type: string
 
 paths:
   /:
@@ -467,6 +625,330 @@ paths:
                   endpoints:
                     type: object
 
+  /api/auth/sso/detect:
+    post:
+      tags:
+        - SSO
+      summary: Detect SSO provider
+      description: |
+        Detects if a user's email domain has SSO configured.
+        Used in login flow to redirect users to SSO automatically.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - email
+              properties:
+                email:
+                  type: string
+                  format: email
+                  example: "user@company.com"
+      responses:
+        '200':
+          description: SSO detection result
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  has_sso:
+                    type: boolean
+                    example: true
+                  tenants:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        tenant_id:
+                          type: string
+                          format: uuid
+                        tenant_name:
+                          type: string
+                          example: "Acme Corp"
+                        provider:
+                          type: string
+                          enum: [azure_ad]
+                        login_url:
+                          type: string
+                          format: uri
+                          example: "/api/auth/sso/azure/login/123e4567"
+
+  /api/auth/sso/check-availability/{tenant_id}:
+    get:
+      tags:
+        - SSO
+      summary: Check SSO availability
+      description: |
+        Checks if SSO is available and configured for a specific tenant.
+        Returns the authentication method and SSO provider details.
+      parameters:
+        - name: tenant_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+          description: UUID of the tenant
+      responses:
+        '200':
+          description: SSO availability status
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SSOAvailability'
+        '404':
+          description: Tenant not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /api/auth/sso/azure/login/{tenant_id}:
+    get:
+      tags:
+        - SSO
+      summary: Initiate Azure AD login
+      description: |
+        Initiates the Azure AD OAuth2 authorization flow with PKCE.
+        Redirects the user to Microsoft login page.
+
+        **Flow:**
+        1. Generates PKCE code challenge and state token
+        2. Stores PKCE verifier and state in session
+        3. Redirects to Microsoft authorization endpoint
+        4. Microsoft redirects back to callback after authentication
+      parameters:
+        - name: tenant_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+          description: UUID of the tenant
+        - name: redirect_uri
+          in: query
+          schema:
+            type: string
+            format: uri
+          description: Optional custom redirect URI after successful login
+      responses:
+        '302':
+          description: Redirect to Azure AD login page
+          headers:
+            Location:
+              description: Microsoft authorization URL
+              schema:
+                type: string
+                format: uri
+                example: "https://login.microsoftonline.com/{tenant}/oauth2/v2.0/authorize?..."
+        '404':
+          description: SSO not configured for tenant
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /api/auth/sso/azure/callback:
+    get:
+      tags:
+        - SSO
+      summary: Azure AD OAuth2 callback
+      description: |
+        Handles the OAuth2 callback from Azure AD after user authentication.
+        Exchanges authorization code for tokens using PKCE.
+        Creates or updates user account and returns JWT tokens.
+
+        **Flow:**
+        1. Validates state token (CSRF protection)
+        2. Exchanges auth code for tokens using PKCE verifier
+        3. Fetches user profile from Microsoft Graph
+        4. Creates/updates user and Azure identity records
+        5. Returns JWT tokens for the application
+      parameters:
+        - name: code
+          in: query
+          required: true
+          schema:
+            type: string
+          description: Authorization code from Azure AD
+        - name: state
+          in: query
+          required: true
+          schema:
+            type: string
+          description: State token for CSRF protection
+        - name: error
+          in: query
+          schema:
+            type: string
+          description: Error code if authentication failed
+        - name: error_description
+          in: query
+          schema:
+            type: string
+          description: Error description if authentication failed
+      responses:
+        '200':
+          description: SSO login successful
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SSOLoginResponse'
+        '400':
+          description: Invalid state or authorization code
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Authentication failed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /api/auth/sso/azure/refresh:
+    post:
+      tags:
+        - SSO
+      summary: Refresh Azure AD tokens
+      description: |
+        Refreshes Azure AD access token using stored refresh token.
+        This is called automatically by background tasks before token expiry.
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - tenant_id
+              properties:
+                tenant_id:
+                  type: string
+                  format: uuid
+                  description: UUID of the tenant
+      responses:
+        '200':
+          description: Token refreshed successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: "Azure AD token refreshed successfully"
+                  expires_at:
+                    type: string
+                    format: date-time
+        '401':
+          description: Refresh token invalid or expired
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /api/auth/sso/azure/logout/{tenant_id}:
+    post:
+      tags:
+        - SSO
+      summary: Azure AD logout
+      description: |
+        Logs out the user from Azure AD SSO session.
+        Clears stored tokens and optionally redirects to Microsoft logout.
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: tenant_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+          description: UUID of the tenant
+        - name: global_logout
+          in: query
+          schema:
+            type: boolean
+            default: false
+          description: Also logout from Microsoft account globally
+      responses:
+        '200':
+          description: Logged out successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: "SSO logout successful"
+                  logout_url:
+                    type: string
+                    format: uri
+                    description: Microsoft logout URL if global_logout=true
+
+  /api/auth/sso/switch-tenant:
+    post:
+      tags:
+        - SSO
+      summary: Switch tenant with SSO
+      description: |
+        Switches to a different tenant using SSO authentication.
+        Retrieves cached Azure AD tokens for the target tenant.
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - target_tenant_id
+              properties:
+                target_tenant_id:
+                  type: string
+                  format: uuid
+                  description: UUID of the tenant to switch to
+      responses:
+        '200':
+          description: Tenant switched successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: "Switched to tenant successfully"
+                  access_token:
+                    type: string
+                    description: New JWT token for the target tenant
+                  tenant:
+                    $ref: '#/components/schemas/Tenant'
+        '404':
+          description: No SSO identity found for target tenant
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
   /api/users/me:
     get:
       tags:
@@ -571,6 +1053,88 @@ paths:
                     type: array
                     items:
                       $ref: '#/components/schemas/Tenant'
+
+  /api/users/me/sso-identities:
+    get:
+      tags:
+        - Users
+        - SSO
+      summary: Get user's SSO identities
+      description: |
+        Returns all SSO identities linked to the authenticated user.
+        A user can have different Azure Object IDs for different tenants.
+      security:
+        - BearerAuth: []
+      responses:
+        '200':
+          description: SSO identities retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: "SSO identities retrieved successfully"
+                  data:
+                    type: array
+                    items:
+                      allOf:
+                        - $ref: '#/components/schemas/UserAzureIdentity'
+                        - type: object
+                          properties:
+                            tenant_name:
+                              type: string
+                              example: "Acme Corp"
+
+  /api/users/me/sso-identities/{tenant_id}:
+    delete:
+      tags:
+        - Users
+        - SSO
+      summary: Unlink SSO identity
+      description: |
+        Unlinks an SSO identity from the authenticated user for a specific tenant.
+        User must have a local password set before unlinking SSO.
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: tenant_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+          description: UUID of the tenant
+      responses:
+        '200':
+          description: SSO identity unlinked successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: "SSO identity unlinked successfully"
+        '400':
+          description: User has no local password set
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: SSO identity not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
 
   /api/users/health:
     get:
@@ -941,6 +1505,540 @@ paths:
                     type: "null"
         '400':
           description: Cannot remove last admin
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Not authorized (not admin)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /api/tenants/{tenant_id}/sso/config:
+    get:
+      tags:
+        - Tenants
+        - SSO
+      summary: Get SSO configuration
+      description: |
+        Retrieves the SSO configuration for a tenant.
+        Only tenant admins can view the configuration.
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: tenant_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+          description: UUID of the tenant
+      responses:
+        '200':
+          description: SSO configuration retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: "SSO configuration retrieved successfully"
+                  data:
+                    $ref: '#/components/schemas/SSOConfig'
+        '404':
+          description: SSO not configured for tenant
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Not authorized (not admin)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+    post:
+      tags:
+        - Tenants
+        - SSO
+      summary: Create SSO configuration
+      description: |
+        Creates a new SSO configuration for a tenant.
+        Only tenant admins can create SSO configuration.
+        Note: Client secret is not required for Azure AD public application mode.
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: tenant_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+          description: UUID of the tenant
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - client_id
+                - provider_tenant_id
+              properties:
+                provider:
+                  type: string
+                  enum: [azure_ad]
+                  default: azure_ad
+                  description: SSO provider type
+                client_id:
+                  type: string
+                  description: Azure AD Application (client) ID
+                  example: "your-azure-client-id"
+                provider_tenant_id:
+                  type: string
+                  description: Azure AD Directory (tenant) ID
+                  example: "your-azure-tenant-id"
+                enable:
+                  type: boolean
+                  default: false
+                  description: Enable SSO immediately after creation
+                config_metadata:
+                  type: object
+                  description: Additional configuration options
+                  properties:
+                    auto_provisioning:
+                      type: object
+                      properties:
+                        enabled:
+                          type: boolean
+                          default: false
+                        default_role:
+                          type: string
+                          enum: [admin, user, viewer]
+                          default: viewer
+                        sync_attributes_on_login:
+                          type: boolean
+                          default: true
+                        allowed_email_domains:
+                          type: array
+                          items:
+                            type: string
+                          example: ["@company.com"]
+                        allowed_azure_groups:
+                          type: array
+                          items:
+                            type: string
+                          example: ["All-Employees"]
+                        group_role_mapping:
+                          type: object
+                          additionalProperties:
+                            type: string
+                          example:
+                            IT-Admins: "admin"
+      responses:
+        '201':
+          description: SSO configuration created successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: "SSO configuration created successfully"
+                  data:
+                    $ref: '#/components/schemas/SSOConfig'
+        '400':
+          description: SSO already configured or validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Not authorized (not admin)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+    put:
+      tags:
+        - Tenants
+        - SSO
+      summary: Update SSO configuration
+      description: |
+        Updates the SSO configuration for a tenant.
+        Only tenant admins can update SSO configuration.
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: tenant_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+          description: UUID of the tenant
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                client_id:
+                  type: string
+                  description: Azure AD Application (client) ID
+                provider_tenant_id:
+                  type: string
+                  description: Azure AD Directory (tenant) ID
+                config_metadata:
+                  type: object
+                  description: Additional configuration options
+      responses:
+        '200':
+          description: SSO configuration updated successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: "SSO configuration updated successfully"
+                  data:
+                    $ref: '#/components/schemas/SSOConfig'
+        '404':
+          description: SSO configuration not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Not authorized (not admin)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+    delete:
+      tags:
+        - Tenants
+        - SSO
+      summary: Delete SSO configuration
+      description: |
+        Deletes the SSO configuration for a tenant.
+        This will disable SSO and remove all stored tokens.
+        Only tenant admins can delete SSO configuration.
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: tenant_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+          description: UUID of the tenant
+      responses:
+        '200':
+          description: SSO configuration deleted successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: "SSO configuration deleted successfully"
+        '404':
+          description: SSO configuration not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Not authorized (not admin)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /api/tenants/{tenant_id}/sso/config/enable:
+    post:
+      tags:
+        - Tenants
+        - SSO
+      summary: Enable SSO
+      description: |
+        Enables SSO for a tenant.
+        SSO must be configured before it can be enabled.
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: tenant_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+          description: UUID of the tenant
+      responses:
+        '200':
+          description: SSO enabled successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: "SSO enabled successfully"
+                  data:
+                    type: object
+                    properties:
+                      is_enabled:
+                        type: boolean
+                        example: true
+        '404':
+          description: SSO configuration not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Not authorized (not admin)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /api/tenants/{tenant_id}/sso/config/disable:
+    post:
+      tags:
+        - Tenants
+        - SSO
+      summary: Disable SSO
+      description: |
+        Disables SSO for a tenant.
+        Users can still login with local passwords if available.
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: tenant_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+          description: UUID of the tenant
+      responses:
+        '200':
+          description: SSO disabled successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: "SSO disabled successfully"
+                  data:
+                    type: object
+                    properties:
+                      is_enabled:
+                        type: boolean
+                        example: false
+        '404':
+          description: SSO configuration not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Not authorized (not admin)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /api/tenants/{tenant_id}/sso/config/validate:
+    get:
+      tags:
+        - Tenants
+        - SSO
+      summary: Validate SSO configuration
+      description: |
+        Validates the SSO configuration by checking:
+        - Azure AD app registration exists
+        - Redirect URI is configured correctly
+        - Required permissions are granted
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: tenant_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+          description: UUID of the tenant
+      responses:
+        '200':
+          description: Validation result
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  valid:
+                    type: boolean
+                    example: true
+                  checks:
+                    type: object
+                    properties:
+                      app_registration:
+                        type: boolean
+                        description: Azure AD app exists
+                      redirect_uri:
+                        type: boolean
+                        description: Redirect URI configured
+                      permissions:
+                        type: boolean
+                        description: Required permissions granted
+                      public_client:
+                        type: boolean
+                        description: Public client flow enabled
+                  errors:
+                    type: array
+                    items:
+                      type: string
+                    example: []
+                  warnings:
+                    type: array
+                    items:
+                      type: string
+                    example: ["Admin consent may be required"]
+        '404':
+          description: SSO configuration not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Not authorized (not admin)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /api/tenants/{tenant_id}/sso/config/stats:
+    get:
+      tags:
+        - Tenants
+        - SSO
+      summary: Get SSO usage statistics
+      description: |
+        Returns statistics about SSO usage for the tenant including:
+        - Number of users with SSO identities
+        - Last SSO login time
+        - Token refresh statistics
+        - Login success/failure rates
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: tenant_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+          description: UUID of the tenant
+        - name: period
+          in: query
+          schema:
+            type: string
+            enum: [day, week, month, year]
+            default: month
+          description: Time period for statistics
+      responses:
+        '200':
+          description: SSO statistics retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: "SSO statistics retrieved successfully"
+                  data:
+                    type: object
+                    properties:
+                      total_sso_users:
+                        type: integer
+                        example: 42
+                      active_sso_sessions:
+                        type: integer
+                        example: 15
+                      logins_in_period:
+                        type: integer
+                        example: 125
+                      failed_logins:
+                        type: integer
+                        example: 3
+                      token_refreshes:
+                        type: integer
+                        example: 250
+                      last_sso_login:
+                        type: string
+                        format: date-time
+                      auto_provisioned_users:
+                        type: integer
+                        example: 8
+                      by_day:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            date:
+                              type: string
+                              format: date
+                            logins:
+                              type: integer
+                            refreshes:
+                              type: integer
+        '404':
+          description: SSO configuration not found
           content:
             application/json:
               schema:
