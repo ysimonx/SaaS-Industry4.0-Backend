@@ -78,6 +78,15 @@ def initiate_azure_login(tenant_id):
         )
 
         logger.info(f"Initiating Azure AD login for tenant {tenant_id}")
+        logger.info(f"Generated auth URL: {auth_url}")
+
+        # Safety check: Ensure URL doesn't contain HTML entities
+        if '&amp;' in auth_url:
+            logger.error(f"WARNING: Generated URL contains HTML entities: {auth_url}")
+            # Fix the URL by replacing HTML entities
+            auth_url = auth_url.replace('&amp;', '&')
+            logger.info(f"Fixed auth URL: {auth_url}")
+
         return redirect(auth_url)
 
     except Exception as e:
@@ -365,6 +374,83 @@ def get_azure_user_info():
     except Exception as e:
         logger.error(f"Error getting Azure user info: {str(e)}")
         return jsonify({'error': str(e)}), 500
+
+
+@bp.route('/detect', methods=['POST'])
+def detect_sso():
+    """
+    Detect SSO provider based on email domain.
+
+    Checks if the user's email domain has SSO configured in any tenant.
+    Used in login flow to redirect users to SSO automatically.
+
+    Request body:
+        {
+            "email": "user@company.com"
+        }
+
+    Returns:
+        {
+            "has_sso": true,
+            "tenants": [
+                {
+                    "tenant_id": "uuid",
+                    "tenant_name": "Acme Corp",
+                    "provider": "azure_ad",
+                    "login_url": "/api/auth/sso/azure/login/uuid"
+                }
+            ]
+        }
+    """
+    try:
+        data = request.get_json()
+        if not data or 'email' not in data:
+            return jsonify({
+                'error': 'Email is required'
+            }), 400
+
+        email = data['email'].lower().strip()
+
+        # Extract domain from email
+        if '@' not in email:
+            return jsonify({
+                'error': 'Invalid email format'
+            }), 400
+
+        domain = '@' + email.split('@')[1]
+
+        # Find tenants with this domain in their whitelist
+        matching_tenants = []
+
+        # Query tenants that have SSO enabled and this domain in their whitelist
+        tenants = Tenant.query.filter(
+            Tenant.auth_method.in_(['sso', 'both']),
+            Tenant.is_active == True,
+            Tenant.sso_domain_whitelist.contains([domain])
+        ).all()
+
+        for tenant in tenants:
+            # Check if SSO is properly configured
+            sso_config = TenantSSOConfig.find_enabled_by_tenant_id(tenant.id)
+            if sso_config:
+                # Validate configuration
+                is_valid, _ = sso_config.validate_configuration()
+                if is_valid:
+                    matching_tenants.append({
+                        'tenant_id': str(tenant.id),
+                        'tenant_name': tenant.name,
+                        'provider': sso_config.provider_type,
+                        'login_url': f"/api/auth/sso/{sso_config.provider_type}/login/{tenant.id}"
+                    })
+
+        return jsonify({
+            'has_sso': len(matching_tenants) > 0,
+            'tenants': matching_tenants
+        }), 200
+
+    except Exception as e:
+        logger.error(f"Error detecting SSO: {str(e)}")
+        return jsonify({'error': 'Failed to detect SSO configuration'}), 500
 
 
 @bp.route('/check-availability/<string:tenant_id>', methods=['GET'])
