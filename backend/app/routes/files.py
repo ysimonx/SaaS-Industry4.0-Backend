@@ -24,7 +24,7 @@ Architecture notes:
 """
 
 import logging
-from flask import Blueprint, request, jsonify
+from flask import Blueprint, request, jsonify, g
 from marshmallow import ValidationError
 
 from app.models import Tenant, UserTenantAssociation
@@ -156,7 +156,7 @@ def list_files(tenant_id: str):
     """
     try:
         # Get current user from JWT token (set by @jwt_required_custom decorator)
-        user_id = request.user_id
+        user_id = g.user_id
 
         # Validate tenant access
         has_access, error_response = check_tenant_access(user_id, tenant_id)
@@ -282,7 +282,7 @@ def get_file(tenant_id: str, file_id: str):
     """
     try:
         # Get current user from JWT token
-        user_id = request.user_id
+        user_id = g.user_id
 
         # Validate tenant access
         has_access, error_response = check_tenant_access(user_id, tenant_id)
@@ -374,7 +374,7 @@ def delete_file(tenant_id: str, file_id: str):
     """
     try:
         # Get current user from JWT token
-        user_id = request.user_id
+        user_id = g.user_id
 
         # Validate admin access
         is_admin, error_response = check_admin_access(user_id, tenant_id)

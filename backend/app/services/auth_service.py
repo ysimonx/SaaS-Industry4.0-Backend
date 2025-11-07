@@ -34,12 +34,11 @@ from flask import current_app
 
 from app.models.user import User
 from app.models.user_tenant_association import UserTenantAssociation
-from app.extensions import db
+from app.extensions import db, redis_manager
 
 logger = logging.getLogger(__name__)
 
-# In-memory token blacklist for development
-# TODO: Replace with Redis in production for distributed systems
+# In-memory token blacklist fallback for when Redis is not available
 TOKEN_BLACKLIST = set()
 
 
@@ -50,6 +49,84 @@ class AuthService:
     This class provides methods for user registration, authentication, token management,
     and logout. All methods are static since there's no instance state to maintain.
     """
+
+    @staticmethod
+    def _add_to_blacklist(jti: str) -> bool:
+        """
+        Add a token JTI to the blacklist.
+
+        Uses Redis if available, falls back to in-memory set.
+
+        Args:
+            jti: JWT ID to blacklist
+
+        Returns:
+            bool: True if successfully added
+        """
+        try:
+            redis_client = redis_manager.get_client()
+            if redis_client:
+                # Use Redis with expiration
+                expire_time = current_app.config.get('REDIS_TOKEN_BLACKLIST_EXPIRE', 86400)
+                redis_key = f"token_blacklist:{jti}"
+                redis_client.setex(redis_key, expire_time, "1")
+                logger.debug(f"Token blacklisted in Redis: {jti}")
+                return True
+            else:
+                # Fall back to in-memory
+                TOKEN_BLACKLIST.add(jti)
+                logger.debug(f"Token blacklisted in memory: {jti}")
+                return True
+        except Exception as e:
+            logger.error(f"Error adding token to blacklist: {e}")
+            # Fallback to in-memory
+            TOKEN_BLACKLIST.add(jti)
+            return True
+
+    @staticmethod
+    def _is_token_blacklisted(jti: str) -> bool:
+        """
+        Check if a token JTI is blacklisted.
+
+        Uses Redis if available, falls back to in-memory set.
+
+        Args:
+            jti: JWT ID to check
+
+        Returns:
+            bool: True if token is blacklisted
+        """
+        try:
+            redis_client = redis_manager.get_client()
+            if redis_client:
+                redis_key = f"token_blacklist:{jti}"
+                return redis_client.exists(redis_key) > 0
+            else:
+                return jti in TOKEN_BLACKLIST
+        except Exception as e:
+            logger.error(f"Error checking token blacklist: {e}")
+            # Fallback to in-memory
+            return jti in TOKEN_BLACKLIST
+
+    @staticmethod
+    def _get_blacklist_size() -> int:
+        """
+        Get the size of the token blacklist.
+
+        Returns:
+            int: Number of blacklisted tokens
+        """
+        try:
+            redis_client = redis_manager.get_client()
+            if redis_client:
+                # Count all token_blacklist keys in Redis
+                keys = redis_client.keys("token_blacklist:*")
+                return len(keys)
+            else:
+                return len(TOKEN_BLACKLIST)
+        except Exception as e:
+            logger.error(f"Error getting blacklist size: {e}")
+            return len(TOKEN_BLACKLIST)
 
     @staticmethod
     def register(user_data: Dict) -> Tuple[User, Optional[str]]:
@@ -244,7 +321,7 @@ class AuthService:
             user_id = decoded_token.get('sub')
 
             # Check if token is blacklisted
-            if jti in TOKEN_BLACKLIST:
+            if AuthService._is_token_blacklisted(jti):
                 logger.warning(f"Refresh failed: Token is blacklisted: {jti}")
                 return None, 'Token has been revoked'
 
@@ -299,10 +376,10 @@ class AuthService:
         """
         try:
             # Add JTI to blacklist
-            TOKEN_BLACKLIST.add(jti)
+            AuthService._add_to_blacklist(jti)
 
             logger.info(f"Token blacklisted (logout): {jti}")
-            logger.debug(f"Blacklist size: {len(TOKEN_BLACKLIST)}")
+            logger.debug(f"Blacklist size: {AuthService._get_blacklist_size()}")
 
             return True, None
 
@@ -327,7 +404,7 @@ class AuthService:
             if AuthService.is_token_blacklisted(jti):
                 return unauthorized('Token has been revoked')
         """
-        return jti in TOKEN_BLACKLIST
+        return AuthService._is_token_blacklisted(jti)
 
     @staticmethod
     def _get_user_tenants(user_id: str) -> List[Dict]:

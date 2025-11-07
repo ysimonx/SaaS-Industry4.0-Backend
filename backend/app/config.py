@@ -70,8 +70,10 @@ class Config:
 
     # S3 / Object Storage Configuration
     S3_ENDPOINT_URL = os.environ.get('S3_ENDPOINT_URL', 'https://s3.amazonaws.com')
+    S3_PUBLIC_URL = os.environ.get('S3_PUBLIC_URL', S3_ENDPOINT_URL)  # Public URL for pre-signed URLs
     S3_REGION = os.environ.get('S3_REGION', 'us-east-1')
-    S3_BUCKET_NAME = os.environ.get('S3_BUCKET_NAME', 'saas-platform-files')
+    S3_BUCKET_NAME = os.environ.get('S3_BUCKET_NAME', os.environ.get('S3_BUCKET', 'saas-platform-files'))
+    S3_BUCKET = S3_BUCKET_NAME  # Alias for backward compatibility
     S3_ACCESS_KEY_ID = os.environ.get('S3_ACCESS_KEY_ID')
     S3_SECRET_ACCESS_KEY = os.environ.get('S3_SECRET_ACCESS_KEY')
     S3_USE_SSL = os.environ.get('S3_USE_SSL', 'True').lower() == 'true'
@@ -85,6 +87,13 @@ class Config:
         os.environ.get('ALLOWED_FILE_EXTENSIONS',
                       'pdf,doc,docx,xls,xlsx,ppt,pptx,txt,jpg,jpeg,png,gif').split(',')
     )
+
+    # Redis Configuration
+    REDIS_URL = os.environ.get('REDIS_URL', 'redis://localhost:6379/0')
+    REDIS_MAX_CONNECTIONS = int(os.environ.get('REDIS_MAX_CONNECTIONS', 20))
+    REDIS_DECODE_RESPONSES = os.environ.get('REDIS_DECODE_RESPONSES', 'True').lower() == 'true'
+    REDIS_TOKEN_BLACKLIST_EXPIRE = int(os.environ.get('REDIS_TOKEN_BLACKLIST_EXPIRE', 86400))  # 24 hours
+    REDIS_SESSION_EXPIRE = int(os.environ.get('REDIS_SESSION_EXPIRE', 3600))  # 1 hour
 
     # CORS Configuration
     CORS_ORIGINS = os.environ.get('CORS_ORIGINS', 'http://localhost:3000').split(',')
@@ -164,9 +173,11 @@ class Config:
             if "s3" in secrets:
                 s3_secrets = secrets["s3"]
                 cls.S3_ENDPOINT_URL = s3_secrets.get("endpoint_url")
+                cls.S3_PUBLIC_URL = s3_secrets.get("public_url", cls.S3_ENDPOINT_URL)
                 cls.S3_ACCESS_KEY_ID = s3_secrets.get("access_key_id")
                 cls.S3_SECRET_ACCESS_KEY = s3_secrets.get("secret_access_key")
                 cls.S3_BUCKET_NAME = s3_secrets.get("bucket_name")
+                cls.S3_BUCKET = cls.S3_BUCKET_NAME  # Alias
                 cls.S3_REGION = s3_secrets.get("region")
                 logger.info("Configuration S3 chargée depuis Vault")
 

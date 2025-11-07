@@ -72,20 +72,20 @@ The SaaS Multi-Tenant Backend Platform is a production-ready backend infrastruct
        │                       │                       │
        └───────────────────────┼───────────────────────┘
                                │
-       ┌───────────────────────┼───────────────────────┐
-       │                       │                       │
-       ▼                       ▼                       ▼
-┌──────────────┐        ┌──────────────┐        ┌──────────────┐
-│ PostgreSQL   │        │ Apache Kafka │        │   AWS S3     │
-│ Main DB      │        │  Message     │        │   Object     │
-│ + Tenant DBs │        │  Broker      │        │   Storage    │
-└──────────────┘        └──────┬───────┘        └──────────────┘
-                               │
-                               ▼
-                        ┌──────────────┐
-                        │ Kafka Worker │
-                        │  (Consumer)  │
-                        └──────────────┘
+       ┌───────────────────────┼───────────────────────┬───────────────┐
+       │                       │                       │               │
+       ▼                       ▼                       ▼               ▼
+┌──────────────┐        ┌──────────────┐        ┌──────────────┐ ┌──────────────┐
+│ PostgreSQL   │        │ Apache Kafka │        │   AWS S3     │ │    Redis     │
+│ Main DB      │        │  Message     │        │   Object     │ │  Cache/Queue │
+│ + Tenant DBs │        │  Broker      │        │   Storage    │ │  + Sessions  │
+└──────────────┘        └──────┬───────┘        └──────────────┘ └─────┬────────┘
+                               │                                        │
+                               ▼                                        ▼
+                        ┌──────────────┐                        ┌──────────────┐
+                        │ Kafka Worker │                        │Celery Workers│
+                        │  (Consumer)  │                        │  (SSO/Tasks) │
+                        └──────────────┘                        └──────────────┘
 ```
 
 ---
@@ -607,6 +607,704 @@ JWT_ACCESS_TOKEN_EXPIRES = timedelta(minutes=15)
 JWT_REFRESH_TOKEN_EXPIRES = timedelta(days=30)
 JWT_ALGORITHM = 'HS256'
 ```
+
+### Azure AD Single Sign-On (SSO)
+
+The platform supports **Azure AD / Microsoft Entra ID** SSO for enterprise authentication:
+
+```
+┌────────────────────────────────────────────────────────────────┐
+│                     Azure AD SSO Flow                           │
+└────────────────────────────────────────────────────────────────┘
+
+1. SSO Initiation (GET /api/auth/sso/azure/login/{tenant_id})
+   ├─ Check tenant SSO configuration
+   ├─ Generate PKCE challenge (Public Application mode)
+   ├─ Create state token for CSRF protection
+   └─ Redirect to Azure AD authorization endpoint
+
+2. Azure AD Authentication
+   ├─ User authenticates in Azure AD
+   ├─ Azure AD validates against tenant directory
+   ├─ Authorization code returned to callback URL
+   └─ State token verified for security
+
+3. Token Exchange (GET /api/auth/sso/azure/callback)
+   ├─ Exchange authorization code for tokens
+   ├─ Validate ID token signature and claims
+   ├─ Extract user information (email, name, object ID)
+   └─ Create or update user in local database
+
+4. User Provisioning
+   ├─ Check if user exists (by email)
+   ├─ If new: auto-provision if enabled
+   ├─ Map Azure AD groups to roles
+   ├─ Create UserAzureIdentity mapping
+   └─ Store encrypted Azure tokens
+
+5. JWT Generation
+   ├─ Create platform JWT tokens
+   ├─ Include tenant_id and auth_method
+   └─ Return access + refresh tokens
+```
+
+#### SSO Configuration Model
+
+Each tenant can configure Azure AD SSO independently:
+
+```python
+# TenantSSOConfig Model
+class TenantSSOConfig:
+    tenant_id           # One-to-one with Tenant
+    provider_type       # 'azure_ad' (extensible)
+    provider_tenant_id  # Azure AD tenant ID/domain
+    client_id          # Azure app registration ID
+    redirect_uri       # OAuth callback URL
+    is_enabled         # Enable/disable SSO
+    config_metadata    # JSONB for additional settings:
+                      # - auto_provisioning settings
+                      # - allowed email domains
+                      # - group role mappings
+```
+
+#### Multi-Tenant Azure Identity
+
+Users can have different Azure identities per tenant:
+
+```python
+# UserAzureIdentity Model
+class UserAzureIdentity:
+    user_id             # Local user ID
+    tenant_id           # Tenant context
+    azure_tenant_id     # Azure AD tenant
+    azure_object_id     # User's object ID in Azure
+    azure_upn          # User Principal Name
+    encrypted_tokens   # Vault-encrypted OAuth tokens
+    token_expires_at   # Access token expiration
+    last_sync          # Last attributes sync
+
+    # Unique constraint: (user_id, tenant_id)
+    # User can have different Azure IDs per tenant
+```
+
+#### Authentication Modes
+
+Tenants can configure three authentication modes:
+
+```python
+AUTHENTICATION_MODES = {
+    'local': 'Username/password only',
+    'sso': 'Azure AD only (no passwords)',
+    'both': 'Either method allowed'
+}
+
+# Tenant.auth_method determines available options
+# SSO-only users have nullable password_hash
+```
+
+#### PKCE Security (Public Application Mode)
+
+The implementation uses **OAuth 2.0 with PKCE** for enhanced security:
+
+```python
+# No client_secret required (Public Application)
+# PKCE prevents authorization code interception
+
+1. Generate code_verifier (random 128 chars)
+2. Calculate code_challenge = SHA256(code_verifier)
+3. Send challenge with authorization request
+4. Store verifier in encrypted session
+5. Include verifier in token exchange
+6. Azure AD validates challenge/verifier pair
+```
+
+#### Auto-Provisioning
+
+SSO supports automatic user provisioning:
+
+```python
+# Auto-provisioning configuration
+{
+    "enabled": true,
+    "default_role": "viewer",
+    "sync_attributes_on_login": true,
+    "allowed_email_domains": ["@company.com"],
+    "allowed_azure_groups": ["All-Employees"],
+    "group_role_mapping": {
+        "IT-Admins": "admin",
+        "Developers": "user",
+        "Support": "viewer"
+    }
+}
+
+# Provisioning flow:
+1. User authenticates via Azure AD
+2. Check email domain whitelist
+3. Verify Azure AD group membership
+4. Create user with mapped role
+5. Sync profile attributes
+```
+
+#### Token Management
+
+Azure tokens are securely stored and managed:
+
+```python
+# Token encryption via Vault Transit
+1. Access token: Encrypted, short-lived (1 hour)
+2. Refresh token: Encrypted, long-lived (90 days)
+3. ID token: Encrypted, contains user claims
+
+# Automatic refresh before expiration
+if azure_identity.is_access_token_expired():
+    new_tokens = azure_service.refresh_access_token()
+    azure_identity.save_tokens(new_tokens)
+```
+
+#### SSO API Endpoints
+
+```python
+# Configuration Management
+GET    /api/tenants/{id}/sso/config          # Get SSO configuration
+POST   /api/tenants/{id}/sso/config          # Create SSO configuration
+PUT    /api/tenants/{id}/sso/config          # Update SSO configuration
+DELETE /api/tenants/{id}/sso/config          # Delete SSO configuration
+POST   /api/tenants/{id}/sso/config/enable   # Enable SSO
+POST   /api/tenants/{id}/sso/config/disable  # Disable SSO
+GET    /api/tenants/{id}/sso/config/validate # Validate configuration
+
+# Authentication Flow
+GET    /api/auth/sso/azure/login/{tenant_id}       # Initiate login
+GET    /api/auth/sso/azure/callback                # OAuth callback
+POST   /api/auth/sso/azure/refresh                 # Refresh tokens
+POST   /api/auth/sso/azure/logout/{tenant_id}      # SSO logout
+GET    /api/auth/sso/azure/user-info              # Get Azure profile
+GET    /api/auth/sso/check-availability/{tenant_id} # Check SSO status
+```
+
+---
+
+## Redis Cache & Session Store
+
+### Redis Architecture Overview
+
+The platform uses **Redis** as a high-performance cache and session store for:
+
+```
+┌────────────────────────────────────────────────────────────────┐
+│                      Redis Usage Patterns                        │
+└────────────────────────────────────────────────────────────────┘
+
+1. Token Blacklist Storage
+   ├─ JWT tokens marked for revocation
+   ├─ TTL matches token expiration (24 hours)
+   ├─ Key pattern: token_blacklist:{jti}
+   └─ Distributed across multiple API instances
+
+2. SSO Session Management
+   ├─ PKCE parameters during OAuth flow
+   ├─ State tokens for CSRF protection
+   ├─ TTL: 10 minutes (OAuth flow timeout)
+   ├─ Key pattern: sso_session:{state}
+   └─ Automatic cleanup after use
+
+3. API Response Caching (Future)
+   ├─ Cache frequently accessed data
+   ├─ Reduce database load
+   ├─ Key pattern: cache:api:{endpoint}:{params}
+   └─ TTL based on data volatility
+
+4. Rate Limiting (Future)
+   ├─ Track API requests per user/IP
+   ├─ Sliding window algorithm
+   ├─ Key pattern: rate_limit:{user_id}:{window}
+   └─ TTL: Rate limit window duration
+```
+
+### Redis Integration
+
+#### RedisManager Class
+
+The platform provides a centralized Redis manager with automatic fallback:
+
+```python
+# backend/app/extensions.py
+
+class RedisManager:
+    """Manager for Redis connections with graceful fallback"""
+
+    def __init__(self):
+        self.client: Optional[redis.Redis] = None
+        self.enabled: bool = False
+
+    def init_app(self, app):
+        """Initialize Redis with connection pooling"""
+        redis_url = app.config.get('REDIS_URL')
+
+        if redis_url:
+            self.client = redis.from_url(
+                redis_url,
+                max_connections=20,
+                decode_responses=True,
+                health_check_interval=30
+            )
+            # Test connection
+            self.client.ping()
+            self.enabled = True
+```
+
+#### Token Blacklist Implementation
+
+JWT token revocation using Redis:
+
+```python
+# backend/app/services/auth_service.py
+
+# Add token to blacklist
+def _add_to_blacklist(jti: str) -> bool:
+    redis_client = redis_manager.get_client()
+    if redis_client:
+        # Store in Redis with TTL
+        expire_time = 86400  # 24 hours
+        redis_key = f"token_blacklist:{jti}"
+        redis_client.setex(redis_key, expire_time, "1")
+    else:
+        # Fallback to in-memory set
+        TOKEN_BLACKLIST.add(jti)
+
+# Check if token is blacklisted
+def _is_token_blacklisted(jti: str) -> bool:
+    redis_client = redis_manager.get_client()
+    if redis_client:
+        redis_key = f"token_blacklist:{jti}"
+        return redis_client.exists(redis_key) > 0
+    else:
+        return jti in TOKEN_BLACKLIST
+```
+
+#### SSO Session Storage
+
+Secure PKCE parameter storage for OAuth flows:
+
+```python
+# backend/app/services/azure_ad_service.py
+
+def store_pkce_in_session(code_verifier: str, state: str):
+    redis_client = redis_manager.get_client()
+
+    if redis_client:
+        # Store in Redis with 10-minute TTL
+        session_data = {
+            'code_verifier': code_verifier,
+            'state': state,
+            'timestamp': datetime.utcnow().isoformat()
+        }
+
+        redis_key = f"sso_session:{state}"
+        redis_client.setex(
+            redis_key,
+            600,  # 10 minutes
+            json.dumps(session_data)
+        )
+    else:
+        # Fallback to Flask session
+        session['oauth_state'] = state
+        session['oauth_code_verifier'] = code_verifier
+```
+
+### Redis Configuration
+
+#### Docker Deployment
+
+```yaml
+# docker-compose.yml
+
+redis:
+  image: redis:7-alpine
+  container_name: saas-redis
+  restart: unless-stopped
+  ports:
+    - "6379:6379"
+  volumes:
+    - redis_data:/data
+  networks:
+    - saas-network
+  command: >
+    redis-server
+    --appendonly yes
+    --maxmemory 256mb
+    --maxmemory-policy allkeys-lru
+  healthcheck:
+    test: ["CMD", "redis-cli", "ping"]
+    interval: 10s
+    timeout: 5s
+    retries: 5
+```
+
+#### Application Configuration
+
+```python
+# backend/app/config.py
+
+# Redis Configuration
+REDIS_URL = os.environ.get('REDIS_URL', 'redis://localhost:6379/0')
+REDIS_MAX_CONNECTIONS = int(os.environ.get('REDIS_MAX_CONNECTIONS', 20))
+REDIS_DECODE_RESPONSES = True
+REDIS_TOKEN_BLACKLIST_EXPIRE = 86400  # 24 hours
+REDIS_SESSION_EXPIRE = 600  # 10 minutes
+```
+
+### High Availability Considerations
+
+#### Redis Persistence
+
+Two persistence options configured:
+
+1. **AOF (Append-Only File)**: Every write operation logged
+   - Configured with `--appendonly yes`
+   - Better durability, slight performance impact
+
+2. **Memory Management**: LRU eviction policy
+   - `--maxmemory 256mb`: Memory limit
+   - `--maxmemory-policy allkeys-lru`: Least Recently Used eviction
+
+#### Graceful Degradation
+
+The platform operates without Redis, with reduced functionality:
+
+```
+With Redis:
+✓ Token blacklist shared across instances
+✓ SSO sessions persist across requests
+✓ Scalable to multiple API instances
+✓ Tokens survive API restarts
+
+Without Redis (Fallback):
+✗ Token blacklist in-memory only
+✗ SSO sessions in Flask session
+✗ Single instance limitation
+✗ Tokens lost on restart
+```
+
+### Redis Monitoring
+
+Key metrics to monitor:
+
+```bash
+# Check Redis status
+docker exec saas-redis redis-cli INFO stats
+
+# Monitor memory usage
+docker exec saas-redis redis-cli INFO memory
+
+# View all keys (development only)
+docker exec saas-redis redis-cli KEYS "*"
+
+# Check specific key TTL
+docker exec saas-redis redis-cli TTL "token_blacklist:abc123"
+
+# Monitor connections
+docker exec saas-redis redis-cli CLIENT LIST
+```
+
+### Future Redis Use Cases
+
+Planned Redis implementations:
+
+1. **API Response Caching**
+   - Cache expensive queries
+   - Reduce database load
+   - Invalidation strategies
+
+2. **Rate Limiting**
+   - Per-user/IP request tracking
+   - Sliding window algorithm
+   - DDoS protection
+
+3. **Session Storage**
+   - User session data
+   - Shopping cart persistence
+   - Activity tracking
+
+4. **Real-time Features**
+   - Pub/Sub for notifications
+   - WebSocket state management
+   - Live updates
+
+5. **Distributed Locks**
+   - Prevent concurrent operations
+   - Job queue coordination
+   - Resource locking
+
+---
+
+## Celery Task Queue Architecture
+
+### Celery Overview
+
+The platform uses **Celery** for asynchronous task processing, complementing Kafka for different use cases:
+
+```
+┌────────────────────────────────────────────────────────────────┐
+│                    Task Processing Architecture                  │
+└────────────────────────────────────────────────────────────────┘
+
+Kafka (Event Streaming):
+├─ Real-time event processing
+├─ High-throughput message streaming
+├─ Event sourcing and audit logs
+└─ Fire-and-forget notifications
+
+Celery (Task Queue):
+├─ Scheduled periodic tasks
+├─ Long-running background jobs
+├─ Tasks requiring retry logic
+├─ SSO token refresh automation
+└─ System maintenance operations
+```
+
+### Celery Components
+
+#### Task Queues
+
+The platform uses multiple Celery queues for task organization:
+
+```python
+# Queue Configuration
+CELERY_TASK_ROUTES = {
+    'app.tasks.sso_tasks.*': {'queue': 'sso'},
+    'app.tasks.maintenance_tasks.*': {'queue': 'maintenance'},
+    'app.tasks.email_tasks.*': {'queue': 'email'},
+}
+
+# Queue Priorities:
+# - sso: High priority (token refresh)
+# - email: Medium priority (notifications)
+# - maintenance: Low priority (cleanup)
+```
+
+#### Workers
+
+Three types of Celery workers handle different workloads:
+
+1. **SSO Worker** (`celery-worker-sso`):
+   - Processes SSO token refresh tasks
+   - Handles Azure AD token management
+   - Manages Vault key rotation
+
+2. **Beat Scheduler** (`celery-beat`):
+   - Schedules periodic tasks
+   - Manages cron-like job execution
+   - Coordinates task timing
+
+3. **Flower Monitor** (`flower`):
+   - Web-based monitoring dashboard
+   - Real-time task tracking
+   - Performance metrics
+
+### SSO Token Refresh Strategy
+
+#### Hybrid Refresh Implementation
+
+The platform implements a hybrid token refresh strategy using Celery:
+
+```python
+# Scheduled Tasks (via Celery Beat)
+
+# Every 15 minutes - Refresh expiring tokens
+@celery_app.task
+def refresh_expiring_tokens():
+    """
+    Proactively refresh tokens expiring in next 30 minutes
+    """
+    threshold = datetime.utcnow() + timedelta(minutes=30)
+    expiring_identities = UserAzureIdentity.query.filter(
+        UserAzureIdentity.token_expires_at < threshold
+    )
+    # Refresh logic...
+
+# Daily at 2 AM - Cleanup expired tokens
+@celery_app.task
+def cleanup_expired_tokens():
+    """
+    Remove tokens that cannot be refreshed
+    """
+    expired_identities = UserAzureIdentity.query.filter(
+        UserAzureIdentity.refresh_token_expires_at < datetime.utcnow()
+    )
+    # Cleanup logic...
+
+# Monthly - Rotate encryption keys
+@celery_app.task
+def rotate_encryption_keys():
+    """
+    Rotate Vault Transit keys for enhanced security
+    """
+    # Key rotation and token re-wrapping...
+```
+
+### Celery Configuration
+
+#### Broker and Backend
+
+```yaml
+# Redis Database Allocation
+
+DB 0: Application cache
+DB 1: Session storage
+DB 2: SSO PKCE flows
+DB 3: Celery broker (task queue)
+DB 4: Celery results backend
+DB 5: Rate limiting
+```
+
+#### Docker Services
+
+```yaml
+# docker-compose.yml
+
+celery-worker-sso:
+  command: celery -A app.celery_app worker -Q sso,maintenance
+  environment:
+    CELERY_BROKER_URL: redis://redis:6379/3
+    CELERY_RESULT_BACKEND: redis://redis:6379/4
+
+celery-beat:
+  command: celery -A app.celery_app beat
+  volumes:
+    - celery_beat_schedule:/var/lib/celery
+
+flower:
+  command: celery -A app.celery_app flower
+  ports:
+    - "5555:5555"  # Monitoring dashboard
+```
+
+### Task Scheduling
+
+#### Beat Schedule Configuration
+
+```python
+CELERYBEAT_SCHEDULE = {
+    'refresh-expiring-tokens': {
+        'task': 'app.tasks.sso_tasks.refresh_expiring_tokens',
+        'schedule': crontab(minute='*/15'),  # Every 15 minutes
+        'options': {'queue': 'sso', 'priority': 7}
+    },
+
+    'cleanup-expired-tokens': {
+        'task': 'app.tasks.sso_tasks.cleanup_expired_tokens',
+        'schedule': crontab(hour=2, minute=0),  # Daily at 2 AM
+        'options': {'queue': 'maintenance', 'priority': 3}
+    },
+
+    'rotate-vault-keys': {
+        'task': 'app.tasks.sso_tasks.rotate_encryption_keys',
+        'schedule': crontab(day_of_month=1, hour=3),  # Monthly
+        'options': {'queue': 'maintenance', 'priority': 2}
+    },
+
+    'health-check': {
+        'task': 'app.tasks.maintenance_tasks.health_check',
+        'schedule': crontab(minute='*/5'),  # Every 5 minutes
+        'options': {'queue': 'maintenance', 'priority': 1}
+    }
+}
+```
+
+### Error Handling and Retries
+
+#### Exponential Backoff
+
+```python
+@celery_app.task(bind=True, max_retries=3)
+def refresh_user_token(self, user_id, tenant_id):
+    try:
+        # Token refresh logic...
+    except NetworkError as e:
+        # Retry with exponential backoff
+        raise self.retry(exc=e, countdown=2 ** self.request.retries)
+```
+
+#### Dead Letter Queue
+
+Failed tasks after max retries are moved to a dead letter queue for investigation:
+
+```python
+CELERY_TASK_REJECT_ON_WORKER_LOST = True
+CELERY_TASK_ACKS_LATE = True
+CELERY_WORKER_PREFETCH_MULTIPLIER = 1
+```
+
+### Monitoring and Metrics
+
+#### Flower Dashboard
+
+Access monitoring at: `http://localhost:5555`
+
+Features:
+- Real-time task monitoring
+- Worker status and pool stats
+- Task execution history
+- Performance graphs
+- Failed task inspection
+
+#### Task Metrics
+
+```python
+# Track task performance
+@celery_app.task
+def refresh_expiring_tokens():
+    results = {
+        'task_id': current_task.request.id,
+        'timestamp': datetime.utcnow().isoformat(),
+        'success': 0,
+        'failed': 0,
+        'skipped': 0
+    }
+    # Process tokens...
+    return results
+```
+
+### Kafka vs Celery Usage
+
+#### When to Use Kafka
+
+- **Event streaming**: Real-time data processing
+- **High throughput**: Millions of messages per second
+- **Event sourcing**: Maintaining event history
+- **Pub/Sub patterns**: Multiple consumers for same event
+
+#### When to Use Celery
+
+- **Scheduled tasks**: Cron-like periodic jobs
+- **Long-running tasks**: Complex processing with progress tracking
+- **Retry logic**: Tasks needing sophisticated retry strategies
+- **Task routing**: Different queues for different priorities
+
+### Production Considerations
+
+1. **Worker Scaling**
+   ```bash
+   # Scale SSO workers during peak hours
+   docker-compose up -d --scale celery-worker-sso=3
+   ```
+
+2. **Resource Limits**
+   ```yaml
+   celery-worker-sso:
+     deploy:
+       resources:
+         limits:
+           cpus: '1.0'
+           memory: 512M
+   ```
+
+3. **Monitoring Alerts**
+   - Queue length thresholds
+   - Task failure rates
+   - Worker memory usage
+   - Redis connection pool
 
 ---
 
@@ -2862,7 +3560,7 @@ def health_check():
 
     # Database check
     try:
-        db.session.execute('SELECT 1')
+        db.session.execute(text('SELECT 1'))
         health['checks']['database'] = 'ok'
     except Exception as e:
         health['status'] = 'unhealthy'

@@ -1789,3 +1789,1001 @@ WHERE users.email = %(email_1)s
 2025-11-05 14:49:51,315 - app - INFO - Flask app created with config: development
 2025-11-05 14:49:51,315 - app - INFO - Debug mode: True
 2025-11-05 14:49:51,315 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-05 19:52:18,971 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-05 19:52:18,972 - app - INFO - Flask app created with config: development
+2025-11-05 19:52:18,972 - app - INFO - Debug mode: True
+2025-11-05 19:52:18,973 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-05 19:52:18,976 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-05 19:52:18,977 - app - INFO - Flask app created with config: development
+2025-11-05 19:52:18,977 - app - INFO - Debug mode: True
+2025-11-05 19:52:18,977 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-05 19:52:18,984 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-05 19:52:18,984 - app - INFO - Flask app created with config: development
+2025-11-05 19:52:18,984 - app - INFO - Debug mode: True
+2025-11-05 19:52:18,985 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-05 19:52:18,999 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-05 19:52:18,999 - app - INFO - Flask app created with config: development
+2025-11-05 19:52:18,999 - app - INFO - Debug mode: True
+2025-11-05 19:52:18,999 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-05 19:52:57,252 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-05 19:52:57,252 - app - INFO - Flask app created with config: development
+2025-11-05 19:52:57,253 - app - INFO - Debug mode: True
+2025-11-05 19:52:57,253 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-05 19:53:10,339 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-05 19:53:10,339 - app - INFO - Flask app created with config: development
+2025-11-05 19:53:10,339 - app - INFO - Debug mode: True
+2025-11-05 19:53:10,339 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-05 19:54:00,458 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-05 19:54:00,458 - app - INFO - Flask app created with config: development
+2025-11-05 19:54:00,459 - app - INFO - Debug mode: True
+2025-11-05 19:54:00,459 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-05 19:54:05,594 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-05 19:54:05,594 - app - INFO - Flask app created with config: development
+2025-11-05 19:54:05,594 - app - INFO - Debug mode: True
+2025-11-05 19:54:05,595 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-05 19:55:02,204 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-05 19:55:02,204 - app - INFO - Flask app created with config: development
+2025-11-05 19:55:02,204 - app - INFO - Debug mode: True
+2025-11-05 19:55:02,204 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-05 19:55:25,505 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-05 19:55:25,506 - app - INFO - Flask app created with config: development
+2025-11-05 19:55:25,506 - app - INFO - Debug mode: True
+2025-11-05 19:55:25,506 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-05 19:55:25,519 - app.tenant_db.tenant_migrations - DEBUG - Schema version table doesn't exist yet: (psycopg2.errors.UndefinedTable) relation "tenant_schema_version" does not exist
+LINE 1: SELECT version FROM tenant_schema_version ORDER BY version D...
+                            ^
+
+[SQL: SELECT version FROM tenant_schema_version ORDER BY version DESC LIMIT 1]
+(Background on this error at: https://sqlalche.me/e/20/f405)
+2025-11-05 19:55:25,523 - app.tenant_db.tenant_migrations - INFO - Created tenant_schema_version table
+2025-11-05 19:55:25,524 - app.tenant_db.tenant_migrations - INFO - Applying migration v1: initial_schema
+2025-11-05 19:55:25,524 - app.tenant_db.tenant_migrations - INFO - ✓ Migration v1 applied successfully
+2025-11-05 19:56:37,382 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-05 19:56:37,382 - app - INFO - Flask app created with config: development
+2025-11-05 19:56:37,382 - app - INFO - Debug mode: True
+2025-11-05 19:56:37,382 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-05 19:59:06,693 - app.utils.decorators - DEBUG - Authenticated user: 08786958-ab2a-4ab8-91c0-3b8702daeac0
+2025-11-05 19:59:06,694 - app.routes.tenants - INFO - Listing tenants for user_id=08786958-ab2a-4ab8-91c0-3b8702daeac0
+2025-11-05 19:59:06,727 - app.routes.tenants - INFO - Retrieved 1 tenants for user_id=08786958-ab2a-4ab8-91c0-3b8702daeac0
+2025-11-05 19:59:33,054 - app.utils.decorators - DEBUG - Authenticated user: 08786958-ab2a-4ab8-91c0-3b8702daeac0
+2025-11-05 19:59:33,055 - app.routes.tenants - INFO - Adding user to tenant: tenant_id=9b2cf18a-243d-4ceb-8b87-9fcc4babbb54, admin_user_id=08786958-ab2a-4ab8-91c0-3b8702daeac0
+2025-11-05 19:59:33,059 - app.schemas.user_tenant_association_schema - DEBUG - Validated role for association creation: user
+2025-11-05 19:59:33,060 - app.schemas.user_tenant_association_schema - DEBUG - Normalized role for association creation: user
+2025-11-05 19:59:33,064 - app.routes.tenants - WARNING - User not found: user_id=123e4567-e89b-12d3-a456-426614174000
+2025-11-05 20:00:12,220 - app.utils.decorators - DEBUG - Authenticated user: 08786958-ab2a-4ab8-91c0-3b8702daeac0
+2025-11-05 20:00:12,221 - app.routes.documents - INFO - Listing documents: tenant_id=9b2cf18a-243d-4ceb-8b87-9fcc4babbb54, user_id=08786958-ab2a-4ab8-91c0-3b8702daeac0
+2025-11-05 20:00:12,248 - app.utils.database - INFO - Created engine for tenant database: tenant_iter_45fca42c
+2025-11-05 20:00:12,248 - app.utils.database - INFO - Created session factory for tenant database: tenant_iter_45fca42c
+2025-11-05 20:00:12,259 - app.routes.documents - INFO - Retrieved 0 documents for tenant_id=9b2cf18a-243d-4ceb-8b87-9fcc4babbb54
+2025-11-05 20:00:12,260 - app.utils.database - DEBUG - Committed transaction for tenant: tenant_iter_45fca42c
+2025-11-05 20:00:58,167 - app.utils.decorators - DEBUG - Authenticated user: 08786958-ab2a-4ab8-91c0-3b8702daeac0
+2025-11-05 20:00:58,168 - app.routes.documents - INFO - Uploading document: tenant_id=9b2cf18a-243d-4ceb-8b87-9fcc4babbb54, user_id=08786958-ab2a-4ab8-91c0-3b8702daeac0
+2025-11-05 20:00:58,202 - app.schemas.document_schema - DEBUG - Validated filename for upload: filename1.png
+2025-11-05 20:00:58,203 - app.schemas.document_schema - DEBUG - Validated MIME type for upload: image/svg
+2025-11-05 20:00:58,203 - app.schemas.document_schema - DEBUG - Normalized filename for upload: filename1.png
+2025-11-05 20:00:58,203 - app.schemas.document_schema - DEBUG - Normalized MIME type for upload: image/svg
+2025-11-05 20:00:58,204 - app.routes.documents - INFO - File MD5: 7554235c8db48c7f01a2bf4cd2fe199f, size: 286665 bytes
+2025-11-05 20:00:58,206 - app.utils.database - INFO - Created engine for tenant database: tenant_iter_45fca42c
+2025-11-05 20:00:58,206 - app.utils.database - INFO - Created session factory for tenant database: tenant_iter_45fca42c
+2025-11-05 20:00:58,216 - app.models.file - DEBUG - Generated S3 path: tenants/9b2cf18a-243d-4ceb-8b87-9fcc4babbb54/files/75/54/7554235c8db48c7f01a2bf4cd2fe199f_None
+2025-11-05 20:00:58,216 - app.models.file - INFO - File object initialized: md5=7554235c8db48c7f01a2bf4cd2fe199f, size=286665, s3_path=tenants/9b2cf18a-243d-4ceb-8b87-9fcc4babbb54/files/75/54/7554235c8db48c7f01a2bf4cd2fe199f_None
+2025-11-05 20:00:58,218 - app.routes.documents - INFO - Created new file: file_id=35442bec-923a-4c27-933b-2676d9d1a9d6, md5=7554235c8db48c7f01a2bf4cd2fe199f, s3_path=tenants/9b2cf18a-243d-4ceb-8b87-9fcc4babbb54/files/75/54/7554235c8db48c7f01a2bf4cd2fe199f_None
+2025-11-05 20:00:58,218 - app.models.document - INFO - Document object initialized: filename=filename1.png, mime_type=image/svg, file_id=35442bec-923a-4c27-933b-2676d9d1a9d6, user_id=08786958-ab2a-4ab8-91c0-3b8702daeac0
+2025-11-05 20:00:58,220 - app.routes.documents - INFO - Document uploaded successfully: document_id=279ad643-a412-47cd-afff-788f517f0791, file_id=35442bec-923a-4c27-933b-2676d9d1a9d6
+2025-11-05 20:00:58,221 - app.utils.database - DEBUG - Committed transaction for tenant: tenant_iter_45fca42c
+2025-11-05 20:01:31,355 - app.utils.decorators - DEBUG - Authenticated user: 08786958-ab2a-4ab8-91c0-3b8702daeac0
+2025-11-05 20:01:31,355 - app.routes.files - ERROR - Error listing files for tenant 9b2cf18a-243d-4ceb-8b87-9fcc4babbb54: 'Request' object has no attribute 'user_id'
+Traceback (most recent call last):
+  File "/app/app/routes/files.py", line 159, in list_files
+    user_id = request.user_id
+              ^^^^^^^^^^^^^^^
+AttributeError: 'Request' object has no attribute 'user_id'
+2025-11-05 20:02:01,139 - app.utils.decorators - DEBUG - Authenticated user: 08786958-ab2a-4ab8-91c0-3b8702daeac0
+2025-11-05 20:02:01,141 - app.routes.files - ERROR - Error listing files for tenant 9b2cf18a-243d-4ceb-8b87-9fcc4babbb54: 'Request' object has no attribute 'user_id'
+Traceback (most recent call last):
+  File "/app/app/routes/files.py", line 159, in list_files
+    user_id = request.user_id
+              ^^^^^^^^^^^^^^^
+AttributeError: 'Request' object has no attribute 'user_id'
+2025-11-05 20:04:22,055 - app.utils.decorators - DEBUG - Authenticated user: 08786958-ab2a-4ab8-91c0-3b8702daeac0
+2025-11-05 20:04:22,056 - app.routes.files - ERROR - Error listing files for tenant 9b2cf18a-243d-4ceb-8b87-9fcc4babbb54: 'Request' object has no attribute 'user_id'
+Traceback (most recent call last):
+  File "/app/app/routes/files.py", line 159, in list_files
+    user_id = request.user_id
+              ^^^^^^^^^^^^^^^
+AttributeError: 'Request' object has no attribute 'user_id'
+2025-11-05 20:06:15,019 - app.utils.decorators - DEBUG - Authenticated user: 08786958-ab2a-4ab8-91c0-3b8702daeac0
+2025-11-05 20:06:15,020 - app.routes.files - ERROR - Error listing files for tenant 9b2cf18a-243d-4ceb-8b87-9fcc4babbb54: 'Request' object has no attribute 'user_id'
+Traceback (most recent call last):
+  File "/app/app/routes/files.py", line 159, in list_files
+    user_id = g.user_id
+              ^^^^^^^^^^
+AttributeError: 'Request' object has no attribute 'user_id'
+2025-11-05 20:06:39,631 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-05 20:06:39,631 - app - INFO - Flask app created with config: development
+2025-11-05 20:06:39,631 - app - INFO - Debug mode: True
+2025-11-05 20:06:39,632 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-05 20:06:39,652 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-05 20:06:39,652 - app - INFO - Flask app created with config: development
+2025-11-05 20:06:39,652 - app - INFO - Debug mode: True
+2025-11-05 20:06:39,653 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-05 20:06:39,674 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-05 20:06:39,674 - app - INFO - Flask app created with config: development
+2025-11-05 20:06:39,675 - app - INFO - Debug mode: True
+2025-11-05 20:06:39,675 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-05 20:06:39,697 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-05 20:06:39,697 - app - INFO - Flask app created with config: development
+2025-11-05 20:06:39,697 - app - INFO - Debug mode: True
+2025-11-05 20:06:39,698 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-05 20:06:56,122 - app.utils.decorators - DEBUG - Authenticated user: 08786958-ab2a-4ab8-91c0-3b8702daeac0
+2025-11-05 20:06:56,142 - app.utils.database - INFO - Created engine for tenant database: tenant_iter_45fca42c
+2025-11-05 20:06:56,142 - app.utils.database - INFO - Created session factory for tenant database: tenant_iter_45fca42c
+2025-11-05 20:06:56,153 - app.routes.files - INFO - Retrieved 1 files for tenant 9b2cf18a-243d-4ceb-8b87-9fcc4babbb54 (page 1/1, total: 1)
+2025-11-05 20:06:56,154 - app.utils.database - DEBUG - Committed transaction for tenant: tenant_iter_45fca42c
+2025-11-05 20:09:15,813 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-05 20:09:15,814 - app - INFO - Flask app created with config: development
+2025-11-05 20:09:15,814 - app - INFO - Debug mode: True
+2025-11-05 20:09:15,814 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-05 20:09:15,930 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-05 20:09:15,930 - app - INFO - Flask app created with config: development
+2025-11-05 20:09:15,931 - app - INFO - Debug mode: True
+2025-11-05 20:09:15,931 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-05 20:09:16,010 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-05 20:09:16,010 - app - INFO - Flask app created with config: development
+2025-11-05 20:09:16,010 - app - INFO - Debug mode: True
+2025-11-05 20:09:16,011 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-05 20:09:16,057 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-05 20:09:16,058 - app - INFO - Flask app created with config: development
+2025-11-05 20:09:16,058 - app - INFO - Debug mode: True
+2025-11-05 20:09:16,058 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-05 20:09:39,647 - app.utils.decorators - DEBUG - Authenticated user: 08786958-ab2a-4ab8-91c0-3b8702daeac0
+2025-11-05 20:09:39,678 - app.utils.database - INFO - Created engine for tenant database: tenant_iter_45fca42c
+2025-11-05 20:09:39,679 - app.utils.database - INFO - Created session factory for tenant database: tenant_iter_45fca42c
+2025-11-05 20:09:39,692 - app.routes.files - INFO - Retrieved 1 files for tenant 9b2cf18a-243d-4ceb-8b87-9fcc4babbb54 (page 1/1, total: 1)
+2025-11-05 20:09:39,693 - app.utils.database - DEBUG - Committed transaction for tenant: tenant_iter_45fca42c
+2025-11-05 20:17:37,693 - app.utils.decorators - ERROR - JWT validation failed: Bad Authorization header. Expected 'Authorization: Bearer <JWT>'
+2025-11-05 20:17:55,448 - app.models.user - DEBUG - Password hashed for user: test_upload_1762373875@example.com
+2025-11-05 20:18:12,226 - app.models.user - DEBUG - Password hashed for user: test_upload_1762373892@example.com
+2025-11-05 20:18:12,481 - app.utils.decorators - DEBUG - Authenticated user: 1a2a08d1-2578-4c66-a197-d2261a39efa1
+2025-11-05 20:18:12,482 - app.routes.tenants - INFO - Creating tenant for user_id=1a2a08d1-2578-4c66-a197-d2261a39efa1
+2025-11-05 20:18:12,482 - app.schemas.tenant_schema - DEBUG - Validated tenant name for creation: Test Upload Tenant
+2025-11-05 20:18:12,482 - app.routes.tenants - WARNING - Validation error: {'slug': ['Unknown field.']}
+2025-11-05 20:18:39,804 - app.models.user - DEBUG - Password hashed for user: test_upload_1762373919@example.com
+2025-11-05 20:18:40,037 - app.utils.decorators - DEBUG - Authenticated user: 8f36c453-edbc-4acf-9f52-46da6c7b7b31
+2025-11-05 20:18:40,037 - app.routes.tenants - INFO - Creating tenant for user_id=8f36c453-edbc-4acf-9f52-46da6c7b7b31
+2025-11-05 20:18:40,037 - app.schemas.tenant_schema - DEBUG - Validated tenant name for creation: Test Upload Tenant 1762373919
+2025-11-05 20:18:40,037 - app.schemas.tenant_schema - DEBUG - Normalized tenant name for creation: Test Upload Tenant 1762373919
+2025-11-05 20:18:40,038 - app.models.tenant - DEBUG - Generated database name: Test Upload Tenant 1762373919 -> tenant_test_upload_tenant_1762373919_1dc1d8db
+2025-11-05 20:18:40,038 - app.models.tenant - INFO - Tenant object initialized: name=Test Upload Tenant 1762373919, database_name=tenant_test_upload_tenant_1762373919_1dc1d8db
+2025-11-05 20:18:40,073 - app.utils.database - INFO - Created tenant database: tenant_test_upload_tenant_1762373919_1dc1d8db
+2025-11-05 20:18:40,073 - app.utils.database - INFO - Created engine for tenant database: tenant_test_upload_tenant_1762373919_1dc1d8db
+2025-11-05 20:18:40,087 - app.utils.database - INFO - Created 'files' table in tenant database: tenant_test_upload_tenant_1762373919_1dc1d8db
+2025-11-05 20:18:40,093 - app.utils.database - INFO - Created 'documents' table in tenant database: tenant_test_upload_tenant_1762373919_1dc1d8db
+2025-11-05 20:18:40,093 - app.utils.database - INFO - Successfully created all tables in tenant database: tenant_test_upload_tenant_1762373919_1dc1d8db
+2025-11-05 20:18:40,093 - app.routes.tenants - INFO - Created database and tables: tenant_test_upload_tenant_1762373919_1dc1d8db
+2025-11-05 20:18:40,094 - app.models.user_tenant_association - INFO - UserTenantAssociation initialized: user_id=8f36c453-edbc-4acf-9f52-46da6c7b7b31, tenant_id=50ff2f90-1c94-47cf-b5c2-9cce7b8f4b2d, role=admin
+2025-11-05 20:18:40,095 - app.routes.tenants - INFO - Tenant created successfully: tenant_id=50ff2f90-1c94-47cf-b5c2-9cce7b8f4b2d, database=tenant_test_upload_tenant_1762373919_1dc1d8db
+2025-11-05 20:18:40,127 - app.utils.decorators - DEBUG - Authenticated user: 8f36c453-edbc-4acf-9f52-46da6c7b7b31
+2025-11-05 20:18:40,128 - app.routes.documents - INFO - Uploading document: tenant_id=50ff2f90-1c94-47cf-b5c2-9cce7b8f4b2d, user_id=8f36c453-edbc-4acf-9f52-46da6c7b7b31
+2025-11-05 20:18:40,129 - app.schemas.document_schema - DEBUG - Validated filename for upload: test_document.txt
+2025-11-05 20:18:40,129 - app.schemas.document_schema - DEBUG - Validated MIME type for upload: text/plain
+2025-11-05 20:18:40,129 - app.schemas.document_schema - DEBUG - Normalized filename for upload: test_document.txt
+2025-11-05 20:18:40,130 - app.schemas.document_schema - DEBUG - Normalized MIME type for upload: text/plain
+2025-11-05 20:18:40,130 - app.routes.documents - INFO - File MD5: 1f6f15f08533976f0ed772204694a57e, size: 148 bytes
+2025-11-05 20:18:40,131 - app.utils.database - INFO - Created session factory for tenant database: tenant_test_upload_tenant_1762373919_1dc1d8db
+2025-11-05 20:18:40,132 - app.models.file - DEBUG - Generated S3 path: tenants/50ff2f90-1c94-47cf-b5c2-9cce7b8f4b2d/files/1f/6f/1f6f15f08533976f0ed772204694a57e_None
+2025-11-05 20:18:40,132 - app.models.file - INFO - File object initialized: md5=1f6f15f08533976f0ed772204694a57e, size=148, s3_path=tenants/50ff2f90-1c94-47cf-b5c2-9cce7b8f4b2d/files/1f/6f/1f6f15f08533976f0ed772204694a57e_None
+2025-11-05 20:18:40,133 - app.routes.documents - INFO - Created new file: file_id=43eef47c-c9d4-4b87-b8b1-8032d5ee732d, md5=1f6f15f08533976f0ed772204694a57e, s3_path=tenants/50ff2f90-1c94-47cf-b5c2-9cce7b8f4b2d/files/1f/6f/1f6f15f08533976f0ed772204694a57e_None
+2025-11-05 20:18:40,133 - app.models.document - INFO - Document object initialized: filename=test_document.txt, mime_type=text/plain, file_id=43eef47c-c9d4-4b87-b8b1-8032d5ee732d, user_id=8f36c453-edbc-4acf-9f52-46da6c7b7b31
+2025-11-05 20:18:40,134 - app.routes.documents - INFO - Document uploaded successfully: document_id=b10b6dfe-b217-4f65-82a9-27e05cb05cf0, file_id=43eef47c-c9d4-4b87-b8b1-8032d5ee732d
+2025-11-05 20:18:40,134 - app.utils.database - DEBUG - Committed transaction for tenant: tenant_test_upload_tenant_1762373919_1dc1d8db
+2025-11-05 20:19:00,312 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-05 20:19:00,313 - app - INFO - Flask app created with config: development
+2025-11-05 20:19:00,313 - app - INFO - Debug mode: True
+2025-11-05 20:19:00,315 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-05 20:19:00,343 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-05 20:19:00,343 - app - INFO - Flask app created with config: development
+2025-11-05 20:19:00,343 - app - INFO - Debug mode: True
+2025-11-05 20:19:00,343 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-05 20:19:00,412 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-05 20:19:00,412 - app - INFO - Flask app created with config: development
+2025-11-05 20:19:00,412 - app - INFO - Debug mode: True
+2025-11-05 20:19:00,412 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-05 20:19:00,487 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-05 20:19:00,487 - app - INFO - Flask app created with config: development
+2025-11-05 20:19:00,487 - app - INFO - Debug mode: True
+2025-11-05 20:19:00,487 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-05 20:19:14,956 - app.models.user - DEBUG - Password hashed for user: test_upload_1762373954@example.com
+2025-11-05 20:19:15,194 - app.utils.decorators - DEBUG - Authenticated user: 96a6bc5b-341f-404c-a3af-f4eac440fe51
+2025-11-05 20:19:15,194 - app.routes.tenants - INFO - Creating tenant for user_id=96a6bc5b-341f-404c-a3af-f4eac440fe51
+2025-11-05 20:19:15,194 - app.schemas.tenant_schema - DEBUG - Validated tenant name for creation: Test Upload Tenant 1762373954
+2025-11-05 20:19:15,195 - app.schemas.tenant_schema - DEBUG - Normalized tenant name for creation: Test Upload Tenant 1762373954
+2025-11-05 20:19:15,195 - app.models.tenant - DEBUG - Generated database name: Test Upload Tenant 1762373954 -> tenant_test_upload_tenant_1762373954_3dcdac48
+2025-11-05 20:19:15,195 - app.models.tenant - INFO - Tenant object initialized: name=Test Upload Tenant 1762373954, database_name=tenant_test_upload_tenant_1762373954_3dcdac48
+2025-11-05 20:19:15,234 - app.utils.database - INFO - Created tenant database: tenant_test_upload_tenant_1762373954_3dcdac48
+2025-11-05 20:19:15,235 - app.utils.database - INFO - Created engine for tenant database: tenant_test_upload_tenant_1762373954_3dcdac48
+2025-11-05 20:19:15,249 - app.utils.database - INFO - Created 'files' table in tenant database: tenant_test_upload_tenant_1762373954_3dcdac48
+2025-11-05 20:19:15,255 - app.utils.database - INFO - Created 'documents' table in tenant database: tenant_test_upload_tenant_1762373954_3dcdac48
+2025-11-05 20:19:15,255 - app.utils.database - INFO - Successfully created all tables in tenant database: tenant_test_upload_tenant_1762373954_3dcdac48
+2025-11-05 20:19:15,255 - app.routes.tenants - INFO - Created database and tables: tenant_test_upload_tenant_1762373954_3dcdac48
+2025-11-05 20:19:15,256 - app.models.user_tenant_association - INFO - UserTenantAssociation initialized: user_id=96a6bc5b-341f-404c-a3af-f4eac440fe51, tenant_id=7e1926de-3af3-4692-beb0-212518ad654d, role=admin
+2025-11-05 20:19:15,257 - app.routes.tenants - INFO - Tenant created successfully: tenant_id=7e1926de-3af3-4692-beb0-212518ad654d, database=tenant_test_upload_tenant_1762373954_3dcdac48
+2025-11-05 20:19:15,288 - app.utils.decorators - DEBUG - Authenticated user: 96a6bc5b-341f-404c-a3af-f4eac440fe51
+2025-11-05 20:19:15,288 - app.routes.documents - INFO - Uploading document: tenant_id=7e1926de-3af3-4692-beb0-212518ad654d, user_id=96a6bc5b-341f-404c-a3af-f4eac440fe51
+2025-11-05 20:19:15,300 - app.schemas.document_schema - DEBUG - Validated filename for upload: test_document.txt
+2025-11-05 20:19:15,300 - app.schemas.document_schema - DEBUG - Validated MIME type for upload: text/plain
+2025-11-05 20:19:15,300 - app.schemas.document_schema - DEBUG - Normalized filename for upload: test_document.txt
+2025-11-05 20:19:15,300 - app.schemas.document_schema - DEBUG - Normalized MIME type for upload: text/plain
+2025-11-05 20:19:15,300 - app.routes.documents - INFO - File MD5: 560a4540736813214d8b4bb257e3bccd, size: 148 bytes
+2025-11-05 20:19:15,301 - app.utils.database - INFO - Created engine for tenant database: tenant_test_upload_tenant_1762373954_3dcdac48
+2025-11-05 20:19:15,301 - app.utils.database - INFO - Created session factory for tenant database: tenant_test_upload_tenant_1762373954_3dcdac48
+2025-11-05 20:19:15,307 - app.models.file - DEBUG - Generated S3 path: tenants/7e1926de-3af3-4692-beb0-212518ad654d/files/56/0a/560a4540736813214d8b4bb257e3bccd_None
+2025-11-05 20:19:15,308 - app.models.file - INFO - File object initialized: md5=560a4540736813214d8b4bb257e3bccd, size=148, s3_path=tenants/7e1926de-3af3-4692-beb0-212518ad654d/files/56/0a/560a4540736813214d8b4bb257e3bccd_None
+2025-11-05 20:19:15,309 - app.routes.documents - INFO - Created new file: file_id=8f0f14d1-a3b7-4f1e-9eec-e76199685cea, md5=560a4540736813214d8b4bb257e3bccd, s3_path=tenants/7e1926de-3af3-4692-beb0-212518ad654d/files/56/0a/560a4540736813214d8b4bb257e3bccd_None
+2025-11-05 20:19:15,402 - app.utils.s3_client - DEBUG - S3 client initialized: bucket=saas-documents, region=us-east-1, endpoint=http://minio:9000, use_ssl=False
+2025-11-05 20:19:15,402 - app.utils.s3_client - INFO - S3 client initialized: bucket=saas-documents
+2025-11-05 20:19:15,407 - app.utils.s3_client - DEBUG - Uploaded file to S3: bucket=saas-documents, path=tenants/7e1926de-3af3-4692-beb0-212518ad654d/files/56/0a/560a4540736813214d8b4bb257e3bccd_None, content_type=text/plain
+2025-11-05 20:19:15,407 - app.utils.s3_client - INFO - File uploaded to S3: tenants/7e1926de-3af3-4692-beb0-212518ad654d/files/56/0a/560a4540736813214d8b4bb257e3bccd_None
+2025-11-05 20:19:15,408 - app.models.document - INFO - Document object initialized: filename=test_document.txt, mime_type=text/plain, file_id=8f0f14d1-a3b7-4f1e-9eec-e76199685cea, user_id=96a6bc5b-341f-404c-a3af-f4eac440fe51
+2025-11-05 20:19:15,409 - app.routes.documents - INFO - Document uploaded successfully: document_id=b3005db9-8c21-4967-bff2-4bb8bf43ff5e, file_id=8f0f14d1-a3b7-4f1e-9eec-e76199685cea
+2025-11-05 20:19:15,410 - app.utils.database - DEBUG - Committed transaction for tenant: tenant_test_upload_tenant_1762373954_3dcdac48
+2025-11-05 20:20:00,142 - app.models.user - DEBUG - Password hashed for user: test_dl_1762373999@example.com
+2025-11-05 20:20:00,384 - app.utils.decorators - DEBUG - Authenticated user: a0bd8974-b11e-462e-acc2-077fdd011b7b
+2025-11-05 20:20:00,384 - app.routes.tenants - INFO - Creating tenant for user_id=a0bd8974-b11e-462e-acc2-077fdd011b7b
+2025-11-05 20:20:00,384 - app.schemas.tenant_schema - DEBUG - Validated tenant name for creation: Test Download Tenant 1762373999
+2025-11-05 20:20:00,384 - app.schemas.tenant_schema - DEBUG - Normalized tenant name for creation: Test Download Tenant 1762373999
+2025-11-05 20:20:00,385 - app.models.tenant - DEBUG - Generated database name: Test Download Tenant 1762373999 -> tenant_test_download_tenant_1762373999_e8d66d3b
+2025-11-05 20:20:00,385 - app.models.tenant - INFO - Tenant object initialized: name=Test Download Tenant 1762373999, database_name=tenant_test_download_tenant_1762373999_e8d66d3b
+2025-11-05 20:20:00,430 - app.utils.database - INFO - Created tenant database: tenant_test_download_tenant_1762373999_e8d66d3b
+2025-11-05 20:20:00,431 - app.utils.database - INFO - Created engine for tenant database: tenant_test_download_tenant_1762373999_e8d66d3b
+2025-11-05 20:20:00,445 - app.utils.database - INFO - Created 'files' table in tenant database: tenant_test_download_tenant_1762373999_e8d66d3b
+2025-11-05 20:20:00,451 - app.utils.database - INFO - Created 'documents' table in tenant database: tenant_test_download_tenant_1762373999_e8d66d3b
+2025-11-05 20:20:00,451 - app.utils.database - INFO - Successfully created all tables in tenant database: tenant_test_download_tenant_1762373999_e8d66d3b
+2025-11-05 20:20:00,451 - app.routes.tenants - INFO - Created database and tables: tenant_test_download_tenant_1762373999_e8d66d3b
+2025-11-05 20:20:00,451 - app.models.user_tenant_association - INFO - UserTenantAssociation initialized: user_id=a0bd8974-b11e-462e-acc2-077fdd011b7b, tenant_id=5dbffeba-b5da-4ec5-8302-544698ab540b, role=admin
+2025-11-05 20:20:00,453 - app.routes.tenants - INFO - Tenant created successfully: tenant_id=5dbffeba-b5da-4ec5-8302-544698ab540b, database=tenant_test_download_tenant_1762373999_e8d66d3b
+2025-11-05 20:20:00,482 - app.utils.decorators - DEBUG - Authenticated user: a0bd8974-b11e-462e-acc2-077fdd011b7b
+2025-11-05 20:20:00,482 - app.routes.documents - INFO - Uploading document: tenant_id=5dbffeba-b5da-4ec5-8302-544698ab540b, user_id=a0bd8974-b11e-462e-acc2-077fdd011b7b
+2025-11-05 20:20:00,484 - app.schemas.document_schema - DEBUG - Validated filename for upload: download_test.txt
+2025-11-05 20:20:00,484 - app.schemas.document_schema - DEBUG - Validated MIME type for upload: text/plain
+2025-11-05 20:20:00,484 - app.schemas.document_schema - DEBUG - Normalized filename for upload: download_test.txt
+2025-11-05 20:20:00,484 - app.schemas.document_schema - DEBUG - Normalized MIME type for upload: text/plain
+2025-11-05 20:20:00,484 - app.routes.documents - INFO - File MD5: 9aae55330bd1ded0e0c5f98ab92f3a5f, size: 36 bytes
+2025-11-05 20:20:00,485 - app.utils.database - INFO - Created session factory for tenant database: tenant_test_download_tenant_1762373999_e8d66d3b
+2025-11-05 20:20:00,486 - app.models.file - DEBUG - Generated S3 path: tenants/5dbffeba-b5da-4ec5-8302-544698ab540b/files/9a/ae/9aae55330bd1ded0e0c5f98ab92f3a5f_None
+2025-11-05 20:20:00,486 - app.models.file - INFO - File object initialized: md5=9aae55330bd1ded0e0c5f98ab92f3a5f, size=36, s3_path=tenants/5dbffeba-b5da-4ec5-8302-544698ab540b/files/9a/ae/9aae55330bd1ded0e0c5f98ab92f3a5f_None
+2025-11-05 20:20:00,487 - app.routes.documents - INFO - Created new file: file_id=1564b40e-f72c-4abd-8707-778102666985, md5=9aae55330bd1ded0e0c5f98ab92f3a5f, s3_path=tenants/5dbffeba-b5da-4ec5-8302-544698ab540b/files/9a/ae/9aae55330bd1ded0e0c5f98ab92f3a5f_None
+2025-11-05 20:20:00,491 - app.utils.s3_client - DEBUG - Uploaded file to S3: bucket=saas-documents, path=tenants/5dbffeba-b5da-4ec5-8302-544698ab540b/files/9a/ae/9aae55330bd1ded0e0c5f98ab92f3a5f_None, content_type=text/plain
+2025-11-05 20:20:00,491 - app.utils.s3_client - INFO - File uploaded to S3: tenants/5dbffeba-b5da-4ec5-8302-544698ab540b/files/9a/ae/9aae55330bd1ded0e0c5f98ab92f3a5f_None
+2025-11-05 20:20:00,491 - app.models.document - INFO - Document object initialized: filename=download_test.txt, mime_type=text/plain, file_id=1564b40e-f72c-4abd-8707-778102666985, user_id=a0bd8974-b11e-462e-acc2-077fdd011b7b
+2025-11-05 20:20:00,492 - app.routes.documents - INFO - Document uploaded successfully: document_id=562002e9-bf1e-4bec-bbbd-9a7414cacacb, file_id=1564b40e-f72c-4abd-8707-778102666985
+2025-11-05 20:20:00,493 - app.utils.database - DEBUG - Committed transaction for tenant: tenant_test_download_tenant_1762373999_e8d66d3b
+2025-11-05 20:20:00,517 - app.utils.decorators - DEBUG - Authenticated user: a0bd8974-b11e-462e-acc2-077fdd011b7b
+2025-11-05 20:20:00,517 - app.routes.documents - INFO - Generating download URL: tenant_id=5dbffeba-b5da-4ec5-8302-544698ab540b, document_id=562002e9-bf1e-4bec-bbbd-9a7414cacacb, user_id=a0bd8974-b11e-462e-acc2-077fdd011b7b
+2025-11-05 20:20:00,520 - app.utils.database - INFO - Created engine for tenant database: tenant_test_download_tenant_1762373999_e8d66d3b
+2025-11-05 20:20:00,520 - app.utils.database - INFO - Created session factory for tenant database: tenant_test_download_tenant_1762373999_e8d66d3b
+2025-11-05 20:20:00,608 - app.utils.s3_client - DEBUG - S3 client initialized: bucket=saas-documents, region=us-east-1, endpoint=http://minio:9000, use_ssl=False
+2025-11-05 20:20:00,608 - app.utils.s3_client - INFO - S3 client initialized: bucket=saas-documents
+2025-11-05 20:20:00,609 - app.utils.s3_client - DEBUG - Generated pre-signed URL: bucket=saas-documents, path=tenants/5dbffeba-b5da-4ec5-8302-544698ab540b/files/9a/ae/9aae55330bd1ded0e0c5f98ab92f3a5f_None, expires_in=3600
+2025-11-05 20:20:00,609 - app.utils.s3_client - INFO - Pre-signed URL generated: tenants/5dbffeba-b5da-4ec5-8302-544698ab540b/files/9a/ae/9aae55330bd1ded0e0c5f98ab92f3a5f_None (expires in 3600s)
+2025-11-05 20:20:00,610 - app.routes.documents - INFO - Download URL generated: document_id=562002e9-bf1e-4bec-bbbd-9a7414cacacb, expires_in=3600s
+2025-11-05 20:20:00,610 - app.utils.database - DEBUG - Committed transaction for tenant: tenant_test_download_tenant_1762373999_e8d66d3b
+2025-11-05 20:20:19,757 - app.models.user - DEBUG - Password hashed for user: test_dl_1762374019@example.com
+2025-11-05 20:20:19,987 - app.utils.decorators - DEBUG - Authenticated user: 866d031b-4942-44cb-8ed1-6b152486c722
+2025-11-05 20:20:19,987 - app.routes.tenants - INFO - Creating tenant for user_id=866d031b-4942-44cb-8ed1-6b152486c722
+2025-11-05 20:20:19,987 - app.schemas.tenant_schema - DEBUG - Validated tenant name for creation: Test Download Tenant 1762374019
+2025-11-05 20:20:19,987 - app.schemas.tenant_schema - DEBUG - Normalized tenant name for creation: Test Download Tenant 1762374019
+2025-11-05 20:20:19,988 - app.models.tenant - DEBUG - Generated database name: Test Download Tenant 1762374019 -> tenant_test_download_tenant_1762374019_bc191d93
+2025-11-05 20:20:19,988 - app.models.tenant - INFO - Tenant object initialized: name=Test Download Tenant 1762374019, database_name=tenant_test_download_tenant_1762374019_bc191d93
+2025-11-05 20:20:20,034 - app.utils.database - INFO - Created tenant database: tenant_test_download_tenant_1762374019_bc191d93
+2025-11-05 20:20:20,034 - app.utils.database - INFO - Created engine for tenant database: tenant_test_download_tenant_1762374019_bc191d93
+2025-11-05 20:20:20,048 - app.utils.database - INFO - Created 'files' table in tenant database: tenant_test_download_tenant_1762374019_bc191d93
+2025-11-05 20:20:20,053 - app.utils.database - INFO - Created 'documents' table in tenant database: tenant_test_download_tenant_1762374019_bc191d93
+2025-11-05 20:20:20,053 - app.utils.database - INFO - Successfully created all tables in tenant database: tenant_test_download_tenant_1762374019_bc191d93
+2025-11-05 20:20:20,053 - app.routes.tenants - INFO - Created database and tables: tenant_test_download_tenant_1762374019_bc191d93
+2025-11-05 20:20:20,053 - app.models.user_tenant_association - INFO - UserTenantAssociation initialized: user_id=866d031b-4942-44cb-8ed1-6b152486c722, tenant_id=ae3a5931-7126-47c6-bdf4-d131440a6799, role=admin
+2025-11-05 20:20:20,054 - app.routes.tenants - INFO - Tenant created successfully: tenant_id=ae3a5931-7126-47c6-bdf4-d131440a6799, database=tenant_test_download_tenant_1762374019_bc191d93
+2025-11-05 20:20:20,083 - app.utils.decorators - DEBUG - Authenticated user: 866d031b-4942-44cb-8ed1-6b152486c722
+2025-11-05 20:20:20,083 - app.routes.documents - INFO - Uploading document: tenant_id=ae3a5931-7126-47c6-bdf4-d131440a6799, user_id=866d031b-4942-44cb-8ed1-6b152486c722
+2025-11-05 20:20:20,095 - app.schemas.document_schema - DEBUG - Validated filename for upload: download_test.txt
+2025-11-05 20:20:20,095 - app.schemas.document_schema - DEBUG - Validated MIME type for upload: text/plain
+2025-11-05 20:20:20,095 - app.schemas.document_schema - DEBUG - Normalized filename for upload: download_test.txt
+2025-11-05 20:20:20,095 - app.schemas.document_schema - DEBUG - Normalized MIME type for upload: text/plain
+2025-11-05 20:20:20,095 - app.routes.documents - INFO - File MD5: 5f6dd6064beb2d0f358cc0afff5f7efd, size: 36 bytes
+2025-11-05 20:20:20,096 - app.utils.database - INFO - Created engine for tenant database: tenant_test_download_tenant_1762374019_bc191d93
+2025-11-05 20:20:20,096 - app.utils.database - INFO - Created session factory for tenant database: tenant_test_download_tenant_1762374019_bc191d93
+2025-11-05 20:20:20,103 - app.models.file - DEBUG - Generated S3 path: tenants/ae3a5931-7126-47c6-bdf4-d131440a6799/files/5f/6d/5f6dd6064beb2d0f358cc0afff5f7efd_None
+2025-11-05 20:20:20,103 - app.models.file - INFO - File object initialized: md5=5f6dd6064beb2d0f358cc0afff5f7efd, size=36, s3_path=tenants/ae3a5931-7126-47c6-bdf4-d131440a6799/files/5f/6d/5f6dd6064beb2d0f358cc0afff5f7efd_None
+2025-11-05 20:20:20,104 - app.routes.documents - INFO - Created new file: file_id=0118b33e-a343-4bae-a80a-772d9651dae5, md5=5f6dd6064beb2d0f358cc0afff5f7efd, s3_path=tenants/ae3a5931-7126-47c6-bdf4-d131440a6799/files/5f/6d/5f6dd6064beb2d0f358cc0afff5f7efd_None
+2025-11-05 20:20:20,186 - app.utils.s3_client - DEBUG - S3 client initialized: bucket=saas-documents, region=us-east-1, endpoint=http://minio:9000, use_ssl=False
+2025-11-05 20:20:20,186 - app.utils.s3_client - INFO - S3 client initialized: bucket=saas-documents
+2025-11-05 20:20:20,191 - app.utils.s3_client - DEBUG - Uploaded file to S3: bucket=saas-documents, path=tenants/ae3a5931-7126-47c6-bdf4-d131440a6799/files/5f/6d/5f6dd6064beb2d0f358cc0afff5f7efd_None, content_type=text/plain
+2025-11-05 20:20:20,191 - app.utils.s3_client - INFO - File uploaded to S3: tenants/ae3a5931-7126-47c6-bdf4-d131440a6799/files/5f/6d/5f6dd6064beb2d0f358cc0afff5f7efd_None
+2025-11-05 20:20:20,192 - app.models.document - INFO - Document object initialized: filename=download_test.txt, mime_type=text/plain, file_id=0118b33e-a343-4bae-a80a-772d9651dae5, user_id=866d031b-4942-44cb-8ed1-6b152486c722
+2025-11-05 20:20:20,193 - app.routes.documents - INFO - Document uploaded successfully: document_id=c1458f1d-a3df-4d8c-bd03-c45a05d07177, file_id=0118b33e-a343-4bae-a80a-772d9651dae5
+2025-11-05 20:20:20,193 - app.utils.database - DEBUG - Committed transaction for tenant: tenant_test_download_tenant_1762374019_bc191d93
+2025-11-05 20:20:20,225 - app.utils.decorators - DEBUG - Authenticated user: 866d031b-4942-44cb-8ed1-6b152486c722
+2025-11-05 20:20:20,225 - app.routes.documents - INFO - Generating download URL: tenant_id=ae3a5931-7126-47c6-bdf4-d131440a6799, document_id=c1458f1d-a3df-4d8c-bd03-c45a05d07177, user_id=866d031b-4942-44cb-8ed1-6b152486c722
+2025-11-05 20:20:20,227 - app.utils.database - INFO - Created engine for tenant database: tenant_test_download_tenant_1762374019_bc191d93
+2025-11-05 20:20:20,227 - app.utils.database - INFO - Created session factory for tenant database: tenant_test_download_tenant_1762374019_bc191d93
+2025-11-05 20:20:20,234 - app.utils.s3_client - DEBUG - Generated pre-signed URL: bucket=saas-documents, path=tenants/ae3a5931-7126-47c6-bdf4-d131440a6799/files/5f/6d/5f6dd6064beb2d0f358cc0afff5f7efd_None, expires_in=3600
+2025-11-05 20:20:20,235 - app.utils.s3_client - INFO - Pre-signed URL generated: tenants/ae3a5931-7126-47c6-bdf4-d131440a6799/files/5f/6d/5f6dd6064beb2d0f358cc0afff5f7efd_None (expires in 3600s)
+2025-11-05 20:20:20,235 - app.routes.documents - INFO - Download URL generated: document_id=c1458f1d-a3df-4d8c-bd03-c45a05d07177, expires_in=3600s
+2025-11-05 20:20:20,235 - app.utils.database - DEBUG - Committed transaction for tenant: tenant_test_download_tenant_1762374019_bc191d93
+2025-11-05 20:23:13,614 - app.utils.decorators - DEBUG - Authenticated user: 08786958-ab2a-4ab8-91c0-3b8702daeac0
+2025-11-05 20:23:13,615 - app.routes.documents - INFO - Uploading document: tenant_id=9b2cf18a-243d-4ceb-8b87-9fcc4babbb54, user_id=08786958-ab2a-4ab8-91c0-3b8702daeac0
+2025-11-05 20:23:13,624 - app.schemas.document_schema - DEBUG - Validated filename for upload: test.pdf
+2025-11-05 20:23:13,625 - app.routes.documents - WARNING - Validation error: {'mime_type': ['Length must be between 1 and 100.']}
+2025-11-05 20:23:26,069 - app.utils.decorators - DEBUG - Authenticated user: 08786958-ab2a-4ab8-91c0-3b8702daeac0
+2025-11-05 20:23:26,070 - app.routes.documents - INFO - Uploading document: tenant_id=9b2cf18a-243d-4ceb-8b87-9fcc4babbb54, user_id=08786958-ab2a-4ab8-91c0-3b8702daeac0
+2025-11-05 20:23:26,085 - app.schemas.document_schema - DEBUG - Validated filename for upload: test.pdf
+2025-11-05 20:23:26,085 - app.schemas.document_schema - DEBUG - Validated MIME type for upload: text/pdf
+2025-11-05 20:23:26,086 - app.schemas.document_schema - DEBUG - Normalized filename for upload: test.pdf
+2025-11-05 20:23:26,086 - app.schemas.document_schema - DEBUG - Normalized MIME type for upload: text/pdf
+2025-11-05 20:23:26,087 - app.routes.documents - INFO - File MD5: b5d774f77e1742d1a18c7a34e85323fb, size: 368951 bytes
+2025-11-05 20:23:26,089 - app.utils.database - INFO - Created engine for tenant database: tenant_iter_45fca42c
+2025-11-05 20:23:26,090 - app.utils.database - INFO - Created session factory for tenant database: tenant_iter_45fca42c
+2025-11-05 20:23:26,100 - app.models.file - DEBUG - Generated S3 path: tenants/9b2cf18a-243d-4ceb-8b87-9fcc4babbb54/files/b5/d7/b5d774f77e1742d1a18c7a34e85323fb_None
+2025-11-05 20:23:26,101 - app.models.file - INFO - File object initialized: md5=b5d774f77e1742d1a18c7a34e85323fb, size=368951, s3_path=tenants/9b2cf18a-243d-4ceb-8b87-9fcc4babbb54/files/b5/d7/b5d774f77e1742d1a18c7a34e85323fb_None
+2025-11-05 20:23:26,102 - app.routes.documents - INFO - Created new file: file_id=1f2456d2-5731-4e98-8c2c-984132e782ab, md5=b5d774f77e1742d1a18c7a34e85323fb, s3_path=tenants/9b2cf18a-243d-4ceb-8b87-9fcc4babbb54/files/b5/d7/b5d774f77e1742d1a18c7a34e85323fb_None
+2025-11-05 20:23:26,204 - app.utils.s3_client - DEBUG - S3 client initialized: bucket=saas-documents, region=us-east-1, endpoint=http://minio:9000, use_ssl=False
+2025-11-05 20:23:26,205 - app.utils.s3_client - INFO - S3 client initialized: bucket=saas-documents
+2025-11-05 20:23:26,212 - app.utils.s3_client - DEBUG - Uploaded file to S3: bucket=saas-documents, path=tenants/9b2cf18a-243d-4ceb-8b87-9fcc4babbb54/files/b5/d7/b5d774f77e1742d1a18c7a34e85323fb_None, content_type=text/pdf
+2025-11-05 20:23:26,212 - app.utils.s3_client - INFO - File uploaded to S3: tenants/9b2cf18a-243d-4ceb-8b87-9fcc4babbb54/files/b5/d7/b5d774f77e1742d1a18c7a34e85323fb_None
+2025-11-05 20:23:26,212 - app.models.document - INFO - Document object initialized: filename=test.pdf, mime_type=text/pdf, file_id=1f2456d2-5731-4e98-8c2c-984132e782ab, user_id=08786958-ab2a-4ab8-91c0-3b8702daeac0
+2025-11-05 20:23:26,214 - app.routes.documents - INFO - Document uploaded successfully: document_id=d66ccbb3-93fd-4430-b5f4-9255bd20729c, file_id=1f2456d2-5731-4e98-8c2c-984132e782ab
+2025-11-05 20:23:26,214 - app.utils.database - DEBUG - Committed transaction for tenant: tenant_iter_45fca42c
+2025-11-05 20:28:02,599 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-05 20:28:02,599 - app - INFO - Flask app created with config: development
+2025-11-05 20:28:02,600 - app - INFO - Debug mode: True
+2025-11-05 20:28:02,600 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-05 20:28:02,638 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-05 20:28:02,639 - app - INFO - Flask app created with config: development
+2025-11-05 20:28:02,639 - app - INFO - Debug mode: True
+2025-11-05 20:28:02,639 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-05 20:28:02,747 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-05 20:28:02,747 - app - INFO - Flask app created with config: development
+2025-11-05 20:28:02,748 - app - INFO - Debug mode: True
+2025-11-05 20:28:02,749 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-05 20:28:02,777 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-05 20:28:02,777 - app - INFO - Flask app created with config: development
+2025-11-05 20:28:02,777 - app - INFO - Debug mode: True
+2025-11-05 20:28:02,777 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-05 20:28:29,222 - app.models.user - DEBUG - Password hashed for user: test_path_1762374509@example.com
+2025-11-05 20:28:29,454 - app.utils.decorators - DEBUG - Authenticated user: 7aa7a015-95f7-4a58-a58b-f321a8986e7d
+2025-11-05 20:28:29,454 - app.routes.tenants - INFO - Creating tenant for user_id=7aa7a015-95f7-4a58-a58b-f321a8986e7d
+2025-11-05 20:28:29,455 - app.schemas.tenant_schema - DEBUG - Validated tenant name for creation: TestPath 1762374509
+2025-11-05 20:28:29,455 - app.schemas.tenant_schema - DEBUG - Normalized tenant name for creation: TestPath 1762374509
+2025-11-05 20:28:29,458 - app.models.tenant - DEBUG - Generated database name: TestPath 1762374509 -> tenant_testpath_1762374509_fbda372d
+2025-11-05 20:28:29,458 - app.models.tenant - INFO - Tenant object initialized: name=TestPath 1762374509, database_name=tenant_testpath_1762374509_fbda372d
+2025-11-05 20:28:29,499 - app.utils.database - INFO - Created tenant database: tenant_testpath_1762374509_fbda372d
+2025-11-05 20:28:29,499 - app.utils.database - INFO - Created engine for tenant database: tenant_testpath_1762374509_fbda372d
+2025-11-05 20:28:29,513 - app.utils.database - INFO - Created 'files' table in tenant database: tenant_testpath_1762374509_fbda372d
+2025-11-05 20:28:29,519 - app.utils.database - INFO - Created 'documents' table in tenant database: tenant_testpath_1762374509_fbda372d
+2025-11-05 20:28:29,519 - app.utils.database - INFO - Successfully created all tables in tenant database: tenant_testpath_1762374509_fbda372d
+2025-11-05 20:28:29,519 - app.routes.tenants - INFO - Created database and tables: tenant_testpath_1762374509_fbda372d
+2025-11-05 20:28:29,519 - app.models.user_tenant_association - INFO - UserTenantAssociation initialized: user_id=7aa7a015-95f7-4a58-a58b-f321a8986e7d, tenant_id=42f3b275-48c3-477d-a3b5-6a4900371807, role=admin
+2025-11-05 20:28:29,522 - app.routes.tenants - INFO - Tenant created successfully: tenant_id=42f3b275-48c3-477d-a3b5-6a4900371807, database=tenant_testpath_1762374509_fbda372d
+2025-11-05 20:28:29,564 - app.utils.decorators - DEBUG - Authenticated user: 7aa7a015-95f7-4a58-a58b-f321a8986e7d
+2025-11-05 20:28:29,565 - app.routes.documents - INFO - Uploading document: tenant_id=42f3b275-48c3-477d-a3b5-6a4900371807, user_id=7aa7a015-95f7-4a58-a58b-f321a8986e7d
+2025-11-05 20:28:29,568 - app.schemas.document_schema - DEBUG - Validated filename for upload: test_path.txt
+2025-11-05 20:28:29,568 - app.schemas.document_schema - DEBUG - Validated MIME type for upload: text/plain
+2025-11-05 20:28:29,568 - app.schemas.document_schema - DEBUG - Normalized filename for upload: test_path.txt
+2025-11-05 20:28:29,569 - app.schemas.document_schema - DEBUG - Normalized MIME type for upload: text/plain
+2025-11-05 20:28:29,569 - app.routes.documents - INFO - File MD5: d7425b99173cf0db8183fe9c5a95e5b6, size: 49 bytes
+2025-11-05 20:28:29,569 - app.utils.database - INFO - Created session factory for tenant database: tenant_testpath_1762374509_fbda372d
+2025-11-05 20:28:29,571 - app.models.file - DEBUG - Generated S3 path: tenants/tenant_testpath_1762374509_fbda372d/files/d7/42/d7425b99173cf0db8183fe9c5a95e5b6_None
+2025-11-05 20:28:29,571 - app.models.file - INFO - File object initialized: md5=d7425b99173cf0db8183fe9c5a95e5b6, size=49, s3_path=tenants/tenant_testpath_1762374509_fbda372d/files/d7/42/d7425b99173cf0db8183fe9c5a95e5b6_None
+2025-11-05 20:28:29,572 - app.routes.documents - INFO - Created new file: file_id=3f01a2d9-c76f-4b8d-beae-f177eea0bd9f, md5=d7425b99173cf0db8183fe9c5a95e5b6, s3_path=tenants/tenant_testpath_1762374509_fbda372d/files/d7/42/d7425b99173cf0db8183fe9c5a95e5b6_None
+2025-11-05 20:28:29,657 - app.utils.s3_client - DEBUG - S3 client initialized: bucket=saas-documents, region=us-east-1, endpoint=http://minio:9000, use_ssl=False
+2025-11-05 20:28:29,657 - app.utils.s3_client - INFO - S3 client initialized: bucket=saas-documents
+2025-11-05 20:28:29,662 - app.utils.s3_client - DEBUG - Uploaded file to S3: bucket=saas-documents, path=tenants/tenant_testpath_1762374509_fbda372d/files/d7/42/d7425b99173cf0db8183fe9c5a95e5b6_None, content_type=text/plain
+2025-11-05 20:28:29,662 - app.utils.s3_client - INFO - File uploaded to S3: tenants/tenant_testpath_1762374509_fbda372d/files/d7/42/d7425b99173cf0db8183fe9c5a95e5b6_None
+2025-11-05 20:28:29,662 - app.models.document - INFO - Document object initialized: filename=test_path.txt, mime_type=text/plain, file_id=3f01a2d9-c76f-4b8d-beae-f177eea0bd9f, user_id=7aa7a015-95f7-4a58-a58b-f321a8986e7d
+2025-11-05 20:28:29,664 - app.routes.documents - INFO - Document uploaded successfully: document_id=1f216882-9b06-4583-ba53-4b092302d4e6, file_id=3f01a2d9-c76f-4b8d-beae-f177eea0bd9f
+2025-11-05 20:28:29,664 - app.utils.database - DEBUG - Committed transaction for tenant: tenant_testpath_1762374509_fbda372d
+2025-11-05 20:29:20,529 - app.models.user - DEBUG - Password hashed for user: iter_test_1762374560@example.com
+2025-11-05 20:29:20,756 - app.utils.decorators - DEBUG - Authenticated user: 3ab72a03-b066-4b4f-9fe4-8a2398147951
+2025-11-05 20:29:20,757 - app.routes.tenants - INFO - Creating tenant for user_id=3ab72a03-b066-4b4f-9fe4-8a2398147951
+2025-11-05 20:29:20,757 - app.schemas.tenant_schema - DEBUG - Validated tenant name for creation: iter
+2025-11-05 20:29:20,757 - app.schemas.tenant_schema - DEBUG - Normalized tenant name for creation: iter
+2025-11-05 20:29:20,757 - app.models.tenant - DEBUG - Generated database name: iter -> tenant_iter_ac905dd4
+2025-11-05 20:29:20,757 - app.models.tenant - INFO - Tenant object initialized: name=iter, database_name=tenant_iter_ac905dd4
+2025-11-05 20:29:20,792 - app.utils.database - INFO - Created tenant database: tenant_iter_ac905dd4
+2025-11-05 20:29:20,792 - app.utils.database - INFO - Created engine for tenant database: tenant_iter_ac905dd4
+2025-11-05 20:29:20,806 - app.utils.database - INFO - Created 'files' table in tenant database: tenant_iter_ac905dd4
+2025-11-05 20:29:20,812 - app.utils.database - INFO - Created 'documents' table in tenant database: tenant_iter_ac905dd4
+2025-11-05 20:29:20,812 - app.utils.database - INFO - Successfully created all tables in tenant database: tenant_iter_ac905dd4
+2025-11-05 20:29:20,812 - app.routes.tenants - INFO - Created database and tables: tenant_iter_ac905dd4
+2025-11-05 20:29:20,812 - app.models.user_tenant_association - INFO - UserTenantAssociation initialized: user_id=3ab72a03-b066-4b4f-9fe4-8a2398147951, tenant_id=f95bf2f2-ace7-49d3-9b83-d3704871b4ea, role=admin
+2025-11-05 20:29:20,814 - app.routes.tenants - INFO - Tenant created successfully: tenant_id=f95bf2f2-ace7-49d3-9b83-d3704871b4ea, database=tenant_iter_ac905dd4
+2025-11-05 20:29:20,861 - app.utils.decorators - DEBUG - Authenticated user: 3ab72a03-b066-4b4f-9fe4-8a2398147951
+2025-11-05 20:29:20,861 - app.routes.documents - INFO - Uploading document: tenant_id=f95bf2f2-ace7-49d3-9b83-d3704871b4ea, user_id=3ab72a03-b066-4b4f-9fe4-8a2398147951
+2025-11-05 20:29:20,865 - app.schemas.document_schema - DEBUG - Validated filename for upload: iter_document.txt
+2025-11-05 20:29:20,865 - app.schemas.document_schema - DEBUG - Validated MIME type for upload: text/plain
+2025-11-05 20:29:20,865 - app.schemas.document_schema - DEBUG - Normalized filename for upload: iter_document.txt
+2025-11-05 20:29:20,865 - app.schemas.document_schema - DEBUG - Normalized MIME type for upload: text/plain
+2025-11-05 20:29:20,865 - app.routes.documents - INFO - File MD5: b7f9f8503e79db6f567041f55424531d, size: 122 bytes
+2025-11-05 20:29:20,866 - app.utils.database - INFO - Created engine for tenant database: tenant_iter_ac905dd4
+2025-11-05 20:29:20,866 - app.utils.database - INFO - Created session factory for tenant database: tenant_iter_ac905dd4
+2025-11-05 20:29:20,872 - app.models.file - DEBUG - Generated S3 path: tenants/tenant_iter_ac905dd4/files/b7/f9/b7f9f8503e79db6f567041f55424531d_None
+2025-11-05 20:29:20,873 - app.models.file - INFO - File object initialized: md5=b7f9f8503e79db6f567041f55424531d, size=122, s3_path=tenants/tenant_iter_ac905dd4/files/b7/f9/b7f9f8503e79db6f567041f55424531d_None
+2025-11-05 20:29:20,874 - app.routes.documents - INFO - Created new file: file_id=d0d3e35b-9136-45e8-9138-855902b925b3, md5=b7f9f8503e79db6f567041f55424531d, s3_path=tenants/tenant_iter_ac905dd4/files/b7/f9/b7f9f8503e79db6f567041f55424531d_None
+2025-11-05 20:29:20,956 - app.utils.s3_client - DEBUG - S3 client initialized: bucket=saas-documents, region=us-east-1, endpoint=http://minio:9000, use_ssl=False
+2025-11-05 20:29:20,956 - app.utils.s3_client - INFO - S3 client initialized: bucket=saas-documents
+2025-11-05 20:29:20,961 - app.utils.s3_client - DEBUG - Uploaded file to S3: bucket=saas-documents, path=tenants/tenant_iter_ac905dd4/files/b7/f9/b7f9f8503e79db6f567041f55424531d_None, content_type=text/plain
+2025-11-05 20:29:20,961 - app.utils.s3_client - INFO - File uploaded to S3: tenants/tenant_iter_ac905dd4/files/b7/f9/b7f9f8503e79db6f567041f55424531d_None
+2025-11-05 20:29:20,961 - app.models.document - INFO - Document object initialized: filename=iter_document.txt, mime_type=text/plain, file_id=d0d3e35b-9136-45e8-9138-855902b925b3, user_id=3ab72a03-b066-4b4f-9fe4-8a2398147951
+2025-11-05 20:29:20,963 - app.routes.documents - INFO - Document uploaded successfully: document_id=7332032b-0927-48b4-ac80-943631c892ee, file_id=d0d3e35b-9136-45e8-9138-855902b925b3
+2025-11-05 20:29:20,963 - app.utils.database - DEBUG - Committed transaction for tenant: tenant_iter_ac905dd4
+2025-11-05 20:33:46,463 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-05 20:33:46,463 - app - INFO - Flask app created with config: development
+2025-11-05 20:33:46,463 - app - INFO - Debug mode: True
+2025-11-05 20:33:46,463 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-05 20:33:46,488 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-05 20:33:46,488 - app - INFO - Flask app created with config: development
+2025-11-05 20:33:46,488 - app - INFO - Debug mode: True
+2025-11-05 20:33:46,488 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-05 20:33:46,498 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-05 20:33:46,498 - app - INFO - Flask app created with config: development
+2025-11-05 20:33:46,498 - app - INFO - Debug mode: True
+2025-11-05 20:33:46,499 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-05 20:33:46,516 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-05 20:33:46,516 - app - INFO - Flask app created with config: development
+2025-11-05 20:33:46,516 - app - INFO - Debug mode: True
+2025-11-05 20:33:46,516 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-05 20:34:14,373 - app.models.user - DEBUG - Password hashed for user: test_fileid_1762374854@example.com
+2025-11-05 20:34:14,602 - app.utils.decorators - DEBUG - Authenticated user: 5efddc20-666b-4ae5-a677-a1028d01b157
+2025-11-05 20:34:14,603 - app.routes.tenants - INFO - Creating tenant for user_id=5efddc20-666b-4ae5-a677-a1028d01b157
+2025-11-05 20:34:14,603 - app.schemas.tenant_schema - DEBUG - Validated tenant name for creation: TestFileID 1762374854
+2025-11-05 20:34:14,603 - app.schemas.tenant_schema - DEBUG - Normalized tenant name for creation: TestFileID 1762374854
+2025-11-05 20:34:14,603 - app.models.tenant - DEBUG - Generated database name: TestFileID 1762374854 -> tenant_testfileid_1762374854_abf5b9fd
+2025-11-05 20:34:14,603 - app.models.tenant - INFO - Tenant object initialized: name=TestFileID 1762374854, database_name=tenant_testfileid_1762374854_abf5b9fd
+2025-11-05 20:34:14,642 - app.utils.database - INFO - Created tenant database: tenant_testfileid_1762374854_abf5b9fd
+2025-11-05 20:34:14,642 - app.utils.database - INFO - Created engine for tenant database: tenant_testfileid_1762374854_abf5b9fd
+2025-11-05 20:34:14,657 - app.utils.database - INFO - Created 'files' table in tenant database: tenant_testfileid_1762374854_abf5b9fd
+2025-11-05 20:34:14,662 - app.utils.database - INFO - Created 'documents' table in tenant database: tenant_testfileid_1762374854_abf5b9fd
+2025-11-05 20:34:14,662 - app.utils.database - INFO - Successfully created all tables in tenant database: tenant_testfileid_1762374854_abf5b9fd
+2025-11-05 20:34:14,662 - app.routes.tenants - INFO - Created database and tables: tenant_testfileid_1762374854_abf5b9fd
+2025-11-05 20:34:14,663 - app.models.user_tenant_association - INFO - UserTenantAssociation initialized: user_id=5efddc20-666b-4ae5-a677-a1028d01b157, tenant_id=bf8d7f23-ae77-43b4-a2d4-d6f1cfc7d6c9, role=admin
+2025-11-05 20:34:14,665 - app.routes.tenants - INFO - Tenant created successfully: tenant_id=bf8d7f23-ae77-43b4-a2d4-d6f1cfc7d6c9, database=tenant_testfileid_1762374854_abf5b9fd
+2025-11-05 20:34:14,707 - app.utils.decorators - DEBUG - Authenticated user: 5efddc20-666b-4ae5-a677-a1028d01b157
+2025-11-05 20:34:14,707 - app.routes.documents - INFO - Uploading document: tenant_id=bf8d7f23-ae77-43b4-a2d4-d6f1cfc7d6c9, user_id=5efddc20-666b-4ae5-a677-a1028d01b157
+2025-11-05 20:34:14,709 - app.schemas.document_schema - DEBUG - Validated filename for upload: test_fileid.txt
+2025-11-05 20:34:14,710 - app.schemas.document_schema - DEBUG - Validated MIME type for upload: text/plain
+2025-11-05 20:34:14,710 - app.schemas.document_schema - DEBUG - Normalized filename for upload: test_fileid.txt
+2025-11-05 20:34:14,710 - app.schemas.document_schema - DEBUG - Normalized MIME type for upload: text/plain
+2025-11-05 20:34:14,710 - app.routes.documents - INFO - File MD5: 09a7ea3c184c836635c0e60f17fd472f, size: 49 bytes
+2025-11-05 20:34:14,711 - app.utils.database - INFO - Created session factory for tenant database: tenant_testfileid_1762374854_abf5b9fd
+2025-11-05 20:34:14,712 - app.models.file - DEBUG - Generated S3 path: tenants/tenant_testfileid_1762374854_abf5b9fd/files/09/a7/09a7ea3c184c836635c0e60f17fd472f_temp
+2025-11-05 20:34:14,712 - app.models.file - INFO - File object initialized: md5=09a7ea3c184c836635c0e60f17fd472f, size=49, s3_path=tenants/tenant_testfileid_1762374854_abf5b9fd/files/09/a7/09a7ea3c184c836635c0e60f17fd472f_temp
+2025-11-05 20:34:14,713 - app.models.file - DEBUG - Generated S3 path: tenants/tenant_testfileid_1762374854_abf5b9fd/files/09/a7/09a7ea3c184c836635c0e60f17fd472f_263996cd-94cc-411e-9ec8-ed74d405ceda
+2025-11-05 20:34:14,714 - app.routes.documents - INFO - Created new file: file_id=263996cd-94cc-411e-9ec8-ed74d405ceda, md5=09a7ea3c184c836635c0e60f17fd472f, s3_path=tenants/tenant_testfileid_1762374854_abf5b9fd/files/09/a7/09a7ea3c184c836635c0e60f17fd472f_263996cd-94cc-411e-9ec8-ed74d405ceda
+2025-11-05 20:34:14,796 - app.utils.s3_client - DEBUG - S3 client initialized: bucket=saas-documents, region=us-east-1, endpoint=http://minio:9000, use_ssl=False
+2025-11-05 20:34:14,796 - app.utils.s3_client - INFO - S3 client initialized: bucket=saas-documents
+2025-11-05 20:34:14,801 - app.utils.s3_client - DEBUG - Uploaded file to S3: bucket=saas-documents, path=tenants/tenant_testfileid_1762374854_abf5b9fd/files/09/a7/09a7ea3c184c836635c0e60f17fd472f_263996cd-94cc-411e-9ec8-ed74d405ceda, content_type=text/plain
+2025-11-05 20:34:14,801 - app.utils.s3_client - INFO - File uploaded to S3: tenants/tenant_testfileid_1762374854_abf5b9fd/files/09/a7/09a7ea3c184c836635c0e60f17fd472f_263996cd-94cc-411e-9ec8-ed74d405ceda
+2025-11-05 20:34:14,802 - app.models.document - INFO - Document object initialized: filename=test_fileid.txt, mime_type=text/plain, file_id=263996cd-94cc-411e-9ec8-ed74d405ceda, user_id=5efddc20-666b-4ae5-a677-a1028d01b157
+2025-11-05 20:34:14,803 - app.routes.documents - INFO - Document uploaded successfully: document_id=92af68e3-0590-4adf-b1fa-62abb723a5e3, file_id=263996cd-94cc-411e-9ec8-ed74d405ceda
+2025-11-05 20:34:14,803 - app.utils.database - DEBUG - Committed transaction for tenant: tenant_testfileid_1762374854_abf5b9fd
+2025-11-05 20:35:27,219 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-05 20:35:27,219 - app - INFO - Flask app created with config: development
+2025-11-05 20:35:27,219 - app - INFO - Debug mode: True
+2025-11-05 20:35:27,220 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-05 20:35:27,281 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-05 20:35:27,281 - app - INFO - Flask app created with config: development
+2025-11-05 20:35:27,281 - app - INFO - Debug mode: True
+2025-11-05 20:35:27,282 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-05 20:35:27,348 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-05 20:35:27,348 - app - INFO - Flask app created with config: development
+2025-11-05 20:35:27,349 - app - INFO - Debug mode: True
+2025-11-05 20:35:27,349 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-05 20:35:27,379 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-05 20:35:27,379 - app - INFO - Flask app created with config: development
+2025-11-05 20:35:27,379 - app - INFO - Debug mode: True
+2025-11-05 20:35:27,379 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-05 20:36:51,215 - app.utils.decorators - DEBUG - Authenticated user: 08786958-ab2a-4ab8-91c0-3b8702daeac0
+2025-11-05 20:36:51,216 - app.routes.documents - INFO - Uploading document: tenant_id=9b2cf18a-243d-4ceb-8b87-9fcc4babbb54, user_id=08786958-ab2a-4ab8-91c0-3b8702daeac0
+2025-11-05 20:36:51,228 - app.schemas.document_schema - DEBUG - Validated filename for upload: test.pdf
+2025-11-05 20:36:51,228 - app.schemas.document_schema - DEBUG - Validated MIME type for upload: text/pdf
+2025-11-05 20:36:51,228 - app.schemas.document_schema - DEBUG - Normalized filename for upload: test.pdf
+2025-11-05 20:36:51,229 - app.schemas.document_schema - DEBUG - Normalized MIME type for upload: text/pdf
+2025-11-05 20:36:51,230 - app.routes.documents - INFO - File MD5: b5d774f77e1742d1a18c7a34e85323fb, size: 368951 bytes
+2025-11-05 20:36:51,231 - app.utils.database - INFO - Created engine for tenant database: tenant_iter_45fca42c
+2025-11-05 20:36:51,232 - app.utils.database - INFO - Created session factory for tenant database: tenant_iter_45fca42c
+2025-11-05 20:36:51,241 - app.models.file - DEBUG - Generated S3 path: tenants/tenant_iter_45fca42c/files/b5/d7/b5d774f77e1742d1a18c7a34e85323fb_temp
+2025-11-05 20:36:51,241 - app.models.file - INFO - File object initialized: md5=b5d774f77e1742d1a18c7a34e85323fb, size=368951, s3_path=tenants/tenant_iter_45fca42c/files/b5/d7/b5d774f77e1742d1a18c7a34e85323fb_temp
+2025-11-05 20:36:51,243 - app.models.file - DEBUG - Generated S3 path: tenants/tenant_iter_45fca42c/files/b5/d7/b5d774f77e1742d1a18c7a34e85323fb_c6ed5667-2a23-4201-b3f5-2c7dc05b4c03
+2025-11-05 20:36:51,245 - app.routes.documents - INFO - Created new file: file_id=c6ed5667-2a23-4201-b3f5-2c7dc05b4c03, md5=b5d774f77e1742d1a18c7a34e85323fb, s3_path=tenants/tenant_iter_45fca42c/files/b5/d7/b5d774f77e1742d1a18c7a34e85323fb_c6ed5667-2a23-4201-b3f5-2c7dc05b4c03
+2025-11-05 20:36:51,347 - app.utils.s3_client - DEBUG - S3 client initialized: bucket=saas-documents, region=us-east-1, endpoint=http://minio:9000, use_ssl=False
+2025-11-05 20:36:51,347 - app.utils.s3_client - INFO - S3 client initialized: bucket=saas-documents
+2025-11-05 20:36:51,354 - app.utils.s3_client - DEBUG - Uploaded file to S3: bucket=saas-documents, path=tenants/tenant_iter_45fca42c/files/b5/d7/b5d774f77e1742d1a18c7a34e85323fb_c6ed5667-2a23-4201-b3f5-2c7dc05b4c03, content_type=text/pdf
+2025-11-05 20:36:51,354 - app.utils.s3_client - INFO - File uploaded to S3: tenants/tenant_iter_45fca42c/files/b5/d7/b5d774f77e1742d1a18c7a34e85323fb_c6ed5667-2a23-4201-b3f5-2c7dc05b4c03
+2025-11-05 20:36:51,354 - app.models.document - INFO - Document object initialized: filename=test.pdf, mime_type=text/pdf, file_id=c6ed5667-2a23-4201-b3f5-2c7dc05b4c03, user_id=08786958-ab2a-4ab8-91c0-3b8702daeac0
+2025-11-05 20:36:51,356 - app.routes.documents - INFO - Document uploaded successfully: document_id=9c6e6031-5abf-4845-a56a-b319e33f44f8, file_id=c6ed5667-2a23-4201-b3f5-2c7dc05b4c03
+2025-11-05 20:36:51,356 - app.utils.database - DEBUG - Committed transaction for tenant: tenant_iter_45fca42c
+2025-11-05 21:38:08,413 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-05 21:38:08,413 - app - INFO - Flask app created with config: development
+2025-11-05 21:38:08,413 - app - INFO - Debug mode: True
+2025-11-05 21:38:08,413 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-05 21:38:08,457 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-05 21:38:08,457 - app - INFO - Flask app created with config: development
+2025-11-05 21:38:08,457 - app - INFO - Debug mode: True
+2025-11-05 21:38:08,457 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-05 21:38:08,555 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-05 21:38:08,555 - app - INFO - Flask app created with config: development
+2025-11-05 21:38:08,555 - app - INFO - Debug mode: True
+2025-11-05 21:38:08,556 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-05 21:38:08,592 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-05 21:38:08,592 - app - INFO - Flask app created with config: development
+2025-11-05 21:38:08,592 - app - INFO - Debug mode: True
+2025-11-05 21:38:08,592 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-05 21:38:58,191 - app.utils.decorators - DEBUG - Authenticated user: 08786958-ab2a-4ab8-91c0-3b8702daeac0
+2025-11-05 21:38:58,192 - app.routes.documents - INFO - Downloading document: tenant_id=9b2cf18a-243d-4ceb-8b87-9fcc4babbb54, document_id=9c6e6031-5abf-4845-a56a-b319e33f44f8, user_id=08786958-ab2a-4ab8-91c0-3b8702daeac0
+2025-11-05 21:38:58,224 - app.utils.database - INFO - Created engine for tenant database: tenant_iter_45fca42c
+2025-11-05 21:38:58,224 - app.utils.database - INFO - Created session factory for tenant database: tenant_iter_45fca42c
+2025-11-05 21:38:58,236 - app.routes.documents - INFO - Streaming file from S3: s3_path=tenants/tenant_iter_45fca42c/files/b5/d7/b5d774f77e1742d1a18c7a34e85323fb_c6ed5667-2a23-4201-b3f5-2c7dc05b4c03, filename=test.pdf
+2025-11-05 21:38:58,239 - app.utils.database - ERROR - Rolled back transaction for tenant tenant_iter_45fca42c: 'NoneType' object has no attribute 'get_object'
+2025-11-05 21:38:58,239 - app.routes.documents - ERROR - Error downloading document: 'NoneType' object has no attribute 'get_object'
+Traceback (most recent call last):
+  File "/app/app/routes/documents.py", line 535, in download_document
+    s3_object = s3_client._client.get_object(
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'NoneType' object has no attribute 'get_object'
+2025-11-05 21:40:44,683 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-05 21:40:44,685 - app - INFO - Flask app created with config: development
+2025-11-05 21:40:44,685 - app - INFO - Debug mode: True
+2025-11-05 21:40:44,686 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-05 21:40:44,703 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-05 21:40:44,705 - app - INFO - Flask app created with config: development
+2025-11-05 21:40:44,706 - app - INFO - Debug mode: True
+2025-11-05 21:40:44,707 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-05 21:40:44,736 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-05 21:40:44,736 - app - INFO - Flask app created with config: development
+2025-11-05 21:40:44,736 - app - INFO - Debug mode: True
+2025-11-05 21:40:44,736 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-05 21:40:44,774 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-05 21:40:44,774 - app - INFO - Flask app created with config: development
+2025-11-05 21:40:44,774 - app - INFO - Debug mode: True
+2025-11-05 21:40:44,774 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-05 21:41:12,525 - app.utils.decorators - DEBUG - Authenticated user: 08786958-ab2a-4ab8-91c0-3b8702daeac0
+2025-11-05 21:41:12,526 - app.routes.documents - INFO - Downloading document: tenant_id=9b2cf18a-243d-4ceb-8b87-9fcc4babbb54, document_id=9c6e6031-5abf-4845-a56a-b319e33f44f8, user_id=08786958-ab2a-4ab8-91c0-3b8702daeac0
+2025-11-05 21:41:12,559 - app.utils.database - INFO - Created engine for tenant database: tenant_iter_45fca42c
+2025-11-05 21:41:12,559 - app.utils.database - INFO - Created session factory for tenant database: tenant_iter_45fca42c
+2025-11-05 21:41:12,570 - app.routes.documents - INFO - Streaming file from S3: s3_path=tenants/tenant_iter_45fca42c/files/b5/d7/b5d774f77e1742d1a18c7a34e85323fb_c6ed5667-2a23-4201-b3f5-2c7dc05b4c03, filename=test.pdf
+2025-11-05 21:41:12,668 - app.utils.s3_client - DEBUG - S3 client initialized: bucket=saas-documents, region=us-east-1, endpoint=http://minio:9000, use_ssl=False
+2025-11-05 21:41:12,668 - app.utils.s3_client - INFO - S3 client initialized: bucket=saas-documents
+2025-11-05 21:41:12,671 - app.utils.s3_client - INFO - Retrieved S3 object for streaming: tenants/tenant_iter_45fca42c/files/b5/d7/b5d774f77e1742d1a18c7a34e85323fb_c6ed5667-2a23-4201-b3f5-2c7dc05b4c03
+2025-11-05 21:41:12,671 - app.routes.documents - INFO - Document download started: document_id=9c6e6031-5abf-4845-a56a-b319e33f44f8, size=368951 bytes
+2025-11-05 21:41:12,672 - app.utils.database - DEBUG - Committed transaction for tenant: tenant_iter_45fca42c
+2025-11-05 21:41:21,918 - app.utils.decorators - DEBUG - Authenticated user: 08786958-ab2a-4ab8-91c0-3b8702daeac0
+2025-11-05 21:41:21,919 - app.routes.documents - INFO - Downloading document: tenant_id=9b2cf18a-243d-4ceb-8b87-9fcc4babbb54, document_id=9c6e6031-5abf-4845-a56a-b319e33f44f8, user_id=08786958-ab2a-4ab8-91c0-3b8702daeac0
+2025-11-05 21:41:21,948 - app.utils.database - INFO - Created engine for tenant database: tenant_iter_45fca42c
+2025-11-05 21:41:21,948 - app.utils.database - INFO - Created session factory for tenant database: tenant_iter_45fca42c
+2025-11-05 21:41:21,959 - app.routes.documents - INFO - Streaming file from S3: s3_path=tenants/tenant_iter_45fca42c/files/b5/d7/b5d774f77e1742d1a18c7a34e85323fb_c6ed5667-2a23-4201-b3f5-2c7dc05b4c03, filename=test.pdf
+2025-11-05 21:41:22,057 - app.utils.s3_client - DEBUG - S3 client initialized: bucket=saas-documents, region=us-east-1, endpoint=http://minio:9000, use_ssl=False
+2025-11-05 21:41:22,057 - app.utils.s3_client - INFO - S3 client initialized: bucket=saas-documents
+2025-11-05 21:41:22,060 - app.utils.s3_client - INFO - Retrieved S3 object for streaming: tenants/tenant_iter_45fca42c/files/b5/d7/b5d774f77e1742d1a18c7a34e85323fb_c6ed5667-2a23-4201-b3f5-2c7dc05b4c03
+2025-11-05 21:41:22,061 - app.routes.documents - INFO - Document download started: document_id=9c6e6031-5abf-4845-a56a-b319e33f44f8, size=368951 bytes
+2025-11-05 21:41:22,061 - app.utils.database - DEBUG - Committed transaction for tenant: tenant_iter_45fca42c
+2025-11-05 21:41:54,339 - app.utils.decorators - DEBUG - Authenticated user: 08786958-ab2a-4ab8-91c0-3b8702daeac0
+2025-11-05 21:41:54,340 - app.routes.documents - INFO - Downloading document: tenant_id=9b2cf18a-243d-4ceb-8b87-9fcc4babbb54, document_id=9c6e6031-5abf-4845-a56a-b319e33f44f8, user_id=08786958-ab2a-4ab8-91c0-3b8702daeac0
+2025-11-05 21:41:54,373 - app.utils.database - INFO - Created engine for tenant database: tenant_iter_45fca42c
+2025-11-05 21:41:54,373 - app.utils.database - INFO - Created session factory for tenant database: tenant_iter_45fca42c
+2025-11-05 21:41:54,385 - app.routes.documents - INFO - Streaming file from S3: s3_path=tenants/tenant_iter_45fca42c/files/b5/d7/b5d774f77e1742d1a18c7a34e85323fb_c6ed5667-2a23-4201-b3f5-2c7dc05b4c03, filename=test.pdf
+2025-11-05 21:41:54,482 - app.utils.s3_client - DEBUG - S3 client initialized: bucket=saas-documents, region=us-east-1, endpoint=http://minio:9000, use_ssl=False
+2025-11-05 21:41:54,482 - app.utils.s3_client - INFO - S3 client initialized: bucket=saas-documents
+2025-11-05 21:41:54,487 - app.utils.s3_client - INFO - Retrieved S3 object for streaming: tenants/tenant_iter_45fca42c/files/b5/d7/b5d774f77e1742d1a18c7a34e85323fb_c6ed5667-2a23-4201-b3f5-2c7dc05b4c03
+2025-11-05 21:41:54,487 - app.routes.documents - INFO - Document download started: document_id=9c6e6031-5abf-4845-a56a-b319e33f44f8, size=368951 bytes
+2025-11-05 21:41:54,487 - app.utils.database - DEBUG - Committed transaction for tenant: tenant_iter_45fca42c
+2025-11-05 21:42:46,323 - app.utils.decorators - DEBUG - Authenticated user: 08786958-ab2a-4ab8-91c0-3b8702daeac0
+2025-11-05 21:42:46,324 - app.routes.documents - INFO - Downloading document: tenant_id=9b2cf18a-243d-4ceb-8b87-9fcc4babbb54, document_id=9c6e6031-5abf-4845-a56a-b319e33f44f8, user_id=08786958-ab2a-4ab8-91c0-3b8702daeac0
+2025-11-05 21:42:46,336 - app.routes.documents - INFO - Streaming file from S3: s3_path=tenants/tenant_iter_45fca42c/files/b5/d7/b5d774f77e1742d1a18c7a34e85323fb_c6ed5667-2a23-4201-b3f5-2c7dc05b4c03, filename=test.pdf
+2025-11-05 21:42:46,343 - app.utils.s3_client - INFO - Retrieved S3 object for streaming: tenants/tenant_iter_45fca42c/files/b5/d7/b5d774f77e1742d1a18c7a34e85323fb_c6ed5667-2a23-4201-b3f5-2c7dc05b4c03
+2025-11-05 21:42:46,343 - app.routes.documents - INFO - Document download started: document_id=9c6e6031-5abf-4845-a56a-b319e33f44f8, size=368951 bytes
+2025-11-05 21:42:46,344 - app.utils.database - DEBUG - Committed transaction for tenant: tenant_iter_45fca42c
+2025-11-05 21:43:16,258 - app.utils.decorators - DEBUG - Authenticated user: 08786958-ab2a-4ab8-91c0-3b8702daeac0
+2025-11-05 21:43:16,260 - app.routes.documents - INFO - Downloading document: tenant_id=9b2cf18a-243d-4ceb-8b87-9fcc4babbb54, document_id=9c6e6031-5abf-4845-a56a-b319e33f44f8, user_id=08786958-ab2a-4ab8-91c0-3b8702daeac0
+2025-11-05 21:43:16,267 - app.routes.documents - INFO - Streaming file from S3: s3_path=tenants/tenant_iter_45fca42c/files/b5/d7/b5d774f77e1742d1a18c7a34e85323fb_c6ed5667-2a23-4201-b3f5-2c7dc05b4c03, filename=test.pdf
+2025-11-05 21:43:16,273 - app.utils.s3_client - INFO - Retrieved S3 object for streaming: tenants/tenant_iter_45fca42c/files/b5/d7/b5d774f77e1742d1a18c7a34e85323fb_c6ed5667-2a23-4201-b3f5-2c7dc05b4c03
+2025-11-05 21:43:16,274 - app.routes.documents - INFO - Document download started: document_id=9c6e6031-5abf-4845-a56a-b319e33f44f8, size=368951 bytes
+2025-11-05 21:43:16,275 - app.utils.database - DEBUG - Committed transaction for tenant: tenant_iter_45fca42c
+2025-11-05 21:45:58,618 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-05 21:45:58,618 - app - INFO - Flask app created with config: development
+2025-11-05 21:45:58,619 - app - INFO - Debug mode: True
+2025-11-05 21:45:58,619 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-05 21:45:58,702 - app.utils.s3_client - DEBUG - S3 client initialized: bucket=saas-documents, region=us-east-1, endpoint=http://minio:9000, use_ssl=False
+2025-11-05 21:45:58,702 - app.utils.s3_client - INFO - S3 client initialized: bucket=saas-documents
+2025-11-05 21:45:58,705 - app.utils.s3_client - INFO - Retrieved S3 object for streaming: tenants/tenant_iter_45fca42c/files/b5/d7/b5d774f77e1742d1a18c7a34e85323fb_c6ed5667-2a23-4201-b3f5-2c7dc05b4c03
+2025-11-05 21:51:37,174 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-05 21:51:37,174 - app - INFO - Flask app created with config: development
+2025-11-05 21:51:37,175 - app - INFO - Debug mode: True
+2025-11-05 21:51:37,175 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-05 21:51:37,182 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-05 21:51:37,183 - app - INFO - Flask app created with config: development
+2025-11-05 21:51:37,183 - app - INFO - Debug mode: True
+2025-11-05 21:51:37,184 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-05 21:51:37,196 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-05 21:51:37,196 - app - INFO - Flask app created with config: development
+2025-11-05 21:51:37,196 - app - INFO - Debug mode: True
+2025-11-05 21:51:37,196 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-05 21:51:37,213 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-05 21:51:37,213 - app - INFO - Flask app created with config: development
+2025-11-05 21:51:37,214 - app - INFO - Debug mode: True
+2025-11-05 21:51:37,214 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-05 21:52:09,094 - app.utils.decorators - ERROR - JWT validation failed: Signature has expired
+2025-11-05 21:52:33,030 - app.utils.decorators - DEBUG - Authenticated user: 08786958-ab2a-4ab8-91c0-3b8702daeac0
+2025-11-05 21:52:33,030 - app.routes.documents - INFO - Download request: tenant_id=9b2cf18a-243d-4ceb-8b87-9fcc4babbb54, document_id=9c6e6031-5abf-4845-a56a-b319e33f44f8, user_id=08786958-ab2a-4ab8-91c0-3b8702daeac0
+2025-11-05 21:52:33,057 - app.routes.documents - INFO - Access granted: user_id=08786958-ab2a-4ab8-91c0-3b8702daeac0, tenant_id=9b2cf18a-243d-4ceb-8b87-9fcc4babbb54, role=admin, database=tenant_iter_45fca42c
+2025-11-05 21:52:33,057 - app.utils.database - INFO - Created engine for tenant database: tenant_iter_45fca42c
+2025-11-05 21:52:33,058 - app.utils.database - INFO - Created session factory for tenant database: tenant_iter_45fca42c
+2025-11-05 21:52:33,069 - app.routes.documents - INFO - AUDIT: Download initiated - user_id=08786958-ab2a-4ab8-91c0-3b8702daeac0, tenant_id=9b2cf18a-243d-4ceb-8b87-9fcc4babbb54, document_id=9c6e6031-5abf-4845-a56a-b319e33f44f8, filename=test.pdf, size=368951, md5=b5d774f77e1742d1a18c7a34e85323fb, role=admin
+2025-11-05 21:52:33,168 - app.utils.s3_client - DEBUG - S3 client initialized: bucket=saas-documents, region=us-east-1, endpoint=http://minio:9000, use_ssl=False
+2025-11-05 21:52:33,169 - app.utils.s3_client - INFO - S3 client initialized: bucket=saas-documents
+2025-11-05 21:52:33,172 - app.utils.s3_client - INFO - Retrieved S3 object for streaming: tenants/tenant_iter_45fca42c/files/b5/d7/b5d774f77e1742d1a18c7a34e85323fb_c6ed5667-2a23-4201-b3f5-2c7dc05b4c03
+2025-11-05 21:52:33,172 - app.routes.documents - INFO - Download stream started: document_id=9c6e6031-5abf-4845-a56a-b319e33f44f8, size=368951 bytes
+2025-11-05 21:52:33,172 - app.utils.database - DEBUG - Committed transaction for tenant: tenant_iter_45fca42c
+2025-11-05 21:52:33,173 - app.routes.documents - INFO - AUDIT: Download completed successfully - user_id=08786958-ab2a-4ab8-91c0-3b8702daeac0, document_id=9c6e6031-5abf-4845-a56a-b319e33f44f8, filename=test.pdf, size=368951
+2025-11-05 21:52:53,713 - app.utils.decorators - ERROR - JWT validation failed: Bad Authorization header. Expected 'Authorization: Bearer <JWT>'
+2025-11-05 21:53:20,809 - app.utils.decorators - DEBUG - Authenticated user: 08786958-ab2a-4ab8-91c0-3b8702daeac0
+2025-11-05 21:53:20,810 - app.routes.documents - INFO - Download request: tenant_id=9b2cf18a-243d-4ceb-8b87-9fcc4babbb54, document_id=9c6e6031-5abf-4845-a56a-b319e33f44f8, user_id=08786958-ab2a-4ab8-91c0-3b8702daeac0
+2025-11-05 21:53:20,823 - app.routes.documents - INFO - Access granted: user_id=08786958-ab2a-4ab8-91c0-3b8702daeac0, tenant_id=9b2cf18a-243d-4ceb-8b87-9fcc4babbb54, role=admin, database=tenant_iter_45fca42c
+2025-11-05 21:53:20,823 - app.utils.database - INFO - Created engine for tenant database: tenant_iter_45fca42c
+2025-11-05 21:53:20,823 - app.utils.database - INFO - Created session factory for tenant database: tenant_iter_45fca42c
+2025-11-05 21:53:20,834 - app.routes.documents - INFO - AUDIT: Download initiated - user_id=08786958-ab2a-4ab8-91c0-3b8702daeac0, tenant_id=9b2cf18a-243d-4ceb-8b87-9fcc4babbb54, document_id=9c6e6031-5abf-4845-a56a-b319e33f44f8, filename=test.pdf, size=368951, md5=b5d774f77e1742d1a18c7a34e85323fb, role=admin
+2025-11-05 21:53:20,917 - app.utils.s3_client - DEBUG - S3 client initialized: bucket=saas-documents, region=us-east-1, endpoint=http://minio:9000, use_ssl=False
+2025-11-05 21:53:20,917 - app.utils.s3_client - INFO - S3 client initialized: bucket=saas-documents
+2025-11-05 21:53:20,920 - app.utils.s3_client - INFO - Retrieved S3 object for streaming: tenants/tenant_iter_45fca42c/files/b5/d7/b5d774f77e1742d1a18c7a34e85323fb_c6ed5667-2a23-4201-b3f5-2c7dc05b4c03
+2025-11-05 21:53:20,920 - app.routes.documents - INFO - Download stream started: document_id=9c6e6031-5abf-4845-a56a-b319e33f44f8, size=368951 bytes
+2025-11-05 21:53:20,921 - app.utils.database - DEBUG - Committed transaction for tenant: tenant_iter_45fca42c
+2025-11-05 21:54:57,462 - app.utils.decorators - DEBUG - Authenticated user: 08786958-ab2a-4ab8-91c0-3b8702daeac0
+2025-11-05 21:54:57,463 - app.routes.documents - INFO - Download request: tenant_id=9b2cf18a-243d-4ceb-8b87-9fcc4babbb54, document_id=9c6e6031-5abf-4845-a56a-b319e33f44f8, user_id=08786958-ab2a-4ab8-91c0-3b8702daeac0
+2025-11-05 21:54:57,467 - app.routes.documents - INFO - Access granted: user_id=08786958-ab2a-4ab8-91c0-3b8702daeac0, tenant_id=9b2cf18a-243d-4ceb-8b87-9fcc4babbb54, role=admin, database=tenant_iter_45fca42c
+2025-11-05 21:54:57,471 - app.routes.documents - INFO - AUDIT: Download initiated - user_id=08786958-ab2a-4ab8-91c0-3b8702daeac0, tenant_id=9b2cf18a-243d-4ceb-8b87-9fcc4babbb54, document_id=9c6e6031-5abf-4845-a56a-b319e33f44f8, filename=test.pdf, size=368951, md5=b5d774f77e1742d1a18c7a34e85323fb, role=admin
+2025-11-05 21:54:57,478 - app.utils.s3_client - INFO - Retrieved S3 object for streaming: tenants/tenant_iter_45fca42c/files/b5/d7/b5d774f77e1742d1a18c7a34e85323fb_c6ed5667-2a23-4201-b3f5-2c7dc05b4c03
+2025-11-05 21:54:57,479 - app.routes.documents - INFO - Download stream started: document_id=9c6e6031-5abf-4845-a56a-b319e33f44f8, size=368951 bytes
+2025-11-05 21:54:57,479 - app.utils.database - DEBUG - Committed transaction for tenant: tenant_iter_45fca42c
+2025-11-05 21:54:57,481 - app.routes.documents - INFO - AUDIT: Download completed successfully - user_id=08786958-ab2a-4ab8-91c0-3b8702daeac0, document_id=9c6e6031-5abf-4845-a56a-b319e33f44f8, filename=test.pdf, size=368951
+2025-11-05 21:55:29,197 - app.utils.decorators - DEBUG - Authenticated user: 08786958-ab2a-4ab8-91c0-3b8702daeac0
+2025-11-05 21:55:29,199 - app.routes.documents - INFO - Download request: tenant_id=9b2cf18a-243d-4ceb-8b87-9fcc4babbb54, document_id=9c6e6031-5abf-4845-a56a-b319e33f44f8, user_id=08786958-ab2a-4ab8-91c0-3b8702daeac0
+2025-11-05 21:55:29,205 - app.routes.documents - INFO - Access granted: user_id=08786958-ab2a-4ab8-91c0-3b8702daeac0, tenant_id=9b2cf18a-243d-4ceb-8b87-9fcc4babbb54, role=admin, database=tenant_iter_45fca42c
+2025-11-05 21:55:29,208 - app.routes.documents - INFO - AUDIT: Download initiated - user_id=08786958-ab2a-4ab8-91c0-3b8702daeac0, tenant_id=9b2cf18a-243d-4ceb-8b87-9fcc4babbb54, document_id=9c6e6031-5abf-4845-a56a-b319e33f44f8, filename=test.pdf, size=368951, md5=b5d774f77e1742d1a18c7a34e85323fb, role=admin
+2025-11-05 21:55:29,213 - app.utils.s3_client - INFO - Retrieved S3 object for streaming: tenants/tenant_iter_45fca42c/files/b5/d7/b5d774f77e1742d1a18c7a34e85323fb_c6ed5667-2a23-4201-b3f5-2c7dc05b4c03
+2025-11-05 21:55:29,213 - app.routes.documents - INFO - Download stream started: document_id=9c6e6031-5abf-4845-a56a-b319e33f44f8, size=368951 bytes
+2025-11-05 21:55:29,214 - app.utils.database - DEBUG - Committed transaction for tenant: tenant_iter_45fca42c
+2025-11-05 21:55:29,216 - app.routes.documents - INFO - AUDIT: Download completed successfully - user_id=08786958-ab2a-4ab8-91c0-3b8702daeac0, document_id=9c6e6031-5abf-4845-a56a-b319e33f44f8, filename=test.pdf, size=368951
+2025-11-05 21:56:04,588 - app.utils.decorators - DEBUG - Authenticated user: 08786958-ab2a-4ab8-91c0-3b8702daeac0
+2025-11-05 21:56:04,589 - app.routes.documents - INFO - Download request: tenant_id=9b2cf18a-243d-4ceb-8b87-9fcc4babbb54, document_id=9c6e6031-5abf-4845-a56a-b319e33f44f8, user_id=08786958-ab2a-4ab8-91c0-3b8702daeac0
+2025-11-05 21:56:04,597 - app.routes.documents - INFO - Access granted: user_id=08786958-ab2a-4ab8-91c0-3b8702daeac0, tenant_id=9b2cf18a-243d-4ceb-8b87-9fcc4babbb54, role=admin, database=tenant_iter_45fca42c
+2025-11-05 21:56:04,601 - app.routes.documents - INFO - AUDIT: Download initiated - user_id=08786958-ab2a-4ab8-91c0-3b8702daeac0, tenant_id=9b2cf18a-243d-4ceb-8b87-9fcc4babbb54, document_id=9c6e6031-5abf-4845-a56a-b319e33f44f8, filename=test.pdf, size=368951, md5=b5d774f77e1742d1a18c7a34e85323fb, role=admin
+2025-11-05 21:56:04,607 - app.utils.s3_client - INFO - Retrieved S3 object for streaming: tenants/tenant_iter_45fca42c/files/b5/d7/b5d774f77e1742d1a18c7a34e85323fb_c6ed5667-2a23-4201-b3f5-2c7dc05b4c03
+2025-11-05 21:56:04,607 - app.routes.documents - INFO - Download stream started: document_id=9c6e6031-5abf-4845-a56a-b319e33f44f8, size=368951 bytes
+2025-11-05 21:56:04,608 - app.utils.database - DEBUG - Committed transaction for tenant: tenant_iter_45fca42c
+2025-11-05 21:56:04,610 - app.routes.documents - INFO - AUDIT: Download completed successfully - user_id=08786958-ab2a-4ab8-91c0-3b8702daeac0, document_id=9c6e6031-5abf-4845-a56a-b319e33f44f8, filename=test.pdf, size=368951
+2025-11-05 22:37:09,516 - app.utils.decorators - DEBUG - Authenticated user: 08786958-ab2a-4ab8-91c0-3b8702daeac0
+2025-11-05 22:37:09,517 - app.routes.documents - INFO - Listing documents: tenant_id=9b2cf18a-243d-4ceb-8b87-9fcc4babbb54, user_id=08786958-ab2a-4ab8-91c0-3b8702daeac0
+2025-11-05 22:37:09,525 - app.utils.database - INFO - Created engine for tenant database: tenant_iter_45fca42c
+2025-11-05 22:37:09,525 - app.utils.database - INFO - Created session factory for tenant database: tenant_iter_45fca42c
+2025-11-05 22:37:09,539 - app.routes.documents - INFO - Retrieved 2 documents for tenant_id=9b2cf18a-243d-4ceb-8b87-9fcc4babbb54
+2025-11-05 22:37:09,540 - app.utils.database - DEBUG - Committed transaction for tenant: tenant_iter_45fca42c
+2025-11-05 22:39:39,054 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-05 22:39:39,054 - app - INFO - Flask app created with config: development
+2025-11-05 22:39:39,054 - app - INFO - Debug mode: True
+2025-11-05 22:39:39,055 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-05 22:39:39,088 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-05 22:39:39,088 - app - INFO - Flask app created with config: development
+2025-11-05 22:39:39,088 - app - INFO - Debug mode: True
+2025-11-05 22:39:39,088 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-05 22:39:39,138 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-05 22:39:39,138 - app - INFO - Flask app created with config: development
+2025-11-05 22:39:39,139 - app - INFO - Debug mode: True
+2025-11-05 22:39:39,139 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-05 22:39:39,143 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-05 22:39:39,143 - app - INFO - Flask app created with config: development
+2025-11-05 22:39:39,143 - app - INFO - Debug mode: True
+2025-11-05 22:39:39,143 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-05 22:39:52,109 - app.utils.decorators - DEBUG - Authenticated user: 08786958-ab2a-4ab8-91c0-3b8702daeac0
+2025-11-05 22:39:52,110 - app.routes.documents - INFO - Download URL request: tenant_id=9b2cf18a-243d-4ceb-8b87-9fcc4babbb54, document_id=9c6e6031-5abf-4845-a56a-b319e33f44f8, user_id=08786958-ab2a-4ab8-91c0-3b8702daeac0, expires_in=3600s
+2025-11-05 22:39:52,135 - app.routes.documents - INFO - Access granted: user_id=08786958-ab2a-4ab8-91c0-3b8702daeac0, tenant_id=9b2cf18a-243d-4ceb-8b87-9fcc4babbb54, role=admin, database=tenant_iter_45fca42c
+2025-11-05 22:39:52,136 - app.utils.database - INFO - Created engine for tenant database: tenant_iter_45fca42c
+2025-11-05 22:39:52,136 - app.utils.database - INFO - Created session factory for tenant database: tenant_iter_45fca42c
+2025-11-05 22:39:52,248 - app.utils.s3_client - DEBUG - S3 client initialized: bucket=saas-documents, region=us-east-1, endpoint=http://minio:9000, public_url=http://minio:9000, use_ssl=False
+2025-11-05 22:39:52,248 - app.utils.s3_client - INFO - S3 client initialized: bucket=saas-documents
+2025-11-05 22:39:52,249 - app.utils.s3_client - DEBUG - Generated pre-signed URL: bucket=saas-documents, path=tenants/tenant_iter_45fca42c/files/b5/d7/b5d774f77e1742d1a18c7a34e85323fb_c6ed5667-2a23-4201-b3f5-2c7dc05b4c03, expires_in=3600
+2025-11-05 22:39:52,250 - app.utils.s3_client - INFO - Pre-signed URL generated: tenants/tenant_iter_45fca42c/files/b5/d7/b5d774f77e1742d1a18c7a34e85323fb_c6ed5667-2a23-4201-b3f5-2c7dc05b4c03 (expires in 3600s)
+2025-11-05 22:39:52,250 - app.routes.documents - INFO - AUDIT: Download URL generated - user_id=08786958-ab2a-4ab8-91c0-3b8702daeac0, tenant_id=9b2cf18a-243d-4ceb-8b87-9fcc4babbb54, document_id=9c6e6031-5abf-4845-a56a-b319e33f44f8, filename=test.pdf, expires_in=3600s, role=admin
+2025-11-05 22:39:52,250 - app.utils.database - DEBUG - Committed transaction for tenant: tenant_iter_45fca42c
+2025-11-05 22:42:17,870 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-05 22:42:17,870 - app - INFO - Flask app created with config: development
+2025-11-05 22:42:17,870 - app - INFO - Debug mode: True
+2025-11-05 22:42:17,870 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-05 22:44:25,079 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-05 22:44:25,080 - app - INFO - Flask app created with config: development
+2025-11-05 22:44:25,080 - app - INFO - Debug mode: True
+2025-11-05 22:44:25,080 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-05 22:44:25,134 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-05 22:44:25,134 - app - INFO - Flask app created with config: development
+2025-11-05 22:44:25,134 - app - INFO - Debug mode: True
+2025-11-05 22:44:25,134 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-05 22:44:25,182 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-05 22:44:25,182 - app - INFO - Flask app created with config: development
+2025-11-05 22:44:25,182 - app - INFO - Debug mode: True
+2025-11-05 22:44:25,182 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-05 22:44:25,191 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-05 22:44:25,191 - app - INFO - Flask app created with config: development
+2025-11-05 22:44:25,191 - app - INFO - Debug mode: True
+2025-11-05 22:44:25,191 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-05 22:47:27,227 - app.utils.decorators - DEBUG - Authenticated user: 08786958-ab2a-4ab8-91c0-3b8702daeac0
+2025-11-05 22:47:27,228 - app.routes.documents - INFO - Download URL request: tenant_id=9b2cf18a-243d-4ceb-8b87-9fcc4babbb54, document_id=c6ed5667-2a23-4201-b3f5-2c7dc05b4c03, user_id=08786958-ab2a-4ab8-91c0-3b8702daeac0, expires_in=3600s
+2025-11-05 22:47:27,239 - app.routes.documents - INFO - Access granted: user_id=08786958-ab2a-4ab8-91c0-3b8702daeac0, tenant_id=9b2cf18a-243d-4ceb-8b87-9fcc4babbb54, role=admin, database=tenant_iter_45fca42c
+2025-11-05 22:47:27,240 - app.utils.database - INFO - Created engine for tenant database: tenant_iter_45fca42c
+2025-11-05 22:47:27,241 - app.utils.database - INFO - Created session factory for tenant database: tenant_iter_45fca42c
+2025-11-05 22:47:27,253 - app.routes.documents - WARNING - Document not found: document_id=c6ed5667-2a23-4201-b3f5-2c7dc05b4c03
+2025-11-05 22:47:27,253 - app.utils.database - DEBUG - Committed transaction for tenant: tenant_iter_45fca42c
+2025-11-05 22:48:01,511 - app.utils.decorators - DEBUG - Authenticated user: 08786958-ab2a-4ab8-91c0-3b8702daeac0
+2025-11-05 22:48:01,511 - app.routes.documents - INFO - Download URL request: tenant_id=9b2cf18a-243d-4ceb-8b87-9fcc4babbb54, document_id=c6ed5667-2a23-4201-b3f5-2c7dc05b4c03, user_id=08786958-ab2a-4ab8-91c0-3b8702daeac0, expires_in=3600s
+2025-11-05 22:48:01,514 - app.routes.documents - INFO - Access granted: user_id=08786958-ab2a-4ab8-91c0-3b8702daeac0, tenant_id=9b2cf18a-243d-4ceb-8b87-9fcc4babbb54, role=admin, database=tenant_iter_45fca42c
+2025-11-05 22:48:01,514 - app.routes.documents - WARNING - Document not found: document_id=c6ed5667-2a23-4201-b3f5-2c7dc05b4c03
+2025-11-05 22:48:01,515 - app.utils.database - DEBUG - Committed transaction for tenant: tenant_iter_45fca42c
+2025-11-05 22:48:31,934 - app.utils.decorators - DEBUG - Authenticated user: 08786958-ab2a-4ab8-91c0-3b8702daeac0
+2025-11-05 22:48:31,936 - app.routes.documents - INFO - Download URL request: tenant_id=9b2cf18a-243d-4ceb-8b87-9fcc4babbb54, document_id=c6ed5667-2a23-4201-b3f5-2c7dc05b4c03, user_id=08786958-ab2a-4ab8-91c0-3b8702daeac0, expires_in=3600s
+2025-11-05 22:48:31,972 - app.routes.documents - INFO - Access granted: user_id=08786958-ab2a-4ab8-91c0-3b8702daeac0, tenant_id=9b2cf18a-243d-4ceb-8b87-9fcc4babbb54, role=admin, database=tenant_iter_45fca42c
+2025-11-05 22:48:31,973 - app.utils.database - INFO - Created engine for tenant database: tenant_iter_45fca42c
+2025-11-05 22:48:31,973 - app.utils.database - INFO - Created session factory for tenant database: tenant_iter_45fca42c
+2025-11-05 22:48:31,982 - app.routes.documents - WARNING - Document not found: document_id=c6ed5667-2a23-4201-b3f5-2c7dc05b4c03
+2025-11-05 22:48:31,983 - app.utils.database - DEBUG - Committed transaction for tenant: tenant_iter_45fca42c
+2025-11-05 22:48:57,234 - app.utils.decorators - DEBUG - Authenticated user: 08786958-ab2a-4ab8-91c0-3b8702daeac0
+2025-11-05 22:48:57,235 - app.routes.documents - INFO - Download URL request: tenant_id=9b2cf18a-243d-4ceb-8b87-9fcc4babbb54, document_id=9c6e6031-5abf-4845-a56a-b319e33f44f8, user_id=08786958-ab2a-4ab8-91c0-3b8702daeac0, expires_in=3600s
+2025-11-05 22:48:57,239 - app.routes.documents - INFO - Access granted: user_id=08786958-ab2a-4ab8-91c0-3b8702daeac0, tenant_id=9b2cf18a-243d-4ceb-8b87-9fcc4babbb54, role=admin, database=tenant_iter_45fca42c
+2025-11-05 22:48:57,375 - app.utils.s3_client - DEBUG - S3 client initialized: bucket=saas-documents, region=us-east-1, endpoint=http://minio:9000, public_url=http://minio:9000, use_ssl=False
+2025-11-05 22:48:57,375 - app.utils.s3_client - INFO - S3 client initialized: bucket=saas-documents
+2025-11-05 22:48:57,376 - app.utils.s3_client - DEBUG - Generated pre-signed URL: bucket=saas-documents, path=tenants/tenant_iter_45fca42c/files/b5/d7/b5d774f77e1742d1a18c7a34e85323fb_c6ed5667-2a23-4201-b3f5-2c7dc05b4c03, expires_in=3600
+2025-11-05 22:48:57,376 - app.utils.s3_client - INFO - Pre-signed URL generated: tenants/tenant_iter_45fca42c/files/b5/d7/b5d774f77e1742d1a18c7a34e85323fb_c6ed5667-2a23-4201-b3f5-2c7dc05b4c03 (expires in 3600s)
+2025-11-05 22:48:57,377 - app.routes.documents - INFO - AUDIT: Download URL generated - user_id=08786958-ab2a-4ab8-91c0-3b8702daeac0, tenant_id=9b2cf18a-243d-4ceb-8b87-9fcc4babbb54, document_id=9c6e6031-5abf-4845-a56a-b319e33f44f8, filename=test.pdf, expires_in=3600s, role=admin
+2025-11-05 22:48:57,378 - app.utils.database - DEBUG - Committed transaction for tenant: tenant_iter_45fca42c
+2025-11-05 22:51:02,619 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-05 22:51:02,619 - app - INFO - Flask app created with config: development
+2025-11-05 22:51:02,619 - app - INFO - Debug mode: True
+2025-11-05 22:51:02,620 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-05 22:51:02,725 - app.utils.s3_client - DEBUG - S3 client initialized: bucket=saas-documents, region=us-east-1, endpoint=http://minio:9000, public_url=http://localhost:9000, use_ssl=False
+2025-11-05 22:51:02,725 - app.utils.s3_client - INFO - S3 client initialized: bucket=saas-documents
+2025-11-05 22:52:28,982 - app.utils.decorators - ERROR - JWT validation failed: Signature has expired
+2025-11-05 22:53:20,252 - app.utils.decorators - DEBUG - Authenticated user: 08786958-ab2a-4ab8-91c0-3b8702daeac0
+2025-11-05 22:53:20,252 - app.routes.documents - INFO - Download URL request: tenant_id=9b2cf18a-243d-4ceb-8b87-9fcc4babbb54, document_id=9c6e6031-5abf-4845-a56a-b319e33f44f8, user_id=08786958-ab2a-4ab8-91c0-3b8702daeac0, expires_in=3600s
+2025-11-05 22:53:20,276 - app.routes.documents - INFO - Access granted: user_id=08786958-ab2a-4ab8-91c0-3b8702daeac0, tenant_id=9b2cf18a-243d-4ceb-8b87-9fcc4babbb54, role=admin, database=tenant_iter_45fca42c
+2025-11-05 22:53:20,277 - app.utils.database - INFO - Created engine for tenant database: tenant_iter_45fca42c
+2025-11-05 22:53:20,277 - app.utils.database - INFO - Created session factory for tenant database: tenant_iter_45fca42c
+2025-11-05 22:53:20,378 - app.utils.s3_client - DEBUG - S3 client initialized: bucket=saas-documents, region=us-east-1, endpoint=http://minio:9000, public_url=http://minio:9000, use_ssl=False
+2025-11-05 22:53:20,379 - app.utils.s3_client - INFO - S3 client initialized: bucket=saas-documents
+2025-11-05 22:53:20,380 - app.utils.s3_client - DEBUG - Generated pre-signed URL: bucket=saas-documents, path=tenants/tenant_iter_45fca42c/files/b5/d7/b5d774f77e1742d1a18c7a34e85323fb_c6ed5667-2a23-4201-b3f5-2c7dc05b4c03, expires_in=3600
+2025-11-05 22:53:20,380 - app.utils.s3_client - INFO - Pre-signed URL generated: tenants/tenant_iter_45fca42c/files/b5/d7/b5d774f77e1742d1a18c7a34e85323fb_c6ed5667-2a23-4201-b3f5-2c7dc05b4c03 (expires in 3600s)
+2025-11-05 22:53:20,380 - app.routes.documents - INFO - AUDIT: Download URL generated - user_id=08786958-ab2a-4ab8-91c0-3b8702daeac0, tenant_id=9b2cf18a-243d-4ceb-8b87-9fcc4babbb54, document_id=9c6e6031-5abf-4845-a56a-b319e33f44f8, filename=test.pdf, expires_in=3600s, role=admin
+2025-11-05 22:53:20,381 - app.utils.database - DEBUG - Committed transaction for tenant: tenant_iter_45fca42c
+2025-11-05 22:53:51,017 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-05 22:53:51,017 - app - INFO - Flask app created with config: development
+2025-11-05 22:53:51,017 - app - INFO - Debug mode: True
+2025-11-05 22:53:51,017 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-05 22:54:18,328 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-05 22:54:18,328 - app - INFO - Flask app created with config: development
+2025-11-05 22:54:18,329 - app - INFO - Debug mode: True
+2025-11-05 22:54:18,329 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-05 22:54:18,340 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-05 22:54:18,340 - app - INFO - Flask app created with config: development
+2025-11-05 22:54:18,341 - app - INFO - Debug mode: True
+2025-11-05 22:54:18,341 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-05 22:54:18,363 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-05 22:54:18,363 - app - INFO - Flask app created with config: development
+2025-11-05 22:54:18,363 - app - INFO - Debug mode: True
+2025-11-05 22:54:18,363 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-05 22:54:18,370 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-05 22:54:18,370 - app - INFO - Flask app created with config: development
+2025-11-05 22:54:18,370 - app - INFO - Debug mode: True
+2025-11-05 22:54:18,370 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-05 22:54:34,674 - app.utils.decorators - DEBUG - Authenticated user: 08786958-ab2a-4ab8-91c0-3b8702daeac0
+2025-11-05 22:54:34,675 - app.routes.documents - INFO - Download URL request: tenant_id=9b2cf18a-243d-4ceb-8b87-9fcc4babbb54, document_id=9c6e6031-5abf-4845-a56a-b319e33f44f8, user_id=08786958-ab2a-4ab8-91c0-3b8702daeac0, expires_in=3600s
+2025-11-05 22:54:34,678 - app.routes.documents - INFO - Access granted: user_id=08786958-ab2a-4ab8-91c0-3b8702daeac0, tenant_id=9b2cf18a-243d-4ceb-8b87-9fcc4babbb54, role=admin, database=tenant_iter_45fca42c
+2025-11-05 22:54:34,678 - app.utils.database - INFO - Created engine for tenant database: tenant_iter_45fca42c
+2025-11-05 22:54:34,678 - app.utils.database - INFO - Created session factory for tenant database: tenant_iter_45fca42c
+2025-11-05 22:54:34,763 - app.utils.s3_client - DEBUG - S3 client initialized: bucket=saas-documents, region=us-east-1, endpoint=http://minio:9000, public_url=http://minio:9000, use_ssl=False
+2025-11-05 22:54:34,763 - app.utils.s3_client - INFO - S3 client initialized: bucket=saas-documents
+2025-11-05 22:54:34,764 - app.utils.s3_client - DEBUG - Generated pre-signed URL: bucket=saas-documents, path=tenants/tenant_iter_45fca42c/files/b5/d7/b5d774f77e1742d1a18c7a34e85323fb_c6ed5667-2a23-4201-b3f5-2c7dc05b4c03, expires_in=3600
+2025-11-05 22:54:34,764 - app.utils.s3_client - INFO - Pre-signed URL generated: tenants/tenant_iter_45fca42c/files/b5/d7/b5d774f77e1742d1a18c7a34e85323fb_c6ed5667-2a23-4201-b3f5-2c7dc05b4c03 (expires in 3600s)
+2025-11-05 22:54:34,764 - app.routes.documents - INFO - AUDIT: Download URL generated - user_id=08786958-ab2a-4ab8-91c0-3b8702daeac0, tenant_id=9b2cf18a-243d-4ceb-8b87-9fcc4babbb54, document_id=9c6e6031-5abf-4845-a56a-b319e33f44f8, filename=test.pdf, expires_in=3600s, role=admin
+2025-11-05 22:54:34,765 - app.utils.database - DEBUG - Committed transaction for tenant: tenant_iter_45fca42c
+2025-11-05 22:57:01,498 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-05 22:57:01,498 - app - INFO - Flask app created with config: development
+2025-11-05 22:57:01,498 - app - INFO - Debug mode: True
+2025-11-05 22:57:01,498 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-05 22:57:01,590 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-05 22:57:01,590 - app - INFO - Flask app created with config: development
+2025-11-05 22:57:01,590 - app - INFO - Debug mode: True
+2025-11-05 22:57:01,590 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-05 22:57:01,684 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-05 22:57:01,684 - app - INFO - Flask app created with config: development
+2025-11-05 22:57:01,684 - app - INFO - Debug mode: True
+2025-11-05 22:57:01,684 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-05 22:57:01,708 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-05 22:57:01,708 - app - INFO - Flask app created with config: development
+2025-11-05 22:57:01,708 - app - INFO - Debug mode: True
+2025-11-05 22:57:01,708 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-05 22:57:20,611 - app.utils.decorators - DEBUG - Authenticated user: 08786958-ab2a-4ab8-91c0-3b8702daeac0
+2025-11-05 22:57:20,612 - app.routes.documents - INFO - Download URL request: tenant_id=9b2cf18a-243d-4ceb-8b87-9fcc4babbb54, document_id=9c6e6031-5abf-4845-a56a-b319e33f44f8, user_id=08786958-ab2a-4ab8-91c0-3b8702daeac0, expires_in=3600s
+2025-11-05 22:57:20,615 - app.routes.documents - INFO - Access granted: user_id=08786958-ab2a-4ab8-91c0-3b8702daeac0, tenant_id=9b2cf18a-243d-4ceb-8b87-9fcc4babbb54, role=admin, database=tenant_iter_45fca42c
+2025-11-05 22:57:20,615 - app.utils.database - INFO - Created engine for tenant database: tenant_iter_45fca42c
+2025-11-05 22:57:20,615 - app.utils.database - INFO - Created session factory for tenant database: tenant_iter_45fca42c
+2025-11-05 22:57:20,702 - app.utils.s3_client - DEBUG - S3 client initialized: bucket=saas-documents, region=us-east-1, endpoint=http://minio:9000, public_url=http://localhost:9000, use_ssl=False
+2025-11-05 22:57:20,702 - app.utils.s3_client - INFO - S3 client initialized: bucket=saas-documents
+2025-11-05 22:57:20,703 - app.utils.s3_client - DEBUG - Generated pre-signed URL: bucket=saas-documents, path=tenants/tenant_iter_45fca42c/files/b5/d7/b5d774f77e1742d1a18c7a34e85323fb_c6ed5667-2a23-4201-b3f5-2c7dc05b4c03, expires_in=3600
+2025-11-05 22:57:20,703 - app.utils.s3_client - DEBUG - Replaced endpoint URL with public URL: http://minio:9000 → http://localhost:9000
+2025-11-05 22:57:20,703 - app.utils.s3_client - DEBUG - Original URL: http://minio:9000/saas-documents/tenants/tenant_iter_45fca42c/files/b5/d7/b5d774f77e1742d1a18c7a34e85323fb_c6ed5667-2a23-4201-b3f5-2c7dc05b4c03?response-content-disposition=attachment%3B%20filename%3D%22test.pdf%22&X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=minioadmin%2F20251105%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20251105T225720Z&X-Amz-Expires=3600&X-Amz-SignedHeaders=host&X-Amz-Signature=3fa8b2d1f1ad2112501232ec9ce02971eab06adbbeb6c116d832901050b256fa
+2025-11-05 22:57:20,703 - app.utils.s3_client - DEBUG - Public URL: http://localhost:9000/saas-documents/tenants/tenant_iter_45fca42c/files/b5/d7/b5d774f77e1742d1a18c7a34e85323fb_c6ed5667-2a23-4201-b3f5-2c7dc05b4c03?response-content-disposition=attachment%3B%20filename%3D%22test.pdf%22&X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=minioadmin%2F20251105%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20251105T225720Z&X-Amz-Expires=3600&X-Amz-SignedHeaders=host&X-Amz-Signature=3fa8b2d1f1ad2112501232ec9ce02971eab06adbbeb6c116d832901050b256fa
+2025-11-05 22:57:20,704 - app.utils.s3_client - INFO - Pre-signed URL generated: tenants/tenant_iter_45fca42c/files/b5/d7/b5d774f77e1742d1a18c7a34e85323fb_c6ed5667-2a23-4201-b3f5-2c7dc05b4c03 (expires in 3600s)
+2025-11-05 22:57:20,704 - app.routes.documents - INFO - AUDIT: Download URL generated - user_id=08786958-ab2a-4ab8-91c0-3b8702daeac0, tenant_id=9b2cf18a-243d-4ceb-8b87-9fcc4babbb54, document_id=9c6e6031-5abf-4845-a56a-b319e33f44f8, filename=test.pdf, expires_in=3600s, role=admin
+2025-11-05 22:57:20,704 - app.utils.database - DEBUG - Committed transaction for tenant: tenant_iter_45fca42c
+2025-11-05 22:57:43,833 - app.utils.decorators - DEBUG - Authenticated user: 08786958-ab2a-4ab8-91c0-3b8702daeac0
+2025-11-05 22:57:43,833 - app.routes.documents - INFO - Download URL request: tenant_id=9b2cf18a-243d-4ceb-8b87-9fcc4babbb54, document_id=9c6e6031-5abf-4845-a56a-b319e33f44f8, user_id=08786958-ab2a-4ab8-91c0-3b8702daeac0, expires_in=3600s
+2025-11-05 22:57:43,836 - app.routes.documents - INFO - Access granted: user_id=08786958-ab2a-4ab8-91c0-3b8702daeac0, tenant_id=9b2cf18a-243d-4ceb-8b87-9fcc4babbb54, role=admin, database=tenant_iter_45fca42c
+2025-11-05 22:57:43,836 - app.utils.database - INFO - Created engine for tenant database: tenant_iter_45fca42c
+2025-11-05 22:57:43,836 - app.utils.database - INFO - Created session factory for tenant database: tenant_iter_45fca42c
+2025-11-05 22:57:43,923 - app.utils.s3_client - DEBUG - S3 client initialized: bucket=saas-documents, region=us-east-1, endpoint=http://minio:9000, public_url=http://localhost:9000, use_ssl=False
+2025-11-05 22:57:43,923 - app.utils.s3_client - INFO - S3 client initialized: bucket=saas-documents
+2025-11-05 22:57:43,924 - app.utils.s3_client - DEBUG - Generated pre-signed URL: bucket=saas-documents, path=tenants/tenant_iter_45fca42c/files/b5/d7/b5d774f77e1742d1a18c7a34e85323fb_c6ed5667-2a23-4201-b3f5-2c7dc05b4c03, expires_in=3600
+2025-11-05 22:57:43,924 - app.utils.s3_client - DEBUG - Replaced endpoint URL with public URL: http://minio:9000 → http://localhost:9000
+2025-11-05 22:57:43,924 - app.utils.s3_client - DEBUG - Original URL: http://minio:9000/saas-documents/tenants/tenant_iter_45fca42c/files/b5/d7/b5d774f77e1742d1a18c7a34e85323fb_c6ed5667-2a23-4201-b3f5-2c7dc05b4c03?response-content-disposition=attachment%3B%20filename%3D%22test.pdf%22&X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=minioadmin%2F20251105%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20251105T225743Z&X-Amz-Expires=3600&X-Amz-SignedHeaders=host&X-Amz-Signature=ea96ff28bc95f309860c67836ab8f8ed108df1df0a49891b4cff18d503f49838
+2025-11-05 22:57:43,924 - app.utils.s3_client - DEBUG - Public URL: http://localhost:9000/saas-documents/tenants/tenant_iter_45fca42c/files/b5/d7/b5d774f77e1742d1a18c7a34e85323fb_c6ed5667-2a23-4201-b3f5-2c7dc05b4c03?response-content-disposition=attachment%3B%20filename%3D%22test.pdf%22&X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=minioadmin%2F20251105%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20251105T225743Z&X-Amz-Expires=3600&X-Amz-SignedHeaders=host&X-Amz-Signature=ea96ff28bc95f309860c67836ab8f8ed108df1df0a49891b4cff18d503f49838
+2025-11-05 22:57:43,925 - app.utils.s3_client - INFO - Pre-signed URL generated: tenants/tenant_iter_45fca42c/files/b5/d7/b5d774f77e1742d1a18c7a34e85323fb_c6ed5667-2a23-4201-b3f5-2c7dc05b4c03 (expires in 3600s)
+2025-11-05 22:57:43,925 - app.routes.documents - INFO - AUDIT: Download URL generated - user_id=08786958-ab2a-4ab8-91c0-3b8702daeac0, tenant_id=9b2cf18a-243d-4ceb-8b87-9fcc4babbb54, document_id=9c6e6031-5abf-4845-a56a-b319e33f44f8, filename=test.pdf, expires_in=3600s, role=admin
+2025-11-05 22:57:43,925 - app.utils.database - DEBUG - Committed transaction for tenant: tenant_iter_45fca42c
+2025-11-05 22:58:11,441 - app.utils.decorators - DEBUG - Authenticated user: 08786958-ab2a-4ab8-91c0-3b8702daeac0
+2025-11-05 22:58:11,441 - app.routes.documents - INFO - Download URL request: tenant_id=9b2cf18a-243d-4ceb-8b87-9fcc4babbb54, document_id=9c6e6031-5abf-4845-a56a-b319e33f44f8, user_id=08786958-ab2a-4ab8-91c0-3b8702daeac0, expires_in=3600s
+2025-11-05 22:58:11,443 - app.routes.documents - INFO - Access granted: user_id=08786958-ab2a-4ab8-91c0-3b8702daeac0, tenant_id=9b2cf18a-243d-4ceb-8b87-9fcc4babbb54, role=admin, database=tenant_iter_45fca42c
+2025-11-05 22:58:11,444 - app.utils.s3_client - DEBUG - Generated pre-signed URL: bucket=saas-documents, path=tenants/tenant_iter_45fca42c/files/b5/d7/b5d774f77e1742d1a18c7a34e85323fb_c6ed5667-2a23-4201-b3f5-2c7dc05b4c03, expires_in=3600
+2025-11-05 22:58:11,444 - app.utils.s3_client - DEBUG - Replaced endpoint URL with public URL: http://minio:9000 → http://localhost:9000
+2025-11-05 22:58:11,445 - app.utils.s3_client - DEBUG - Original URL: http://minio:9000/saas-documents/tenants/tenant_iter_45fca42c/files/b5/d7/b5d774f77e1742d1a18c7a34e85323fb_c6ed5667-2a23-4201-b3f5-2c7dc05b4c03?response-content-disposition=attachment%3B%20filename%3D%22test.pdf%22&X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=minioadmin%2F20251105%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20251105T225811Z&X-Amz-Expires=3600&X-Amz-SignedHeaders=host&X-Amz-Signature=344be7296006ac69c8d72342f4e6f74cef1b5495ef5303bc5d69970af6370530
+2025-11-05 22:58:11,445 - app.utils.s3_client - DEBUG - Public URL: http://localhost:9000/saas-documents/tenants/tenant_iter_45fca42c/files/b5/d7/b5d774f77e1742d1a18c7a34e85323fb_c6ed5667-2a23-4201-b3f5-2c7dc05b4c03?response-content-disposition=attachment%3B%20filename%3D%22test.pdf%22&X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=minioadmin%2F20251105%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20251105T225811Z&X-Amz-Expires=3600&X-Amz-SignedHeaders=host&X-Amz-Signature=344be7296006ac69c8d72342f4e6f74cef1b5495ef5303bc5d69970af6370530
+2025-11-05 22:58:11,445 - app.utils.s3_client - INFO - Pre-signed URL generated: tenants/tenant_iter_45fca42c/files/b5/d7/b5d774f77e1742d1a18c7a34e85323fb_c6ed5667-2a23-4201-b3f5-2c7dc05b4c03 (expires in 3600s)
+2025-11-05 22:58:11,445 - app.routes.documents - INFO - AUDIT: Download URL generated - user_id=08786958-ab2a-4ab8-91c0-3b8702daeac0, tenant_id=9b2cf18a-243d-4ceb-8b87-9fcc4babbb54, document_id=9c6e6031-5abf-4845-a56a-b319e33f44f8, filename=test.pdf, expires_in=3600s, role=admin
+2025-11-05 22:58:11,446 - app.utils.database - DEBUG - Committed transaction for tenant: tenant_iter_45fca42c
+2025-11-05 22:58:23,822 - app.utils.decorators - DEBUG - Authenticated user: 08786958-ab2a-4ab8-91c0-3b8702daeac0
+2025-11-05 22:58:23,822 - app.routes.documents - INFO - Download URL request: tenant_id=9b2cf18a-243d-4ceb-8b87-9fcc4babbb54, document_id=9c6e6031-5abf-4845-a56a-b319e33f44f8, user_id=08786958-ab2a-4ab8-91c0-3b8702daeac0, expires_in=3600s
+2025-11-05 22:58:23,834 - app.routes.documents - INFO - Access granted: user_id=08786958-ab2a-4ab8-91c0-3b8702daeac0, tenant_id=9b2cf18a-243d-4ceb-8b87-9fcc4babbb54, role=admin, database=tenant_iter_45fca42c
+2025-11-05 22:58:23,834 - app.utils.database - INFO - Created engine for tenant database: tenant_iter_45fca42c
+2025-11-05 22:58:23,834 - app.utils.database - INFO - Created session factory for tenant database: tenant_iter_45fca42c
+2025-11-05 22:58:23,922 - app.utils.s3_client - DEBUG - S3 client initialized: bucket=saas-documents, region=us-east-1, endpoint=http://minio:9000, public_url=http://localhost:9000, use_ssl=False
+2025-11-05 22:58:23,922 - app.utils.s3_client - INFO - S3 client initialized: bucket=saas-documents
+2025-11-05 22:58:23,923 - app.utils.s3_client - DEBUG - Generated pre-signed URL: bucket=saas-documents, path=tenants/tenant_iter_45fca42c/files/b5/d7/b5d774f77e1742d1a18c7a34e85323fb_c6ed5667-2a23-4201-b3f5-2c7dc05b4c03, expires_in=3600
+2025-11-05 22:58:23,923 - app.utils.s3_client - DEBUG - Replaced endpoint URL with public URL: http://minio:9000 → http://localhost:9000
+2025-11-05 22:58:23,923 - app.utils.s3_client - DEBUG - Original URL: http://minio:9000/saas-documents/tenants/tenant_iter_45fca42c/files/b5/d7/b5d774f77e1742d1a18c7a34e85323fb_c6ed5667-2a23-4201-b3f5-2c7dc05b4c03?response-content-disposition=attachment%3B%20filename%3D%22test.pdf%22&X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=minioadmin%2F20251105%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20251105T225823Z&X-Amz-Expires=3600&X-Amz-SignedHeaders=host&X-Amz-Signature=66a6482cbd7fafab6e2abc810db9f52649e90da75181b26a648daac52111ef09
+2025-11-05 22:58:23,923 - app.utils.s3_client - DEBUG - Public URL: http://localhost:9000/saas-documents/tenants/tenant_iter_45fca42c/files/b5/d7/b5d774f77e1742d1a18c7a34e85323fb_c6ed5667-2a23-4201-b3f5-2c7dc05b4c03?response-content-disposition=attachment%3B%20filename%3D%22test.pdf%22&X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=minioadmin%2F20251105%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20251105T225823Z&X-Amz-Expires=3600&X-Amz-SignedHeaders=host&X-Amz-Signature=66a6482cbd7fafab6e2abc810db9f52649e90da75181b26a648daac52111ef09
+2025-11-05 22:58:23,924 - app.utils.s3_client - INFO - Pre-signed URL generated: tenants/tenant_iter_45fca42c/files/b5/d7/b5d774f77e1742d1a18c7a34e85323fb_c6ed5667-2a23-4201-b3f5-2c7dc05b4c03 (expires in 3600s)
+2025-11-05 22:58:23,924 - app.routes.documents - INFO - AUDIT: Download URL generated - user_id=08786958-ab2a-4ab8-91c0-3b8702daeac0, tenant_id=9b2cf18a-243d-4ceb-8b87-9fcc4babbb54, document_id=9c6e6031-5abf-4845-a56a-b319e33f44f8, filename=test.pdf, expires_in=3600s, role=admin
+2025-11-05 22:58:23,925 - app.utils.database - DEBUG - Committed transaction for tenant: tenant_iter_45fca42c
+2025-11-05 22:59:26,660 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-05 22:59:26,660 - app - INFO - Flask app created with config: development
+2025-11-05 22:59:26,661 - app - INFO - Debug mode: True
+2025-11-05 22:59:26,661 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-05 22:59:26,763 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-05 22:59:26,763 - app - INFO - Flask app created with config: development
+2025-11-05 22:59:26,763 - app - INFO - Debug mode: True
+2025-11-05 22:59:26,763 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-05 22:59:26,849 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-05 22:59:26,850 - app - INFO - Flask app created with config: development
+2025-11-05 22:59:26,850 - app - INFO - Debug mode: True
+2025-11-05 22:59:26,850 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-05 22:59:26,896 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-05 22:59:26,896 - app - INFO - Flask app created with config: development
+2025-11-05 22:59:26,896 - app - INFO - Debug mode: True
+2025-11-05 22:59:26,897 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-05 22:59:49,518 - app.utils.decorators - DEBUG - Authenticated user: 08786958-ab2a-4ab8-91c0-3b8702daeac0
+2025-11-05 22:59:49,519 - app.routes.documents - INFO - Download URL request: tenant_id=9b2cf18a-243d-4ceb-8b87-9fcc4babbb54, document_id=9c6e6031-5abf-4845-a56a-b319e33f44f8, user_id=08786958-ab2a-4ab8-91c0-3b8702daeac0, expires_in=3600s
+2025-11-05 22:59:49,530 - app.routes.documents - INFO - Access granted: user_id=08786958-ab2a-4ab8-91c0-3b8702daeac0, tenant_id=9b2cf18a-243d-4ceb-8b87-9fcc4babbb54, role=admin, database=tenant_iter_45fca42c
+2025-11-05 22:59:49,531 - app.utils.database - INFO - Created engine for tenant database: tenant_iter_45fca42c
+2025-11-05 22:59:49,531 - app.utils.database - INFO - Created session factory for tenant database: tenant_iter_45fca42c
+2025-11-05 22:59:49,620 - app.utils.s3_client - DEBUG - Created separate presigned URL client with public endpoint: http://localhost:9000
+2025-11-05 22:59:49,621 - app.utils.s3_client - DEBUG - S3 client initialized: bucket=saas-documents, region=us-east-1, endpoint=http://minio:9000, public_url=http://localhost:9000, use_ssl=False
+2025-11-05 22:59:49,621 - app.utils.s3_client - INFO - S3 client initialized: bucket=saas-documents
+2025-11-05 22:59:49,622 - app.utils.s3_client - DEBUG - Generated pre-signed URL using public endpoint: bucket=saas-documents, path=tenants/tenant_iter_45fca42c/files/b5/d7/b5d774f77e1742d1a18c7a34e85323fb_c6ed5667-2a23-4201-b3f5-2c7dc05b4c03, expires_in=3600
+2025-11-05 22:59:49,622 - app.utils.s3_client - INFO - Pre-signed URL generated: tenants/tenant_iter_45fca42c/files/b5/d7/b5d774f77e1742d1a18c7a34e85323fb_c6ed5667-2a23-4201-b3f5-2c7dc05b4c03 (expires in 3600s)
+2025-11-05 22:59:49,622 - app.routes.documents - INFO - AUDIT: Download URL generated - user_id=08786958-ab2a-4ab8-91c0-3b8702daeac0, tenant_id=9b2cf18a-243d-4ceb-8b87-9fcc4babbb54, document_id=9c6e6031-5abf-4845-a56a-b319e33f44f8, filename=test.pdf, expires_in=3600s, role=admin
+2025-11-05 22:59:49,622 - app.utils.database - DEBUG - Committed transaction for tenant: tenant_iter_45fca42c
+2025-11-05 23:01:02,023 - app.utils.decorators - DEBUG - Authenticated user: 08786958-ab2a-4ab8-91c0-3b8702daeac0
+2025-11-05 23:01:02,023 - app.routes.documents - INFO - Download URL request: tenant_id=9b2cf18a-243d-4ceb-8b87-9fcc4babbb54, document_id=9c6e6031-5abf-4845-a56a-b319e33f44f8, user_id=08786958-ab2a-4ab8-91c0-3b8702daeac0, expires_in=3600s
+2025-11-05 23:01:02,035 - app.routes.documents - INFO - Access granted: user_id=08786958-ab2a-4ab8-91c0-3b8702daeac0, tenant_id=9b2cf18a-243d-4ceb-8b87-9fcc4babbb54, role=admin, database=tenant_iter_45fca42c
+2025-11-05 23:01:02,036 - app.utils.database - INFO - Created engine for tenant database: tenant_iter_45fca42c
+2025-11-05 23:01:02,036 - app.utils.database - INFO - Created session factory for tenant database: tenant_iter_45fca42c
+2025-11-05 23:01:02,126 - app.utils.s3_client - DEBUG - Created separate presigned URL client with public endpoint: http://localhost:9000
+2025-11-05 23:01:02,126 - app.utils.s3_client - DEBUG - S3 client initialized: bucket=saas-documents, region=us-east-1, endpoint=http://minio:9000, public_url=http://localhost:9000, use_ssl=False
+2025-11-05 23:01:02,126 - app.utils.s3_client - INFO - S3 client initialized: bucket=saas-documents
+2025-11-05 23:01:02,127 - app.utils.s3_client - DEBUG - Generated pre-signed URL using public endpoint: bucket=saas-documents, path=tenants/tenant_iter_45fca42c/files/b5/d7/b5d774f77e1742d1a18c7a34e85323fb_c6ed5667-2a23-4201-b3f5-2c7dc05b4c03, expires_in=3600
+2025-11-05 23:01:02,128 - app.utils.s3_client - INFO - Pre-signed URL generated: tenants/tenant_iter_45fca42c/files/b5/d7/b5d774f77e1742d1a18c7a34e85323fb_c6ed5667-2a23-4201-b3f5-2c7dc05b4c03 (expires in 3600s)
+2025-11-05 23:01:02,128 - app.routes.documents - INFO - AUDIT: Download URL generated - user_id=08786958-ab2a-4ab8-91c0-3b8702daeac0, tenant_id=9b2cf18a-243d-4ceb-8b87-9fcc4babbb54, document_id=9c6e6031-5abf-4845-a56a-b319e33f44f8, filename=test.pdf, expires_in=3600s, role=admin
+2025-11-05 23:01:02,128 - app.utils.database - DEBUG - Committed transaction for tenant: tenant_iter_45fca42c
+2025-11-05 23:04:15,853 - app.utils.decorators - DEBUG - Authenticated user: 08786958-ab2a-4ab8-91c0-3b8702daeac0
+2025-11-05 23:04:15,855 - app.routes.documents - INFO - Download URL request: tenant_id=9b2cf18a-243d-4ceb-8b87-9fcc4babbb54, document_id=9c6e6031-5abf-4845-a56a-b319e33f44f8, user_id=08786958-ab2a-4ab8-91c0-3b8702daeac0, expires_in=3600s
+2025-11-05 23:04:15,864 - app.routes.documents - INFO - Access granted: user_id=08786958-ab2a-4ab8-91c0-3b8702daeac0, tenant_id=9b2cf18a-243d-4ceb-8b87-9fcc4babbb54, role=admin, database=tenant_iter_45fca42c
+2025-11-05 23:04:15,865 - app.utils.database - INFO - Created engine for tenant database: tenant_iter_45fca42c
+2025-11-05 23:04:15,866 - app.utils.database - INFO - Created session factory for tenant database: tenant_iter_45fca42c
+2025-11-05 23:04:16,002 - app.utils.s3_client - DEBUG - Created separate presigned URL client with public endpoint: http://localhost:9000
+2025-11-05 23:04:16,002 - app.utils.s3_client - DEBUG - S3 client initialized: bucket=saas-documents, region=us-east-1, endpoint=http://minio:9000, public_url=http://localhost:9000, use_ssl=False
+2025-11-05 23:04:16,002 - app.utils.s3_client - INFO - S3 client initialized: bucket=saas-documents
+2025-11-05 23:04:16,003 - app.utils.s3_client - DEBUG - Generated pre-signed URL using public endpoint: bucket=saas-documents, path=tenants/tenant_iter_45fca42c/files/b5/d7/b5d774f77e1742d1a18c7a34e85323fb_c6ed5667-2a23-4201-b3f5-2c7dc05b4c03, expires_in=3600
+2025-11-05 23:04:16,004 - app.utils.s3_client - INFO - Pre-signed URL generated: tenants/tenant_iter_45fca42c/files/b5/d7/b5d774f77e1742d1a18c7a34e85323fb_c6ed5667-2a23-4201-b3f5-2c7dc05b4c03 (expires in 3600s)
+2025-11-05 23:04:16,004 - app.routes.documents - INFO - AUDIT: Download URL generated - user_id=08786958-ab2a-4ab8-91c0-3b8702daeac0, tenant_id=9b2cf18a-243d-4ceb-8b87-9fcc4babbb54, document_id=9c6e6031-5abf-4845-a56a-b319e33f44f8, filename=test.pdf, expires_in=3600s, role=admin
+2025-11-05 23:04:16,004 - app.utils.database - DEBUG - Committed transaction for tenant: tenant_iter_45fca42c
+2025-11-06 22:11:11,086 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-06 22:11:11,086 - app - INFO - Flask app created with config: development
+2025-11-06 22:11:11,086 - app - INFO - Debug mode: True
+2025-11-06 22:11:11,088 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-06 22:11:11,093 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-06 22:11:11,093 - app - INFO - Flask app created with config: development
+2025-11-06 22:11:11,093 - app - INFO - Debug mode: True
+2025-11-06 22:11:11,094 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-06 22:11:11,151 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-06 22:11:11,152 - app - INFO - Flask app created with config: development
+2025-11-06 22:11:11,152 - app - INFO - Debug mode: True
+2025-11-06 22:11:11,152 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-06 22:11:11,213 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-06 22:11:11,214 - app - INFO - Flask app created with config: development
+2025-11-06 22:11:11,214 - app - INFO - Debug mode: True
+2025-11-06 22:11:11,214 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-06 22:13:14,081 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-06 22:13:14,082 - app - INFO - Flask app created with config: development
+2025-11-06 22:13:14,083 - app - INFO - Debug mode: True
+2025-11-06 22:13:14,083 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-06 22:13:14,141 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-06 22:13:14,142 - app - INFO - Flask app created with config: development
+2025-11-06 22:13:14,142 - app - INFO - Debug mode: True
+2025-11-06 22:13:14,143 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-06 22:13:14,158 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-06 22:13:14,158 - app - INFO - Flask app created with config: development
+2025-11-06 22:13:14,159 - app - INFO - Debug mode: True
+2025-11-06 22:13:14,159 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-06 22:13:14,179 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-06 22:13:14,179 - app - INFO - Flask app created with config: development
+2025-11-06 22:13:14,179 - app - INFO - Debug mode: True
+2025-11-06 22:13:14,179 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-06 22:14:23,873 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-06 22:14:23,873 - app - INFO - Flask app created with config: development
+2025-11-06 22:14:23,873 - app - INFO - Debug mode: True
+2025-11-06 22:14:23,873 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-06 22:14:32,157 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-06 22:14:32,157 - app - INFO - Flask app created with config: development
+2025-11-06 22:14:32,158 - app - INFO - Debug mode: True
+2025-11-06 22:14:32,158 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-06 22:14:43,007 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-06 22:14:43,007 - app - INFO - Flask app created with config: development
+2025-11-06 22:14:43,008 - app - INFO - Debug mode: True
+2025-11-06 22:14:43,008 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-06 22:15:03,057 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-06 22:15:03,058 - app - INFO - Flask app created with config: development
+2025-11-06 22:15:03,058 - app - INFO - Debug mode: True
+2025-11-06 22:15:03,058 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-06 22:15:03,073 - app.tenant_db.tenant_migrations - DEBUG - Schema version table doesn't exist yet: (psycopg2.errors.UndefinedTable) relation "tenant_schema_version" does not exist
+LINE 1: SELECT version FROM tenant_schema_version ORDER BY version D...
+                            ^
+
+[SQL: SELECT version FROM tenant_schema_version ORDER BY version DESC LIMIT 1]
+(Background on this error at: https://sqlalche.me/e/20/f405)
+2025-11-06 22:15:03,077 - app.tenant_db.tenant_migrations - INFO - Created tenant_schema_version table
+2025-11-06 22:15:03,077 - app.tenant_db.tenant_migrations - INFO - Applying migration v1: initial_schema
+2025-11-06 22:15:03,078 - app.tenant_db.tenant_migrations - INFO - ✓ Migration v1 applied successfully
+2025-11-07 07:44:54,461 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-07 07:44:54,461 - app - INFO - Flask app created with config: development
+2025-11-07 07:44:54,461 - app - INFO - Debug mode: True
+2025-11-07 07:44:54,462 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-07 07:44:54,503 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-07 07:44:54,503 - app - INFO - Flask app created with config: development
+2025-11-07 07:44:54,503 - app - INFO - Debug mode: True
+2025-11-07 07:44:54,504 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-07 07:44:54,516 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-07 07:44:54,516 - app - INFO - Flask app created with config: development
+2025-11-07 07:44:54,516 - app - INFO - Debug mode: True
+2025-11-07 07:44:54,516 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-07 07:44:54,528 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-07 07:44:54,529 - app - INFO - Flask app created with config: development
+2025-11-07 07:44:54,529 - app - INFO - Debug mode: True
+2025-11-07 07:44:54,529 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-07 07:46:37,296 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-07 07:46:37,296 - app - INFO - Flask app created with config: development
+2025-11-07 07:46:37,296 - app - INFO - Debug mode: True
+2025-11-07 07:46:37,296 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...

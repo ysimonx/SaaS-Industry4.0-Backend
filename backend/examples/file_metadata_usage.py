@@ -1,11 +1,11 @@
 """
-Exemples d'utilisation de la colonne metadata dans le modèle File
+Exemples d'utilisation de la colonne file_metadata dans le modèle File
 
-Ce fichier montre comment utiliser la nouvelle colonne JSONB 'metadata'
+Ce fichier montre comment utiliser la nouvelle colonne JSONB 'file_metadata'
 ajoutée par la migration v2 pour stocker des informations personnalisées
 sur les fichiers.
 
-La colonne metadata permet de stocker :
+La colonne file_metadata permet de stocker :
 - Informations techniques (MIME type, encoding, résolution, etc.)
 - Métadonnées EXIF pour les images
 - Résultats d'analyse (scan antivirus, OCR, etc.)
@@ -208,21 +208,21 @@ def example_8_search_by_metadata():
 
     # Rechercher tous les fichiers JPEG
     jpeg_files = File.query.filter(
-        File.metadata['mime_type'].astext == 'image/jpeg'
+        File.file_metadata['mime_type'].astext == 'image/jpeg'
     ).all()
 
     print(f"Found {len(jpeg_files)} JPEG files")
 
     # Rechercher les images de plus de 1920px de large
     large_images = File.query.filter(
-        File.metadata['width'].astext.cast(db.Integer) > 1920
+        File.file_metadata['width'].astext.cast(db.Integer) > 1920
     ).all()
 
     print(f"Found {len(large_images)} large images")
 
     # Rechercher les fichiers avec un tag spécifique
     important_files = File.query.filter(
-        File.metadata['tags'].contains(['important'])
+        File.file_metadata['tags'].contains(['important'])
     ).all()
 
     print(f"Found {len(important_files)} important files")
@@ -299,7 +299,7 @@ def example_10_complete_workflow():
     db.session.commit()
 
     print(f"File processed successfully: {file.id}")
-    print(f"Metadata: {file.metadata}")
+    print(f"File metadata: {file.file_metadata}")
 
 
 # Point d'entrée pour tester les exemples
@@ -307,7 +307,7 @@ if __name__ == '__main__':
     app = create_app()
 
     with app.app_context():
-        print("=== Exemples d'utilisation de File.metadata ===\n")
+        print("=== Exemples d'utilisation de File.file_metadata ===\n")
 
         # Choisir les exemples à exécuter
         print("1. Métadonnées basiques")

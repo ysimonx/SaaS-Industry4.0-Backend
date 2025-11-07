@@ -53,7 +53,7 @@ Routes (Controllers) → Services (Business Logic) → Models → Database
   - `backend/app/models/file.py` with File model for tenant databases (550+ lines)
   - MD5-based deduplication within tenant boundaries
   - Fields: md5_hash (String(32), indexed), s3_path (String(500), unique), file_size (BigInteger)
-  - S3 path sharding strategy: tenants/{tenant_id}/files/{md5[:2]}/{md5[2:4]}/{md5}_{uuid}
+  - S3 path sharding strategy: tenants/{database_name}/files/{md5[:2]}/{md5[2:4]}/{md5}_{uuid}
   - Methods: find_by_md5(), check_duplicate(), generate_s3_path(), is_orphaned(), delete_from_s3()
   - Storage management: get_total_storage_used(), get_file_count(), find_orphaned_files()
   - Validation: MD5 hash format (32 hex chars), positive file size, prevents md5/s3_path changes
@@ -378,6 +378,7 @@ pip install pytest-flask
 pip install pytest-mock
 pip install pytest-cov
 pip install hvac
+pip install redis
 ```
 4. Generate requirements file: `pip freeze > requirements.txt`
 5. Move to `backend/requirements.txt`
@@ -807,8 +808,9 @@ class File(BaseModel, db.Model):
   - Deduplication works within tenant boundary only (no cross-tenant sharing)
 
   S3 integration methods:
-  - `generate_s3_path(tenant_id, md5_hash, file_id)` - creates sharded S3 path
-  - S3 path format: `tenants/{tenant_id}/files/{md5[:2]}/{md5[2:4]}/{md5}_{file_id}`
+  - `generate_s3_path(database_name, md5_hash, file_id)` - creates sharded S3 path
+  - S3 path format: `tenants/{database_name}/files/{md5[:2]}/{md5[2:4]}/{md5}_{file_id}`
+  - Example: `tenants/tenant_iter_45fca42c/files/b5/d7/b5d774f77e1742d1a18c7a34e85323fb_None`
   - Sharding strategy prevents too many files in single S3 directory
   - `get_s3_url(expiration)` - generates pre-signed download URL (placeholder for Phase 6)
   - `delete_from_s3(confirm=True)` - removes file from S3 storage (placeholder for Phase 6)
@@ -1183,7 +1185,7 @@ class FileResponseSchema(Schema):
 - Fields included: id (UUID), md5_hash (32 hex chars), s3_path (S3 object path), file_size (bytes), created_at (timestamp)
 - Files are created automatically during document upload process, not via direct API endpoints
 - MD5 deduplication: Files with same MD5 hash are reused to save storage space
-- S3 path format: tenants/{tenant_id}/files/{md5_prefix}/{md5_hash}_{file_uuid}
+- S3 path format: tenants/{database_name}/files/{md5_prefix}/{md5_hash}_{file_uuid}
 - Multiple documents can reference the same file_id (many-to-one relationship via deduplication)
 - Files never deleted (managed by S3 lifecycle policies, referenced by documents)
 - Pre-instantiated schema instances: file_schema, file_response_schema, files_response_schema
@@ -2040,8 +2042,8 @@ flask db upgrade
    - Check duplicate via MD5 query
    - If duplicate: return existing file (deduplication)
    - If new:
-     - Generate S3 path: `tenants/{tenant_id}/files/{year}/{month}/{file_id}_{md5_hash}`
-     - Upload to S3 with metadata (placeholder for Phase 6)
+     - Generate S3 path: `tenants/{database_name}/files/{md5[:2]}/{md5[2:4]}/{md5_hash}_{file_id}`
+     - Upload to S3 with metadata (✅ implemented with boto3/MinIO)
      - Create File record in tenant database
      - Publish file.uploaded event to Kafka (placeholder for Phase 6)
      - Return file object
@@ -2078,8 +2080,9 @@ flask db upgrade
 
 **S3 path structure**:
 ```
-bucket/tenants/{tenant_id}/files/{year}/{month}/{file_id}_{md5_hash}
+bucket/tenants/{database_name}/files/{md5[:2]}/{md5[2:4]}/{md5_hash}_{file_id}
 ```
+Example: `saas-documents/tenants/tenant_iter_45fca42c/files/b5/d7/b5d774f77e1742d1a18c7a34e85323fb_None`
 
 **Deliverables**:
 - File upload with deduplication
@@ -2446,7 +2449,7 @@ python scripts/init_db.py --create-admin
 python scripts/init_db.py --create-admin --create-test-tenant
 
 # Non-interactive mode with environment variables
-ADMIN_EMAIL=admin@example.com ADMIN_PASSWORD=password123 \
+ADMIN_EMAIL=admin@example.com ADMIN_PASSWORD=12345678 \
 python scripts/init_db.py --create-admin --non-interactive
 
 # Full reset (DANGEROUS - deletes all data!)

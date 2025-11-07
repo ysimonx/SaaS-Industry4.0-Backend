@@ -46,7 +46,7 @@ docker-compose logs -f worker
 docker-compose exec api python scripts/init_db.py --create-admin --create-test-tenant
 
 # Follow prompts to create admin user
-# Default: admin@example.com / password123
+# Default: admin@example.com / 12345678
 ```
 
 ### 4. Verify Services

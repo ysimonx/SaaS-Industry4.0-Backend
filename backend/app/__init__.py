@@ -25,7 +25,7 @@ from flask import Flask, jsonify
 from flask.logging import default_handler
 
 from app.config import config, get_config
-from app.extensions import db, migrate, jwt, cors
+from app.extensions import db, migrate, jwt, cors, redis_manager
 
 
 def create_app(config_name=None, vault_client=None):
@@ -149,10 +149,13 @@ def initialize_extensions(app):
     from app.utils.database import tenant_db_manager
     tenant_db_manager.init_app(app)
 
+    # Initialize Redis Manager
+    redis_manager.init_app(app)
+
     # Configure JWT callbacks
     configure_jwt(app)
 
-    app.logger.info("Extensions initialized: db, migrate, jwt, cors, tenant_db_manager")
+    app.logger.info("Extensions initialized: db, migrate, jwt, cors, tenant_db_manager, redis")
 
 
 def configure_jwt(app):
@@ -293,6 +296,22 @@ def register_blueprints(app):
         app.logger.info("Registered blueprint: swagger_ui (/api/docs)")
     except ImportError as e:
         app.logger.warning(f"Swagger UI blueprint not found: {e}")
+
+    # Register SSO configuration blueprint
+    try:
+        from app.routes.sso_config import bp as sso_config_bp
+        app.register_blueprint(sso_config_bp)
+        app.logger.info("Registered blueprint: sso_config (/api/tenants)")
+    except ImportError as e:
+        app.logger.warning(f"SSO config blueprint not found: {e}")
+
+    # Register SSO authentication blueprint
+    try:
+        from app.routes.sso_auth import bp as sso_auth_bp
+        app.register_blueprint(sso_auth_bp)
+        app.logger.info("Registered blueprint: sso_auth (/api/auth/sso)")
+    except ImportError as e:
+        app.logger.warning(f"SSO auth blueprint not found: {e}")
 
     # Health check endpoint (no blueprint needed)
     @app.route('/health')
