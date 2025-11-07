@@ -25,7 +25,8 @@ S3 Path format:
 import re
 import logging
 from typing import Optional, List, Dict, Any
-from sqlalchemy import String, BigInteger, Index, JSON
+from sqlalchemy import String, BigInteger, Index
+from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.orm import relationship
 
 from .base import BaseModel
@@ -70,7 +71,7 @@ class File(BaseModel, db.Model):
     file_size = db.Column(BigInteger, nullable=False)
 
     # Metadata column - stores custom JSON data
-    file_metadata = db.Column(JSON, nullable=False, default={})
+    file_metadata = db.Column(JSONB, nullable=False, default={})
 
     # Relationships
     documents = relationship('Document', back_populates='file', cascade='all, delete-orphan')

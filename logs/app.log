@@ -2787,3 +2787,292 @@ LINE 1: SELECT version FROM tenant_schema_version ORDER BY version D...
 2025-11-07 07:46:37,296 - app - INFO - Flask app created with config: development
 2025-11-07 07:46:37,296 - app - INFO - Debug mode: True
 2025-11-07 07:46:37,296 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-07 17:34:39,374 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-07 17:34:39,374 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-07 17:34:39,374 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-07 17:34:39,378 - app - INFO - Flask app created with config: development
+2025-11-07 17:34:39,378 - app - INFO - Debug mode: True
+2025-11-07 17:34:39,378 - app - INFO - Flask app created with config: development
+2025-11-07 17:34:39,378 - app - INFO - Flask app created with config: development
+2025-11-07 17:34:39,378 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-07 17:34:39,381 - app - INFO - Debug mode: True
+2025-11-07 17:34:39,379 - app - INFO - Debug mode: True
+2025-11-07 17:34:39,383 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-07 17:34:39,383 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-07 17:34:39,386 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-07 17:34:39,386 - app - INFO - Flask app created with config: development
+2025-11-07 17:34:39,386 - app - INFO - Debug mode: True
+2025-11-07 17:34:39,386 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-07 17:35:04,067 - app - ERROR - Unhandled exception: (psycopg2.errors.UndefinedColumn) column users.sso_provider does not exist
+LINE 1: ...assword_hash, users.is_active AS users_is_active, users.sso_...
+                                                             ^
+
+[SQL: SELECT users.first_name AS users_first_name, users.last_name AS users_last_name, users.email AS users_email, users.password_hash AS users_password_hash, users.is_active AS users_is_active, users.sso_provider AS users_sso_provider, users.sso_metadata AS users_sso_metadata, users.id AS users_id, users.created_at AS users_created_at, users.updated_at AS users_updated_at, users.created_by AS users_created_by 
+FROM users 
+WHERE users.email = %(email_1)s 
+ LIMIT %(param_1)s]
+[parameters: {'email_1': 'admin@example.com', 'param_1': 1}]
+(Background on this error at: https://sqlalche.me/e/20/f405)
+Traceback (most recent call last):
+  File "/opt/venv/lib/python3.11/site-packages/sqlalchemy/engine/base.py", line 1967, in _exec_single_context
+    self.dialect.do_execute(
+  File "/opt/venv/lib/python3.11/site-packages/sqlalchemy/engine/default.py", line 951, in do_execute
+    cursor.execute(statement, parameters)
+psycopg2.errors.UndefinedColumn: column users.sso_provider does not exist
+LINE 1: ...assword_hash, users.is_active AS users_is_active, users.sso_...
+                                                             ^
+
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/opt/venv/lib/python3.11/site-packages/flask/app.py", line 917, in full_dispatch_request
+    rv = self.dispatch_request()
+         ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/venv/lib/python3.11/site-packages/flask/app.py", line 902, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/app/app/routes/auth.py", line 190, in login
+    user = User.query.filter_by(email=data['email']).first()
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/venv/lib/python3.11/site-packages/sqlalchemy/orm/query.py", line 2759, in first
+    return self.limit(1)._iter().first()  # type: ignore
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/venv/lib/python3.11/site-packages/sqlalchemy/orm/query.py", line 2857, in _iter
+    result: Union[ScalarResult[_T], Result[_T]] = self.session.execute(
+                                                  ^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/venv/lib/python3.11/site-packages/sqlalchemy/orm/session.py", line 2351, in execute
+    return self._execute_internal(
+           ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/venv/lib/python3.11/site-packages/sqlalchemy/orm/session.py", line 2249, in _execute_internal
+    result: Result[Any] = compile_state_cls.orm_execute_statement(
+                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/venv/lib/python3.11/site-packages/sqlalchemy/orm/context.py", line 306, in orm_execute_statement
+    result = conn.execute(
+             ^^^^^^^^^^^^^
+  File "/opt/venv/lib/python3.11/site-packages/sqlalchemy/engine/base.py", line 1419, in execute
+    return meth(
+           ^^^^^
+  File "/opt/venv/lib/python3.11/site-packages/sqlalchemy/sql/elements.py", line 526, in _execute_on_connection
+    return connection._execute_clauseelement(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/venv/lib/python3.11/site-packages/sqlalchemy/engine/base.py", line 1641, in _execute_clauseelement
+    ret = self._execute_context(
+          ^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/venv/lib/python3.11/site-packages/sqlalchemy/engine/base.py", line 1846, in _execute_context
+    return self._exec_single_context(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/venv/lib/python3.11/site-packages/sqlalchemy/engine/base.py", line 1986, in _exec_single_context
+    self._handle_dbapi_exception(
+  File "/opt/venv/lib/python3.11/site-packages/sqlalchemy/engine/base.py", line 2355, in _handle_dbapi_exception
+    raise sqlalchemy_exception.with_traceback(exc_info[2]) from e
+  File "/opt/venv/lib/python3.11/site-packages/sqlalchemy/engine/base.py", line 1967, in _exec_single_context
+    self.dialect.do_execute(
+  File "/opt/venv/lib/python3.11/site-packages/sqlalchemy/engine/default.py", line 951, in do_execute
+    cursor.execute(statement, parameters)
+sqlalchemy.exc.ProgrammingError: (psycopg2.errors.UndefinedColumn) column users.sso_provider does not exist
+LINE 1: ...assword_hash, users.is_active AS users_is_active, users.sso_...
+                                                             ^
+
+[SQL: SELECT users.first_name AS users_first_name, users.last_name AS users_last_name, users.email AS users_email, users.password_hash AS users_password_hash, users.is_active AS users_is_active, users.sso_provider AS users_sso_provider, users.sso_metadata AS users_sso_metadata, users.id AS users_id, users.created_at AS users_created_at, users.updated_at AS users_updated_at, users.created_by AS users_created_by 
+FROM users 
+WHERE users.email = %(email_1)s 
+ LIMIT %(param_1)s]
+[parameters: {'email_1': 'admin@example.com', 'param_1': 1}]
+(Background on this error at: https://sqlalche.me/e/20/f405)
+2025-11-07 17:38:29,805 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-07 17:38:29,806 - app - INFO - Flask app created with config: development
+2025-11-07 17:38:29,806 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-07 17:38:29,810 - app - INFO - Debug mode: True
+2025-11-07 17:38:29,810 - app - INFO - Flask app created with config: development
+2025-11-07 17:38:29,811 - app - INFO - Debug mode: True
+2025-11-07 17:38:29,811 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-07 17:38:29,811 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-07 17:38:29,848 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-07 17:38:29,848 - app - INFO - Flask app created with config: development
+2025-11-07 17:38:29,848 - app - INFO - Debug mode: True
+2025-11-07 17:38:29,848 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-07 17:38:29,853 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-07 17:38:29,853 - app - INFO - Flask app created with config: development
+2025-11-07 17:38:29,853 - app - INFO - Debug mode: True
+2025-11-07 17:38:29,853 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-07 17:38:39,472 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-07 17:38:39,473 - app - INFO - Flask app created with config: development
+2025-11-07 17:38:39,473 - app - INFO - Debug mode: True
+2025-11-07 17:38:39,473 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-07 17:38:46,141 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-07 17:38:46,142 - app - INFO - Flask app created with config: development
+2025-11-07 17:38:46,142 - app - INFO - Debug mode: True
+2025-11-07 17:38:46,142 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-07 17:38:52,717 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-07 17:38:52,717 - app - INFO - Flask app created with config: development
+2025-11-07 17:38:52,717 - app - INFO - Debug mode: True
+2025-11-07 17:38:52,717 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-07 17:39:54,545 - app.utils.decorators - DEBUG - Authenticated user: 7b817370-baff-4d5b-a4cf-ee9d6eb442e4
+2025-11-07 17:39:54,549 - app.routes.users - INFO - Fetching profile for user_id=7b817370-baff-4d5b-a4cf-ee9d6eb442e4
+2025-11-07 17:39:54,628 - app.routes.users - INFO - User profile retrieved successfully: user_id=7b817370-baff-4d5b-a4cf-ee9d6eb442e4
+2025-11-07 17:41:40,848 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-07 17:41:40,849 - app - INFO - Flask app created with config: development
+2025-11-07 17:41:40,849 - app - INFO - Debug mode: True
+2025-11-07 17:41:40,849 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-07 17:41:40,859 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-07 17:41:40,861 - app - INFO - Flask app created with config: development
+2025-11-07 17:41:40,863 - app - INFO - Debug mode: True
+2025-11-07 17:41:40,863 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-07 17:41:40,933 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-07 17:41:40,933 - app - INFO - Flask app created with config: development
+2025-11-07 17:41:40,933 - app - INFO - Debug mode: True
+2025-11-07 17:41:40,933 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-07 17:41:40,938 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-07 17:41:40,938 - app - INFO - Flask app created with config: development
+2025-11-07 17:41:40,938 - app - INFO - Debug mode: True
+2025-11-07 17:41:40,938 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-07 17:43:04,665 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-07 17:43:04,666 - app - INFO - Flask app created with config: development
+2025-11-07 17:43:04,667 - app - INFO - Debug mode: True
+2025-11-07 17:43:04,669 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-07 17:43:04,669 - app - INFO - Flask app created with config: development
+2025-11-07 17:43:04,669 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-07 17:43:04,669 - app - INFO - Debug mode: True
+2025-11-07 17:43:04,670 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-07 17:43:04,727 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-07 17:43:04,734 - app - INFO - Flask app created with config: development
+2025-11-07 17:43:04,735 - app - INFO - Debug mode: True
+2025-11-07 17:43:04,736 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-07 17:43:04,750 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-07 17:43:04,750 - app - INFO - Flask app created with config: development
+2025-11-07 17:43:04,750 - app - INFO - Debug mode: True
+2025-11-07 17:43:04,750 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-07 17:43:46,118 - app.utils.decorators - DEBUG - Authenticated user: 7b817370-baff-4d5b-a4cf-ee9d6eb442e4
+2025-11-07 17:43:46,120 - app.routes.users - INFO - Fetching profile for user_id=7b817370-baff-4d5b-a4cf-ee9d6eb442e4
+2025-11-07 17:43:46,176 - app.routes.users - INFO - User profile retrieved successfully: user_id=7b817370-baff-4d5b-a4cf-ee9d6eb442e4
+2025-11-07 17:46:01,366 - app.utils.decorators - ERROR - JWT validation failed: Bad Authorization header. Expected 'Authorization: Bearer <JWT>'
+2025-11-07 17:46:14,975 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-07 17:46:14,976 - app - INFO - Flask app created with config: development
+2025-11-07 17:46:14,976 - app - INFO - Debug mode: True
+2025-11-07 17:46:14,976 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-07 17:46:22,039 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-07 17:46:22,039 - app - INFO - Flask app created with config: development
+2025-11-07 17:46:22,039 - app - INFO - Debug mode: True
+2025-11-07 17:46:22,039 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-07 17:46:28,088 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-07 17:46:28,088 - app - INFO - Flask app created with config: development
+2025-11-07 17:46:28,088 - app - INFO - Debug mode: True
+2025-11-07 17:46:28,089 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-07 17:48:21,112 - app.utils.decorators - DEBUG - Authenticated user: 7b817370-baff-4d5b-a4cf-ee9d6eb442e4
+2025-11-07 17:48:21,113 - app.routes.tenants - INFO - Creating tenant for user_id=7b817370-baff-4d5b-a4cf-ee9d6eb442e4
+2025-11-07 17:48:21,113 - app.schemas.tenant_schema - DEBUG - Validated tenant name for creation: Ma Première Entreprise
+2025-11-07 17:48:21,113 - app.schemas.tenant_schema - DEBUG - Normalized tenant name for creation: Ma Première Entreprise
+2025-11-07 17:48:21,114 - app.models.tenant - DEBUG - Generated database name: Ma Première Entreprise -> tenant_ma_première_entreprise_f6148c00
+2025-11-07 17:48:21,115 - app.models.tenant - INFO - Tenant object initialized: name=Ma Première Entreprise, database_name=tenant_ma_première_entreprise_f6148c00
+2025-11-07 17:48:21,208 - app.utils.database - INFO - Created tenant database: tenant_ma_première_entreprise_f6148c00
+2025-11-07 17:48:21,209 - app.utils.database - INFO - Created engine for tenant database: tenant_ma_première_entreprise_f6148c00
+2025-11-07 17:48:21,234 - app.utils.database - ERROR - Failed to create tables in tenant database tenant_ma_première_entreprise_f6148c00: (psycopg2.errors.UndefinedObject) data type json has no default operator class for access method "gin"
+HINT:  You must specify an operator class for the index or define a default operator class for the data type.
+
+[SQL: CREATE INDEX ix_files_metadata ON files USING gin (file_metadata)]
+(Background on this error at: https://sqlalche.me/e/20/f405)
+2025-11-07 17:48:21,234 - app.routes.tenants - ERROR - Failed to create tenant database: (psycopg2.errors.UndefinedObject) data type json has no default operator class for access method "gin"
+HINT:  You must specify an operator class for the index or define a default operator class for the data type.
+
+[SQL: CREATE INDEX ix_files_metadata ON files USING gin (file_metadata)]
+(Background on this error at: https://sqlalche.me/e/20/f405)
+Traceback (most recent call last):
+  File "/opt/venv/lib/python3.11/site-packages/sqlalchemy/engine/base.py", line 1967, in _exec_single_context
+    self.dialect.do_execute(
+  File "/opt/venv/lib/python3.11/site-packages/sqlalchemy/engine/default.py", line 951, in do_execute
+    cursor.execute(statement, parameters)
+psycopg2.errors.UndefinedObject: data type json has no default operator class for access method "gin"
+HINT:  You must specify an operator class for the index or define a default operator class for the data type.
+
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/app/app/routes/tenants.py", line 222, in create_tenant
+    tenant_db_manager.create_tenant_tables(tenant.database_name)
+  File "/app/app/utils/database.py", line 219, in create_tenant_tables
+    File.__table__.create(bind=engine, checkfirst=True)
+  File "/opt/venv/lib/python3.11/site-packages/sqlalchemy/sql/schema.py", line 1288, in create
+    bind._run_ddl_visitor(ddl.SchemaGenerator, self, checkfirst=checkfirst)
+  File "/opt/venv/lib/python3.11/site-packages/sqlalchemy/engine/base.py", line 3252, in _run_ddl_visitor
+    conn._run_ddl_visitor(visitorcallable, element, **kwargs)
+  File "/opt/venv/lib/python3.11/site-packages/sqlalchemy/engine/base.py", line 2459, in _run_ddl_visitor
+    ).traverse_single(element)
+      ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/venv/lib/python3.11/site-packages/sqlalchemy/sql/visitors.py", line 661, in traverse_single
+    return meth(obj, **kw)
+           ^^^^^^^^^^^^^^^
+  File "/opt/venv/lib/python3.11/site-packages/sqlalchemy/sql/ddl.py", line 1026, in visit_table
+    self.traverse_single(index, create_ok=True)
+  File "/opt/venv/lib/python3.11/site-packages/sqlalchemy/sql/visitors.py", line 661, in traverse_single
+    return meth(obj, **kw)
+           ^^^^^^^^^^^^^^^
+  File "/opt/venv/lib/python3.11/site-packages/sqlalchemy/sql/ddl.py", line 1063, in visit_index
+    CreateIndex(index)._invoke_with(self.connection)
+  File "/opt/venv/lib/python3.11/site-packages/sqlalchemy/sql/ddl.py", line 321, in _invoke_with
+    return bind.execute(self)
+           ^^^^^^^^^^^^^^^^^^
+  File "/opt/venv/lib/python3.11/site-packages/sqlalchemy/engine/base.py", line 1419, in execute
+    return meth(
+           ^^^^^
+  File "/opt/venv/lib/python3.11/site-packages/sqlalchemy/sql/ddl.py", line 187, in _execute_on_connection
+    return connection._execute_ddl(
+           ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/venv/lib/python3.11/site-packages/sqlalchemy/engine/base.py", line 1530, in _execute_ddl
+    ret = self._execute_context(
+          ^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/venv/lib/python3.11/site-packages/sqlalchemy/engine/base.py", line 1846, in _execute_context
+    return self._exec_single_context(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/venv/lib/python3.11/site-packages/sqlalchemy/engine/base.py", line 1986, in _exec_single_context
+    self._handle_dbapi_exception(
+  File "/opt/venv/lib/python3.11/site-packages/sqlalchemy/engine/base.py", line 2355, in _handle_dbapi_exception
+    raise sqlalchemy_exception.with_traceback(exc_info[2]) from e
+  File "/opt/venv/lib/python3.11/site-packages/sqlalchemy/engine/base.py", line 1967, in _exec_single_context
+    self.dialect.do_execute(
+  File "/opt/venv/lib/python3.11/site-packages/sqlalchemy/engine/default.py", line 951, in do_execute
+    cursor.execute(statement, parameters)
+sqlalchemy.exc.ProgrammingError: (psycopg2.errors.UndefinedObject) data type json has no default operator class for access method "gin"
+HINT:  You must specify an operator class for the index or define a default operator class for the data type.
+
+[SQL: CREATE INDEX ix_files_metadata ON files USING gin (file_metadata)]
+(Background on this error at: https://sqlalche.me/e/20/f405)
+2025-11-07 17:48:59,696 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-07 17:48:59,696 - app - INFO - Flask app created with config: development
+2025-11-07 17:48:59,697 - app - INFO - Debug mode: True
+2025-11-07 17:48:59,698 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-07 17:48:59,733 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-07 17:48:59,734 - app - INFO - Flask app created with config: development
+2025-11-07 17:48:59,734 - app - INFO - Debug mode: True
+2025-11-07 17:48:59,734 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-07 17:48:59,749 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-07 17:48:59,749 - app - INFO - Flask app created with config: development
+2025-11-07 17:48:59,749 - app - INFO - Debug mode: True
+2025-11-07 17:48:59,749 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-07 17:48:59,770 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-07 17:48:59,770 - app - INFO - Flask app created with config: development
+2025-11-07 17:48:59,770 - app - INFO - Debug mode: True
+2025-11-07 17:48:59,771 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-07 17:49:17,562 - app.utils.decorators - DEBUG - Authenticated user: 7b817370-baff-4d5b-a4cf-ee9d6eb442e4
+2025-11-07 17:49:17,563 - app.routes.tenants - INFO - Creating tenant for user_id=7b817370-baff-4d5b-a4cf-ee9d6eb442e4
+2025-11-07 17:49:17,563 - app.schemas.tenant_schema - DEBUG - Validated tenant name for creation: Ma Première Entreprise
+2025-11-07 17:49:17,564 - app.schemas.tenant_schema - DEBUG - Normalized tenant name for creation: Ma Première Entreprise
+2025-11-07 17:49:17,564 - app.models.tenant - DEBUG - Generated database name: Ma Première Entreprise -> tenant_ma_première_entreprise_1110f3fd
+2025-11-07 17:49:17,565 - app.models.tenant - INFO - Tenant object initialized: name=Ma Première Entreprise, database_name=tenant_ma_première_entreprise_1110f3fd
+2025-11-07 17:49:17,671 - app.utils.database - INFO - Created tenant database: tenant_ma_première_entreprise_1110f3fd
+2025-11-07 17:49:17,672 - app.utils.database - INFO - Created engine for tenant database: tenant_ma_première_entreprise_1110f3fd
+2025-11-07 17:49:17,706 - app.utils.database - INFO - Created 'files' table in tenant database: tenant_ma_première_entreprise_1110f3fd
+2025-11-07 17:49:17,717 - app.utils.database - INFO - Created 'documents' table in tenant database: tenant_ma_première_entreprise_1110f3fd
+2025-11-07 17:49:17,717 - app.utils.database - INFO - Successfully created all tables in tenant database: tenant_ma_première_entreprise_1110f3fd
+2025-11-07 17:49:17,717 - app.routes.tenants - INFO - Created database and tables: tenant_ma_première_entreprise_1110f3fd
+2025-11-07 17:49:17,718 - app.models.user_tenant_association - INFO - UserTenantAssociation initialized: user_id=7b817370-baff-4d5b-a4cf-ee9d6eb442e4, tenant_id=87223a8c-26dd-42e0-b983-1d48802e62d2, role=admin
+2025-11-07 17:49:17,726 - app.routes.tenants - INFO - Tenant created successfully: tenant_id=87223a8c-26dd-42e0-b983-1d48802e62d2, database=tenant_ma_première_entreprise_1110f3fd
+2025-11-07 17:51:16,538 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-07 17:51:16,538 - app - INFO - Flask app created with config: development
+2025-11-07 17:51:16,538 - app - INFO - Debug mode: True
+2025-11-07 17:51:16,539 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-07 17:51:49,484 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-07 17:51:49,485 - app - INFO - Flask app created with config: development
+2025-11-07 17:51:49,485 - app - INFO - Debug mode: True
+2025-11-07 17:51:49,485 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...

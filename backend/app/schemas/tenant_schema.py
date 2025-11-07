@@ -253,6 +253,10 @@ class TenantResponseSchema(Schema):
         name: Tenant organization name
         database_name: PostgreSQL database name (for reference)
         is_active: Whether tenant is active
+        auth_method: Authentication method ('local', 'sso', 'both')
+        sso_domain_whitelist: Allowed email domains for SSO
+        sso_auto_provisioning: Auto-create users on first SSO login
+        sso_default_role: Default role for new SSO users
         created_at: When tenant was created
         updated_at: When tenant was last updated
         created_by: UUID of user who created tenant
@@ -267,6 +271,10 @@ class TenantResponseSchema(Schema):
             "name": "Acme Corporation",
             "database_name": "tenant_acme_corp_a1b2c3d4",
             "is_active": true,
+            "auth_method": "both",
+            "sso_domain_whitelist": ["@acme.com"],
+            "sso_auto_provisioning": true,
+            "sso_default_role": "user",
             "created_at": "2024-01-01T00:00:00Z",
             "updated_at": "2024-01-01T00:00:00Z",
             "created_by": "456e7890-e89b-12d3-a456-426614174001"
@@ -276,6 +284,13 @@ class TenantResponseSchema(Schema):
     name = fields.Str(dump_only=True)
     database_name = fields.Str(dump_only=True)
     is_active = fields.Boolean(dump_only=True)
+
+    # SSO fields
+    auth_method = fields.Str(dump_only=True)
+    sso_domain_whitelist = fields.List(fields.Str(), dump_only=True)
+    sso_auto_provisioning = fields.Boolean(dump_only=True)
+    sso_default_role = fields.Str(dump_only=True)
+
     created_at = fields.DateTime(dump_only=True)
     updated_at = fields.DateTime(dump_only=True)
     created_by = fields.UUID(dump_only=True)
