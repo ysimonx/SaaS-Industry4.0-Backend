@@ -24,8 +24,8 @@ S3 Path format:
 
 import re
 import logging
-from typing import Optional, List
-from sqlalchemy import String, BigInteger, Index
+from typing import Optional, List, Dict, Any
+from sqlalchemy import String, BigInteger, Index, JSON
 from sqlalchemy.orm import relationship
 
 from .base import BaseModel
@@ -69,6 +69,9 @@ class File(BaseModel, db.Model):
     s3_path = db.Column(String(500), nullable=False, unique=True)
     file_size = db.Column(BigInteger, nullable=False)
 
+    # Metadata column - stores custom JSON data
+    file_metadata = db.Column(JSON, nullable=False, default={})
+
     # Relationships
     documents = relationship('Document', back_populates='file', cascade='all, delete-orphan')
 
@@ -77,6 +80,7 @@ class File(BaseModel, db.Model):
         Index('ix_files_md5_hash', 'md5_hash'),
         Index('ix_files_s3_path', 's3_path', unique=True),
         Index('ix_files_created_at', 'created_at'),
+        Index('ix_files_metadata', 'file_metadata', postgresql_using='gin'),
     )
 
     def __init__(self, **kwargs):
@@ -114,6 +118,107 @@ class File(BaseModel, db.Model):
             f"File object initialized: md5={self.md5_hash}, "
             f"size={self.file_size}, s3_path={self.s3_path}"
         )
+
+    # Metadata helper methods
+    def get_metadata(self, key: str, default: Any = None) -> Any:
+        """
+        Get a metadata value by key.
+
+        Args:
+            key: The metadata key to retrieve
+            default: Default value if key doesn't exist
+
+        Returns:
+            The metadata value or default if not found
+
+        Example:
+            mime_type = file.get_metadata('mime_type', 'application/octet-stream')
+        """
+        if self.file_metadata is None:
+            return default
+        return self.file_metadata.get(key, default)
+
+    def set_metadata(self, key: str, value: Any) -> None:
+        """
+        Set a metadata value for a specific key.
+
+        Args:
+            key: The metadata key to set
+            value: The value to store (must be JSON-serializable)
+
+        Example:
+            file.set_metadata('mime_type', 'image/jpeg')
+            file.set_metadata('dimensions', {'width': 1920, 'height': 1080})
+        """
+        if self.file_metadata is None:
+            self.file_metadata = {}
+
+        # Create a new dict to trigger SQLAlchemy change detection
+        new_metadata = dict(self.file_metadata)
+        new_metadata[key] = value
+        self.file_metadata = new_metadata
+
+    def update_metadata(self, data: Dict[str, Any]) -> None:
+        """
+        Update multiple metadata fields at once.
+
+        Args:
+            data: Dictionary of metadata to update
+
+        Example:
+            file.update_metadata({
+                'mime_type': 'image/jpeg',
+                'width': 1920,
+                'height': 1080
+            })
+        """
+        if self.file_metadata is None:
+            self.file_metadata = {}
+
+        # Create a new dict to trigger SQLAlchemy change detection
+        new_metadata = dict(self.file_metadata)
+        new_metadata.update(data)
+        self.file_metadata = new_metadata
+
+    def has_metadata(self, key: str) -> bool:
+        """
+        Check if a metadata key exists.
+
+        Args:
+            key: The metadata key to check
+
+        Returns:
+            True if key exists, False otherwise
+
+        Example:
+            if file.has_metadata('virus_scan_result'):
+                result = file.get_metadata('virus_scan_result')
+        """
+        if self.file_metadata is None:
+            return False
+        return key in self.file_metadata
+
+    def remove_metadata(self, key: str) -> bool:
+        """
+        Remove a metadata key.
+
+        Args:
+            key: The metadata key to remove
+
+        Returns:
+            True if key was removed, False if it didn't exist
+
+        Example:
+            file.remove_metadata('temp_flag')
+        """
+        if self.file_metadata is None or key not in self.file_metadata:
+            return False
+
+        # Create a new dict to trigger SQLAlchemy change detection
+        new_metadata = dict(self.file_metadata)
+        del new_metadata[key]
+        self.file_metadata = new_metadata
+        return True
 
     @staticmethod
     def _is_valid_md5(md5_hash: str) -> bool:

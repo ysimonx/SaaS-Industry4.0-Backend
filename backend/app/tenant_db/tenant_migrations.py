@@ -201,19 +201,19 @@ def initial_schema(db: Session):
 
 # Exemple de migrations futures (à décommenter et adapter selon vos besoins):
 
-# @register_migration(2)
-# def add_file_metadata_column(db: Session):
-#     """Ajoute une colonne metadata JSONB à la table files pour stocker des métadonnées personnalisées"""
-#     db.execute(text("""
-#         ALTER TABLE files
-#         ADD COLUMN IF NOT EXISTS metadata JSONB DEFAULT '{}'::jsonb
-#     """))
-# 
-#     # Créer un index GIN pour permettre des recherches efficaces dans le JSON
-#     db.execute(text("""
-#         CREATE INDEX IF NOT EXISTS idx_files_metadata
-#         ON files USING GIN (metadata)
-#     """))
+@register_migration(2)
+def add_file_metadata_column(db: Session):
+    """Ajoute une colonne file_metadata JSONB à la table files pour stocker des métadonnées personnalisées"""
+    db.execute(text("""
+        ALTER TABLE files
+        ADD COLUMN IF NOT EXISTS file_metadata JSONB DEFAULT '{}'::jsonb
+    """))
+
+    # Créer un index GIN pour permettre des recherches efficaces dans le JSON
+    db.execute(text("""
+        CREATE INDEX IF NOT EXISTS idx_files_metadata
+        ON files USING GIN (file_metadata)
+    """))
 
 # @register_migration(3)
 # def add_document_version_column(db: Session):

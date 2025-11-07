@@ -1,6 +1,6 @@
-# Guide d'utilisation de la colonne metadata dans File
+# Guide d'utilisation de la colonne file_metadata dans File
 
-La colonne `metadata` (type JSONB) a été ajoutée à la table `files` via la migration v2. Elle permet de stocker des informations personnalisées sur chaque fichier de manière flexible.
+La colonne `file_metadata` (type JSONB) a été ajoutée à la table `files` via la migration v2. Elle permet de stocker des informations personnalisées sur chaque fichier de manière flexible.
 
 ## Caractéristiques
 
@@ -220,7 +220,7 @@ PostgreSQL offre des opérateurs puissants pour interroger les données JSONB :
 ```python
 # Tous les fichiers JPEG
 jpeg_files = File.query.filter(
-    File.metadata['mime_type'].astext == 'image/jpeg'
+    File.file_metadata['mime_type'].astext == 'image/jpeg'
 ).all()
 ```
 
@@ -231,7 +231,7 @@ from sqlalchemy import cast, Integer
 
 # Images de plus de 1920px de large
 large_images = File.query.filter(
-    cast(File.metadata['width'].astext, Integer) > 1920
+    cast(File.file_metadata['width'].astext, Integer) > 1920
 ).all()
 ```
 
@@ -240,7 +240,7 @@ large_images = File.query.filter(
 ```python
 # Fichiers avec le tag 'important'
 important_files = File.query.filter(
-    File.metadata['tags'].contains(['important'])
+    File.file_metadata['tags'].contains(['important'])
 ).all()
 ```
 
@@ -249,7 +249,7 @@ important_files = File.query.filter(
 ```python
 # Fichiers qui ont des données EXIF
 files_with_exif = File.query.filter(
-    File.metadata.has_key('exif')
+    File.file_metadata.has_key('exif')
 ).all()
 ```
 
@@ -258,13 +258,13 @@ files_with_exif = File.query.filter(
 ```python
 # Fichiers pris avec un appareil Canon
 canon_photos = File.query.filter(
-    File.metadata['exif']['camera'].astext.like('%Canon%')
+    File.file_metadata['exif']['camera'].astext.like('%Canon%')
 ).all()
 ```
 
 ## Bonnes pratiques
 
-### 1. **Initialisez metadata lors de la création**
+### 1. **Initialisez file_metadata lors de la création**
 
 ```python
 file = File(
@@ -322,7 +322,7 @@ db.session.commit()  # Important !
 
 ```python
 # Au lieu de
-mime = file.metadata.get('mime_type') if file.metadata else None
+mime = file.file_metadata.get('mime_type') if file.file_metadata else None
 
 # Préférez
 mime = file.get_metadata('mime_type', 'application/octet-stream')
@@ -332,20 +332,20 @@ mime = file.get_metadata('mime_type', 'application/octet-stream')
 
 ### Index GIN
 
-La colonne `metadata` est indexée avec un index GIN (Generalized Inverted Index), ce qui permet des recherches rapides :
+La colonne `file_metadata` est indexée avec un index GIN (Generalized Inverted Index), ce qui permet des recherches rapides :
 
 ```sql
-CREATE INDEX IF NOT EXISTS idx_files_metadata ON files USING GIN (metadata);
+CREATE INDEX IF NOT EXISTS idx_files_metadata ON files USING GIN (file_metadata);
 ```
 
 ### Requêtes optimisées
 
 ```python
 # ✓ Utilise l'index - rapide
-File.query.filter(File.metadata['mime_type'].astext == 'image/jpeg')
+File.query.filter(File.file_metadata['mime_type'].astext == 'image/jpeg')
 
 # ✗ Full table scan - lent
-File.query.filter(File.metadata.cast(String).like('%jpeg%'))
+File.query.filter(File.file_metadata.cast(String).like('%jpeg%'))
 ```
 
 ## Exemples complets

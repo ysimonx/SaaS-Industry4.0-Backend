@@ -941,7 +941,7 @@ GET /api/tenants/{tenant_id}/sso/identities
 Chaque tenant peut configurer indépendamment son auto-provisioning :
 
 ```json
-// Dans tenant_sso_configs.metadata
+// Dans tenant_sso_configs.config_metadata
 {
   "auto_provisioning": {
     "enabled": true,
@@ -1760,7 +1760,7 @@ Exemple de configuration pour un tenant :
     "provider_tenant_id": "12345678-1234-1234-1234-123456789abc",
     "client_id": "87654321-abcd-efgh-ijkl-098765432109",
     "redirect_uri": "https://api.saasplatform.com/api/auth/sso/azure/callback",
-    "metadata": {
+    "config_metadata": {
         "auto_provisioning": {
             "enabled": true,
             "default_role": "viewer",
@@ -2221,7 +2221,7 @@ consultant@freelance.com
 tenant_config = {
     "auth_method": "both",  # SSO et local acceptés
     "sso_domain_whitelist": ["@it.company.com", "@hr.company.com"],  # Départements migrés
-    "metadata": {
+    "config_metadata": {
         "migration_phase": "partial",
         "departments_migrated": ["IT", "HR"],
         "target_completion": "2024-06-01"

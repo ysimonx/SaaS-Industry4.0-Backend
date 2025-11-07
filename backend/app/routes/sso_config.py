@@ -21,7 +21,7 @@ bp = Blueprint('sso_config', __name__, url_prefix='/api/tenants')
 
 @bp.route('/<string:tenant_id>/sso/config', methods=['GET'])
 @jwt_required()
-@tenant_required
+@tenant_required()
 @role_required(['admin', 'user'])
 def get_sso_config(tenant_id):
     """
@@ -46,7 +46,7 @@ def get_sso_config(tenant_id):
 
 @bp.route('/<string:tenant_id>/sso/config', methods=['POST'])
 @jwt_required()
-@tenant_required
+@tenant_required()
 @role_required(['admin'])
 def create_sso_config(tenant_id):
     """
@@ -98,7 +98,7 @@ def create_sso_config(tenant_id):
 
 @bp.route('/<string:tenant_id>/sso/config', methods=['PUT'])
 @jwt_required()
-@tenant_required
+@tenant_required()
 @role_required(['admin'])
 def update_sso_config(tenant_id):
     """
@@ -135,7 +135,7 @@ def update_sso_config(tenant_id):
 
 @bp.route('/<string:tenant_id>/sso/config', methods=['DELETE'])
 @jwt_required()
-@tenant_required
+@tenant_required()
 @role_required(['admin'])
 def delete_sso_config(tenant_id):
     """
@@ -169,7 +169,7 @@ def delete_sso_config(tenant_id):
 
 @bp.route('/<string:tenant_id>/sso/config/enable', methods=['POST'])
 @jwt_required()
-@tenant_required
+@tenant_required()
 @role_required(['admin'])
 def enable_sso(tenant_id):
     """
@@ -203,7 +203,7 @@ def enable_sso(tenant_id):
 
 @bp.route('/<string:tenant_id>/sso/config/disable', methods=['POST'])
 @jwt_required()
-@tenant_required
+@tenant_required()
 @role_required(['admin'])
 def disable_sso(tenant_id):
     """
@@ -237,7 +237,7 @@ def disable_sso(tenant_id):
 
 @bp.route('/<string:tenant_id>/sso/config/validate', methods=['GET'])
 @jwt_required()
-@tenant_required
+@tenant_required()
 @role_required(['admin'])
 def validate_sso_config(tenant_id):
     """
@@ -257,7 +257,7 @@ def validate_sso_config(tenant_id):
 
 @bp.route('/<string:tenant_id>/sso/config/auto-provisioning', methods=['PUT'])
 @jwt_required()
-@tenant_required
+@tenant_required()
 @role_required(['admin'])
 def update_auto_provisioning(tenant_id):
     """
@@ -298,7 +298,7 @@ def update_auto_provisioning(tenant_id):
 
 @bp.route('/<string:tenant_id>/sso/statistics', methods=['GET'])
 @jwt_required()
-@tenant_required
+@tenant_required()
 @role_required(['admin'])
 def get_sso_statistics(tenant_id):
     """

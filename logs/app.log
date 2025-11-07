@@ -2767,3 +2767,23 @@ LINE 1: SELECT version FROM tenant_schema_version ORDER BY version D...
 2025-11-06 22:15:03,077 - app.tenant_db.tenant_migrations - INFO - Created tenant_schema_version table
 2025-11-06 22:15:03,077 - app.tenant_db.tenant_migrations - INFO - Applying migration v1: initial_schema
 2025-11-06 22:15:03,078 - app.tenant_db.tenant_migrations - INFO - ✓ Migration v1 applied successfully
+2025-11-07 07:44:54,461 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-07 07:44:54,461 - app - INFO - Flask app created with config: development
+2025-11-07 07:44:54,461 - app - INFO - Debug mode: True
+2025-11-07 07:44:54,462 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-07 07:44:54,503 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-07 07:44:54,503 - app - INFO - Flask app created with config: development
+2025-11-07 07:44:54,503 - app - INFO - Debug mode: True
+2025-11-07 07:44:54,504 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-07 07:44:54,516 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-07 07:44:54,516 - app - INFO - Flask app created with config: development
+2025-11-07 07:44:54,516 - app - INFO - Debug mode: True
+2025-11-07 07:44:54,516 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-07 07:44:54,528 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-07 07:44:54,529 - app - INFO - Flask app created with config: development
+2025-11-07 07:44:54,529 - app - INFO - Debug mode: True
+2025-11-07 07:44:54,529 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-07 07:46:37,296 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-07 07:46:37,296 - app - INFO - Flask app created with config: development
+2025-11-07 07:46:37,296 - app - INFO - Debug mode: True
+2025-11-07 07:46:37,296 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
