@@ -41,6 +41,89 @@ A production-ready, scalable multi-tenant SaaS backend platform built with Flask
 
 ---
 
+
+
+## Features
+
+### ✅ User Management
+- User registration with email validation
+- Secure login with JWT tokens (15-min access, 7-day refresh)
+- Password hashing with bcrypt
+- User profile management
+- Token refresh and logout (blacklist)
+
+### ✅ Multi-Tenant System
+- Dynamic tenant creation with isolated databases
+- Automatic database provisioning
+- Role-based access control (admin, user, viewer)
+- User-tenant associations
+- Tenant member management
+
+### ✅ Enterprise Authentication (SSO)
+- Azure AD / Microsoft Entra ID integration
+- Per-tenant SSO configuration
+- Public Application mode (no client_secret needed)
+- OAuth 2.0 Authorization Code Flow with PKCE
+- Auto-provisioning with configurable rules
+- Azure AD group to role mapping
+- Hybrid authentication modes (local, SSO, or both)
+- Encrypted token storage via HashiCorp Vault
+- Multi-tenant identity mapping (different Azure IDs per tenant)
+
+### ✅ Document Management
+- Document upload with multipart/form-data
+- MD5-based file deduplication (storage optimization)
+- S3-compatible storage with sharded paths
+- Document metadata management
+- Pre-signed URL generation for downloads
+- Pagination and filtering
+
+### ✅ File Management
+- Immutable file storage
+- Reference counting (shared files across documents)
+- Orphaned file detection and cleanup
+- Storage statistics per tenant
+
+### ✅ Async Processing
+- **Kafka**: Event streaming for real-time data processing
+  - Event topics: tenant.created, document.uploaded, etc.
+  - Background worker for event consumption
+- **Celery**: Distributed task queue for scheduled jobs
+  - SSO token refresh (automatic renewal before expiry)
+  - Expired token cleanup
+  - Encryption key rotation
+  - Scheduled maintenance tasks
+- **Flower**: Real-time monitoring dashboard for Celery tasks
+
+### ✅ API Features
+- RESTful API design
+- OpenAPI 3.0 specification (Swagger)
+- Standardized response formats
+- Comprehensive error handling
+- Request validation with Marshmallow schemas
+- CORS support
+
+### ✅ Security
+- JWT-based authentication
+- Password strength validation
+- Azure AD / Microsoft Entra ID SSO support
+- OAuth 2.0 with PKCE (Public Application mode)
+- Multi-factor authentication (via Azure AD)
+- Rate limiting (configurable)
+- SQL injection prevention (SQLAlchemy ORM)
+- XSS protection
+- HTTPS/TLS support (production)
+
+### ✅ DevOps Ready
+- Docker and Docker Compose support
+- Multi-stage Docker builds
+- Health check endpoints
+- Logging and monitoring hooks
+- Environment-based configuration
+- Database migration system
+
+---
+
 ## Project Overview
 
 This platform provides a complete SaaS backend solution with the following capabilities:
@@ -274,87 +357,6 @@ This approach provides:
 ### Containerization
 - **Docker 20.10+**: Containerization
 - **Docker Compose 2.0+**: Multi-container orchestration
-
----
-
-## Features
-
-### ✅ User Management
-- User registration with email validation
-- Secure login with JWT tokens (15-min access, 7-day refresh)
-- Password hashing with bcrypt
-- User profile management
-- Token refresh and logout (blacklist)
-
-### ✅ Multi-Tenant System
-- Dynamic tenant creation with isolated databases
-- Automatic database provisioning
-- Role-based access control (admin, user, viewer)
-- User-tenant associations
-- Tenant member management
-
-### ✅ Enterprise Authentication (SSO)
-- Azure AD / Microsoft Entra ID integration
-- Per-tenant SSO configuration
-- Public Application mode (no client_secret needed)
-- OAuth 2.0 Authorization Code Flow with PKCE
-- Auto-provisioning with configurable rules
-- Azure AD group to role mapping
-- Hybrid authentication modes (local, SSO, or both)
-- Encrypted token storage via HashiCorp Vault
-- Multi-tenant identity mapping (different Azure IDs per tenant)
-
-### ✅ Document Management
-- Document upload with multipart/form-data
-- MD5-based file deduplication (storage optimization)
-- S3-compatible storage with sharded paths
-- Document metadata management
-- Pre-signed URL generation for downloads
-- Pagination and filtering
-
-### ✅ File Management
-- Immutable file storage
-- Reference counting (shared files across documents)
-- Orphaned file detection and cleanup
-- Storage statistics per tenant
-
-### ✅ Async Processing
-- **Kafka**: Event streaming for real-time data processing
-  - Event topics: tenant.created, document.uploaded, etc.
-  - Background worker for event consumption
-- **Celery**: Distributed task queue for scheduled jobs
-  - SSO token refresh (automatic renewal before expiry)
-  - Expired token cleanup
-  - Encryption key rotation
-  - Scheduled maintenance tasks
-- **Flower**: Real-time monitoring dashboard for Celery tasks
-
-### ✅ API Features
-- RESTful API design
-- OpenAPI 3.0 specification (Swagger)
-- Standardized response formats
-- Comprehensive error handling
-- Request validation with Marshmallow schemas
-- CORS support
-
-### ✅ Security
-- JWT-based authentication
-- Password strength validation
-- Azure AD / Microsoft Entra ID SSO support
-- OAuth 2.0 with PKCE (Public Application mode)
-- Multi-factor authentication (via Azure AD)
-- Rate limiting (configurable)
-- SQL injection prevention (SQLAlchemy ORM)
-- XSS protection
-- HTTPS/TLS support (production)
-
-### ✅ DevOps Ready
-- Docker and Docker Compose support
-- Multi-stage Docker builds
-- Health check endpoints
-- Logging and monitoring hooks
-- Environment-based configuration
-- Database migration system
 
 ---
 
