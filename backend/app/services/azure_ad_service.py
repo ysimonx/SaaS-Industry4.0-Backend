@@ -187,8 +187,31 @@ class AzureADService:
 
             if response.status_code != 200:
                 error_data = response.json() if response.text else {}
+                error_code = error_data.get('error', '')
+                error_description = error_data.get('error_description', 'Unknown error')
+
                 logger.error(f"Token exchange failed: {response.status_code} - {error_data}")
-                raise ValueError(f"Token exchange failed: {error_data.get('error_description', 'Unknown error')}")
+
+                # Provide specific guidance for common Azure AD errors
+                if 'AADSTS9002327' in error_description:
+                    raise ValueError(
+                        "Azure AD app is configured as 'Single-Page Application'. "
+                        "Please reconfigure it as 'Web' application in Azure Portal. "
+                        "See AZURE_AD_CONFIGURATION_GUIDE.md for details."
+                    )
+                elif 'AADSTS7000218' in error_description:
+                    raise ValueError(
+                        "The application requires a client secret but none was provided. "
+                        "Either add a client secret in Azure Portal or ensure the app "
+                        "is configured for public client flow with PKCE."
+                    )
+                elif 'AADSTS50011' in error_description:
+                    raise ValueError(
+                        f"Redirect URI mismatch. Ensure the callback URL "
+                        f"'{redirect_uri}' is registered in Azure Portal."
+                    )
+
+                raise ValueError(f"Token exchange failed: {error_description}")
 
             token_response = response.json()
 
@@ -236,8 +259,19 @@ class AzureADService:
 
             if response.status_code != 200:
                 error_data = response.json() if response.text else {}
+                error_description = error_data.get('error_description', 'Unknown error')
+
                 logger.error(f"Token refresh failed: {response.status_code} - {error_data}")
-                raise ValueError(f"Token refresh failed: {error_data.get('error_description', 'Unknown error')}")
+
+                # Provide specific guidance for common Azure AD errors
+                if 'AADSTS9002327' in error_description:
+                    raise ValueError(
+                        "Azure AD app is configured as 'Single-Page Application'. "
+                        "Please reconfigure it as 'Web' application in Azure Portal. "
+                        "See AZURE_AD_CONFIGURATION_GUIDE.md for details."
+                    )
+
+                raise ValueError(f"Token refresh failed: {error_description}")
 
             token_response = response.json()
             logger.info(f"Successfully refreshed tokens for tenant {self.tenant_id}")
@@ -534,13 +568,14 @@ class AzureADService:
 
             # Also store state in Flask session for key retrieval
             session['oauth_state'] = state
-            logger.debug(f"Stored PKCE parameters in Redis with key: {redis_key}")
+            logger.info(f"Stored PKCE parameters in Redis with key: {redis_key}, state: {state[:10]}...")
         else:
             # Fallback to Flask session
             session['oauth_state'] = state
             session['oauth_code_verifier'] = code_verifier
             session['oauth_timestamp'] = datetime.utcnow().isoformat()
-            logger.debug("Stored PKCE parameters in Flask session")
+            logger.info(f"Stored PKCE parameters in Flask session, state: {state[:10]}...")
+            logger.debug(f"Session keys after storing: {list(session.keys())}")
 
     @staticmethod
     def retrieve_pkce_from_session() -> Tuple[Optional[str], Optional[str]]:
@@ -552,12 +587,17 @@ class AzureADService:
         Returns:
             Tuple of (code_verifier, state) or (None, None)
         """
+        logger.info(f"Attempting to retrieve PKCE from session. Session keys: {list(session.keys())}")
+
         redis_client = redis_manager.get_client()
 
         # Get state from Flask session (always stored there)
         state = session.pop('oauth_state', None)
 
+        logger.info(f"Retrieved state from Flask session: {state[:10] if state else 'None'}")
+
         if not state:
+            logger.warning("No oauth_state found in Flask session")
             return None, None
 
         if redis_client:
@@ -573,19 +613,22 @@ class AzureADService:
                     # Delete from Redis after retrieval
                     redis_client.delete(redis_key)
 
-                    logger.debug(f"Retrieved PKCE parameters from Redis and deleted key: {redis_key}")
+                    logger.info(f"Retrieved PKCE parameters from Redis and deleted key: {redis_key}, state: {state[:10]}...")
                     return code_verifier, state
                 except json.JSONDecodeError:
                     logger.error("Failed to decode session data from Redis")
+            else:
+                logger.warning(f"No data found in Redis for key: {redis_key}")
 
         # Fallback to Flask session
         code_verifier = session.pop('oauth_code_verifier', None)
         session.pop('oauth_timestamp', None)
 
         if code_verifier and state:
-            logger.debug("Retrieved PKCE parameters from Flask session")
+            logger.info(f"Retrieved PKCE parameters from Flask session, state: {state[:10]}...")
             return code_verifier, state
 
+        logger.warning(f"Failed to retrieve complete PKCE data. State: {state[:10] if state else 'None'}, Code verifier: {'Present' if code_verifier else 'None'}")
         return None, None
 
     @staticmethod
