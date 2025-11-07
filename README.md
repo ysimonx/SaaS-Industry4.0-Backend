@@ -1,5 +1,16 @@
 # SaaS Multi-Tenant Backend Industry 4.0 Platform
 
+**A Production-Ready Foundation for Industry 4.0 SaaS Applications**
+
+This platform is specifically designed to support the development of backend systems for Industry 4.0 SaaS applications. As of today, it provides:
+
+- **Mobile Application Foundation**: Serves as the backbone for modern mobile and web applications in industrial contexts
+- **Flexible Cloud Deployment**: Can be hosted on French sovereign cloud, European cloud providers, or GAFAM platforms (AWS, Azure, GCP)
+- **Multi-Tenant Architecture**: Complete data and file isolation between tenants for maximum security and compliance
+- **Enterprise Security Standards**: Uses HashiCorp Vault for secrets management and data encryption at rest and in transit
+- **Enterprise SSO Integration**: Seamlessly integrates with Microsoft Entra ID (Azure SSO) for enterprise authentication
+- **Comprehensive API Documentation**: Fully documented RESTful APIs with OpenAPI/Swagger specification
+
 A production-ready, scalable multi-tenant SaaS backend platform built with Flask, PostgreSQL, Kafka, and S3 storage. Features isolated tenant databases, JWT authentication, asynchronous document processing, and RESTful APIs.
 
 [![Python 3.11+](https://img.shields.io/badge/python-3.11+-blue.svg)](https://www.python.org/downloads/)
@@ -16,10 +27,8 @@ A production-ready, scalable multi-tenant SaaS backend platform built with Flask
 - [Tech Stack](#tech-stack)
 - [Features](#features)
 - [Prerequisites](#prerequisites)
-- [Quick Start](#quick-start)
-- [Installation](#installation)
-  - [Option 1: Docker (Recommended)](#option-1-docker-recommended)
-  - [Option 2: Local Development](#option-2-local-development)
+- [Quick Start avec Docker (Recommended)](#quick-start)
+- [Installation Sans Docker](#installation)
 - [Environment Variables](#environment-variables)
 - [HashiCorp Vault Integration](#hashicorp-vault-integration)
 - [Database Migrations](#database-migrations)
@@ -50,6 +59,106 @@ This platform provides a complete SaaS backend solution with the following capab
 - Document management systems with multi-tenant support
 - Enterprise applications with organization-based access control
 - B2B platforms with separate data domains per client
+
+---
+
+## Industry 4.0 Target Functionalities
+
+This platform is designed as a foundation to support advanced Industry 4.0 capabilities. The following functionalities represent the strategic roadmap for industrial IoT and smart manufacturing applications:
+
+### A) Connectivity and Massive Data Ingestion (Big Data)
+
+**IoT Integration**:
+- Receive and process high-throughput real-time data streams from thousands of sensors, equipment, and industrial systems
+- Support for industrial protocols: MQTT, OPC-UA, Modbus, SCADA systems
+- Integration with ERP, MES (Manufacturing Execution Systems), and CMMS (Computerized Maintenance Management Systems)
+
+**Robust Gateways/APIs**:
+- Secure interfaces for bidirectional integration with on-premise client systems
+- Edge computing support for data preprocessing at the source
+- Protocol translation and data normalization layers
+
+**Scalable Storage**:
+- Manage exponentially growing data volumes with high availability
+- Time-series database optimization for sensor data
+- Hot/Cold storage strategies for cost optimization
+
+### B) Intelligence and Advanced Analytics (AI/ML)
+
+**Analytics Engine**:
+- Implement Artificial Intelligence and Machine Learning algorithms for data analysis
+- Real-time stream processing with Apache Kafka
+- Batch processing for historical data analysis
+
+**Predictive Maintenance**:
+- Detect and predict equipment anomalies and failures
+- Quality drift detection and alerting
+- Remaining Useful Life (RUL) estimation
+- Root cause analysis automation
+
+**Real-Time Optimization**:
+- Calculate and prescribe actions (e.g., energy efficiency optimization, production adjustments)
+- Closed-loop control integration to reinject decisions into operational systems
+- Digital twin synchronization for simulation and optimization
+
+### C) Security and Compliance
+
+**Industrial Security (OT)**:
+- Ensure security of critical data and operational technology systems
+- Identity and Access Management (IAM) for industrial environments
+- Network segmentation and zero-trust architecture
+- Compliance with IEC 62443 industrial security standards
+
+**Traceability and Audit**:
+- Log all operations with immutable audit trails
+- Compliance with industrial standards and regulations (ISO 50001, ISO 9001, ISO 27001)
+- ESG (Environmental, Social, Governance) reporting capabilities
+- GDPR, HIPAA, and sector-specific compliance support
+
+### D) Platform Management (SaaS)
+
+**Multi-Tenancy** (✅ Currently Implemented):
+- Complete data isolation for multiple clients on shared infrastructure
+- Per-tenant customization and configuration
+- Tenant-specific database schemas for regulatory compliance
+
+**Scalability** (✅ Currently Implemented):
+- Rapid scaling of compute and storage capacity based on load
+- Cloud-native architecture with Kubernetes support
+- Elastic resource allocation
+
+**DevOps/SRE Operations** (✅ Currently Implemented):
+- Continuous Integration/Continuous Deployment (CI/CD) pipelines
+- Infrastructure as Code (IaC) with Docker and Docker Compose
+- Monitoring, alerting, and observability (ready for Prometheus, Grafana)
+- High availability and disaster recovery strategies
+
+### Current Implementation Status
+
+| Category | Capability | Status |
+|----------|-----------|--------|
+| **Foundation** | Multi-tenant architecture | ✅ Production-ready |
+| | User authentication & RBAC | ✅ Production-ready |
+| | Azure AD SSO integration | ✅ Production-ready |
+| | RESTful API with documentation | ✅ Production-ready |
+| | Vault secrets management | ✅ Production-ready |
+| | File storage with S3 | ✅ Production-ready |
+| **Async Processing** | Kafka event streaming | ✅ Production-ready |
+| | Celery task queue | ✅ Production-ready |
+| | Background workers | ✅ Production-ready |
+| **IoT & Big Data** | High-throughput data ingestion | 🚧 Roadmap |
+| | Time-series database | 🚧 Roadmap |
+| | Industrial protocol support | 🚧 Roadmap |
+| **AI/ML** | Predictive maintenance | 🚧 Roadmap |
+| | Real-time analytics | 🚧 Roadmap |
+| | Digital twin integration | 🚧 Roadmap |
+| **Advanced Features** | Edge computing gateway | 🚧 Roadmap |
+| | Closed-loop control | 🚧 Roadmap |
+| | ESG reporting | 🚧 Roadmap |
+
+**Legend**:
+- ✅ Production-ready: Implemented and tested
+- 🚧 Roadmap: Planned for future releases
 
 ---
 
@@ -90,14 +199,14 @@ This platform provides a complete SaaS backend solution with the following capab
 │                 │  │              │  │                 │  │  - Encryption │
 │  Tenant DBs:    │  └──────┬───────┘  └─────────────────┘  │  - Audit Log  │
 │  - Documents    │         │                               └───────────────┘
-│  - Files        │         │         ┌─────────────────┐
-│  (Isolated)     │         │         │     Redis       │
-└─────────────────┘         │         │                 │
-                           │         │  Cache & Session│
-                     ┌──────▼───────┐ │  - Token Blacklist
-                     │Kafka Consumer│ │  - SSO Sessions │
-                     │   Worker     │ │  - API Cache    │
-                     │ (Background) │ └─────────────────┘
+│  - Files        │         │         ┌───────────────────┐
+│  (Isolated)     │         │         │     Redis         │
+└─────────────────┘         │         │                   │
+                            │         │  Cache & Session  │
+                     ┌──────▼───────┐ │  - Token Blacklist│
+                     │Kafka Consumer│ │  - SSO Sessions   │
+                     │   Worker     │ │  - API Cache      │
+                     │ (Background) │ └───────────────────┘
                      └──────────────┘
 ```
 
@@ -270,6 +379,11 @@ This approach provides:
 ## Quick Start
 
 Get the platform running in 5 minutes with Docker. **Choose your setup:**
+
+
+- **Approach A: With Vault** - See [Quick Start - Option A](#option-a-with-hashicorp-vault-recommended-for-production-like-setup) for detailed setup
+- **Approach B: Without Vault** - See [Quick Start - Option B](#option-b-without-vault-simple-setup-for-development) for simple development setup
+
 
 ### Option A: With HashiCorp Vault (Recommended for Production-like Setup)
 
@@ -521,199 +635,8 @@ docker-compose ps
 
 ## Installation
 
-### Option 1: Docker (Recommended)
 
-Docker provides the easiest way to run the complete stack with all dependencies.
-
-**Two deployment approaches are available:**
-
-- **Approach A: With Vault** - See [Quick Start - Option A](#option-a-with-hashicorp-vault-recommended-for-production-like-setup) for detailed setup
-- **Approach B: Without Vault** - See [Quick Start - Option B](#option-b-without-vault-simple-setup-for-development) for simple development setup
-
-Below is the **detailed reference** for Option 1: Docker setup.
-
----
-
-#### 1. Initial Setup
-
-**Choose your approach:**
-
-**If using Vault (Recommended):**
-```bash
-# Clone repository
-git clone https://github.com/your-org/SaaSBackendWithClaude.git
-cd SaaSBackendWithClaude
-
-# Copy minimal environment file (NO secrets)
-cp .env.docker.minimal .env
-
-# Create secrets file for Vault injection
-# See Quick Start - Option A for complete instructions
-```
-
-**If NOT using Vault (Development only):**
-```bash
-# Clone repository
-git clone https://github.com/your-org/SaaSBackendWithClaude.git
-cd SaaSBackendWithClaude
-
-# Copy environment file WITH secrets
-cp .env.docker .env
-
-# ⚠️ WARNING: .env contains secrets - never commit to Git!
-```
-
-#### 2. Generate Secure Secrets (Only if NOT using Vault)
-
-**Skip this section if using Vault** - secrets are managed in `vault/init-data/docker.env`
-
-```bash
-# Generate JWT secret (copy to .env)
-python -c "import secrets; print(secrets.token_urlsafe(64))"
-
-# Generate database password (copy to .env)
-python -c "import secrets; print(secrets.token_urlsafe(32))"
-```
-
-#### 3. Start Services
-
-**With Vault:**
-```bash
-# Start Vault first, then all other services
-# See Quick Start - Option A for detailed Vault setup steps
-docker-compose up -d
-```
-
-**Without Vault:**
-```bash
-# Start only application services (excluding Vault)
-docker-compose up -d postgres kafka zookeeper minio redis api worker celery-worker-sso celery-beat flower
-
-# Or start all services (Vault will be ignored if not configured)
-docker-compose up -d
-```
-
-**View logs:**
-```bash
-# View logs (all services)
-docker-compose logs -f
-
-# View logs (specific service)
-docker-compose logs -f api
-docker-compose logs -f worker
-```
-
-#### 4. Initialize Database
-
-**Note**: The migrations directory is already included in the repository with the initial migration for User, Tenant, and UserTenantAssociation tables.
-
-**⚠️ IMPORTANT - Clean Migration Files**:
-Before initializing the database for the first time, remove any existing migration files:
-```bash
-rm -f backend/migrations/versions/*
-```
-
-**⚠️ Flask Commands with Vault**:
-- **If using Vault**: Use `/app/flask-wrapper.sh` to load secrets from Vault before running Flask commands
-- **If NOT using Vault**: Use `flask` directly (secrets are loaded from `.env`)
-
-**With Vault:**
-```bash
-# Option 1: Quick setup (recommended for first-time setup)
-docker-compose exec api python scripts/init_db.py --create-admin --create-test-tenant
-
-# Option 2: Step-by-step setup
-
-# Step 1: Generate 1st migrations:
-docker-compose exec api /app/flask-wrapper.sh db migrate -m "Initial migration"
-
-
-
-# Step 2: Apply migrations
-docker-compose exec api /app/flask-wrapper.sh db upgrade
-
-# Step 3: Create admin user and test tenant
-docker-compose exec api python scripts/init_db.py --create-admin --create-test-tenant
-```
-
-**Without Vault:**
-```bash
-# Option 1: Quick setup
-docker-compose exec api python scripts/init_db.py --create-admin --create-test-tenant
-
-# Option 2: Step-by-step setup
-
-# Step 1 : Generate migrations:
-docker-compose exec api flask db migrate -m "Initial migration"
-
-# Step 1: Apply migrations
-docker-compose exec api flask db upgrade
-
-# Step 2: Create admin user and test tenant
-docker-compose exec api python scripts/init_db.py --create-admin --create-test-tenant
-
-
-```
-
-The `init_db.py` script will:
-1. Create main database if it doesn't exist (`saas_platform`)
-2. Apply all migrations (create tables: users, tenants, user_tenant_associations)
-3. Create admin user (if `--create-admin` flag)
-4. Create test tenant with isolated database (if `--create-test-tenant` flag)
-
-**Interactive vs Non-Interactive Mode**:
-
-```bash
-# Interactive mode (prompts for admin credentials)
-docker-compose exec api python scripts/init_db.py --create-admin --create-test-tenant
-
-# Non-interactive mode (uses environment variables or defaults)
-docker-compose exec api python scripts/init_db.py \
-  --create-admin \
-  --create-test-tenant \
-  --non-interactive
-```
-
-Set environment variables for non-interactive mode:
-```bash
-export ADMIN_EMAIL=admin@example.com
-export ADMIN_PASSWORD=SecurePass123
-export ADMIN_FIRST_NAME=Admin
-export ADMIN_LAST_NAME=User
-export TEST_TENANT_NAME="Test Organization"
-```
-
-#### 5. Verify Installation
-
-```bash
-# Check API health
-curl http://localhost:4999/health
-
-# Expected response:
-# {"status": "healthy", "message": "SaaS Platform API is running"}
-
-# Check all services
-docker-compose ps
-
-# All services should show "Up" status
-```
-
-#### 6. Access Services
-
-- **API Server**: http://localhost:4999
-- **API Documentation (Swagger UI)**: http://localhost:4999/api/docs
-- **MinIO Console**: http://localhost:9001
-  - Username: `minioadmin`
-  - Password: `minioadmin`
-- **PostgreSQL**: `localhost:5432`
-  - Username: `postgres`
-  - Password: `postgres`
-
-For detailed Docker operations, see [DOCKER.md](DOCKER.md).
-
----
-
-### Option 2: Local Development
+### Local Development
 
 For development without Docker:
 
