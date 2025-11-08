@@ -2,21 +2,27 @@
 """
 Script pour tester le refresh des tokens Azure AD.
 Permet de vérifier que le refresh token fonctionne correctement.
+
+Usage:
+    python scripts/test_azure_token_refresh.py           # Mode interactif
+    python scripts/test_azure_token_refresh.py --yes     # Mode automatique
 """
 
 import sys
 import os
+import argparse
 from datetime import datetime, timezone
 
 # Add backend directory to path
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
 
 from app import create_app
-from app.models import UserAzureIdentity, User, Tenant
+from app.models import UserAzureIdentity
 from app.services.azure_ad_service import AzureADService
 from app.extensions import db
 
-def test_azure_token_refresh():
+
+def test_azure_token_refresh(auto_confirm=False):
     """Tester le refresh des tokens Azure AD."""
     app = create_app()
 
@@ -72,20 +78,28 @@ def test_azure_token_refresh():
                     hours_left = (azure_identity.token_expires_at - now).total_seconds() / 3600
                     print(f"   ✅ Access token valide (expire dans {hours_left:.1f} heures)")
 
-            # Demander confirmation
-            print(f"\n🔄 Test du refresh token pour {user.email}")
-            response = input("   Continuer ? (oui/non): ").strip().lower()
-
-            if response not in ['oui', 'o', 'yes', 'y']:
-                print("   ⏭️  Passé")
-                continue
+            # Demander confirmation (sauf si auto_confirm)
+            if not auto_confirm:
+                print(f"\n🔄 Test du refresh token pour {user.email}")
+                try:
+                    response = input("   Continuer ? (oui/non): ").strip().lower()
+                    if response not in ['oui', 'o', 'yes', 'y']:
+                        print("   ⏭️  Passé")
+                        continue
+                except EOFError:
+                    print("\n   ⚠️  Mode non-interactif détecté")
+                    print("   💡 Utilisez --yes pour automatiser le test")
+                    break
+            else:
+                print(f"\n🔄 Test du refresh token pour {user.email} (auto)")
 
             # Initialiser le service Azure AD
             try:
                 azure_service = AzureADService(str(tenant.id))
 
                 print(f"\n⏳ Récupération du refresh token...")
-                refresh_token = azure_identity.get_refresh_token()
+                tokens = azure_identity.get_decrypted_tokens()
+                refresh_token = tokens.get('refresh_token')
 
                 if not refresh_token:
                     print(f"   ❌ Impossible de récupérer le refresh token")
@@ -110,12 +124,15 @@ def test_azure_token_refresh():
                 # Sauvegarder les nouveaux tokens
                 print(f"\n💾 Sauvegarde des nouveaux tokens...")
 
+                # Azure AD peut retourner refresh_token_expires_in dans certains cas
+                refresh_expires_in = new_tokens.get('refresh_token_expires_in')
+
                 azure_identity.save_tokens(
                     access_token=new_tokens.get('access_token'),
-                    refresh_token=new_tokens.get('refresh_token', refresh_token),  # Garde l'ancien si pas nouveau
+                    refresh_token=new_tokens.get('refresh_token', refresh_token),
                     id_token=new_tokens.get('id_token'),
                     expires_in=new_tokens.get('expires_in', 3600),
-                    refresh_expires_in=azure_identity.refresh_token_expires_at  # Garde l'ancienne expiration
+                    refresh_expires_in=refresh_expires_in  # None = garde 7 jours par défaut
                 )
 
                 db.session.commit()
@@ -149,5 +166,16 @@ def test_azure_token_refresh():
         print("FIN DU TEST")
         print("="*70)
 
+
 if __name__ == "__main__":
-    test_azure_token_refresh()
+    parser = argparse.ArgumentParser(
+        description="Test du refresh des tokens Azure AD"
+    )
+    parser.add_argument(
+        '--yes', '-y',
+        action='store_true',
+        help='Mode automatique sans confirmation'
+    )
+    args = parser.parse_args()
+
+    test_azure_token_refresh(auto_confirm=args.yes)
