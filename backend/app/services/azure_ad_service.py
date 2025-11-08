@@ -539,12 +539,29 @@ class AzureADService:
         if not user.sso_metadata:
             user.sso_metadata = {}
 
-        user.sso_metadata[f'tenant_{self.tenant_id}'] = {
-            'job_title': id_token_claims.get('jobTitle'),
-            'department': id_token_claims.get('department'),
-            'company': id_token_claims.get('companyName'),
-            'last_sso_login': datetime.utcnow().isoformat()
-        }
+        # Try to get profile info from Microsoft Graph API (more reliable)
+        # Fall back to ID token claims if Graph API fails
+        try:
+            from app.services.microsoft_graph_service import microsoft_graph_service
+            graph_profile = microsoft_graph_service.get_user_profile(tokens.get('access_token'))
+
+            user.sso_metadata[f'tenant_{self.tenant_id}'] = {
+                'job_title': graph_profile.get('jobTitle') or id_token_claims.get('jobTitle'),
+                'department': graph_profile.get('department') or id_token_claims.get('department'),
+                'company': id_token_claims.get('companyName'),  # Not available in Graph basic profile
+                'office_location': graph_profile.get('officeLocation'),
+                'mobile_phone': graph_profile.get('mobilePhone'),
+                'last_sso_login': datetime.utcnow().isoformat()
+            }
+            logger.info(f"Updated user metadata from Microsoft Graph for {email}")
+        except Exception as e:
+            logger.warning(f"Failed to fetch Graph profile, using token claims only: {str(e)}")
+            user.sso_metadata[f'tenant_{self.tenant_id}'] = {
+                'job_title': id_token_claims.get('jobTitle'),
+                'department': id_token_claims.get('department'),
+                'company': id_token_claims.get('companyName'),
+                'last_sso_login': datetime.utcnow().isoformat()
+            }
 
         # Commit all changes
         db.session.commit()
