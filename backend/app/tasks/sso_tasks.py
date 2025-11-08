@@ -8,7 +8,7 @@ This module handles:
 """
 
 import logging
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from typing import Dict, Any
 
 from celery import current_task
@@ -32,18 +32,19 @@ def refresh_expiring_tokens(self) -> Dict[str, Any]:
         Dictionary with refresh statistics
     """
     try:
-        threshold = datetime.utcnow() + timedelta(minutes=30)
+        threshold = datetime.now(timezone.utc) + timedelta(minutes=30)
 
-        # Find all tokens expiring soon
+        # Find all tokens expiring soon or already expired (but with valid refresh token)
+        # We check if the token will expire within 30 minutes OR is already expired
         expiring_identities = UserAzureIdentity.query.filter(
             UserAzureIdentity.token_expires_at < threshold,
-            UserAzureIdentity.token_expires_at > datetime.utcnow(),
-            UserAzureIdentity.encrypted_refresh_token.isnot(None)
+            UserAzureIdentity.encrypted_refresh_token.isnot(None),
+            UserAzureIdentity.refresh_token_expires_at > datetime.now(timezone.utc)
         ).all()
 
         results = {
             'task_id': current_task.request.id,
-            'timestamp': datetime.utcnow().isoformat(),
+            'timestamp': datetime.now(timezone.utc).isoformat(),
             'success': 0,
             'failed': 0,
             'skipped': 0,
@@ -53,7 +54,7 @@ def refresh_expiring_tokens(self) -> Dict[str, Any]:
         for identity in expiring_identities:
             try:
                 # Check if refresh token is still valid
-                if identity.refresh_token_expires_at <= datetime.utcnow():
+                if identity.refresh_token_expires_at <= datetime.now(timezone.utc):
                     logger.info(f"Refresh token expired for identity {identity.id}")
                     results['skipped'] += 1
                     continue
@@ -74,8 +75,9 @@ def refresh_expiring_tokens(self) -> Dict[str, Any]:
                     azure_service = AzureADService(identity.tenant_id)
 
                     # Get the decrypted refresh token
-                    refresh_token = identity.get_refresh_token()
-                    if not refresh_token:
+                    tokens = identity.get_decrypted_tokens()
+                    refresh_token = tokens.get('refresh_token')
+                    if not refresh_token or refresh_token == "None":
                         logger.error(f"Failed to decrypt refresh token for identity {identity.id}")
                         results['failed'] += 1
                         continue
@@ -128,7 +130,7 @@ def cleanup_expired_tokens() -> Dict[str, Any]:
         Dictionary with cleanup statistics
     """
     try:
-        expired_threshold = datetime.utcnow()
+        expired_threshold = datetime.now(timezone.utc)
 
         # Find all identities with expired refresh tokens
         expired_identities = UserAzureIdentity.query.filter(
@@ -138,7 +140,7 @@ def cleanup_expired_tokens() -> Dict[str, Any]:
 
         results = {
             'task_id': current_task.request.id,
-            'timestamp': datetime.utcnow().isoformat(),
+            'timestamp': datetime.now(timezone.utc).isoformat(),
             'cleaned': 0,
             'total': len(expired_identities)
         }
@@ -182,7 +184,7 @@ def rotate_encryption_keys() -> Dict[str, Any]:
 
         results = {
             'task_id': current_task.request.id,
-            'timestamp': datetime.utcnow().isoformat(),
+            'timestamp': datetime.now(timezone.utc).isoformat(),
             'rotated_tenants': 0,
             'rewrapped_tokens': 0,
             'total_tenants': len(sso_configs)
@@ -261,7 +263,7 @@ def refresh_user_token(self, user_id: str, tenant_id: str) -> Dict[str, Any]:
             }
 
         # Check if token actually needs refresh
-        if identity.token_expires_at and identity.token_expires_at > datetime.utcnow():
+        if identity.token_expires_at and identity.token_expires_at > datetime.now(timezone.utc):
             return {
                 'success': True,
                 'message': 'Token still valid',
@@ -284,8 +286,9 @@ def refresh_user_token(self, user_id: str, tenant_id: str) -> Dict[str, Any]:
         if sso_config.provider_type == 'azure_ad':
             azure_service = AzureADService(tenant_id)
 
-            refresh_token = identity.get_refresh_token()
-            if not refresh_token:
+            tokens = identity.get_decrypted_tokens()
+            refresh_token = tokens.get('refresh_token')
+            if not refresh_token or refresh_token == "None":
                 return {
                     'success': False,
                     'error': 'No valid refresh token',

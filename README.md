@@ -23,13 +23,14 @@
 ### ✅ Enterprise Authentication (SSO)
 - Azure AD / Microsoft Entra ID integration
 - Per-tenant SSO configuration
-- Public Application mode (no client_secret needed)
-- OAuth 2.0 Authorization Code Flow with PKCE
+- Confidential Application mode (client_secret needed)
+- OAuth 2.0 Authorization Code Flow with PKCE impossinle
 - Auto-provisioning with configurable rules
 - Azure AD group to role mapping
 - Hybrid authentication modes (local, SSO, or both)
 - Encrypted token storage via HashiCorp Vault
 - Multi-tenant identity mapping (different Azure IDs per tenant)
+- Azure AD's token refresh with a celery worker
 
 ### ✅ Document Management
 - Document upload with multipart/form-data
@@ -56,6 +57,11 @@
   - Scheduled maintenance tasks
 - **Flower**: Real-time monitoring dashboard for Celery tasks
 
+- *** ✅ celery-worker-sso : Exécute les tâches de rafraîchissement
+- *** ✅ celery-beat : Schedule les tâches périodiques
+- *** ✅ flower : Dashboard de monitoring (http://localhost:5555)
+
+
 ### ✅ API Features
 - RESTful API design
 - OpenAPI 3.0 specification (Swagger)
@@ -68,7 +74,6 @@
 - JWT-based authentication
 - Password strength validation
 - Azure AD / Microsoft Entra ID SSO support
-- OAuth 2.0 with PKCE (Public Application mode)
 - Multi-factor authentication (via Azure AD)
 - Rate limiting (configurable)
 - SQL injection prevention (SQLAlchemy ORM)
@@ -931,8 +936,7 @@ The platform can automatically create user accounts during SSO login:
 
 ### Security Features
 
-- **PKCE (Proof Key for Code Exchange)**: Prevents authorization code interception
-- **No Client Secret**: Public Application mode for enhanced security
+- **Client Secret**: Confidential Application mode for enhanced security
 - **State Token**: CSRF protection during OAuth flow
 - **Encrypted Token Storage**: Azure tokens encrypted via HashiCorp Vault
 - **Token Refresh**: Automatic token refresh before expiration

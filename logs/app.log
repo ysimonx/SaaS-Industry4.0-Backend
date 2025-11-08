@@ -4585,3 +4585,129 @@ WHERE tenants.id = %(pk_1)s::UUID]
 2025-11-08 11:35:51,104 - app.models.user_azure_identity - INFO - Tokens saved for user 02ab2057-f877-42f7-ad8f-7f42dd7af131 on tenant cb859f98-291e-41b2-b30f-2287c2699205. Access token expires at 2025-11-08 12:44:02.104204
 2025-11-08 11:35:51,104 - app.models.user_azure_identity - INFO - Updated Azure identity from claims for user 02ab2057-f877-42f7-ad8f-7f42dd7af131
 2025-11-08 11:35:51,110 - app.services.azure_ad_service - INFO - Successfully processed SSO login for user yannick.simon@fidwork.fr on tenant cb859f98-291e-41b2-b30f-2287c2699205
+2025-11-08 13:43:14,308 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-08 13:43:14,309 - app - INFO - Flask app created with config: development
+2025-11-08 13:43:14,309 - app - INFO - Debug mode: True
+2025-11-08 13:43:14,309 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-08 13:44:05,598 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-08 13:44:05,599 - app - INFO - Flask app created with config: development
+2025-11-08 13:44:05,599 - app - INFO - Debug mode: True
+2025-11-08 13:44:05,599 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-08 13:45:26,163 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-08 13:45:26,163 - app - INFO - Flask app created with config: development
+2025-11-08 13:45:26,164 - app - INFO - Debug mode: True
+2025-11-08 13:45:26,164 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-08 13:45:37,534 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-08 13:45:37,534 - app - INFO - Flask app created with config: development
+2025-11-08 13:45:37,534 - app - INFO - Debug mode: True
+2025-11-08 13:45:37,534 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-08 13:45:37,966 - app.services.azure_ad_service - ERROR - Token refresh failed: 400 - {'error': 'invalid_grant', 'error_description': 'AADSTS9002313: Invalid request. Request is malformed or invalid. Trace ID: 4e710dc5-c5b1-444c-8abd-f52e45eb2300 Correlation ID: a10679bc-df96-4668-b89c-e3c5905247bc Timestamp: 2025-11-08 13:45:37Z', 'error_codes': [9002313], 'timestamp': '2025-11-08 13:45:37Z', 'trace_id': '4e710dc5-c5b1-444c-8abd-f52e45eb2300', 'correlation_id': 'a10679bc-df96-4668-b89c-e3c5905247bc', 'error_uri': 'https://login.microsoftonline.com/error?code=9002313'}
+2025-11-08 13:48:45,130 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-08 13:48:45,131 - app - INFO - Flask app created with config: development
+2025-11-08 13:48:45,131 - app - INFO - Debug mode: True
+2025-11-08 13:48:45,131 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-08 13:48:45,212 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-08 13:48:45,212 - app - INFO - Flask app created with config: development
+2025-11-08 13:48:45,212 - app - INFO - Debug mode: True
+2025-11-08 13:48:45,212 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-08 13:48:45,280 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-08 13:48:45,280 - app - INFO - Flask app created with config: development
+2025-11-08 13:48:45,280 - app - INFO - Debug mode: True
+2025-11-08 13:48:45,281 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-08 13:48:45,281 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-08 13:48:45,281 - app - INFO - Flask app created with config: development
+2025-11-08 13:48:45,281 - app - INFO - Debug mode: True
+2025-11-08 13:48:45,281 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-08 13:51:18,708 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-08 13:51:18,708 - app - INFO - Flask app created with config: development
+2025-11-08 13:51:18,708 - app - INFO - Debug mode: True
+2025-11-08 13:51:18,709 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-08 13:51:38,708 - app.routes.sso_auth - INFO - Using client_secret (Confidential Client mode)
+2025-11-08 13:51:38,709 - app.services.azure_ad_service - INFO - Stored PKCE parameters in Redis with key: sso_session:6aboR-eyb43QIqxtFBoU5URgpiBYqLXwk-CmL59pmfw, state: 6aboR-eyb4...
+2025-11-08 13:51:38,710 - app.routes.sso_auth - INFO - Using configured redirect URI: http://localhost:4999/api/auth/sso/azure/callback
+2025-11-08 13:51:38,710 - app.services.azure_ad_service - INFO - Using client_secret for authorization (Confidential Client mode)
+2025-11-08 13:51:38,711 - app.services.azure_ad_service - INFO - Generated authorization URL for tenant cb859f98-291e-41b2-b30f-2287c2699205
+2025-11-08 13:51:38,711 - app.routes.sso_auth - INFO - Initiating Azure AD login for tenant cb859f98-291e-41b2-b30f-2287c2699205
+2025-11-08 13:51:38,711 - app.routes.sso_auth - INFO - Generated auth URL: https://login.microsoftonline.com/072a8ae9-5c75-4606-98c3-c0754cf130aa/oauth2/v2.0/authorize?client_id=dd5f0275-3e46-4103-bce5-1589a6f13d48&response_type=code&redirect_uri=http%3A%2F%2Flocalhost%3A4999%2Fapi%2Fauth%2Fsso%2Fazure%2Fcallback&response_mode=query&scope=openid+profile+email+User.Read+offline_access&state=6aboR-eyb43QIqxtFBoU5URgpiBYqLXwk-CmL59pmfw&prompt=select_account
+2025-11-08 13:51:40,533 - app.services.azure_ad_service - INFO - Attempting to retrieve PKCE from session. Session keys: ['oauth_state', 'return_url', 'sso_tenant_id']
+2025-11-08 13:51:40,534 - app.services.azure_ad_service - INFO - Retrieved state from Flask session: 6aboR-eyb4
+2025-11-08 13:51:40,536 - app.services.azure_ad_service - INFO - Retrieved PKCE parameters from Redis and deleted key: sso_session:6aboR-eyb43QIqxtFBoU5URgpiBYqLXwk-CmL59pmfw, state: 6aboR-eyb4...
+2025-11-08 13:51:40,541 - app.routes.sso_auth - INFO - Using configured redirect URI for token exchange: http://localhost:4999/api/auth/sso/azure/callback
+2025-11-08 13:51:40,542 - app.services.azure_ad_service - INFO - Using client_secret for token exchange (confidential app)
+2025-11-08 13:51:40,923 - app.services.azure_ad_service - INFO - Successfully exchanged code for tokens for tenant cb859f98-291e-41b2-b30f-2287c2699205
+2025-11-08 13:51:40,927 - app.services.azure_ad_service - INFO - Successfully validated ID token for user yannick.simon@fidwork.fr
+2025-11-08 13:51:40,944 - app.models.user_azure_identity - INFO - Updated existing Azure identity for user 02ab2057-f877-42f7-ad8f-7f42dd7af131 on tenant cb859f98-291e-41b2-b30f-2287c2699205
+2025-11-08 13:51:40,945 - app.models.user_azure_identity - WARNING - Tokens are being stored without Vault encryption. Implement VaultEncryptionService for production use.
+2025-11-08 13:51:40,945 - app.models.user_azure_identity - INFO - Tokens saved for user 02ab2057-f877-42f7-ad8f-7f42dd7af131 on tenant cb859f98-291e-41b2-b30f-2287c2699205. Access token expires at 2025-11-08 15:10:13.945501
+2025-11-08 13:51:40,946 - app.models.user_azure_identity - INFO - Updated Azure identity from claims for user 02ab2057-f877-42f7-ad8f-7f42dd7af131
+2025-11-08 13:51:40,951 - app.services.azure_ad_service - INFO - Successfully processed SSO login for user yannick.simon@fidwork.fr on tenant cb859f98-291e-41b2-b30f-2287c2699205
+2025-11-08 13:52:17,865 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-08 13:52:17,865 - app - INFO - Flask app created with config: development
+2025-11-08 13:52:17,865 - app - INFO - Debug mode: True
+2025-11-08 13:52:17,865 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-08 13:52:25,958 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-08 13:52:25,959 - app - INFO - Flask app created with config: development
+2025-11-08 13:52:25,959 - app - INFO - Debug mode: True
+2025-11-08 13:52:25,959 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-08 13:52:58,419 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-08 13:52:58,420 - app - INFO - Flask app created with config: development
+2025-11-08 13:52:58,420 - app - INFO - Debug mode: True
+2025-11-08 13:52:58,420 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-08 13:53:30,553 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-08 13:53:30,554 - app - INFO - Flask app created with config: development
+2025-11-08 13:53:30,554 - app - INFO - Debug mode: True
+2025-11-08 13:53:30,554 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-08 13:54:36,145 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-08 13:54:36,145 - app - INFO - Flask app created with config: development
+2025-11-08 13:54:36,145 - app - INFO - Debug mode: True
+2025-11-08 13:54:36,145 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-08 13:54:36,694 - app.services.azure_ad_service - INFO - Successfully refreshed tokens for tenant cb859f98-291e-41b2-b30f-2287c2699205
+2025-11-08 13:54:57,633 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-08 13:54:57,633 - app - INFO - Flask app created with config: development
+2025-11-08 13:54:57,634 - app - INFO - Debug mode: True
+2025-11-08 13:54:57,634 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-08 13:54:58,166 - app.services.azure_ad_service - INFO - Successfully refreshed tokens for tenant cb859f98-291e-41b2-b30f-2287c2699205
+2025-11-08 13:54:58,168 - app.models.user_azure_identity - WARNING - Tokens are being stored without Vault encryption. Implement VaultEncryptionService for production use.
+2025-11-08 13:54:58,170 - app.models.user_azure_identity - INFO - Tokens saved for user 02ab2057-f877-42f7-ad8f-7f42dd7af131 on tenant cb859f98-291e-41b2-b30f-2287c2699205. Access token expires at 2025-11-08 15:07:56.170022
+2025-11-08 13:55:48,326 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-08 13:55:48,327 - app - INFO - Flask app created with config: development
+2025-11-08 13:55:48,327 - app - INFO - Debug mode: True
+2025-11-08 13:55:48,327 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-08 13:56:08,288 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-08 13:56:08,288 - app - INFO - Flask app created with config: development
+2025-11-08 13:56:08,288 - app - INFO - Debug mode: True
+2025-11-08 13:56:08,288 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-08 13:56:49,732 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-08 13:56:49,732 - app - INFO - Flask app created with config: development
+2025-11-08 13:56:49,732 - app - INFO - Debug mode: True
+2025-11-08 13:56:49,732 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-08 13:56:50,514 - app.services.azure_ad_service - INFO - Successfully refreshed tokens for tenant cb859f98-291e-41b2-b30f-2287c2699205
+2025-11-08 13:56:50,515 - app.models.user_azure_identity - WARNING - Tokens are being stored without Vault encryption. Implement VaultEncryptionService for production use.
+2025-11-08 13:56:50,516 - app.models.user_azure_identity - INFO - Tokens saved for user 02ab2057-f877-42f7-ad8f-7f42dd7af131 on tenant cb859f98-291e-41b2-b30f-2287c2699205. Access token expires at 2025-11-08 15:00:50.516015
+2025-11-08 21:43:39,040 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-08 21:43:39,040 - app - INFO - Flask app created with config: development
+2025-11-08 21:43:39,040 - app - INFO - Debug mode: True
+2025-11-08 21:43:39,040 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-08 21:43:39,126 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-08 21:43:39,126 - app - INFO - Flask app created with config: development
+2025-11-08 21:43:39,127 - app - INFO - Debug mode: True
+2025-11-08 21:43:39,128 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-08 21:43:39,196 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-08 21:43:39,196 - app - INFO - Flask app created with config: development
+2025-11-08 21:43:39,196 - app - INFO - Debug mode: True
+2025-11-08 21:43:39,196 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-08 21:43:39,197 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-08 21:43:39,197 - app - INFO - Flask app created with config: development
+2025-11-08 21:43:39,197 - app - INFO - Debug mode: True
+2025-11-08 21:43:39,198 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-08 21:53:15,769 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-08 21:53:15,769 - app - INFO - Flask app created with config: development
+2025-11-08 21:53:15,769 - app - INFO - Debug mode: True
+2025-11-08 21:53:15,769 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-08 21:53:16,351 - app.services.azure_ad_service - INFO - Successfully refreshed tokens for tenant cb859f98-291e-41b2-b30f-2287c2699205
+2025-11-08 21:53:16,354 - app.models.user_azure_identity - WARNING - Tokens are being stored without Vault encryption. Implement VaultEncryptionService for production use.
+2025-11-08 21:53:16,355 - app.models.user_azure_identity - INFO - Tokens saved for user 02ab2057-f877-42f7-ad8f-7f42dd7af131 on tenant cb859f98-291e-41b2-b30f-2287c2699205. Access token expires at 2025-11-08 23:01:19.355321
+2025-11-08 22:01:43,905 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-08 22:01:43,905 - app - INFO - Flask app created with config: development
+2025-11-08 22:01:43,905 - app - INFO - Debug mode: True
+2025-11-08 22:01:43,906 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...

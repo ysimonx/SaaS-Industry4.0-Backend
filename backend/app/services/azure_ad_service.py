@@ -50,7 +50,8 @@ class AzureADService:
         "openid",
         "profile",
         "email",
-        "User.Read"
+        "User.Read",
+        "offline_access"  # REQUIRED to receive refresh_token from Azure AD
     ]
 
     def __init__(self, tenant_id: str = None):
