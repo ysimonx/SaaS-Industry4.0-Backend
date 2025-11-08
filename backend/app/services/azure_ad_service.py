@@ -178,7 +178,8 @@ class AzureADService:
 
         # Add client_secret if configured (confidential app)
         # Otherwise use PKCE code_verifier (public app)
-        if hasattr(self.sso_config, 'client_secret') and self.sso_config.client_secret:
+        # Check if client_secret exists and is not empty/None
+        if self.sso_config.client_secret and self.sso_config.client_secret.strip():
             token_data['client_secret'] = self.sso_config.client_secret
             logger.info("Using client_secret for token exchange (confidential app)")
         else:
@@ -259,7 +260,7 @@ class AzureADService:
         }
 
         # Add client_secret if configured (confidential app)
-        if hasattr(self.sso_config, 'client_secret') and self.sso_config.client_secret:
+        if self.sso_config.client_secret and self.sso_config.client_secret.strip():
             token_data['client_secret'] = self.sso_config.client_secret
 
         try:

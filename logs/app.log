@@ -4176,3 +4176,227 @@ WHERE tenants.id = %(pk_1)s::UUID]
 2025-11-07 21:52:40,475 - app.services.azure_ad_service - DEBUG - Retrieved PKCE parameters from Redis and deleted key: sso_session:lzfRUN3Vt8l4GV-7j18G61skYOc4loxAN7yjiI0e7bk
 2025-11-07 21:52:40,880 - app.services.azure_ad_service - ERROR - Token exchange failed: 401 - {'error': 'invalid_client', 'error_description': "AADSTS7000218: The request body must contain the following parameter: 'client_assertion' or 'client_secret'. Trace ID: 6b652043-d2a8-47ff-980c-2b27e93f1400 Correlation ID: 679769fd-cda1-46f4-9b06-6e41d42a1bae Timestamp: 2025-11-07 21:52:40Z", 'error_codes': [7000218], 'timestamp': '2025-11-07 21:52:40Z', 'trace_id': '6b652043-d2a8-47ff-980c-2b27e93f1400', 'correlation_id': '679769fd-cda1-46f4-9b06-6e41d42a1bae', 'error_uri': 'https://login.microsoftonline.com/error?code=7000218'}
 2025-11-07 21:52:40,880 - app.routes.sso_auth - ERROR - SSO login error: Token exchange failed: AADSTS7000218: The request body must contain the following parameter: 'client_assertion' or 'client_secret'. Trace ID: 6b652043-d2a8-47ff-980c-2b27e93f1400 Correlation ID: 679769fd-cda1-46f4-9b06-6e41d42a1bae Timestamp: 2025-11-07 21:52:40Z
+2025-11-08 10:20:00,380 - app.utils.decorators - ERROR - JWT validation failed: Signature has expired
+2025-11-08 10:21:15,346 - app.services.azure_ad_service - DEBUG - Generated PKCE pair: verifier length=43, challenge length=43
+2025-11-08 10:21:15,347 - app.services.azure_ad_service - DEBUG - Stored PKCE parameters in Redis with key: sso_session:ygnaHnZbGcuMa1RMbj1IsSzjGFlYgvVqm43MPX8cnuQ
+2025-11-08 10:21:15,347 - app.services.azure_ad_service - INFO - Generated authorization URL for tenant cb859f98-291e-41b2-b30f-2287c2699205
+2025-11-08 10:21:15,347 - app.routes.sso_auth - INFO - Initiating Azure AD login for tenant cb859f98-291e-41b2-b30f-2287c2699205
+2025-11-08 10:21:21,302 - app.services.azure_ad_service - DEBUG - Generated PKCE pair: verifier length=43, challenge length=43
+2025-11-08 10:21:21,304 - app.services.azure_ad_service - DEBUG - Stored PKCE parameters in Redis with key: sso_session:fmYzKkOI1-mmupKpMn5RnQ4tKnlfi8iy9LOnbPsKpWI
+2025-11-08 10:21:21,305 - app.services.azure_ad_service - INFO - Generated authorization URL for tenant cb859f98-291e-41b2-b30f-2287c2699205
+2025-11-08 10:21:21,305 - app.routes.sso_auth - INFO - Initiating Azure AD login for tenant cb859f98-291e-41b2-b30f-2287c2699205
+2025-11-08 10:22:59,568 - app.services.azure_ad_service - DEBUG - Generated PKCE pair: verifier length=43, challenge length=43
+2025-11-08 10:22:59,570 - app.services.azure_ad_service - DEBUG - Stored PKCE parameters in Redis with key: sso_session:mjNEQCAwSxWEkCN1tMy0QKW3hrZrcEQ-k8od7SziMBg
+2025-11-08 10:22:59,571 - app.services.azure_ad_service - INFO - Generated authorization URL for tenant cb859f98-291e-41b2-b30f-2287c2699205
+2025-11-08 10:22:59,571 - app.routes.sso_auth - INFO - Initiating Azure AD login for tenant cb859f98-291e-41b2-b30f-2287c2699205
+2025-11-08 10:24:03,479 - app.services.azure_ad_service - WARNING - Missing state token for validation
+2025-11-08 10:24:37,507 - app.services.azure_ad_service - DEBUG - Generated PKCE pair: verifier length=43, challenge length=43
+2025-11-08 10:24:37,508 - app.services.azure_ad_service - DEBUG - Stored PKCE parameters in Redis with key: sso_session:vCu_9OiRARODWigkaK0OibaoltDhJuVsXhqriggD2eQ
+2025-11-08 10:24:37,509 - app.services.azure_ad_service - INFO - Generated authorization URL for tenant cb859f98-291e-41b2-b30f-2287c2699205
+2025-11-08 10:24:37,509 - app.routes.sso_auth - INFO - Initiating Azure AD login for tenant cb859f98-291e-41b2-b30f-2287c2699205
+2025-11-08 10:26:27,677 - app.services.azure_ad_service - DEBUG - Generated PKCE pair: verifier length=43, challenge length=43
+2025-11-08 10:26:27,679 - app.services.azure_ad_service - DEBUG - Stored PKCE parameters in Redis with key: sso_session:HYtHD2dHrvF2L37JMYoxmp26l7OyPkpkATX6WZVVIzw
+2025-11-08 10:26:27,680 - app.services.azure_ad_service - INFO - Generated authorization URL for tenant cb859f98-291e-41b2-b30f-2287c2699205
+2025-11-08 10:26:27,680 - app.routes.sso_auth - INFO - Initiating Azure AD login for tenant cb859f98-291e-41b2-b30f-2287c2699205
+2025-11-08 10:26:28,590 - app.services.azure_ad_service - DEBUG - Generated PKCE pair: verifier length=43, challenge length=43
+2025-11-08 10:26:28,592 - app.services.azure_ad_service - DEBUG - Stored PKCE parameters in Redis with key: sso_session:YyNtiTe6p7cv_0iJ4ZFkcD1NQOSJl3Aq5hnaT_ej20A
+2025-11-08 10:26:28,593 - app.services.azure_ad_service - INFO - Generated authorization URL for tenant cb859f98-291e-41b2-b30f-2287c2699205
+2025-11-08 10:26:28,593 - app.routes.sso_auth - INFO - Initiating Azure AD login for tenant cb859f98-291e-41b2-b30f-2287c2699205
+2025-11-08 10:27:01,910 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-08 10:27:01,911 - app - INFO - Flask app created with config: development
+2025-11-08 10:27:01,911 - app - INFO - Debug mode: True
+2025-11-08 10:27:01,911 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-08 10:27:01,982 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-08 10:27:01,982 - app - INFO - Flask app created with config: development
+2025-11-08 10:27:01,982 - app - INFO - Debug mode: True
+2025-11-08 10:27:01,983 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-08 10:27:01,985 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-08 10:27:01,985 - app - INFO - Flask app created with config: development
+2025-11-08 10:27:01,985 - app - INFO - Debug mode: True
+2025-11-08 10:27:01,985 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-08 10:27:02,033 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-08 10:27:02,033 - app - INFO - Flask app created with config: development
+2025-11-08 10:27:02,034 - app - INFO - Debug mode: True
+2025-11-08 10:27:02,034 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-08 10:27:02,732 - app.services.azure_ad_service - DEBUG - Generated PKCE pair: verifier length=43, challenge length=43
+2025-11-08 10:27:02,732 - app.services.azure_ad_service - INFO - Stored PKCE parameters in Redis with key: sso_session:4WOsbCEnBjiQPJZzsjtzLxHDdzvdxheVlqTPLx6Gut0, state: 4WOsbCEnBj...
+2025-11-08 10:27:02,733 - app.services.azure_ad_service - INFO - Generated authorization URL for tenant cb859f98-291e-41b2-b30f-2287c2699205
+2025-11-08 10:27:02,733 - app.routes.sso_auth - INFO - Initiating Azure AD login for tenant cb859f98-291e-41b2-b30f-2287c2699205
+2025-11-08 10:27:02,733 - app.routes.sso_auth - INFO - Generated auth URL: https://login.microsoftonline.com/072a8ae9-5c75-4606-98c3-c0754cf130aa/oauth2/v2.0/authorize?client_id=dd5f0275-3e46-4103-bce5-1589a6f13d48&response_type=code&redirect_uri=http%3A%2F%2Flocalhost%3A4999%2Fapi%2Fauth%2Fsso%2Fazure%2Fcallback&response_mode=query&scope=openid+profile+email+User.Read&state=4WOsbCEnBjiQPJZzsjtzLxHDdzvdxheVlqTPLx6Gut0&code_challenge=aPEZ4iLF3glUfz8JrM6TkfU76waQS7a4SXk2hWtG0Lg&code_challenge_method=S256&prompt=select_account
+2025-11-08 10:27:13,143 - app.services.azure_ad_service - INFO - Attempting to retrieve PKCE from session. Session keys: []
+2025-11-08 10:27:13,143 - app.services.azure_ad_service - INFO - Retrieved state from Flask session: None
+2025-11-08 10:27:13,144 - app.services.azure_ad_service - WARNING - No oauth_state found in Flask session
+2025-11-08 10:27:13,145 - app.services.azure_ad_service - WARNING - Missing state token for validation
+2025-11-08 10:32:37,521 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-08 10:32:37,522 - app - INFO - Flask app created with config: development
+2025-11-08 10:32:37,522 - app - INFO - Debug mode: True
+2025-11-08 10:32:37,523 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-08 10:32:37,582 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-08 10:32:37,582 - app - INFO - Flask app created with config: development
+2025-11-08 10:32:37,583 - app - INFO - Debug mode: True
+2025-11-08 10:32:37,583 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-08 10:32:37,633 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-08 10:32:37,633 - app - INFO - Flask app created with config: development
+2025-11-08 10:32:37,633 - app - INFO - Debug mode: True
+2025-11-08 10:32:37,634 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-08 10:32:37,698 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-08 10:32:37,698 - app - INFO - Flask app created with config: development
+2025-11-08 10:32:37,698 - app - INFO - Debug mode: True
+2025-11-08 10:32:37,699 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-08 10:32:54,167 - app.services.azure_ad_service - DEBUG - Generated PKCE pair: verifier length=43, challenge length=43
+2025-11-08 10:32:54,168 - app.services.azure_ad_service - INFO - Stored PKCE parameters in Redis with key: sso_session:gevM9RGO_5wzZeYjFLTLm3-mofyHVq2JjClRaRHK1ek, state: gevM9RGO_5...
+2025-11-08 10:32:54,169 - app.services.azure_ad_service - INFO - Generated authorization URL for tenant cb859f98-291e-41b2-b30f-2287c2699205
+2025-11-08 10:32:54,169 - app.routes.sso_auth - INFO - Initiating Azure AD login for tenant cb859f98-291e-41b2-b30f-2287c2699205
+2025-11-08 10:32:54,169 - app.routes.sso_auth - INFO - Generated auth URL: https://login.microsoftonline.com/072a8ae9-5c75-4606-98c3-c0754cf130aa/oauth2/v2.0/authorize?client_id=dd5f0275-3e46-4103-bce5-1589a6f13d48&response_type=code&redirect_uri=http%3A%2F%2Flocalhost%3A4999%2Fapi%2Fauth%2Fsso%2Fazure%2Fcallback&response_mode=query&scope=openid+profile+email+User.Read&state=gevM9RGO_5wzZeYjFLTLm3-mofyHVq2JjClRaRHK1ek&code_challenge=WApS9je39WjM8gwnqZ0ccSi9dv7W_Pqtc0cCmpH3NqU&code_challenge_method=S256&prompt=select_account
+2025-11-08 10:33:53,524 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-08 10:33:53,525 - app - INFO - Flask app created with config: development
+2025-11-08 10:33:53,525 - app - INFO - Debug mode: True
+2025-11-08 10:33:53,525 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-08 10:33:53,596 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-08 10:33:53,596 - app - INFO - Flask app created with config: development
+2025-11-08 10:33:53,596 - app - INFO - Debug mode: True
+2025-11-08 10:33:53,597 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-08 10:33:53,650 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-08 10:33:53,650 - app - INFO - Flask app created with config: development
+2025-11-08 10:33:53,650 - app - INFO - Debug mode: True
+2025-11-08 10:33:53,650 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-08 10:33:53,685 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-08 10:33:53,685 - app - INFO - Flask app created with config: development
+2025-11-08 10:33:53,686 - app - INFO - Debug mode: True
+2025-11-08 10:33:53,686 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-08 10:33:57,279 - app.services.azure_ad_service - DEBUG - Generated PKCE pair: verifier length=43, challenge length=43
+2025-11-08 10:33:57,279 - app.services.azure_ad_service - INFO - Stored PKCE parameters in Redis with key: sso_session:2G88p4vxpEl84Fn1XaFNCnMLtHhBj_npi10781LSJlc, state: 2G88p4vxpE...
+2025-11-08 10:33:57,280 - app.services.azure_ad_service - INFO - Generated authorization URL for tenant cb859f98-291e-41b2-b30f-2287c2699205
+2025-11-08 10:33:57,280 - app.routes.sso_auth - INFO - Initiating Azure AD login for tenant cb859f98-291e-41b2-b30f-2287c2699205
+2025-11-08 10:33:57,281 - app.routes.sso_auth - INFO - Generated auth URL: https://login.microsoftonline.com/072a8ae9-5c75-4606-98c3-c0754cf130aa/oauth2/v2.0/authorize?client_id=dd5f0275-3e46-4103-bce5-1589a6f13d48&response_type=code&redirect_uri=http%3A%2F%2Flocalhost%3A4999%2Fapi%2Fauth%2Fsso%2Fazure%2Fcallback&response_mode=query&scope=openid+profile+email+User.Read&state=2G88p4vxpEl84Fn1XaFNCnMLtHhBj_npi10781LSJlc&code_challenge=nG2G423hpSKOxzm0ZJmmKtg0rc3eEhxBfYAhUt3MmBc&code_challenge_method=S256&prompt=select_account
+2025-11-08 10:33:59,955 - app.services.azure_ad_service - INFO - Attempting to retrieve PKCE from session. Session keys: ['oauth_state', 'return_url', 'sso_tenant_id']
+2025-11-08 10:33:59,956 - app.services.azure_ad_service - INFO - Retrieved state from Flask session: 2G88p4vxpE
+2025-11-08 10:33:59,961 - app.services.azure_ad_service - INFO - Retrieved PKCE parameters from Redis and deleted key: sso_session:2G88p4vxpEl84Fn1XaFNCnMLtHhBj_npi10781LSJlc, state: 2G88p4vxpE...
+2025-11-08 10:33:59,992 - app.services.azure_ad_service - INFO - Using PKCE code_verifier for token exchange (public app)
+2025-11-08 10:34:00,460 - app.services.azure_ad_service - ERROR - Token exchange failed: 401 - {'error': 'invalid_client', 'error_description': "AADSTS7000218: The request body must contain the following parameter: 'client_assertion' or 'client_secret'. Trace ID: d4715ab8-ef03-433b-97bc-9ae332912000 Correlation ID: c0a7de72-f28d-4218-b2f2-bb86f96be3fb Timestamp: 2025-11-08 10:34:00Z", 'error_codes': [7000218], 'timestamp': '2025-11-08 10:34:00Z', 'trace_id': 'd4715ab8-ef03-433b-97bc-9ae332912000', 'correlation_id': 'c0a7de72-f28d-4218-b2f2-bb86f96be3fb', 'error_uri': 'https://login.microsoftonline.com/error?code=7000218'}
+2025-11-08 10:34:00,461 - app.routes.sso_auth - ERROR - SSO login error: The application requires a client secret but none was provided. Either add a client secret in Azure Portal or ensure the app is configured for public client flow with PKCE.
+2025-11-08 10:37:53,931 - app.services.azure_ad_service - DEBUG - Generated PKCE pair: verifier length=43, challenge length=43
+2025-11-08 10:37:53,933 - app.services.azure_ad_service - INFO - Stored PKCE parameters in Redis with key: sso_session:8MLVSc9TKORmLyrU54qqU-yfuQoXk2uSpe-ckscPSDA, state: 8MLVSc9TKO...
+2025-11-08 10:37:53,933 - app.services.azure_ad_service - INFO - Generated authorization URL for tenant cb859f98-291e-41b2-b30f-2287c2699205
+2025-11-08 10:37:53,933 - app.routes.sso_auth - INFO - Initiating Azure AD login for tenant cb859f98-291e-41b2-b30f-2287c2699205
+2025-11-08 10:37:53,934 - app.routes.sso_auth - INFO - Generated auth URL: https://login.microsoftonline.com/072a8ae9-5c75-4606-98c3-c0754cf130aa/oauth2/v2.0/authorize?client_id=dd5f0275-3e46-4103-bce5-1589a6f13d48&response_type=code&redirect_uri=http%3A%2F%2Flocalhost%3A4999%2Fapi%2Fauth%2Fsso%2Fazure%2Fcallback&response_mode=query&scope=openid+profile+email+User.Read&state=8MLVSc9TKORmLyrU54qqU-yfuQoXk2uSpe-ckscPSDA&code_challenge=SPm5tN5KcR_rma8KbuXd-QxlhjZ5pDrjJlJGQAtUmLc&code_challenge_method=S256&prompt=select_account
+2025-11-08 10:37:56,169 - app.services.azure_ad_service - INFO - Attempting to retrieve PKCE from session. Session keys: ['oauth_state', 'return_url', 'sso_tenant_id']
+2025-11-08 10:37:56,171 - app.services.azure_ad_service - INFO - Retrieved state from Flask session: 8MLVSc9TKO
+2025-11-08 10:37:56,173 - app.services.azure_ad_service - INFO - Retrieved PKCE parameters from Redis and deleted key: sso_session:8MLVSc9TKORmLyrU54qqU-yfuQoXk2uSpe-ckscPSDA, state: 8MLVSc9TKO...
+2025-11-08 10:37:56,188 - app.services.azure_ad_service - INFO - Using PKCE code_verifier for token exchange (public app)
+2025-11-08 10:37:56,617 - app.services.azure_ad_service - ERROR - Token exchange failed: 401 - {'error': 'invalid_client', 'error_description': "AADSTS7000218: The request body must contain the following parameter: 'client_assertion' or 'client_secret'. Trace ID: bd595f7f-7579-428e-88a2-33e09b800000 Correlation ID: 6efc3b0c-4ff2-47f2-8c14-a0d9ed65827b Timestamp: 2025-11-08 10:37:56Z", 'error_codes': [7000218], 'timestamp': '2025-11-08 10:37:56Z', 'trace_id': 'bd595f7f-7579-428e-88a2-33e09b800000', 'correlation_id': '6efc3b0c-4ff2-47f2-8c14-a0d9ed65827b', 'error_uri': 'https://login.microsoftonline.com/error?code=7000218'}
+2025-11-08 10:37:56,618 - app.routes.sso_auth - ERROR - SSO login error: The application requires a client secret but none was provided. Either add a client secret in Azure Portal or ensure the app is configured for public client flow with PKCE.
+2025-11-08 10:41:36,148 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-08 10:41:36,148 - app - INFO - Flask app created with config: development
+2025-11-08 10:41:36,148 - app - INFO - Debug mode: True
+2025-11-08 10:41:36,149 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-08 10:41:36,162 - app.services.azure_ad_service - DEBUG - Generated PKCE pair: verifier length=43, challenge length=43
+2025-11-08 10:42:09,941 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-08 10:42:09,942 - app - INFO - Flask app created with config: development
+2025-11-08 10:42:09,942 - app - INFO - Debug mode: True
+2025-11-08 10:42:09,942 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-08 10:42:09,950 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-08 10:42:09,950 - app - INFO - Flask app created with config: development
+2025-11-08 10:42:09,950 - app - INFO - Debug mode: True
+2025-11-08 10:42:09,950 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-08 10:42:09,987 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-08 10:42:09,987 - app - INFO - Flask app created with config: development
+2025-11-08 10:42:09,987 - app - INFO - Debug mode: True
+2025-11-08 10:42:09,987 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-08 10:42:10,036 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-08 10:42:10,036 - app - INFO - Flask app created with config: development
+2025-11-08 10:42:10,036 - app - INFO - Debug mode: True
+2025-11-08 10:42:10,036 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-08 10:42:39,581 - app.services.azure_ad_service - DEBUG - Generated PKCE pair: verifier length=43, challenge length=43
+2025-11-08 10:42:39,582 - app.services.azure_ad_service - INFO - Stored PKCE parameters in Redis with key: sso_session:x82UmcJwEzPcQN1rO0FyxtM-kEX3-aTezAG5RwolAyQ, state: x82UmcJwEz...
+2025-11-08 10:42:39,583 - app.services.azure_ad_service - INFO - Generated authorization URL for tenant cb859f98-291e-41b2-b30f-2287c2699205
+2025-11-08 10:42:39,583 - app.routes.sso_auth - INFO - Initiating Azure AD login for tenant cb859f98-291e-41b2-b30f-2287c2699205
+2025-11-08 10:42:39,583 - app.routes.sso_auth - INFO - Generated auth URL: https://login.microsoftonline.com/072a8ae9-5c75-4606-98c3-c0754cf130aa/oauth2/v2.0/authorize?client_id=dd5f0275-3e46-4103-bce5-1589a6f13d48&response_type=code&redirect_uri=http%3A%2F%2Flocalhost%3A4999%2Fapi%2Fauth%2Fsso%2Fazure%2Fcallback&response_mode=query&scope=openid+profile+email+User.Read&state=x82UmcJwEzPcQN1rO0FyxtM-kEX3-aTezAG5RwolAyQ&code_challenge=2B4r2T_GtY3qzX1S2zmVcF_YPR6nPDtny9H-lnlstno&code_challenge_method=S256&prompt=select_account
+2025-11-08 10:42:42,412 - app.services.azure_ad_service - INFO - Attempting to retrieve PKCE from session. Session keys: ['oauth_state', 'return_url', 'sso_tenant_id']
+2025-11-08 10:42:42,413 - app.services.azure_ad_service - INFO - Retrieved state from Flask session: x82UmcJwEz
+2025-11-08 10:42:42,414 - app.services.azure_ad_service - INFO - Retrieved PKCE parameters from Redis and deleted key: sso_session:x82UmcJwEzPcQN1rO0FyxtM-kEX3-aTezAG5RwolAyQ, state: x82UmcJwEz...
+2025-11-08 10:42:42,448 - app.services.azure_ad_service - INFO - Using PKCE code_verifier for token exchange (public app)
+2025-11-08 10:42:42,860 - app.services.azure_ad_service - ERROR - Token exchange failed: 401 - {'error': 'invalid_client', 'error_description': "AADSTS7000218: The request body must contain the following parameter: 'client_assertion' or 'client_secret'. Trace ID: b70cbf84-5dab-4f9c-a4b3-fc66f3332200 Correlation ID: 147c0047-18a9-433f-aa64-66a1546cd198 Timestamp: 2025-11-08 10:42:42Z", 'error_codes': [7000218], 'timestamp': '2025-11-08 10:42:42Z', 'trace_id': 'b70cbf84-5dab-4f9c-a4b3-fc66f3332200', 'correlation_id': '147c0047-18a9-433f-aa64-66a1546cd198', 'error_uri': 'https://login.microsoftonline.com/error?code=7000218'}
+2025-11-08 10:42:42,860 - app.routes.sso_auth - ERROR - SSO login error: The application requires a client secret but none was provided. Either add a client secret in Azure Portal or ensure the app is configured for public client flow with PKCE.
+2025-11-08 10:43:25,335 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-08 10:43:25,335 - app - INFO - Flask app created with config: development
+2025-11-08 10:43:25,335 - app - INFO - Debug mode: True
+2025-11-08 10:43:25,336 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-08 10:43:25,407 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-08 10:43:25,407 - app - INFO - Flask app created with config: development
+2025-11-08 10:43:25,407 - app - INFO - Debug mode: True
+2025-11-08 10:43:25,407 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-08 10:43:25,421 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-08 10:43:25,422 - app - INFO - Flask app created with config: development
+2025-11-08 10:43:25,422 - app - INFO - Debug mode: True
+2025-11-08 10:43:25,422 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-08 10:43:25,428 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-08 10:43:25,428 - app - INFO - Flask app created with config: development
+2025-11-08 10:43:25,428 - app - INFO - Debug mode: True
+2025-11-08 10:43:25,428 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-08 10:43:26,300 - app.services.azure_ad_service - DEBUG - Generated PKCE pair: verifier length=43, challenge length=43
+2025-11-08 10:43:26,301 - app.services.azure_ad_service - INFO - Stored PKCE parameters in Redis with key: sso_session:BaAsq5Nmr3nZ-efVdFo3ySucsM6T372zLBY16GrOo-I, state: BaAsq5Nmr3...
+2025-11-08 10:43:26,302 - app.services.azure_ad_service - INFO - Generated authorization URL for tenant cb859f98-291e-41b2-b30f-2287c2699205
+2025-11-08 10:43:26,302 - app.routes.sso_auth - INFO - Initiating Azure AD login for tenant cb859f98-291e-41b2-b30f-2287c2699205
+2025-11-08 10:43:26,302 - app.routes.sso_auth - INFO - Generated auth URL: https://login.microsoftonline.com/072a8ae9-5c75-4606-98c3-c0754cf130aa/oauth2/v2.0/authorize?client_id=dd5f0275-3e46-4103-bce5-1589a6f13d48&response_type=code&redirect_uri=http%3A%2F%2Flocalhost%3A4999%2Fapi%2Fauth%2Fsso%2Fazure%2Fcallback&response_mode=query&scope=openid+profile+email+User.Read&state=BaAsq5Nmr3nZ-efVdFo3ySucsM6T372zLBY16GrOo-I&code_challenge=3QZG322t_JtJN-WqNYVEXBPqS0Wk6hluSM2jqIagcT0&code_challenge_method=S256&prompt=select_account
+2025-11-08 10:43:29,238 - app.services.azure_ad_service - INFO - Attempting to retrieve PKCE from session. Session keys: ['oauth_state', 'return_url', 'sso_tenant_id']
+2025-11-08 10:43:29,239 - app.services.azure_ad_service - INFO - Retrieved state from Flask session: BaAsq5Nmr3
+2025-11-08 10:43:29,240 - app.services.azure_ad_service - INFO - Retrieved PKCE parameters from Redis and deleted key: sso_session:BaAsq5Nmr3nZ-efVdFo3ySucsM6T372zLBY16GrOo-I, state: BaAsq5Nmr3...
+2025-11-08 10:43:29,244 - app.services.azure_ad_service - INFO - Using PKCE code_verifier for token exchange (public app)
+2025-11-08 10:43:29,719 - app.services.azure_ad_service - ERROR - Token exchange failed: 401 - {'error': 'invalid_client', 'error_description': "AADSTS7000218: The request body must contain the following parameter: 'client_assertion' or 'client_secret'. Trace ID: 3f416e8c-3f8c-4023-a6f0-4b9623852700 Correlation ID: 47920970-9945-4d64-aca9-a3917892f941 Timestamp: 2025-11-08 10:43:29Z", 'error_codes': [7000218], 'timestamp': '2025-11-08 10:43:29Z', 'trace_id': '3f416e8c-3f8c-4023-a6f0-4b9623852700', 'correlation_id': '47920970-9945-4d64-aca9-a3917892f941', 'error_uri': 'https://login.microsoftonline.com/error?code=7000218'}
+2025-11-08 10:43:29,720 - app.routes.sso_auth - ERROR - SSO login error: The application requires a client secret but none was provided. Either add a client secret in Azure Portal or ensure the app is configured for public client flow with PKCE.
+2025-11-08 10:47:05,323 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-08 10:47:05,323 - app - INFO - Flask app created with config: development
+2025-11-08 10:47:05,323 - app - INFO - Debug mode: True
+2025-11-08 10:47:05,323 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-08 10:47:05,338 - app.services.azure_ad_service - DEBUG - Generated PKCE pair: verifier length=43, challenge length=43
+2025-11-08 10:48:41,530 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-08 10:48:41,530 - app - INFO - Flask app created with config: development
+2025-11-08 10:48:41,530 - app - INFO - Debug mode: True
+2025-11-08 10:48:41,531 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-08 10:49:39,561 - app.services.azure_ad_service - DEBUG - Generated PKCE pair: verifier length=43, challenge length=43
+2025-11-08 10:49:39,564 - app.services.azure_ad_service - INFO - Stored PKCE parameters in Redis with key: sso_session:WX__cmCFA7i6wgu_7-2wcJhEHJr5pKzHcB3TQfmN2lE, state: WX__cmCFA7...
+2025-11-08 10:49:39,565 - app.services.azure_ad_service - INFO - Generated authorization URL for tenant cb859f98-291e-41b2-b30f-2287c2699205
+2025-11-08 10:49:39,566 - app.routes.sso_auth - INFO - Initiating Azure AD login for tenant cb859f98-291e-41b2-b30f-2287c2699205
+2025-11-08 10:49:39,566 - app.routes.sso_auth - INFO - Generated auth URL: https://login.microsoftonline.com/072a8ae9-5c75-4606-98c3-c0754cf130aa/oauth2/v2.0/authorize?client_id=dd5f0275-3e46-4103-bce5-1589a6f13d48&response_type=code&redirect_uri=http%3A%2F%2Flocalhost%3A4999%2Fapi%2Fauth%2Fsso%2Fazure%2Fcallback&response_mode=query&scope=openid+profile+email+User.Read&state=WX__cmCFA7i6wgu_7-2wcJhEHJr5pKzHcB3TQfmN2lE&code_challenge=t1mo7NlmQRS9MbJUMzbIti3byL6c4kPEHVjjblaIXhQ&code_challenge_method=S256&prompt=select_account
+2025-11-08 10:49:41,871 - app.services.azure_ad_service - INFO - Attempting to retrieve PKCE from session. Session keys: ['oauth_state', 'return_url', 'sso_tenant_id']
+2025-11-08 10:49:41,872 - app.services.azure_ad_service - INFO - Retrieved state from Flask session: WX__cmCFA7
+2025-11-08 10:49:41,873 - app.services.azure_ad_service - INFO - Retrieved PKCE parameters from Redis and deleted key: sso_session:WX__cmCFA7i6wgu_7-2wcJhEHJr5pKzHcB3TQfmN2lE, state: WX__cmCFA7...
+2025-11-08 10:49:41,911 - app.services.azure_ad_service - INFO - Using client_secret for token exchange (confidential app)
+2025-11-08 10:49:42,292 - app.services.azure_ad_service - ERROR - Token exchange failed: 400 - {'error': 'invalid_grant', 'error_description': 'AADSTS50148: The code_verifier does not match the code_challenge supplied in the authorization request for PKCE. Trace ID: fa94690a-6de3-4363-9b52-67c843792100 Correlation ID: 0ebb14e8-9d06-4912-8771-fb7f23c0fef0 Timestamp: 2025-11-08 10:49:42Z', 'error_codes': [50148], 'timestamp': '2025-11-08 10:49:42Z', 'trace_id': 'fa94690a-6de3-4363-9b52-67c843792100', 'correlation_id': '0ebb14e8-9d06-4912-8771-fb7f23c0fef0', 'error_uri': 'https://login.microsoftonline.com/error?code=50148'}
+2025-11-08 10:49:42,293 - app.routes.sso_auth - ERROR - SSO login error: Token exchange failed: AADSTS50148: The code_verifier does not match the code_challenge supplied in the authorization request for PKCE. Trace ID: fa94690a-6de3-4363-9b52-67c843792100 Correlation ID: 0ebb14e8-9d06-4912-8771-fb7f23c0fef0 Timestamp: 2025-11-08 10:49:42Z
+2025-11-08 10:50:55,602 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-08 10:50:55,602 - app - INFO - Flask app created with config: development
+2025-11-08 10:50:55,603 - app - INFO - Debug mode: True
+2025-11-08 10:50:55,603 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-08 10:50:55,668 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-08 10:50:55,669 - app - INFO - Flask app created with config: development
+2025-11-08 10:50:55,669 - app - INFO - Debug mode: True
+2025-11-08 10:50:55,669 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-08 10:50:55,741 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-08 10:50:55,743 - app - INFO - Flask app created with config: development
+2025-11-08 10:50:55,743 - app - INFO - Debug mode: True
+2025-11-08 10:50:55,743 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-08 10:50:55,775 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-08 10:50:55,775 - app - INFO - Flask app created with config: development
+2025-11-08 10:50:55,775 - app - INFO - Debug mode: True
+2025-11-08 10:50:55,775 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-08 10:58:56,144 - app.services.azure_ad_service - DEBUG - Generated PKCE pair: verifier length=43, challenge length=43
+2025-11-08 10:58:56,146 - app.services.azure_ad_service - INFO - Stored PKCE parameters in Redis with key: sso_session:P5F9s8lhk_nXhmXgskMh_LnIdF1sFXi8YrXCFcHYr3A, state: P5F9s8lhk_...
+2025-11-08 10:58:56,146 - app.routes.sso_auth - INFO - Using configured redirect URI: http://localhost:4999/api/auth/sso/azure/callback
+2025-11-08 10:58:56,146 - app.services.azure_ad_service - INFO - Generated authorization URL for tenant cb859f98-291e-41b2-b30f-2287c2699205
+2025-11-08 10:58:56,147 - app.routes.sso_auth - INFO - Initiating Azure AD login for tenant cb859f98-291e-41b2-b30f-2287c2699205
+2025-11-08 10:58:56,147 - app.routes.sso_auth - INFO - Generated auth URL: https://login.microsoftonline.com/072a8ae9-5c75-4606-98c3-c0754cf130aa/oauth2/v2.0/authorize?client_id=dd5f0275-3e46-4103-bce5-1589a6f13d48&response_type=code&redirect_uri=http%3A%2F%2Flocalhost%3A4999%2Fapi%2Fauth%2Fsso%2Fazure%2Fcallback&response_mode=query&scope=openid+profile+email+User.Read&state=P5F9s8lhk_nXhmXgskMh_LnIdF1sFXi8YrXCFcHYr3A&code_challenge=8yAAe28vwMFFp_eoyRzyJSFO5KejINuDnHeCTUmUImg&code_challenge_method=S256&prompt=select_account
+2025-11-08 10:59:55,952 - app.services.azure_ad_service - DEBUG - Generated PKCE pair: verifier length=43, challenge length=43
+2025-11-08 10:59:55,956 - app.services.azure_ad_service - INFO - Stored PKCE parameters in Redis with key: sso_session:7MgMgRk7Fd9mE4HaZwSNZ-N5Rsup3y7ftiOCNtBPTME, state: 7MgMgRk7Fd...
+2025-11-08 10:59:55,957 - app.routes.sso_auth - INFO - Using configured redirect URI: http://localhost:4999/api/auth/sso/azure/callback
+2025-11-08 10:59:55,958 - app.services.azure_ad_service - INFO - Generated authorization URL for tenant cb859f98-291e-41b2-b30f-2287c2699205
+2025-11-08 10:59:55,959 - app.routes.sso_auth - INFO - Initiating Azure AD login for tenant cb859f98-291e-41b2-b30f-2287c2699205
+2025-11-08 10:59:55,959 - app.routes.sso_auth - INFO - Generated auth URL: https://login.microsoftonline.com/072a8ae9-5c75-4606-98c3-c0754cf130aa/oauth2/v2.0/authorize?client_id=dd5f0275-3e46-4103-bce5-1589a6f13d48&response_type=code&redirect_uri=http%3A%2F%2Flocalhost%3A4999%2Fapi%2Fauth%2Fsso%2Fazure%2Fcallback&response_mode=query&scope=openid+profile+email+User.Read&state=7MgMgRk7Fd9mE4HaZwSNZ-N5Rsup3y7ftiOCNtBPTME&code_challenge=IbXvobhdU8ay1ppwboY8stznZEjmXyVQExPN6qaQR2o&code_challenge_method=S256&prompt=select_account
+2025-11-08 10:59:59,182 - app.services.azure_ad_service - INFO - Attempting to retrieve PKCE from session. Session keys: ['oauth_state', 'return_url', 'sso_tenant_id']
+2025-11-08 10:59:59,183 - app.services.azure_ad_service - INFO - Retrieved state from Flask session: 7MgMgRk7Fd
+2025-11-08 10:59:59,186 - app.services.azure_ad_service - INFO - Retrieved PKCE parameters from Redis and deleted key: sso_session:7MgMgRk7Fd9mE4HaZwSNZ-N5Rsup3y7ftiOCNtBPTME, state: 7MgMgRk7Fd...
+2025-11-08 10:59:59,194 - app.routes.sso_auth - INFO - Using configured redirect URI for token exchange: http://localhost:4999/api/auth/sso/azure/callback
+2025-11-08 10:59:59,195 - app.services.azure_ad_service - INFO - Using PKCE code_verifier for token exchange (public app)
+2025-11-08 10:59:59,666 - app.services.azure_ad_service - ERROR - Token exchange failed: 401 - {'error': 'invalid_client', 'error_description': "AADSTS7000218: The request body must contain the following parameter: 'client_assertion' or 'client_secret'. Trace ID: fc51b880-4ba3-40dc-8113-f426d2791c00 Correlation ID: 3b3c1d61-a246-4c3f-a9c2-19540aa7e876 Timestamp: 2025-11-08 10:59:59Z", 'error_codes': [7000218], 'timestamp': '2025-11-08 10:59:59Z', 'trace_id': 'fc51b880-4ba3-40dc-8113-f426d2791c00', 'correlation_id': '3b3c1d61-a246-4c3f-a9c2-19540aa7e876', 'error_uri': 'https://login.microsoftonline.com/error?code=7000218'}
+2025-11-08 10:59:59,667 - app.routes.sso_auth - ERROR - SSO login error: The application requires a client secret but none was provided. Either add a client secret in Azure Portal or ensure the app is configured for public client flow with PKCE.
