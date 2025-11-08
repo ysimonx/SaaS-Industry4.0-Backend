@@ -100,12 +100,15 @@ class AzureADService:
     def get_authorization_url(self, redirect_uri: str, state: str = None,
                             code_challenge: str = None, additional_params: Dict = None) -> str:
         """
-        Generate Azure AD authorization URL with PKCE.
+        Generate Azure AD authorization URL with or without PKCE.
+
+        Uses PKCE (Public Client) if no client_secret is configured.
+        Uses traditional flow (Confidential Client) if client_secret exists.
 
         Args:
             redirect_uri: OAuth2 callback URL
             state: Optional state token (will be generated if not provided)
-            code_challenge: PKCE code challenge (will be generated if not provided)
+            code_challenge: PKCE code challenge (will be generated if not provided, unless using client_secret)
             additional_params: Additional query parameters
 
         Returns:
@@ -120,8 +123,8 @@ class AzureADService:
         if not state:
             state = self.generate_state_token()
 
-        if not code_challenge:
-            _, code_challenge = self.generate_pkce_pair()
+        # Check if using client_secret (Confidential Client) or PKCE (Public Client)
+        use_client_secret = self.sso_config.client_secret and self.sso_config.client_secret.strip()
 
         # Build authorization URL
         params = {
@@ -131,10 +134,18 @@ class AzureADService:
             'response_mode': 'query',
             'scope': ' '.join(self.DEFAULT_SCOPES),
             'state': state,
-            'code_challenge': code_challenge,
-            'code_challenge_method': 'S256',
             'prompt': 'select_account'  # Allow user to select account
         }
+
+        # Only add PKCE parameters if NOT using client_secret
+        if not use_client_secret:
+            if not code_challenge:
+                _, code_challenge = self.generate_pkce_pair()
+            params['code_challenge'] = code_challenge
+            params['code_challenge_method'] = 'S256'
+            logger.info(f"Using PKCE for authorization (Public Client mode)")
+        else:
+            logger.info(f"Using client_secret for authorization (Confidential Client mode)")
 
         # Add domain hint if email is provided
         if additional_params:
@@ -431,11 +442,25 @@ class AzureADService:
             if not auto_prov.get('enabled', False):
                 raise ValueError(f"User not found and auto-provisioning is disabled: {email}")
 
+            # Extract first_name and last_name from claims
+            # Azure AD peut fournir given_name/family_name ou juste name
+            first_name = id_token_claims.get('given_name', '')
+            last_name = id_token_claims.get('family_name', '')
+
+            # Si given_name/family_name ne sont pas fournis, parser le champ 'name'
+            if not first_name and not last_name:
+                full_name = id_token_claims.get('name', '')
+                if full_name:
+                    name_parts = full_name.split(' ', 1)
+                    first_name = name_parts[0] if len(name_parts) > 0 else ''
+                    last_name = name_parts[1] if len(name_parts) > 1 else ''
+                    logger.info(f"Parsed name '{full_name}' into first_name='{first_name}', last_name='{last_name}'")
+
             # Create new user
             user = User(
                 email=email,
-                first_name=id_token_claims.get('given_name', ''),
-                last_name=id_token_claims.get('family_name', ''),
+                first_name=first_name,
+                last_name=last_name,
                 sso_provider='azure_ad',
                 is_active=True
             )
@@ -550,14 +575,17 @@ class AzureADService:
         return logout_url
 
     @staticmethod
-    def store_pkce_in_session(code_verifier: str, state: str) -> None:
+    def store_pkce_in_session(code_verifier: Optional[str], state: str) -> None:
         """
-        Store PKCE parameters in session for later verification.
+        Store OAuth parameters in session for later verification.
+
+        Stores code_verifier if using PKCE (Public Client).
+        Stores only state if using client_secret (Confidential Client).
 
         Uses Redis if available, falls back to Flask session.
 
         Args:
-            code_verifier: PKCE code verifier
+            code_verifier: PKCE code verifier (None if using client_secret)
             state: OAuth2 state token
         """
         redis_client = redis_manager.get_client()

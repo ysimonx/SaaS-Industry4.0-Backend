@@ -52,11 +52,22 @@ def initiate_azure_login(tenant_id):
         # Initialize Azure AD service
         azure_service = AzureADService(tenant_id)
 
-        # Generate PKCE parameters
-        code_verifier, code_challenge = azure_service.generate_pkce_pair()
+        # Generate state token (always needed for CSRF protection)
         state = azure_service.generate_state_token()
 
-        # Store PKCE in session
+        # Check if using client_secret (Confidential) or PKCE (Public)
+        use_client_secret = sso_config.client_secret and sso_config.client_secret.strip()
+
+        # Generate PKCE parameters only if NOT using client_secret
+        code_verifier = None
+        code_challenge = None
+        if not use_client_secret:
+            code_verifier, code_challenge = azure_service.generate_pkce_pair()
+            logger.info("Using PKCE (Public Client mode)")
+        else:
+            logger.info("Using client_secret (Confidential Client mode)")
+
+        # Store parameters in session
         azure_service.store_pkce_in_session(code_verifier, state)
         session['sso_tenant_id'] = tenant_id
         session['return_url'] = request.args.get('return_url')
@@ -75,7 +86,7 @@ def initiate_azure_login(tenant_id):
         auth_url = azure_service.get_authorization_url(
             redirect_uri=redirect_uri,
             state=state,
-            code_challenge=code_challenge,
+            code_challenge=code_challenge,  # Will be None if using client_secret
             additional_params=additional_params
         )
 
