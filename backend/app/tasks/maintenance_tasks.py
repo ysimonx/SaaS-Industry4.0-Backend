@@ -70,8 +70,8 @@ def health_check() -> Dict[str, Any]:
 
     # Check Vault (if configured)
     try:
-        from app.services.vault_service import VaultService
-        vault_service = VaultService()
+        from app.services.vault_encryption_service import VaultEncryptionService
+        vault_service = VaultEncryptionService()
         if vault_service.is_healthy():
             health_status['components']['vault'] = {
                 'status': 'healthy',

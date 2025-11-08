@@ -175,9 +175,9 @@ def rotate_encryption_keys() -> Dict[str, Any]:
         Dictionary with rotation statistics
     """
     try:
-        from app.services.vault_service import VaultService
+        from app.services.vault_encryption_service import VaultEncryptionService
 
-        vault_service = VaultService()
+        vault_service = VaultEncryptionService()
 
         # Get all enabled SSO configurations
         sso_configs = TenantSSOConfig.query.filter_by(is_enabled=True).all()
