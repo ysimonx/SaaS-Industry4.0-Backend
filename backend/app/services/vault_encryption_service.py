@@ -264,7 +264,15 @@ class VaultEncryptionService:
                 return False
 
             # Vérifier que Transit Engine est accessible
-            self.client.sys.list_mounted_secrets_engines()
+            # On tente de lister les clés, mais on accepte une liste vide
+            try:
+                self.client.secrets.transit.list_keys(
+                    mount_point=self.transit_mount
+                )
+            except hvac.exceptions.InvalidPath:
+                # Pas de clés = Transit Engine vide, mais accessible
+                logger.debug("Transit Engine is empty but accessible")
+                pass
 
             logger.debug("Vault health check passed")
             return True
