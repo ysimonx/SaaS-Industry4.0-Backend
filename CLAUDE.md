@@ -435,7 +435,7 @@ Enable/disable: `ENABLE_KAFKA_EVENTS` environment variable
 The platform supports **multi-tenant Azure AD SSO** with per-tenant configuration:
 
 **Architecture**:
-- **Public Application Mode**: Uses OAuth2 with PKCE (no client_secret required)
+- **Confidential Application Mode**:  client_secret required
 - **Multi-Tenant Support**: Each tenant configures their own Azure AD instance
 - **User Identity Mapping**: Users can have different Azure Object IDs per tenant
 - **Auto-Provisioning**: Automatically create users on first SSO login (configurable)

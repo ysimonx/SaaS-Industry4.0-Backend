@@ -26,7 +26,8 @@
 ### ✅ Enterprise Authentication (SSO)
 - Azure AD / Microsoft Entra ID integration
 - Per-tenant SSO configuration
-- Confidential Application mode (client_secret needed)
+- **Confidential Application mode (client_secret REQUIRED)**
+- **NOT using PKCE - requires client_secret for secure authentication**
 - Auto-provisioning with configurable rules
 - Azure AD group to role mapping
 - Hybrid authentication modes (local, SSO, or both)
@@ -816,7 +817,7 @@ The platform supports **Azure AD / Microsoft Entra ID** Single Sign-On (SSO) for
 
 ### Setting up Azure AD Application
 
-1. **Register a Public Application in Azure AD**:
+1. **Register an Application in Azure AD**:
    ```bash
    # In Azure Portal (portal.azure.com):
    1. Go to Azure Active Directory → App registrations → New registration
@@ -829,23 +830,30 @@ The platform supports **Azure AD / Microsoft Entra ID** Single Sign-On (SSO) for
    5. Register the application
    ```
 
-2. **Configure the Azure Application**:
+2. **Configure the Azure Application (Confidential Mode)**:
    ```bash
    # In Azure App Registration:
    1. Authentication tab:
-      - Enable "Public client flows" (no client_secret needed)
+      - ⚠️ IMPORTANT: Do NOT enable "Public client flows"
       - Add redirect URIs for all environments
       - Enable ID tokens and Access tokens
 
-   2. API Permissions tab:
+   2. Certificates & secrets tab:
+      - ⚠️ CRITICAL: Click "New client secret"
+      - Description: "SaaS Platform Secret"
+      - Expiration: Choose appropriate duration (12-24 months)
+      - Copy the secret value immediately (shown only once!)
+
+   3. API Permissions tab:
       - Microsoft Graph → User.Read (default)
       - Microsoft Graph → email (optional)
       - Microsoft Graph → profile (optional)
       - Grant admin consent if required
 
-   3. Copy these values:
+   4. Copy these values:
       - Application (client) ID
       - Directory (tenant) ID
+      - Client secret (from step 2)
    ```
 
 ### Configuring SSO for a Tenant
@@ -853,11 +861,13 @@ The platform supports **Azure AD / Microsoft Entra ID** Single Sign-On (SSO) for
 1. **Create SSO Configuration via API**:
    ```bash
    # As tenant admin, configure SSO:
+   # ⚠️ IMPORTANT: client_secret is REQUIRED
    curl -X POST http://localhost:4999/api/tenants/{tenant_id}/sso/config \
      -H "Authorization: Bearer $TOKEN" \
      -H "Content-Type: application/json" \
      -d '{
        "client_id": "your-azure-app-client-id",
+       "client_secret": "your-azure-client-secret",
        "provider_tenant_id": "your-azure-tenant-id",
        "enable": true,
        "config_metadata": {
@@ -938,10 +948,12 @@ The platform can automatically create user accounts during SSO login:
 
 ### Security Features
 
-- **Client Secret**: Confidential Application mode for enhanced security
+- **Confidential Application Mode**: MANDATORY use of client_secret for secure OAuth2 flow
+- **Client Secret Required**: Application configured as confidential (NOT public client)
+- **NO PKCE**: Platform does NOT use Proof Key for Code Exchange (PKCE is for public clients only)
 - **State Token**: CSRF protection during OAuth flow
 - **Encrypted Token Storage**: Azure tokens encrypted via HashiCorp Vault
-- **Token Refresh**: Automatic token refresh before expiration
+- **Token Refresh**: Automatic token refresh before expiration via Celery workers
 - **Multi-Factor Authentication**: Inherited from Azure AD configuration
 
 ### SSO Management Endpoints
@@ -999,7 +1011,8 @@ Common issues and solutions:
 
 2. **"invalid_client" error**:
    - Verify the client_id is correct
-   - Ensure "Public client flows" is enabled in Azure AD
+   - Ensure client_secret is provided and valid
+   - Check that "Public client flows" is DISABLED (we use confidential mode)
 
 3. **Auto-provisioning not working**:
    - Check email domain is in allowed list

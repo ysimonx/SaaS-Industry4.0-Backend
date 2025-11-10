@@ -4719,3 +4719,182 @@ WHERE tenants.id = %(pk_1)s::UUID]
 2025-11-08 22:20:32,941 - app - INFO - Flask app created with config: development
 2025-11-08 22:20:32,941 - app - INFO - Debug mode: True
 2025-11-08 22:20:32,941 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-10 19:25:29,428 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-10 19:25:29,429 - app - INFO - Flask app created with config: development
+2025-11-10 19:25:29,430 - app - INFO - Debug mode: True
+2025-11-10 19:25:29,433 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-10 19:25:29,436 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-10 19:25:29,437 - app - INFO - Flask app created with config: development
+2025-11-10 19:25:29,437 - app - INFO - Debug mode: True
+2025-11-10 19:25:29,438 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-10 19:25:29,498 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-10 19:25:29,498 - app - INFO - Flask app created with config: development
+2025-11-10 19:25:29,499 - app - INFO - Debug mode: True
+2025-11-10 19:25:29,499 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-10 19:25:29,505 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-10 19:25:29,505 - app - INFO - Flask app created with config: development
+2025-11-10 19:25:29,505 - app - INFO - Debug mode: True
+2025-11-10 19:25:29,506 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-10 19:34:03,921 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-10 19:34:03,922 - app - INFO - Flask app created with config: development
+2025-11-10 19:34:03,922 - app - INFO - Debug mode: True
+2025-11-10 19:34:03,922 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-10 19:34:12,330 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-10 19:34:12,330 - app - INFO - Flask app created with config: development
+2025-11-10 19:34:12,330 - app - INFO - Debug mode: True
+2025-11-10 19:34:12,331 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-10 19:34:20,304 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-10 19:34:20,304 - app - INFO - Flask app created with config: development
+2025-11-10 19:34:20,304 - app - INFO - Debug mode: True
+2025-11-10 19:34:20,305 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-10 19:34:40,963 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-10 19:34:40,964 - app - INFO - Flask app created with config: development
+2025-11-10 19:34:40,964 - app - INFO - Debug mode: True
+2025-11-10 19:34:40,964 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-10 19:34:40,990 - app.tenant_db.tenant_migrations - DEBUG - Schema version table doesn't exist yet: (psycopg2.errors.UndefinedTable) relation "tenant_schema_version" does not exist
+LINE 1: SELECT version FROM tenant_schema_version ORDER BY version D...
+                            ^
+
+[SQL: SELECT version FROM tenant_schema_version ORDER BY version DESC LIMIT 1]
+(Background on this error at: https://sqlalche.me/e/20/f405)
+2025-11-10 19:34:40,997 - app.tenant_db.tenant_migrations - INFO - Created tenant_schema_version table
+2025-11-10 19:34:40,998 - app.tenant_db.tenant_migrations - INFO - Applying migration v1: initial_schema
+2025-11-10 19:34:40,998 - app.tenant_db.tenant_migrations - INFO - ✓ Migration v1 applied successfully
+2025-11-10 19:34:40,999 - app.tenant_db.tenant_migrations - INFO - Applying migration v2: add_file_metadata_column
+2025-11-10 19:34:41,000 - app.tenant_db.tenant_migrations - INFO - ✓ Migration v2 applied successfully
+2025-11-10 21:15:14,191 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-10 21:15:14,191 - app - INFO - Flask app created with config: development
+2025-11-10 21:15:14,193 - app - INFO - Debug mode: True
+2025-11-10 21:15:14,193 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-10 21:15:14,199 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-10 21:15:14,199 - app - INFO - Flask app created with config: development
+2025-11-10 21:15:14,199 - app - INFO - Debug mode: True
+2025-11-10 21:15:14,200 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-10 21:15:14,245 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-10 21:15:14,245 - app - INFO - Flask app created with config: development
+2025-11-10 21:15:14,246 - app - INFO - Debug mode: True
+2025-11-10 21:15:14,246 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-10 21:15:14,253 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-10 21:15:14,254 - app - INFO - Flask app created with config: development
+2025-11-10 21:15:14,254 - app - INFO - Debug mode: True
+2025-11-10 21:15:14,254 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-10 21:16:17,449 - app.utils.decorators - DEBUG - Authenticated user: 609fcfa4-354c-435e-8d70-ec699093eb6f
+2025-11-10 21:16:17,454 - app.routes.files - ERROR - Error listing files for tenant :tenant_id: (psycopg2.errors.InvalidTextRepresentation) invalid input syntax for type uuid: ":tenant_id"
+LINE 3: WHERE tenants.id = ':tenant_id'::UUID AND tenants.is_active ...
+                           ^
+
+[SQL: SELECT tenants.name AS tenants_name, tenants.database_name AS tenants_database_name, tenants.is_active AS tenants_is_active, tenants.auth_method AS tenants_auth_method, tenants.sso_domain_whitelist AS tenants_sso_domain_whitelist, tenants.sso_auto_provisioning AS tenants_sso_auto_provisioning, tenants.sso_default_role AS tenants_sso_default_role, tenants.id AS tenants_id, tenants.created_at AS tenants_created_at, tenants.updated_at AS tenants_updated_at, tenants.created_by AS tenants_created_by 
+FROM tenants 
+WHERE tenants.id = %(id_1)s::UUID AND tenants.is_active = true 
+ LIMIT %(param_1)s]
+[parameters: {'id_1': ':tenant_id', 'param_1': 1}]
+(Background on this error at: https://sqlalche.me/e/20/9h9h)
+Traceback (most recent call last):
+  File "/opt/venv/lib/python3.11/site-packages/sqlalchemy/engine/base.py", line 1967, in _exec_single_context
+    self.dialect.do_execute(
+  File "/opt/venv/lib/python3.11/site-packages/sqlalchemy/engine/default.py", line 951, in do_execute
+    cursor.execute(statement, parameters)
+psycopg2.errors.InvalidTextRepresentation: invalid input syntax for type uuid: ":tenant_id"
+LINE 3: WHERE tenants.id = ':tenant_id'::UUID AND tenants.is_active ...
+                           ^
+
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/app/app/routes/files.py", line 162, in list_files
+    has_access, error_response = check_tenant_access(user_id, tenant_id)
+                                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/app/app/routes/files.py", line 59, in check_tenant_access
+    tenant = Tenant.query.filter_by(id=tenant_id, is_active=True).first()
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/venv/lib/python3.11/site-packages/sqlalchemy/orm/query.py", line 2759, in first
+    return self.limit(1)._iter().first()  # type: ignore
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/venv/lib/python3.11/site-packages/sqlalchemy/orm/query.py", line 2857, in _iter
+    result: Union[ScalarResult[_T], Result[_T]] = self.session.execute(
+                                                  ^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/venv/lib/python3.11/site-packages/sqlalchemy/orm/session.py", line 2351, in execute
+    return self._execute_internal(
+           ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/venv/lib/python3.11/site-packages/sqlalchemy/orm/session.py", line 2249, in _execute_internal
+    result: Result[Any] = compile_state_cls.orm_execute_statement(
+                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/venv/lib/python3.11/site-packages/sqlalchemy/orm/context.py", line 306, in orm_execute_statement
+    result = conn.execute(
+             ^^^^^^^^^^^^^
+  File "/opt/venv/lib/python3.11/site-packages/sqlalchemy/engine/base.py", line 1419, in execute
+    return meth(
+           ^^^^^
+  File "/opt/venv/lib/python3.11/site-packages/sqlalchemy/sql/elements.py", line 526, in _execute_on_connection
+    return connection._execute_clauseelement(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/venv/lib/python3.11/site-packages/sqlalchemy/engine/base.py", line 1641, in _execute_clauseelement
+    ret = self._execute_context(
+          ^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/venv/lib/python3.11/site-packages/sqlalchemy/engine/base.py", line 1846, in _execute_context
+    return self._exec_single_context(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/venv/lib/python3.11/site-packages/sqlalchemy/engine/base.py", line 1986, in _exec_single_context
+    self._handle_dbapi_exception(
+  File "/opt/venv/lib/python3.11/site-packages/sqlalchemy/engine/base.py", line 2355, in _handle_dbapi_exception
+    raise sqlalchemy_exception.with_traceback(exc_info[2]) from e
+  File "/opt/venv/lib/python3.11/site-packages/sqlalchemy/engine/base.py", line 1967, in _exec_single_context
+    self.dialect.do_execute(
+  File "/opt/venv/lib/python3.11/site-packages/sqlalchemy/engine/default.py", line 951, in do_execute
+    cursor.execute(statement, parameters)
+sqlalchemy.exc.DataError: (psycopg2.errors.InvalidTextRepresentation) invalid input syntax for type uuid: ":tenant_id"
+LINE 3: WHERE tenants.id = ':tenant_id'::UUID AND tenants.is_active ...
+                           ^
+
+[SQL: SELECT tenants.name AS tenants_name, tenants.database_name AS tenants_database_name, tenants.is_active AS tenants_is_active, tenants.auth_method AS tenants_auth_method, tenants.sso_domain_whitelist AS tenants_sso_domain_whitelist, tenants.sso_auto_provisioning AS tenants_sso_auto_provisioning, tenants.sso_default_role AS tenants_sso_default_role, tenants.id AS tenants_id, tenants.created_at AS tenants_created_at, tenants.updated_at AS tenants_updated_at, tenants.created_by AS tenants_created_by 
+FROM tenants 
+WHERE tenants.id = %(id_1)s::UUID AND tenants.is_active = true 
+ LIMIT %(param_1)s]
+[parameters: {'id_1': ':tenant_id', 'param_1': 1}]
+(Background on this error at: https://sqlalche.me/e/20/9h9h)
+2025-11-10 21:17:16,716 - app.utils.decorators - DEBUG - Authenticated user: 609fcfa4-354c-435e-8d70-ec699093eb6f
+2025-11-10 21:17:16,727 - app.utils.database - INFO - Created engine for tenant database: tenant_fidwork_b3588f36
+2025-11-10 21:17:16,728 - app.utils.database - INFO - Created session factory for tenant database: tenant_fidwork_b3588f36
+2025-11-10 21:17:16,748 - app.routes.files - INFO - Retrieved 0 files for tenant bceedea1-22c3-4295-b02b-5cc4aeec1fa8 (page 1/0, total: 0)
+2025-11-10 21:17:16,749 - app.utils.database - DEBUG - Committed transaction for tenant: tenant_fidwork_b3588f36
+2025-11-10 21:17:31,107 - app.utils.decorators - DEBUG - Authenticated user: 609fcfa4-354c-435e-8d70-ec699093eb6f
+2025-11-10 21:17:31,108 - app.routes.tenants - INFO - Listing tenants for user_id=609fcfa4-354c-435e-8d70-ec699093eb6f
+2025-11-10 21:17:31,116 - app.routes.tenants - INFO - Retrieved 1 tenants for user_id=609fcfa4-354c-435e-8d70-ec699093eb6f
+2025-11-10 21:18:02,333 - app.utils.decorators - DEBUG - Authenticated user: 609fcfa4-354c-435e-8d70-ec699093eb6f
+2025-11-10 21:18:02,334 - app.routes.users - INFO - Fetching profile for user_id=609fcfa4-354c-435e-8d70-ec699093eb6f
+2025-11-10 21:18:02,377 - app.routes.users - INFO - User profile retrieved successfully: user_id=609fcfa4-354c-435e-8d70-ec699093eb6f
+2025-11-10 21:18:54,639 - app.utils.decorators - DEBUG - Authenticated user: 609fcfa4-354c-435e-8d70-ec699093eb6f
+2025-11-10 21:18:54,641 - app.routes.users - INFO - Fetching SSO identities for user_id=609fcfa4-354c-435e-8d70-ec699093eb6f
+2025-11-10 21:18:54,654 - app.routes.users - INFO - Retrieved 0 SSO identities for user_id=609fcfa4-354c-435e-8d70-ec699093eb6f
+2025-11-10 21:19:07,097 - app.utils.decorators - DEBUG - Authenticated user: 609fcfa4-354c-435e-8d70-ec699093eb6f
+2025-11-10 21:19:07,098 - app.routes.users - INFO - Fetching tenants for user_id=609fcfa4-354c-435e-8d70-ec699093eb6f
+2025-11-10 21:19:07,106 - app.routes.users - INFO - Retrieved 1 tenants for user_id=609fcfa4-354c-435e-8d70-ec699093eb6f
+2025-11-10 21:27:58,932 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-10 21:27:58,933 - app - INFO - Flask app created with config: development
+2025-11-10 21:27:58,934 - app - INFO - Debug mode: True
+2025-11-10 21:27:58,934 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-10 21:28:19,290 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-10 21:28:19,290 - app - INFO - Flask app created with config: development
+2025-11-10 21:28:19,290 - app - INFO - Debug mode: True
+2025-11-10 21:28:19,290 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-10 21:28:42,847 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-10 21:28:42,849 - app - INFO - Flask app created with config: development
+2025-11-10 21:28:42,850 - app - INFO - Debug mode: True
+2025-11-10 21:28:42,851 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-10 21:28:42,872 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-10 21:28:42,873 - app - INFO - Flask app created with config: development
+2025-11-10 21:28:42,874 - app - INFO - Debug mode: True
+2025-11-10 21:28:42,875 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-10 21:28:42,897 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-10 21:28:42,897 - app - INFO - Flask app created with config: development
+2025-11-10 21:28:42,897 - app - INFO - Debug mode: True
+2025-11-10 21:28:42,898 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-10 21:28:42,911 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-10 21:28:42,911 - app - INFO - Flask app created with config: development
+2025-11-10 21:28:42,911 - app - INFO - Debug mode: True
+2025-11-10 21:28:42,912 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-10 21:29:13,562 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-10 21:29:13,563 - app - INFO - Flask app created with config: development
+2025-11-10 21:29:13,564 - app - INFO - Debug mode: True
+2025-11-10 21:29:13,564 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...

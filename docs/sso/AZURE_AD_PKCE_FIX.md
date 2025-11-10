@@ -1,98 +1,126 @@
-# Azure AD PKCE Configuration Fix
+# ⚠️ OBSOLETE: Azure AD PKCE Configuration
 
-## Problem
-You're getting the error: "The application requires a client secret but none was provided" even though your code is configured for PKCE.
+## 🚨 THIS DOCUMENT IS OBSOLETE 🚨
 
-## Solution
+**The platform NO LONGER uses PKCE (Proof Key for Code Exchange).**
 
-### ✅ Code Changes Applied
-1. **Fixed client_secret detection** in `azure_ad_service.py`
-   - Now correctly checks if client_secret is None or empty
-   - Uses PKCE when no client_secret is configured
+**Current authentication mode: Confidential Application with client_secret**
 
-2. **Fixed redirect URI consistency** in `sso_auth.py`
-   - Uses the configured redirect_uri from database
-   - Ensures the same URI is used for authorization and token exchange
+---
 
-### ⚠️ CRITICAL: Azure Portal Configuration
+## Migration Notice
 
-You MUST configure your Azure AD app registration correctly for PKCE to work:
+This document described a PKCE-based configuration that is **NO LONGER USED**.
 
-#### Step 1: Go to Azure Portal
-1. Navigate to: https://portal.azure.com
-2. Go to **Azure Active Directory** → **App registrations**
-3. Select your app: `dd5f0275-3e46-4103-bce5-1589a6f13d48`
+### What Changed
 
-#### Step 2: Configure Authentication Settings
-1. Click on **Authentication** in the left menu
-2. Under **Platform configurations**:
-   - Ensure you have a **Web** platform (NOT Single-page application)
-   - Verify the Redirect URI is exactly: `http://localhost:4999/api/auth/sso/azure/callback`
+| Before (PKCE) | Now (Confidential) |
+|---------------|-------------------|
+| ❌ Public client mode | ✅ Confidential application mode |
+| ❌ PKCE code challenge | ✅ Client secret authentication |
+| ❌ No client secret | ✅ Client secret REQUIRED |
+| ❌ "Allow public client flows" enabled | ✅ "Allow public client flows" DISABLED |
 
-#### Step 3: Enable Public Client Flow (CRITICAL!)
-1. Still in **Authentication** section
-2. Scroll down to **Advanced settings**
-3. Find **Allow public client flows**
-4. **Toggle to "Yes"** ⚠️ THIS IS THE KEY SETTING FOR PKCE
+---
 
-#### Step 4: Remove Client Secret (if exists)
-1. Go to **Certificates & secrets**
-2. If any client secrets exist, delete them
-3. You should have NO client secrets for PKCE to work
+## ⚠️ If You're Getting "The application requires a client secret" Error
 
-#### Step 5: Verify API Permissions
-1. Go to **API permissions**
-2. Ensure you have:
-   - `Microsoft Graph > User.Read` (Delegated)
-   - `openid` (Delegated)
-   - `profile` (Delegated)
-   - `email` (Delegated)
+This error means you need to:
 
-## Testing
+1. **Create a client secret in Azure Portal**:
+   - Go to **Certificates & secrets**
+   - Click **New client secret**
+   - Copy the value immediately
 
-After making the Azure Portal changes:
+2. **Disable public client flows**:
+   - Go to **Authentication**
+   - Under **Advanced settings**
+   - Set "Allow public client flows" to **NO**
 
-1. Test the SSO availability:
-```bash
-curl http://localhost:4999/api/auth/sso/check-availability/cb859f98-291e-41b2-b30f-2287c2699205
-```
-
-2. The response should include the SSO login URL:
-```json
-{
-  "available": true,
-  "sso_login_url": "http://localhost:4999/api/auth/sso/azure/login/cb859f98-291e-41b2-b30f-2287c2699205"
-}
-```
-
-3. Navigate to the `sso_login_url` in your browser to test the flow
-
-## Troubleshooting
-
-If you still get the error after these changes:
-
-1. **Clear browser cache and cookies** - Azure AD may cache the app configuration
-2. **Wait 5 minutes** - Azure AD changes can take a few minutes to propagate
-3. **Try an incognito/private browser window** to avoid cached sessions
-4. **Check the logs**:
+3. **Include client_secret in your SSO configuration**:
    ```bash
-   docker-compose logs -f api | grep -i "pkce\|client_secret"
+   curl -X POST http://localhost:4999/api/tenants/{tenant_id}/sso/config \
+     -H "Authorization: Bearer $TOKEN" \
+     -H "Content-Type: application/json" \
+     -d '{
+       "client_id": "your-client-id",
+       "client_secret": "your-client-secret",
+       "provider_tenant_id": "your-tenant-id"
+     }'
    ```
 
-## Key Points to Remember
+---
 
-- **PKCE = Public Client** = No client secret needed
-- The setting "Allow public client flows" MUST be "Yes" in Azure Portal
-- Your redirect URI must match EXACTLY (including the port 4999)
-- Platform type must be "Web" (not "SPA" or "Mobile")
+## ✅ Current Documentation
 
-## Verification Script
+For the correct, up-to-date configuration, see:
 
-Run this to verify your configuration:
-```bash
-docker-compose exec api python scripts/verify_azure_config.py
-```
+📖 **[AZURE_AD_CONFIDENTIAL_MODE.md](AZURE_AD_CONFIDENTIAL_MODE.md)**
 
-All checks should pass, especially:
-- Client Secret: ✅ None (PKCE mode)
-- App Type: public
+This document contains:
+- Correct Azure Portal configuration steps
+- Confidential application mode setup
+- Client secret management
+- Troubleshooting for confidential mode
+- Security best practices
+
+---
+
+## Why The Change?
+
+### PKCE Was Intended For:
+- Single Page Applications (SPAs)
+- Mobile applications
+- Public clients that cannot store secrets
+
+### This Platform Is:
+- A backend server application
+- Capable of securely storing client secrets
+- Better suited for confidential application mode
+- Aligned with enterprise security requirements
+
+### Benefits of Confidential Mode:
+1. ✅ More secure for server-side applications
+2. ✅ Standard OAuth2 flow for web applications
+3. ✅ Required by many enterprise Azure AD configurations
+4. ✅ Supports advanced features (client credentials grant, etc.)
+5. ✅ Better alignment with security best practices
+
+---
+
+## Historical Context (For Reference Only)
+
+This document previously described configuring Azure AD for PKCE mode, which included:
+
+- ~~Enabling "Allow public client flows"~~
+- ~~NOT creating a client secret~~
+- ~~Using PKCE code challenge/verifier~~
+
+**These instructions are now INCORRECT and should NOT be followed.**
+
+---
+
+## Action Required
+
+If you configured SSO using the old PKCE instructions:
+
+1. ✅ Read the new documentation: [AZURE_AD_CONFIDENTIAL_MODE.md](AZURE_AD_CONFIDENTIAL_MODE.md)
+2. ✅ Create a client secret in Azure Portal
+3. ✅ Disable "Allow public client flows"
+4. ✅ Update your SSO configuration to include client_secret
+5. ✅ Test the SSO flow
+
+---
+
+## Questions?
+
+For current SSO configuration help, refer to:
+
+- 📖 [AZURE_AD_CONFIDENTIAL_MODE.md](AZURE_AD_CONFIDENTIAL_MODE.md) - Detailed setup guide
+- 📖 [README.md](../../README.md#azure-sso-configuration) - Quick start guide
+- 📖 [ARCHITECTURE.md](../ARCHITECTURE.md#azure-ad-single-sign-on-sso) - Technical architecture
+
+---
+
+**Last Updated**: 2025-11-10
+**Status**: OBSOLETE - Replaced by AZURE_AD_CONFIDENTIAL_MODE.md

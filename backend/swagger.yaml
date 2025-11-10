@@ -235,6 +235,10 @@ components:
         client_id:
           type: string
           example: "your-azure-client-id"
+        client_secret:
+          type: string
+          example: "your-azure-client-secret"
+          description: "Client secret for confidential application mode"
         provider_tenant_id:
           type: string
           example: "your-azure-tenant-id"
@@ -1572,7 +1576,7 @@ paths:
       description: |
         Creates a new SSO configuration for a tenant.
         Only tenant admins can create SSO configuration.
-        Note: Client secret is not required for Azure AD public application mode.
+        Requires client_secret for confidential application mode.
       security:
         - BearerAuth: []
       parameters:
@@ -1591,6 +1595,7 @@ paths:
               type: object
               required:
                 - client_id
+                - client_secret
                 - provider_tenant_id
               properties:
                 provider:
@@ -1602,6 +1607,10 @@ paths:
                   type: string
                   description: Azure AD Application (client) ID
                   example: "your-azure-client-id"
+                client_secret:
+                  type: string
+                  description: Azure AD Application client secret (required for confidential apps)
+                  example: "your-azure-client-secret"
                 provider_tenant_id:
                   type: string
                   description: Azure AD Directory (tenant) ID
@@ -1700,6 +1709,9 @@ paths:
                 client_id:
                   type: string
                   description: Azure AD Application (client) ID
+                client_secret:
+                  type: string
+                  description: Azure AD Application client secret
                 provider_tenant_id:
                   type: string
                   description: Azure AD Directory (tenant) ID

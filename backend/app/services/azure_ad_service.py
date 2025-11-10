@@ -2,10 +2,9 @@
 Azure AD Authentication Service
 
 This service handles Azure AD / Microsoft Entra ID authentication using the
-Public Application mode (no client_secret) with PKCE for enhanced security.
+Web mode ( client_secret is required)  for enhanced security.
 
 Key features:
-- OAuth2 Authorization Code Flow with PKCE
 - Token management (access, refresh, ID tokens)
 - JWT validation and claims extraction
 - Multi-tenant support with per-tenant configurations
@@ -109,7 +108,6 @@ class AzureADService:
         Args:
             redirect_uri: OAuth2 callback URL
             state: Optional state token (will be generated if not provided)
-            code_challenge: PKCE code challenge (will be generated if not provided, unless using client_secret)
             additional_params: Additional query parameters
 
         Returns:

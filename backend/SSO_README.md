@@ -6,7 +6,7 @@ This implementation provides Azure Active Directory (Microsoft Entra ID) Single 
 
 ## Key Features
 
-- **Public Application Mode**: Uses OAuth2 with PKCE (no client_secret required)
+-  client_secret required
 - **Multi-Tenant Support**: Each tenant can have its own Azure AD instance
 - **Auto-Provisioning**: Automatically create users on first SSO login (optional)
 - **Hybrid Authentication**: Support both SSO and local password authentication

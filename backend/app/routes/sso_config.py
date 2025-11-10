@@ -54,6 +54,7 @@ def create_sso_config(tenant_id):
     Request body:
         {
             "client_id": "azure-app-client-id",
+            "client_secret": "azure-app-client-secret",
             "provider_tenant_id": "azure-tenant-id-or-domain",
             "enable": false,
             "config_metadata": {
@@ -72,7 +73,7 @@ def create_sso_config(tenant_id):
         data = request.get_json()
 
         # Validate required fields
-        required_fields = ['client_id', 'provider_tenant_id']
+        required_fields = ['client_id', 'client_secret', 'provider_tenant_id']
         missing_fields = [field for field in required_fields if field not in data]
         if missing_fields:
             return jsonify({'error': f'Missing required fields: {missing_fields}'}), 400
@@ -81,6 +82,7 @@ def create_sso_config(tenant_id):
         sso_config = TenantSSOConfigService.create_sso_config(
             tenant_id=tenant_id,
             client_id=data['client_id'],
+            client_secret=data['client_secret'],
             provider_tenant_id=data['provider_tenant_id'],
             config_metadata=data.get('config_metadata'),
             enable=data.get('enable', False)
@@ -106,6 +108,7 @@ def update_sso_config(tenant_id):
     Request body:
         {
             "client_id": "new-client-id",
+            "client_secret": "new-client-secret",
             "provider_tenant_id": "new-tenant-id",
             "is_enabled": true,
             "config_metadata": {...}

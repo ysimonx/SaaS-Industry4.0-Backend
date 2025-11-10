@@ -6,9 +6,8 @@ for each tenant in the multi-tenant SaaS platform.
 
 Key features:
 - One-to-one relationship with Tenant (a tenant can have only one SSO config)
-- Supports Azure AD / Microsoft Entra ID in Public Application mode (no client_secret)
-- Uses PKCE (Proof Key for Code Exchange) for secure OAuth2 flow
-- Stores provider-specific configuration (client_id, redirect_uri, etc.)
+- Supports Azure AD / Microsoft Entra ID in confidential mode (client_secret required)
+- Stores provider-specific configuration (client_id, client_secret, redirect_uri, etc.)
 - Flexible configuration metadata storage for additional options
 """
 
@@ -30,13 +29,14 @@ class TenantSSOConfig(BaseModel, db.Model):
     SSO Configuration for each tenant.
 
     Implements a 1-to-1 relationship: A tenant can have only one SSO configuration.
-    Uses the "Public Application" mode (Public Client) without client_secret.
+    Uses the "Confidential Application" mode (client_secret required).
 
     Attributes:
         tenant_id (UUID): Foreign key to the tenant (unique constraint ensures 1-to-1)
         provider_type (str): Type of SSO provider (default: 'azure_ad')
         provider_tenant_id (str): Azure tenant ID (GUID or domain)
         client_id (str): Application (client) ID from Azure Portal
+        client_secret (str): Client secret for confidential application
         redirect_uri (str): OAuth2 callback URL
         is_enabled (bool): Whether SSO is enabled for this tenant
         config_metadata (JSONB): Additional configuration (role mapping, auto-provisioning, etc.)
@@ -71,8 +71,8 @@ class TenantSSOConfig(BaseModel, db.Model):
     client_id = db.Column(String(255), nullable=False)
     # Application (client) ID from Azure Portal
 
-    client_secret = db.Column(String(500), nullable=True)
-    # Client secret (optional - for confidential apps, not needed for public apps with PKCE)
+    client_secret = db.Column(String(500), nullable=False)
+    # Client secret (required for confidential application mode)
 
     redirect_uri = db.Column(String(500), nullable=False)
     # OAuth2 callback URL
@@ -84,7 +84,7 @@ class TenantSSOConfig(BaseModel, db.Model):
     config_metadata = db.Column(JSONB, default=dict)
     # Expected structure:
     # {
-    #   "app_type": "public",  # Always "public" for this implementation
+    #   "app_type": "confidential",  # Always "confidential" for this implementation
     #   "auto_provisioning": {
     #     "enabled": true,
     #     "default_role": "viewer",
@@ -115,9 +115,9 @@ class TenantSSOConfig(BaseModel, db.Model):
         if 'config_metadata' not in kwargs:
             kwargs['config_metadata'] = {}
 
-        # Ensure app_type is always 'public' for this implementation
+        # Ensure app_type is always 'confidential' for this implementation
         if 'config_metadata' in kwargs:
-            kwargs['config_metadata']['app_type'] = 'public'
+            kwargs['config_metadata']['app_type'] = 'confidential'
 
         super().__init__(**kwargs)
         logger.info(f"TenantSSOConfig initialized for tenant_id={self.tenant_id}")
@@ -262,8 +262,12 @@ class TenantSSOConfig(BaseModel, db.Model):
                 errors.append("Invalid Azure tenant ID format (must be GUID or domain)")
 
         # Check config_metadata structure
-        if self.config_metadata and self.config_metadata.get('app_type') != 'public':
-            errors.append("App type must be 'public' for this implementation")
+        if self.config_metadata and self.config_metadata.get('app_type') != 'confidential':
+            errors.append("App type must be 'confidential' for this implementation")
+
+        # Validate client_secret is present
+        if not self.client_secret:
+            errors.append("Client secret is required for confidential application mode")
 
         if errors:
             return False, "; ".join(errors)
