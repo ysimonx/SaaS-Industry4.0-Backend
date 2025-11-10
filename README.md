@@ -433,9 +433,9 @@ EOF
 # 2.0. (Optional) Réinitialisation complète de Vault
 # ⚠️  ATTENTION: Cette opération supprime TOUTES les données Vault !
 # Utilisez ceci uniquement si vous voulez recommencer à zéro
-# rm -Rf vault/data 
-# docker-compose down vault vault-unseal
-# docker volume rm saasbackendwithclaude_vault_data 2>/dev/null || true
+rm -Rf vault/data
+docker-compose down vault vault-unseal
+docker volume rm saasbackendwithclaude_vault_data 2>/dev/null || true
 
 # 2.1. Start Vault and auto-unseal services
 docker-compose up -d vault vault-unseal
