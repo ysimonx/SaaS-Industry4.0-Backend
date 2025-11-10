@@ -10,4 +10,4 @@ logs/
 config/local.hcl
 
 # Secrets initiaux (ne JAMAIS commiter)
-init-data/
+init-data/*.env
