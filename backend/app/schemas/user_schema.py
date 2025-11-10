@@ -207,8 +207,6 @@ class UserResponseSchema(Schema):
     last_name = fields.Str(dump_only=True)
     email = fields.Email(dump_only=True)
     is_active = fields.Boolean(dump_only=True)
-    sso_provider = fields.Str(dump_only=True)
-    sso_metadata = fields.Dict(dump_only=True)
     created_at = fields.DateTime(dump_only=True)
     updated_at = fields.DateTime(dump_only=True)
 

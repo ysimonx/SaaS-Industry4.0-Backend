@@ -457,15 +457,14 @@ class AzureADService:
                     last_name = name_parts[1] if len(name_parts) > 1 else ''
                     logger.info(f"Parsed name '{full_name}' into first_name='{first_name}', last_name='{last_name}'")
 
-            # Create new user
+            # Create new user (SSO-only, no password)
             user = User(
                 email=email,
                 first_name=first_name,
                 last_name=last_name,
-                sso_provider='azure_ad',
                 is_active=True
             )
-            # No password for SSO-only user
+            # No password for SSO-only user (password_hash is nullable)
             db.session.add(user)
             db.session.flush()  # Get user ID
 
@@ -488,13 +487,10 @@ class AzureADService:
             logger.info(f"Created user-tenant association with role: {default_role}")
 
         else:
-            # Update existing user's SSO info
+            # Update existing user's info if sync is enabled
             if self.sso_config.get_auto_provisioning_config().get('sync_attributes_on_login', True):
                 user.first_name = id_token_claims.get('given_name', user.first_name)
                 user.last_name = id_token_claims.get('family_name', user.last_name)
-
-                if not user.sso_provider:
-                    user.sso_provider = 'azure_ad'
 
             # Ensure user has access to this tenant
             if not user.has_access_to_tenant(self.tenant_id):
@@ -535,9 +531,9 @@ class AzureADService:
         # Update from claims
         azure_identity.update_from_azure_claims(id_token_claims)
 
-        # Update user metadata
-        if not user.sso_metadata:
-            user.sso_metadata = {}
+        # Update SSO metadata in azure_identity (not in user model)
+        if not azure_identity.sso_metadata:
+            azure_identity.sso_metadata = {}
 
         # Try to get profile info from Microsoft Graph API (more reliable)
         # Fall back to ID token claims if Graph API fails
@@ -545,7 +541,7 @@ class AzureADService:
             from app.services.microsoft_graph_service import microsoft_graph_service
             graph_profile = microsoft_graph_service.get_user_profile(tokens.get('access_token'))
 
-            user.sso_metadata[f'tenant_{self.tenant_id}'] = {
+            azure_identity.sso_metadata = {
                 'job_title': graph_profile.get('jobTitle') or id_token_claims.get('jobTitle'),
                 'department': graph_profile.get('department') or id_token_claims.get('department'),
                 'company': id_token_claims.get('companyName'),  # Not available in Graph basic profile
@@ -553,10 +549,10 @@ class AzureADService:
                 'mobile_phone': graph_profile.get('mobilePhone'),
                 'last_sso_login': datetime.utcnow().isoformat()
             }
-            logger.info(f"Updated user metadata from Microsoft Graph for {email}")
+            logger.info(f"Updated SSO metadata from Microsoft Graph for {email}")
         except Exception as e:
             logger.warning(f"Failed to fetch Graph profile, using token claims only: {str(e)}")
-            user.sso_metadata[f'tenant_{self.tenant_id}'] = {
+            azure_identity.sso_metadata = {
                 'job_title': id_token_claims.get('jobTitle'),
                 'department': id_token_claims.get('department'),
                 'company': id_token_claims.get('companyName'),

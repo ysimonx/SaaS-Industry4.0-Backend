@@ -43,7 +43,7 @@ def show_azure_claims():
         print(f"   Email: {user.email}")
         print(f"   First Name: '{user.first_name}' {'❌ VIDE' if not user.first_name else '✅'}")
         print(f"   Last Name: '{user.last_name}' {'❌ VIDE' if not user.last_name else '✅'}")
-        print(f"   SSO Provider: {user.sso_provider}")
+        print(f"   Has Azure Identity: ✅ (SSO-enabled user)")
 
         print(f"\n🔐 Informations Azure AD:")
         print(f"   Azure Object ID: {azure_identity.azure_object_id}")

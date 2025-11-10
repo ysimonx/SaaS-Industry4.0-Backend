@@ -1,17 +1,17 @@
 backend/__pycache__
 *.pyc
 
-# HashiCorp Vault
-vault/data/
-vault/logs/
-vault/init-data/
+# HashiCorp Vault (now in docker/volumes/)
+docker/volumes/vault/data/
+docker/volumes/vault/logs/
+docker/volumes/vault/init-data/
 .env.vault
 
 # Clés d'unseal et tokens root (CRITIQUE)
-vault/data/unseal-keys.json
-vault/data/root-token.txt
-vault/data/*.db
-vault/data/*.bin
+docker/volumes/vault/data/unseal-keys.json
+docker/volumes/vault/data/root-token.txt
+docker/volumes/vault/data/*.db
+docker/volumes/vault/data/*.bin
 
 # Backups temporaires des anciens .env (à supprimer après migration)
 .env.*.backup
@@ -23,3 +23,4 @@ vault/data/*.bin
 
 root-token.txt
 unseal-keys.json
+.DS_Store

@@ -127,7 +127,7 @@ open http://localhost:9001
 
 # Access Vault UI (if using Vault)
 open http://localhost:8201
-# Use root token from vault/init-data/.vault-token
+# Use root token from docker/volumes/vault/init-data/.vault-token
 
 # Monitor Redis
 docker-compose exec redis redis-cli

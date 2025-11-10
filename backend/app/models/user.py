@@ -29,9 +29,15 @@ class User(BaseModel, db.Model):
         first_name: User's first name (required, max 100 chars)
         last_name: User's last name (required, max 100 chars)
         email: User's email address (unique, required, indexed, max 255 chars)
-        password_hash: Bcrypt hashed password (required, max 255 chars)
+        password_hash: Bcrypt hashed password (nullable for SSO-only users, max 255 chars)
         is_active: Whether user account is active (default True)
         tenant_associations: List of UserTenantAssociation objects
+        azure_identities: List of UserAzureIdentity objects (SSO identities per tenant)
+
+    Note:
+        SSO-specific metadata (provider, job title, department, etc.) is stored
+        in UserAzureIdentity, not in this model, since users can have different
+        SSO identities for different tenants.
 
     Example:
         >>> user = User(
@@ -79,19 +85,6 @@ class User(BaseModel, db.Model):
         default=True,
         nullable=False,
         comment="Whether user account is active (can login)"
-    )
-
-    # SSO Fields
-    sso_provider = Column(
-        String(50),
-        nullable=True,
-        comment="SSO provider used by this user (e.g., 'azure_ad')"
-    )
-
-    sso_metadata = Column(
-        JSONB,
-        default=dict,
-        comment="Additional SSO metadata (job title, department, etc.)"
     )
 
     # Relationships

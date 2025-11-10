@@ -2,6 +2,9 @@
 
 **A Production-Ready Foundation for Industry 4.0 SaaS Applications**
 
+- [Quick Start avec Docker (Recommended)](#quick-start)
+- **Approach A: With Vault** - See [Quick Start - Option A](#option-a-with-hashicorp-vault-recommended-for-production-like-setup) for detailed setup
+- **Approach B: Without Vault** - See [Quick Start - Option B](#option-b-without-vault-simple-setup-for-development) for simple development setup
 
 
 ## Features
@@ -24,7 +27,6 @@
 - Azure AD / Microsoft Entra ID integration
 - Per-tenant SSO configuration
 - Confidential Application mode (client_secret needed)
-- OAuth 2.0 Authorization Code Flow with PKCE impossinle
 - Auto-provisioning with configurable rules
 - Azure AD group to role mapping
 - Hybrid authentication modes (local, SSO, or both)
