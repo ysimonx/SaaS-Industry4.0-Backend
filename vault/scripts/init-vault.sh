@@ -60,7 +60,9 @@ vault secrets enable transit 2>/dev/null && echo "✓ Transit engine activé" ||
 # Vérifier si les secrets existent déjà (idempotence)
 echo "→ Vérification de l'existence des secrets..."
 SECRETS_EXIST=false
-if vault kv get "secret/saas-project/${VAULT_ENV}/database" >/dev/null 2>&1; then
+if vault kv get "secret/saas-project/${VAULT_ENV}/database" >/dev/null 2>&1 && \
+   vault kv get "secret/saas-project/${VAULT_ENV}/jwt" >/dev/null 2>&1 && \
+   vault kv get "secret/saas-project/${VAULT_ENV}/s3" >/dev/null 2>&1; then
     echo "✓ Les secrets existent déjà pour l'environnement '$VAULT_ENV'"
     SECRETS_EXIST=true
 fi
