@@ -417,7 +417,8 @@ cp .env.docker.minimal .env
 
 # 1.3. Create secrets file for Vault (OBLIGATOIRE)
 # Les scripts Vault sont déjà dans le repo (vault/config/, vault/scripts/)
-cat > vault/init-data/docker.env <<'EOF'
+mkdir -p docker/volumes/vault/init-data/
+cat > docker/volumes/vault/init-data/docker.env <<'EOF'
 DATABASE_URL=postgresql://postgres:postgres@postgres:5432/saas_platform
 TENANT_DATABASE_URL_TEMPLATE=postgresql://postgres:postgres@postgres:5432/{database_name}
 JWT_SECRET_KEY=$(openssl rand -hex 32)
