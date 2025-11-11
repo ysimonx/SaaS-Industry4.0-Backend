@@ -529,7 +529,7 @@ docker-compose ps
 **Access Services:**
 - **API Server**: http://localhost:4999
 - **API Documentation (Swagger)**: http://localhost:4999/api/docs
-- **Vault UI**: http://localhost:8201/ui (use token from `vault/data/root-token.txt`)
+- **Vault UI**: http://localhost:8201/ui (use token from `docker/volumes/vault/data/root-token.txt`)
   - Note: Port 8201 is used instead of the default 8200 to avoid conflicts with OneDrive on macOS
 - **MinIO Console**: http://localhost:9001 (minioadmin / minioadmin)
 - **Flower (Celery Monitor)**: http://localhost:5555 (real-time task monitoring)
@@ -538,8 +538,8 @@ docker-compose ps
 - **Kafka**: localhost:9092
 
 **Important Vault Files** (NE JAMAIS COMMITER):
-- `vault/data/unseal-keys.json` - Clés pour déverrouiller Vault
-- `vault/data/root-token.txt` - Token administrateur Vault
+- `docker/volumes/vault/data/unseal-keys.json` - Clés pour déverrouiller Vault
+- `docker/volumes/vault/data/root-token.txt` - Token administrateur Vault
 - `.env.vault` - Credentials AppRole pour l'application
 - `vault/init-data/docker.env` - Secrets injectés dans Vault
 
