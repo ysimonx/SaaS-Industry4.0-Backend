@@ -437,7 +437,7 @@ EOF
 # 2.0. (Optional) Réinitialisation complète de Vault
 # ⚠️  ATTENTION: Cette opération supprime TOUTES les données Vault !
 # Utilisez ceci uniquement si vous voulez recommencer à zéro
-rm -Rf vault/data
+rm -Rf docker/volumes/vault/data
 docker-compose down vault vault-unseal
 docker volume rm saasbackendwithclaude_vault_data 2>/dev/null || true
 
@@ -453,7 +453,7 @@ docker exec saas-vault vault status
 # Expected: "Sealed: false"
 
 # 2.4. IMPORTANT: Sauvegarder le token root (première fois seulement)
-cat vault/data/root-token.txt
+cat docker/volumes/vault/data/root-token.txt
 # ⚠️  Sauvegarder ce token dans un gestionnaire de mots de passe !
 
 # ============================================================================
@@ -472,7 +472,7 @@ cat .env.vault
 # Ce fichier contient VAULT_ROLE_ID et VAULT_SECRET_ID
 
 # 3.4. (Optional) Verify secrets are stored in Vault
-VAULT_TOKEN=$(cat vault/data/root-token.txt)
+VAULT_TOKEN=$(cat docker/volumes/vault/data/root-token.txt)
 docker exec -e VAULT_TOKEN=$VAULT_TOKEN saas-vault vault kv get secret/saas-project/docker/database
 
 # ============================================================================
