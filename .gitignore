@@ -25,3 +25,7 @@ docker/volumes/vault/data/*.bin
 root-token.txt
 unseal-keys.json
 .DS_Store
+vault/data/auth
+vault/data/core
+vault/data/logical
+vault/data/sys
