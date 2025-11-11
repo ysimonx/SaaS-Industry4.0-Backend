@@ -59,7 +59,7 @@ cat vault/data/root-token.txt
 cat > vault/init-data/docker.env <<'EOF'
 DATABASE_URL=postgresql://postgres:postgres@postgres:5432/saas_platform
 TENANT_DATABASE_URL_TEMPLATE=postgresql://postgres:postgres@postgres:5432/{database_name}
-JWT_SECRET_KEY=$(openssl rand -hex 32)
+JWT_SECRET_KEY=$(head -c 32 /dev/urandom | xxd -p -c 64)
 JWT_ACCESS_TOKEN_EXPIRES=900
 S3_ENDPOINT_URL=http://minio:9000
 S3_ACCESS_KEY_ID=minioadmin
@@ -781,8 +781,8 @@ DATABASE_URL=postgresql://postgres:postgres@postgres:5432/saas_platform
 TENANT_DATABASE_URL_TEMPLATE=postgresql://postgres:postgres@postgres:5432/{database_name}
 
 # JWT - IMPORTANT: Générer une nouvelle clé sécurisée
-# Générer avec: openssl rand -hex 32
-JWT_SECRET_KEY=CHANGE_ME_$(openssl rand -hex 32)
+# Générer avec: head -c 32 /dev/urandom | xxd -p -c 64
+JWT_SECRET_KEY=CHANGE_ME_$(head -c 32 /dev/urandom | xxd -p -c 64)
 JWT_ACCESS_TOKEN_EXPIRES=900
 
 # S3/MinIO
@@ -835,7 +835,7 @@ DATABASE_URL=postgresql://prod_user:STRONG_PASSWORD@prod-db-host:5432/saas_platf
 TENANT_DATABASE_URL_TEMPLATE=postgresql://prod_user:STRONG_PASSWORD@prod-db-host:5432/{database_name}
 
 # JWT - GÉNÉRER UNE CLÉ FORTE UNIQUE
-# Générer avec: openssl rand -hex 32
+# Générer avec: head -c 32 /dev/urandom | xxd -p -c 64
 JWT_SECRET_KEY=REPLACE_WITH_STRONG_RANDOM_KEY
 JWT_ACCESS_TOKEN_EXPIRES=900
 
@@ -2465,7 +2465,7 @@ ls -l vault/init-data/docker.env
 cat > vault/init-data/docker.env <<'EOF'
 DATABASE_URL=postgresql://postgres:postgres@postgres:5432/saas_platform
 TENANT_DATABASE_URL_TEMPLATE=postgresql://postgres:postgres@postgres:5432/{database_name}
-JWT_SECRET_KEY=$(openssl rand -hex 32)
+JWT_SECRET_KEY=$(head -c 32 /dev/urandom | xxd -p -c 64)
 JWT_ACCESS_TOKEN_EXPIRES=900
 S3_ENDPOINT_URL=http://minio:9000
 S3_ACCESS_KEY_ID=minioadmin
@@ -3089,7 +3089,7 @@ DATABASE_URL=postgresql://postgres:postgres@postgres:5432/saas_platform
 TENANT_DATABASE_URL_TEMPLATE=postgresql://postgres:postgres@postgres:5432/{database_name}
 
 # JWT - IMPORTANT: Générer une nouvelle clé sécurisée
-# Générer avec: openssl rand -hex 32
+# Générer avec: head -c 32 /dev/urandom | xxd -p -c 64
 JWT_SECRET_KEY=votre-cle-secrete-jwt-tres-longue-et-aleatoire
 JWT_ACCESS_TOKEN_EXPIRES=900
 
@@ -3333,7 +3333,7 @@ docker-compose up -d
 
 ```bash
 # 1. Générer une nouvelle clé
-NEW_JWT_KEY=$(openssl rand -hex 32)
+NEW_JWT_KEY=$(head -c 32 /dev/urandom | xxd -p -c 64)
 
 # 2. Mettre à jour le fichier de secrets
 vim vault/init-data/docker.env
@@ -3549,7 +3549,7 @@ echo "✅ Tous les checks Vault OK"
 **DO ✅**
 
 - Toujours utiliser `vault/init-data/` pour les secrets (git-ignored)
-- Générer les secrets avec forte entropie (`openssl rand -hex 32`)
+- Générer les secrets avec forte entropie (`head -c 32 /dev/urandom | xxd -p -c 64`)
 - Sauvegarder `vault/init-data/prod.env` de manière chiffrée hors du repo
 - Tester la rotation des secrets en environnement de staging
 - Documenter toute modification de secret dans un changelog sécurisé
@@ -3613,7 +3613,7 @@ cat > vault/init-data/docker.env << 'EOF'
 DATABASE_URL=postgresql://postgres:postgres@postgres:5432/saas_platform
 TENANT_DATABASE_URL_TEMPLATE=postgresql://postgres:postgres@postgres:5432/{database_name}
 
-# JWT Configuration (générer avec: openssl rand -hex 32)
+# JWT Configuration (générer avec: head -c 32 /dev/urandom | xxd -p -c 64)
 JWT_SECRET_KEY=votre-cle-jwt-generee-avec-openssl-rand-hex-32
 JWT_ACCESS_TOKEN_EXPIRES=900
 JWT_REFRESH_TOKEN_EXPIRES=604800
@@ -3844,7 +3844,7 @@ curl http://localhost:4999/health
 
 Avant de déployer en production, vérifier:
 
-- [ ] `vault/init-data/prod.env` contient des secrets forts (générés avec `openssl rand -hex 32`)
+- [ ] `vault/init-data/prod.env` contient des secrets forts (générés avec `head -c 32 /dev/urandom | xxd -p -c 64`)
 - [ ] `vault/init-data/prod.env` est sauvegardé de manière chiffrée (GPG) hors du repo
 - [ ] `.env.vault` est dans `.gitignore`
 - [ ] `vault/init-data/` est dans `.gitignore`

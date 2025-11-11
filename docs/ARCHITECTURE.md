@@ -2299,7 +2299,7 @@ docker-compose exec vault vault kv get secret/saas-project/docker/s3
 
 # 4. Update a specific secret field
 docker-compose exec vault vault kv patch secret/saas-project/docker/jwt \
-  secret_key="new_jwt_secret_$(openssl rand -base64 64)"
+  secret_key="new_jwt_secret_$(head -c 32 /dev/urandom | xxd -p -c 64)"
 
 # 5. Add a new secret category
 docker-compose exec vault vault kv put secret/saas-project/docker/email \
@@ -2343,8 +2343,7 @@ docker-compose exec vault vault write -f auth/approle/role/saas-app-role-docker/
 cat > vault/init-data/docker.env <<EOF
 DATABASE_URL=postgresql://saas_user:saas_password@postgres:5432/saas_main
 TENANT_DATABASE_URL_TEMPLATE=postgresql://saas_user:saas_password@postgres:5432/{database_name}
-JWT_SECRET_KEY=$(openssl rand -base64 64)
-JWT_ACCESS_TOKEN_EXPIRES=900
+JWT_SECRET_KEY=$(head -c 32 /dev/urandom | xxd -p -c 64)JWT_ACCESS_TOKEN_EXPIRES=900
 S3_ENDPOINT_URL=http://localstack:4566
 S3_ACCESS_KEY_ID=test_key
 S3_SECRET_ACCESS_KEY=test_secret
@@ -2951,8 +2950,7 @@ path "sys/*" {
 
 ```bash
 # 1. Generate new secret
-NEW_JWT_SECRET=$(openssl rand -base64 64)
-
+NEW_JWT_SECRET=$(head -c 32 /dev/urandom | xxd -p -c 64)
 # 2. Update Vault with new secret (creates new version)
 docker-compose exec vault vault kv put secret/saas-project/prod/jwt \
   secret_key="$NEW_JWT_SECRET" \

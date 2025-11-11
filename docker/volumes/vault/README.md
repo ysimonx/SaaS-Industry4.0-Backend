@@ -33,7 +33,7 @@ vault/
 cat > vault/init-data/docker.env <<'SECRETS'
 DATABASE_URL=postgresql://postgres:postgres@postgres:5432/saas_platform
 TENANT_DATABASE_URL_TEMPLATE=postgresql://postgres:postgres@postgres:5432/{database_name}
-JWT_SECRET_KEY=$(openssl rand -hex 32)
+JWT_SECRET_KEY=$(head -c 32 /dev/urandom | xxd -p -c 64)
 JWT_ACCESS_TOKEN_EXPIRES=900
 S3_ENDPOINT_URL=http://minio:9000
 S3_ACCESS_KEY_ID=minioadmin
