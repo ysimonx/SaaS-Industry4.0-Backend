@@ -59,6 +59,8 @@ tags:
     description: Document upload and management
   - name: Files
     description: File storage and deduplication
+  - name: TSA Timestamping
+    description: RFC 3161 timestamp authority integration for file timestamping
   - name: Kafka Demo
     description: Kafka integration demo (Phase 6 placeholder)
   - name: Health
@@ -185,6 +187,10 @@ components:
         md5_hash:
           type: string
           example: "5d41402abc4b2a76b9719d911017c592"
+        sha256_hash:
+          type: string
+          example: "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          description: "SHA-256 hash used for TSA timestamping"
         s3_path:
           type: string
           example: "tenants/123/files/5d/41/..."
@@ -200,6 +206,59 @@ components:
         is_orphaned:
           type: boolean
           example: false
+        file_metadata:
+          type: object
+          description: "JSONB metadata including TSA timestamp information"
+          properties:
+            tsa_timestamp:
+              $ref: '#/components/schemas/TSATimestamp'
+
+    TSATimestamp:
+      type: object
+      description: "RFC 3161 timestamp information from DigiCert TSA"
+      properties:
+        status:
+          type: string
+          enum: [success, error, pending]
+          example: "success"
+        token:
+          type: string
+          description: "Base64-encoded RFC 3161 TimeStampResp token"
+          example: "MIIHcjADAgEAMIIHWwYJKoZIhvcNAQcCoIIHT..."
+        algorithm:
+          type: string
+          example: "sha256"
+        serial_number:
+          type: string
+          example: "0x676697DFDEF4AB255FA3631C5538BA15"
+        gen_time:
+          type: string
+          format: date-time
+          example: "2025-11-12T12:19:47Z"
+        tsa_authority:
+          type: string
+          example: "DigiCert Timestamp Authority"
+        policy_oid:
+          type: string
+          example: "2.16.840.1.114412.7.1"
+        tsa_certificate:
+          type: string
+          description: "Base64-encoded X.509 certificate of TSA"
+        certificate_chain:
+          type: array
+          items:
+            type: string
+          description: "Base64-encoded certificate chain (intermediate + root)"
+        timestamped_at:
+          type: string
+          format: date-time
+          description: "When the timestamping was performed"
+        task_id:
+          type: string
+          description: "Celery task ID for tracking"
+        error_message:
+          type: string
+          description: "Error message if status is 'error'"
 
     Pagination:
       type: object
@@ -2898,3 +2957,395 @@ paths:
                     type: integer
                   note:
                     type: string
+
+  /api/tenants/{tenant_id}/files/{file_id}/timestamp/download:
+    get:
+      tags:
+        - TSA Timestamping
+        - Files
+      summary: Download TSA timestamp token
+      description: |
+        Downloads the RFC 3161 timestamp token as a .tsr file (TimeStampResp format).
+
+        The downloaded file can be verified with OpenSSL or other RFC 3161 compliant tools.
+
+        **Verification with OpenSSL:**
+        ```bash
+        # Download timestamp
+        curl -o timestamp.tsr \
+          -H "Authorization: Bearer $TOKEN" \
+          http://localhost:4999/api/tenants/{tenant_id}/files/{file_id}/timestamp/download
+
+        # Download original file
+        curl -o original_file.pdf \
+          -H "Authorization: Bearer $TOKEN" \
+          http://localhost:4999/api/tenants/{tenant_id}/documents/{doc_id}/download
+
+        # Download DigiCert certificate chain
+        curl -o digicert_root.pem https://cacerts.digicert.com/DigiCertAssuredIDRootCA.crt.pem
+        curl -o digicert_intermediate.pem https://cacerts.digicert.com/DigiCertSHA2AssuredIDTimestampingCA.crt.pem
+        cat digicert_intermediate.pem digicert_root.pem > digicert_chain.pem
+
+        # Verify timestamp
+        openssl ts -verify \
+          -data original_file.pdf \
+          -in timestamp.tsr \
+          -CAfile digicert_chain.pem
+        ```
+
+        **Security:**
+        - JWT authentication required
+        - User must have read permission on tenant
+        - All downloads are audit-logged
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: tenant_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+          description: UUID of the tenant
+        - name: file_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+          description: UUID of the file
+      responses:
+        '200':
+          description: Timestamp token downloaded successfully
+          content:
+            application/timestamp-reply:
+              schema:
+                type: string
+                format: binary
+          headers:
+            Content-Type:
+              description: RFC 3161 timestamp reply MIME type
+              schema:
+                type: string
+                example: application/timestamp-reply
+            Content-Disposition:
+              description: Attachment header with .tsr filename
+              schema:
+                type: string
+                example: 'attachment; filename="file_{file_id}_timestamp.tsr"'
+            Content-Length:
+              description: Size of the token in bytes
+              schema:
+                type: integer
+                example: 6007
+        '400':
+          description: File has no valid timestamp
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Not authorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: File not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /api/tenants/{tenant_id}/files/{file_id}/timestamp/create:
+    post:
+      tags:
+        - TSA Timestamping
+        - Files
+      summary: Manually trigger timestamp for a file
+      description: |
+        Manually triggers TSA timestamping for a file that hasn't been timestamped yet.
+        This is useful for:
+        - Retroactively timestamping existing files
+        - Retrying failed timestamps
+        - Timestamping files uploaded before TSA was enabled
+
+        **Admin only**: Only tenant administrators can manually trigger timestamping.
+
+        **Asynchronous**: Returns immediately with a task_id for tracking. The actual
+        timestamping happens in the background via Celery.
+
+        **Idempotent**: If the file is already timestamped and force=false, returns
+        the existing timestamp without scheduling a new task.
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: tenant_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+          description: UUID of the tenant
+        - name: file_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+          description: UUID of the file
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                force:
+                  type: boolean
+                  default: false
+                  description: If true, replaces existing timestamp
+      responses:
+        '201':
+          description: Timestamp task scheduled
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: "Timestamp task scheduled"
+                  data:
+                    type: object
+                    properties:
+                      file_id:
+                        type: string
+                        format: uuid
+                      task_id:
+                        type: string
+                        description: Celery task ID for tracking
+                        example: "4c7dba67-8930-4dae-bce5-f01289b70cae"
+                      status:
+                        type: string
+                        enum: [pending]
+                        example: "pending"
+        '200':
+          description: File already timestamped (force=false)
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: "File already timestamped"
+                  data:
+                    type: object
+                    properties:
+                      file_id:
+                        type: string
+                        format: uuid
+                      timestamp:
+                        type: object
+                        properties:
+                          gen_time:
+                            type: string
+                            format: date-time
+                          serial_number:
+                            type: string
+                          status:
+                            type: string
+                          tsa_authority:
+                            type: string
+        '400':
+          description: TSA disabled or file missing SHA-256 hash
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Not admin
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: File not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /api/tenants/{tenant_id}/files/timestamp/bulk:
+    post:
+      tags:
+        - TSA Timestamping
+        - Files
+      summary: Bulk timestamp multiple files
+      description: |
+        Schedules timestamping tasks for multiple files at once.
+
+        **Admin only**: Only tenant administrators can bulk timestamp files.
+
+        **Two modes:**
+        1. **Explicit file IDs**: Provide a list of file_ids (max 1000)
+        2. **Filter criteria**: Use filters to select files automatically
+
+        **Available filters:**
+        - `not_timestamped`: true - Only files without valid timestamp
+        - `uploaded_before`: ISO 8601 date - Files uploaded before this date
+        - `uploaded_after`: ISO 8601 date - Files uploaded after this date
+
+        **Rate limiting**: Tasks are staggered with 10 seconds delay between each
+        to avoid overwhelming the DigiCert TSA API.
+
+        **Asynchronous**: All tasks run in the background via Celery.
+        Returns estimated completion time in minutes.
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: tenant_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+          description: UUID of the tenant
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                file_ids:
+                  type: array
+                  items:
+                    type: string
+                    format: uuid
+                  maxItems: 1000
+                  description: Optional explicit list of file IDs (max 1000)
+                  example: ["uuid1", "uuid2", "uuid3"]
+                filter:
+                  type: object
+                  description: Optional filter criteria
+                  properties:
+                    not_timestamped:
+                      type: boolean
+                      description: Only files without valid timestamp
+                      example: true
+                    uploaded_before:
+                      type: string
+                      format: date-time
+                      description: Files uploaded before this date
+                      example: "2025-01-01T00:00:00Z"
+                    uploaded_after:
+                      type: string
+                      format: date-time
+                      description: Files uploaded after this date
+                      example: "2024-01-01T00:00:00Z"
+            examples:
+              by_filter:
+                summary: Filter by not timestamped
+                value:
+                  filter:
+                    not_timestamped: true
+              by_file_ids:
+                summary: Explicit file IDs
+                value:
+                  file_ids: ["uuid1", "uuid2", "uuid3"]
+              combined:
+                summary: File IDs with date filter
+                value:
+                  file_ids: ["uuid1", "uuid2"]
+                  filter:
+                    uploaded_before: "2025-01-01T00:00:00Z"
+      responses:
+        '201':
+          description: Bulk timestamp tasks scheduled
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: "Bulk timestamp tasks scheduled"
+                  data:
+                    type: object
+                    properties:
+                      total_files:
+                        type: integer
+                        description: Number of files found matching criteria
+                        example: 14
+                      tasks_scheduled:
+                        type: integer
+                        description: Number of tasks scheduled
+                        example: 14
+                      estimated_duration_minutes:
+                        type: number
+                        description: Estimated time to complete all tasks
+                        example: 2.4
+        '200':
+          description: No files found matching criteria
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: "No files found matching criteria"
+                  data:
+                    type: object
+                    properties:
+                      total_files:
+                        type: integer
+                        example: 0
+                      tasks_scheduled:
+                        type: integer
+                        example: 0
+                      estimated_duration_minutes:
+                        type: number
+                        example: 0
+        '400':
+          description: Invalid request, TSA disabled, or too many files
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              examples:
+                too_many_files:
+                  summary: Too many file IDs
+                  value:
+                    success: false
+                    message: "Maximum 1000 file IDs allowed per bulk request"
+                tsa_disabled:
+                  summary: TSA not enabled
+                  value:
+                    success: false
+                    message: "TSA timestamping is not enabled for this tenant"
+                no_body:
+                  summary: Missing request body
+                  value:
+                    success: false
+                    message: "Request body is required"
+        '403':
+          description: Not admin
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
