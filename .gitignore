@@ -1,12 +1,13 @@
 backend/__pycache__
 *.pyc
 
-# HashiCorp Vault (now in docker/volumes/)
+# docker volumes content
 docker/volumes/vault/data/
 docker/volumes/vault/logs/
 docker/volumes/vault/init-data/
 docker/volumes/postgres/data/*
-docker/volumes/postgres/minio/data/*
+docker/volumes/minio/data/*
+
 .env.vault
 
 # Clés d'unseal et tokens root (CRITIQUE)
@@ -30,4 +31,6 @@ vault/data/auth
 vault/data/core
 vault/data/logical
 vault/data/sys
+backend/celerybeat-schedule
+logs/app.log
 backend/celerybeat-schedule
