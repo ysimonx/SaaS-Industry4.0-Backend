@@ -78,7 +78,7 @@ class Tenant(BaseModel, db.Model):
     # Rôle par défaut pour les nouveaux utilisateurs SSO
 
     # TSA (Time-Stamp Authority) Fields
-    tsa_enabled = db.Column(Boolean, default=False, nullable=False)
+    tsa_enabled = db.Column(Boolean, default=True, nullable=False)
     # Active/désactive l'horodatage RFC3161 pour ce tenant
 
     tsa_provider = db.Column(String(50), default='digicert', nullable=True)

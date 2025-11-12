@@ -103,9 +103,85 @@ if [ "$HTTP_CODE" = "200" ]; then
   echo "  Size: $(stat -f%z "$TSR_FILE" 2>/dev/null || stat -c%s "$TSR_FILE") bytes"
   echo
 
-  # Step 7: Verify with OpenSSL
-  echo -e "${YELLOW}Step 7: Verify timestamp with OpenSSL${NC}"
+  # Step 7: Display timestamp info with OpenSSL
+  echo -e "${YELLOW}Step 7: Display timestamp info with OpenSSL${NC}"
   openssl ts -reply -in "$TSR_FILE" -text 2>&1 | grep -E "Status:|Time stamp:|Serial number:" || true
+  echo
+
+  # Step 8: Download DigiCert certificates (root + intermediate)
+  echo -e "${YELLOW}Step 8: Download DigiCert certificates${NC}"
+
+  # Download root certificate (DigiCert Assured ID Root CA)
+  # Note: The intermediate cert is signed by this root, not by Global Root G2
+  DIGICERT_ROOT="/tmp/digicert_root.pem"
+  curl -s -o "$DIGICERT_ROOT" https://cacerts.digicert.com/DigiCertAssuredIDRootCA.crt.pem
+
+  # Download intermediate certificate (DigiCert SHA2 Assured ID Timestamping CA)
+  DIGICERT_INTERMEDIATE="/tmp/digicert_intermediate.pem"
+  curl -s -o "$DIGICERT_INTERMEDIATE" https://cacerts.digicert.com/DigiCertSHA2AssuredIDTimestampingCA.crt.pem
+
+  # Create combined certificate chain file (intermediate + root)
+  DIGICERT_CHAIN="/tmp/digicert_chain.pem"
+  cat "$DIGICERT_INTERMEDIATE" "$DIGICERT_ROOT" > "$DIGICERT_CHAIN"
+
+  if [ -f "$DIGICERT_CHAIN" ]; then
+    echo -e "${GREEN}✓ DigiCert certificate chain created${NC}"
+    echo "  Root: $DIGICERT_ROOT (DigiCert Assured ID Root CA)"
+    echo "  Intermediate: $DIGICERT_INTERMEDIATE (SHA2 Timestamping CA)"
+    echo "  Chain: $DIGICERT_CHAIN"
+  else
+    echo -e "${RED}❌ Failed to create certificate chain${NC}"
+  fi
+  echo
+
+  # Step 9: Verify timestamp with OpenSSL (complete verification)
+  echo -e "${YELLOW}Step 9: Verify timestamp authenticity with OpenSSL${NC}"
+
+  # Download the original file to verify against
+  ORIGINAL_FILE="/tmp/original_${FILE_ID}.txt"
+  curl -s -o "$ORIGINAL_FILE" \
+    -H "Authorization: Bearer ${TOKEN}" \
+    "${API_URL}/api/tenants/${TENANT_ID}/documents/${DOCUMENT_ID}/download"
+
+  if [ -f "$ORIGINAL_FILE" ]; then
+    echo "Downloaded original file for verification"
+    echo
+
+    # Perform full OpenSSL verification
+    echo "Running OpenSSL verification..."
+    echo
+
+    # Disable exit on error temporarily for verification
+    set +e
+
+    # Run verification and capture output
+    VERIFY_OUTPUT=$(openssl ts -verify \
+      -data "$ORIGINAL_FILE" \
+      -in "$TSR_FILE" \
+      -CAfile "$DIGICERT_CHAIN" 2>&1)
+
+    VERIFY_STATUS=$?
+
+    # Re-enable exit on error
+    set -e
+
+    # Display the full output
+    echo "$VERIFY_OUTPUT"
+    echo
+
+    # Display final status
+    if [ $VERIFY_STATUS -eq 0 ]; then
+      echo -e "${GREEN}✓ VERIFICATION SUCCESSFUL - Timestamp is authentic${NC}"
+    else
+      echo -e "${RED}❌ VERIFICATION FAILED${NC}"
+      echo "The timestamp could not be verified. This may indicate:"
+      echo "  - The file has been modified"
+      echo "  - The timestamp token is invalid"
+      echo "  - Certificate chain issues"
+    fi
+  else
+    echo -e "${RED}❌ Failed to download original file for verification${NC}"
+  fi
   echo
 else
   echo -e "${RED}❌ Timestamp download failed (HTTP $HTTP_CODE)${NC}"
@@ -117,4 +193,8 @@ echo
 # Cleanup
 rm -f $TEST_FILE
 rm -f $TSR_FILE
+rm -f $ORIGINAL_FILE
+rm -f $DIGICERT_ROOT
+rm -f $DIGICERT_INTERMEDIATE
+rm -f $DIGICERT_CHAIN
 echo "Test files removed"

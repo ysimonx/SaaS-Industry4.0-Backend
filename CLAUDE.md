@@ -569,10 +569,38 @@ docker-compose logs -f celery-worker-tsa
 open http://localhost:5555
 ```
 
-**Verification**:
-- Timestamps can be verified using OpenSSL or Adobe Acrobat
-- Certificate chain ensures long-term verification even if TSA cert expires
-- Timestamps are legally binding (RFC 3161 compliant)
+**Verification with OpenSSL**:
+```bash
+# Download timestamp token
+curl -o timestamp.tsr \
+  -H "Authorization: Bearer $TOKEN" \
+  http://localhost:4999/api/tenants/{tenant_id}/files/{file_id}/timestamp/download
+
+# Download original file
+curl -o original_file.pdf \
+  -H "Authorization: Bearer $TOKEN" \
+  http://localhost:4999/api/tenants/{tenant_id}/documents/{doc_id}/download
+
+# Download DigiCert certificate chain (root + intermediate)
+curl -o digicert_root.pem https://cacerts.digicert.com/DigiCertAssuredIDRootCA.crt.pem
+curl -o digicert_intermediate.pem https://cacerts.digicert.com/DigiCertSHA2AssuredIDTimestampingCA.crt.pem
+cat digicert_intermediate.pem digicert_root.pem > digicert_chain.pem
+
+# Verify timestamp authenticity
+openssl ts -verify \
+  -data original_file.pdf \
+  -in timestamp.tsr \
+  -CAfile digicert_chain.pem
+
+# Expected output: "Verification: OK"
+```
+
+**Important Notes**:
+- Use **DigiCert Assured ID Root CA** (NOT Global Root G2)
+- Certificate chain must include both intermediate + root certificates
+- Timestamps remain valid even after TSA certificate expires (signature is immutable)
+- Verification is independent and can be performed years after timestamping
+- Legally binding proof of document existence at a specific time (RFC 3161 compliant)
 
 **Security Features**:
 - SHA-256 fingerprints (MD5 is cryptographically broken)

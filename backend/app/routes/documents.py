@@ -794,6 +794,309 @@ def download_timestamp(tenant_id: str, file_id: str):
         return internal_error('Failed to download timestamp')
 
 
+@documents_bp.route('/<tenant_id>/files/<file_id>/timestamp/create', methods=['POST'])
+@jwt_required_custom
+def create_timestamp(tenant_id: str, file_id: str):
+    """
+    Manually trigger TSA timestamping for a file that hasn't been timestamped yet.
+    This is useful for retroactively timestamping existing files or retrying failed timestamps.
+
+    **Authentication**: JWT required
+    **Authorization**: Admin role required
+
+    **URL Parameters**:
+        tenant_id: UUID of the tenant
+        file_id: UUID of the file
+
+    **Request Body** (optional):
+        {
+            "force": false  // If true, replaces existing timestamp
+        }
+
+    **Response**:
+        202 Accepted: Task scheduled
+            {
+                "success": true,
+                "message": "Timestamp task scheduled",
+                "data": {
+                    "file_id": "uuid",
+                    "task_id": "celery-task-uuid",
+                    "status": "pending"
+                }
+            }
+
+        200 OK: Already timestamped (force=false)
+            {
+                "success": true,
+                "message": "File already timestamped",
+                "data": {
+                    "file_id": "uuid",
+                    "timestamp": {...}
+                }
+            }
+
+        400 Bad Request: TSA disabled for tenant
+        403 Forbidden: Not admin
+        404 Not Found: File not found
+    """
+    try:
+        user_id = g.user_id
+        logger.info(f"Manual timestamp request: tenant_id={tenant_id}, file_id={file_id}, user_id={user_id}")
+
+        # Check tenant access
+        has_access, error_response = check_tenant_access(user_id, tenant_id)
+        if not has_access:
+            logger.warning(f"Access denied: user_id={user_id}, tenant_id={tenant_id}")
+            return error_response
+
+        # Verify user has admin permission
+        association = UserTenantAssociation.query.filter_by(
+            user_id=user_id,
+            tenant_id=tenant_id
+        ).first()
+
+        if association.role != 'admin':
+            logger.warning(
+                f"Permission denied: user_id={user_id}, tenant_id={tenant_id}, "
+                f"role={association.role}, action=create_timestamp (admin required)"
+            )
+            from app.utils.responses import forbidden
+            return forbidden('Only admins can manually trigger timestamping')
+
+        # Get tenant
+        tenant = Tenant.query.get(tenant_id)
+
+        # Check if TSA is enabled for tenant
+        if not tenant.tsa_enabled:
+            logger.warning(f"TSA not enabled for tenant: tenant_id={tenant_id}")
+            return bad_request('TSA timestamping is not enabled for this tenant')
+
+        database_name = tenant.database_name
+
+        # Parse request body
+        request_data = request.get_json() or {}
+        force = request_data.get('force', False)
+
+        # Switch to tenant database
+        with tenant_db_manager.tenant_db_session(database_name) as session:
+            # Fetch file
+            file = session.query(File).filter_by(id=file_id).first()
+
+            if not file:
+                logger.warning(f"File not found: file_id={file_id}")
+                return not_found('File not found')
+
+            # Check if already timestamped
+            tsa_data = file.get_metadata('tsa_timestamp')
+            if tsa_data and tsa_data.get('status') == 'success' and not force:
+                logger.info(f"File already timestamped: file_id={file_id}")
+                return ok({
+                    'file_id': str(file_id),
+                    'timestamp': {
+                        'gen_time': tsa_data.get('gen_time'),
+                        'serial_number': tsa_data.get('serial_number'),
+                        'status': tsa_data.get('status'),
+                        'tsa_authority': tsa_data.get('tsa_authority')
+                    }
+                }, 'File already timestamped')
+
+            # Check if file has SHA-256 hash
+            if not file.sha256_hash:
+                logger.error(f"File missing SHA-256 hash: file_id={file_id}")
+                return bad_request('File does not have SHA-256 hash required for timestamping')
+
+            # Trigger Celery task
+            from app.tasks.tsa_tasks import timestamp_file
+            task = timestamp_file.apply_async(
+                args=[str(file_id), database_name, file.sha256_hash],
+                countdown=2  # 2 second delay
+            )
+
+            logger.info(
+                f"AUDIT: Manual timestamp task scheduled - "
+                f"user_id={user_id}, "
+                f"tenant_id={tenant_id}, "
+                f"file_id={file_id}, "
+                f"task_id={task.id}, "
+                f"force={force}"
+            )
+
+            return created({
+                'file_id': str(file_id),
+                'task_id': task.id,
+                'status': 'pending'
+            }, 'Timestamp task scheduled')
+
+    except Exception as e:
+        logger.error(f"Error creating timestamp: {str(e)}", exc_info=True)
+        return internal_error('Failed to schedule timestamp task')
+
+
+@documents_bp.route('/<tenant_id>/files/timestamp/bulk', methods=['POST'])
+@jwt_required_custom
+def bulk_timestamp(tenant_id: str):
+    """
+    Bulk timestamp multiple files at once.
+    This endpoint schedules timestamping tasks for multiple files in the background.
+
+    **Authentication**: JWT required
+    **Authorization**: Admin role required
+
+    **URL Parameters**:
+        tenant_id: UUID of the tenant
+
+    **Request Body**:
+        {
+            "file_ids": ["uuid1", "uuid2", ...],  // Optional: explicit list (max 1000)
+            "filter": {                            // Optional: filter criteria
+                "not_timestamped": true,           // Only files without timestamp
+                "uploaded_before": "2025-01-01T00:00:00Z",  // Optional date filter
+                "uploaded_after": "2024-01-01T00:00:00Z"    // Optional date filter
+            }
+        }
+
+    **Response**:
+        202 Accepted:
+            {
+                "success": true,
+                "message": "Bulk timestamp tasks scheduled",
+                "data": {
+                    "total_files": 150,
+                    "tasks_scheduled": 150,
+                    "estimated_duration_minutes": 25
+                }
+            }
+
+        400 Bad Request: Invalid request, TSA disabled, or too many files
+        403 Forbidden: Not admin
+    """
+    try:
+        user_id = g.user_id
+        logger.info(f"Bulk timestamp request: tenant_id={tenant_id}, user_id={user_id}")
+
+        # Check tenant access
+        has_access, error_response = check_tenant_access(user_id, tenant_id)
+        if not has_access:
+            logger.warning(f"Access denied: user_id={user_id}, tenant_id={tenant_id}")
+            return error_response
+
+        # Verify user has admin permission
+        association = UserTenantAssociation.query.filter_by(
+            user_id=user_id,
+            tenant_id=tenant_id
+        ).first()
+
+        if association.role != 'admin':
+            logger.warning(
+                f"Permission denied: user_id={user_id}, tenant_id={tenant_id}, "
+                f"role={association.role}, action=bulk_timestamp (admin required)"
+            )
+            from app.utils.responses import forbidden
+            return forbidden('Only admins can bulk timestamp files')
+
+        # Get tenant
+        tenant = Tenant.query.get(tenant_id)
+
+        # Check if TSA is enabled for tenant
+        if not tenant.tsa_enabled:
+            logger.warning(f"TSA not enabled for tenant: tenant_id={tenant_id}")
+            return bad_request('TSA timestamping is not enabled for this tenant')
+
+        database_name = tenant.database_name
+
+        # Parse request body
+        request_data = request.get_json()
+        if not request_data:
+            return bad_request('Request body is required')
+
+        file_ids = request_data.get('file_ids', [])
+        filter_criteria = request_data.get('filter', {})
+
+        # Switch to tenant database
+        with tenant_db_manager.tenant_db_session(database_name) as session:
+            # Build query
+            from sqlalchemy import and_, or_, text
+            query = session.query(File)
+
+            # If explicit file_ids provided, use them
+            if file_ids:
+                if len(file_ids) > 1000:
+                    return bad_request('Maximum 1000 file IDs allowed per bulk request')
+                query = query.filter(File.id.in_(file_ids))
+
+            # Apply filters
+            if filter_criteria:
+                # Filter: not timestamped
+                if filter_criteria.get('not_timestamped'):
+                    query = query.filter(
+                        or_(
+                            File.file_metadata['tsa_timestamp'].is_(None),
+                            File.file_metadata['tsa_timestamp']['status'].astext != 'success'
+                        )
+                    )
+
+                # Filter: uploaded before
+                if filter_criteria.get('uploaded_before'):
+                    from datetime import datetime
+                    before_date = datetime.fromisoformat(filter_criteria['uploaded_before'].replace('Z', '+00:00'))
+                    query = query.filter(File.created_at < before_date)
+
+                # Filter: uploaded after
+                if filter_criteria.get('uploaded_after'):
+                    from datetime import datetime
+                    after_date = datetime.fromisoformat(filter_criteria['uploaded_after'].replace('Z', '+00:00'))
+                    query = query.filter(File.created_at > after_date)
+
+            # Filter: only files with SHA-256 hash
+            query = query.filter(File.sha256_hash.isnot(None))
+
+            # Execute query
+            files = query.limit(1000).all()
+
+            if not files:
+                logger.warning(f"No files found matching criteria: tenant_id={tenant_id}")
+                return ok({
+                    'total_files': 0,
+                    'tasks_scheduled': 0,
+                    'estimated_duration_minutes': 0
+                }, 'No files found matching criteria')
+
+            # Schedule Celery tasks for each file
+            from app.tasks.tsa_tasks import timestamp_file
+            tasks_scheduled = 0
+
+            for idx, file in enumerate(files):
+                # Stagger tasks to avoid overwhelming DigiCert API
+                countdown = 2 + (idx * 10)  # 10 seconds between each task
+
+                task = timestamp_file.apply_async(
+                    args=[str(file.id), database_name, file.sha256_hash],
+                    countdown=countdown
+                )
+                tasks_scheduled += 1
+
+            # Estimate duration (10 seconds per file + initial 2s delay)
+            estimated_duration_minutes = ((tasks_scheduled * 10) + 2) / 60
+
+            logger.info(
+                f"AUDIT: Bulk timestamp tasks scheduled - "
+                f"user_id={user_id}, "
+                f"tenant_id={tenant_id}, "
+                f"total_files={tasks_scheduled}, "
+                f"estimated_minutes={estimated_duration_minutes:.1f}"
+            )
+
+            return created({
+                'total_files': tasks_scheduled,
+                'tasks_scheduled': tasks_scheduled,
+                'estimated_duration_minutes': round(estimated_duration_minutes, 1)
+            }, 'Bulk timestamp tasks scheduled')
+
+    except Exception as e:
+        logger.error(f"Error in bulk timestamp: {str(e)}", exc_info=True)
+        return internal_error('Failed to schedule bulk timestamp tasks')
+
+
 @documents_bp.route('/<tenant_id>/documents/<document_id>/download-url', methods=['GET'])
 @jwt_required_custom
 def get_download_url(tenant_id: str, document_id: str):
