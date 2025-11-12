@@ -7,6 +7,9 @@
 - Stockage du timestamp au niveau du **File** (dans `file_metadata` JSONB)
 - Processing **asynchrone via Celery** avec queue dédiée `tsa_timestamping`
 
+- le script complet de test avec verification final se trouve
+`scripts/tsa/test_tsa_upload.sh`
+
 ---
 
 ## Analyse de l'Architecture Existante

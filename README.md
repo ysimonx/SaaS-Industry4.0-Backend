@@ -74,6 +74,7 @@
 
 - *** ✅ celery-worker-sso : Exécute les tâches de rafraîchissement
 - *** ✅ celery-beat : Schedule les tâches périodiques
+- *** ✅ celery-worker-tsa : Exécute les tâches d'horodatage
 - *** ✅ flower : Dashboard de monitoring (http://localhost:5555)
 
 
