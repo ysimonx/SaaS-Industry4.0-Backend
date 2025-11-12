@@ -215,7 +215,23 @@ def add_file_metadata_column(db: Session):
         ON files USING GIN (file_metadata)
     """))
 
-# @register_migration(3)
+
+@register_migration(3)
+def add_sha256_hash_column(db: Session):
+    """Ajoute une colonne sha256_hash à la table files pour l'horodatage TSA (RFC 3161)"""
+    db.execute(text("""
+        ALTER TABLE files
+        ADD COLUMN IF NOT EXISTS sha256_hash VARCHAR(64)
+    """))
+
+    # Créer un index pour les recherches par SHA-256
+    db.execute(text("""
+        CREATE INDEX IF NOT EXISTS idx_files_sha256_hash
+        ON files(sha256_hash)
+    """))
+
+
+# @register_migration(4)
 # def add_document_version_column(db: Session):
 #     """Ajoute une colonne version à la table documents pour le versioning"""
 #     db.execute(text("""

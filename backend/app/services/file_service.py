@@ -125,14 +125,15 @@ class FileService:
             - If no match, upload to S3 and create new File record
         """
         try:
-            # Calculate MD5 hash of file content
+            # Calculate MD5 and SHA-256 hashes of file content
             file_obj.seek(0)  # Reset file pointer to beginning
             file_data = file_obj.read()
             md5_hash = hashlib.md5(file_data).hexdigest()
+            sha256_hash = hashlib.sha256(file_data).hexdigest()
             file_obj.seek(0)  # Reset for potential upload
 
             logger.debug(
-                f"Calculated MD5 hash for file: {md5_hash} "
+                f"Calculated hashes for file: MD5={md5_hash}, SHA-256={sha256_hash[:16]}... "
                 f"(size: {file_size} bytes, filename: {original_filename})"
             )
 
@@ -159,6 +160,7 @@ class FileService:
                 # Create new File record
                 new_file = File(
                     md5_hash=md5_hash,
+                    sha256_hash=sha256_hash,
                     s3_path=f"{s3_path_prefix}/placeholder",  # Updated after flush
                     file_size=file_size
                 )
@@ -220,7 +222,7 @@ class FileService:
                     # Schedule async timestamping task
                     # Wait 5 seconds to ensure DB commit is complete
                     task = timestamp_file.apply_async(
-                        args=[str(new_file.id), tenant_database_name, md5_hash],
+                        args=[str(new_file.id), tenant_database_name, sha256_hash],
                         countdown=5
                     )
 

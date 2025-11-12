@@ -45,6 +45,7 @@ class File(BaseModel, db.Model):
 
     Attributes:
         md5_hash (str): MD5 hash of file content (32 hex chars, unique within tenant)
+        sha256_hash (str): SHA-256 hash for TSA timestamping (64 hex chars, optional)
         s3_path (str): Full S3 path to the file object
         file_size (int): File size in bytes (for quota management)
 
@@ -67,6 +68,7 @@ class File(BaseModel, db.Model):
 
     # Fields
     md5_hash = db.Column(String(32), nullable=False)
+    sha256_hash = db.Column(String(64), nullable=True)  # For TSA timestamping (RFC 3161)
     s3_path = db.Column(String(500), nullable=False, unique=True)
     file_size = db.Column(BigInteger, nullable=False)
 

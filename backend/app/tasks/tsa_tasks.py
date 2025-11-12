@@ -43,7 +43,7 @@ def timestamp_file(
     self,
     file_id: str,
     tenant_database_name: str,
-    md5_hash: str
+    sha256_hash: str
 ) -> Dict[str, Any]:
     """
     Request TSA RFC3161 timestamp from DigiCert for uploaded file.
@@ -54,14 +54,14 @@ def timestamp_file(
     Flow:
     1. Verify file exists in tenant database
     2. Check if already timestamped (idempotence)
-    3. Request timestamp from DigiCert TSA
+    3. Request timestamp from DigiCert TSA (using SHA-256)
     4. Store timestamp token + certificate chain in file_metadata
     5. Return success status
 
     Args:
         file_id: UUID of the File record in tenant database
         tenant_database_name: Name of tenant database (e.g., 'tenant_acme_123')
-        md5_hash: MD5 hash of the file content (hex string)
+        sha256_hash: SHA-256 hash of the file content (64 hex chars)
 
     Returns:
         Dictionary with result:
@@ -118,8 +118,8 @@ def timestamp_file(
             session.commit()
 
         # 3. Request timestamp from DigiCert TSA (outside session to avoid long transaction)
-        logger.info(f"Requesting timestamp from DigiCert for file {file_id}")
-        tsa_response = digicert_tsa_service.get_rfc3161_timestamp(md5_hash)
+        logger.info(f"Requesting SHA-256 timestamp from DigiCert for file {file_id}")
+        tsa_response = digicert_tsa_service.get_rfc3161_timestamp(sha256_hash, algorithm='sha256')
 
         if not tsa_response.get('success'):
             raise TSAInvalidResponseError("TSA request failed without exception")
