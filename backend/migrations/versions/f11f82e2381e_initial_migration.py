@@ -1,8 +1,8 @@
 """Initial migration
 
-Revision ID: fb48b3669e3b
+Revision ID: f11f82e2381e
 Revises: 
-Create Date: 2025-11-10 19:34:03.995425
+Create Date: 2025-11-12 09:18:28.958494
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 from sqlalchemy.dialects import postgresql
 
 # revision identifiers, used by Alembic.
-revision = 'fb48b3669e3b'
+revision = 'f11f82e2381e'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -43,8 +43,6 @@ def upgrade():
     sa.Column('email', sa.String(length=255), nullable=False, comment="User's email address (unique, used for login)"),
     sa.Column('password_hash', sa.String(length=255), nullable=True, comment='Bcrypt hashed password (optional for SSO-only users)'),
     sa.Column('is_active', sa.Boolean(), nullable=False, comment='Whether user account is active (can login)'),
-    sa.Column('sso_provider', sa.String(length=50), nullable=True, comment="SSO provider used by this user (e.g., 'azure_ad')"),
-    sa.Column('sso_metadata', postgresql.JSONB(astext_type=sa.Text()), nullable=True, comment='Additional SSO metadata (job title, department, etc.)'),
     sa.Column('id', sa.UUID(), nullable=False, comment='Unique identifier for the record'),
     sa.Column('created_at', sa.DateTime(timezone=True), nullable=False, comment='Timestamp when record was created (UTC)'),
     sa.Column('updated_at', sa.DateTime(timezone=True), nullable=False, comment='Timestamp when record was last updated (UTC)'),
@@ -60,7 +58,7 @@ def upgrade():
     sa.Column('provider_type', sa.String(length=50), nullable=False),
     sa.Column('provider_tenant_id', sa.String(length=255), nullable=False),
     sa.Column('client_id', sa.String(length=255), nullable=False),
-    sa.Column('client_secret', sa.String(length=500), nullable=True),
+    sa.Column('client_secret', sa.String(length=500), nullable=False),
     sa.Column('redirect_uri', sa.String(length=500), nullable=False),
     sa.Column('is_enabled', sa.Boolean(), nullable=False),
     sa.Column('config_metadata', postgresql.JSONB(astext_type=sa.Text()), nullable=True),
@@ -89,6 +87,7 @@ def upgrade():
     sa.Column('token_expires_at', sa.DateTime(timezone=True), nullable=True),
     sa.Column('refresh_token_expires_at', sa.DateTime(timezone=True), nullable=True),
     sa.Column('last_sync', sa.DateTime(timezone=True), nullable=True),
+    sa.Column('sso_metadata', sa.JSON(), nullable=True),
     sa.Column('id', sa.UUID(), nullable=False, comment='Unique identifier for the record'),
     sa.Column('created_at', sa.DateTime(timezone=True), nullable=False, comment='Timestamp when record was created (UTC)'),
     sa.Column('updated_at', sa.DateTime(timezone=True), nullable=False, comment='Timestamp when record was last updated (UTC)'),

@@ -358,6 +358,12 @@ class DigiCertTSAService:
             certificates = self._extract_certificates(tst_token)
 
             # Build response
+            # Extract policy OID (optional field)
+            try:
+                policy_oid = str(tst_info['policy'])
+            except (KeyError, IndexError):
+                policy_oid = 'Unknown'
+
             timestamp_data = {
                 'success': True,
                 'timestamp_token': base64.b64encode(tsr_response).decode('utf-8'),
@@ -365,7 +371,7 @@ class DigiCertTSAService:
                 'serial_number': self._format_serial_number(tst_info['serialNumber']),
                 'gen_time': self._format_gen_time(tst_info['genTime']),
                 'tsa_authority': self._extract_tsa_authority(certificates[0]) if certificates else 'DigiCert',
-                'policy_oid': str(tst_info.get('policy', 'Unknown')),
+                'policy_oid': policy_oid,
                 'tsa_certificate': base64.b64encode(
                     certificates[0].public_bytes(serialization.Encoding.DER)
                 ).decode('utf-8') if certificates else None,
@@ -401,12 +407,55 @@ class DigiCertTSAService:
         }
         """
         try:
-            # TimeStampToken is a SignedData CMS structure
-            # The content is EncapsulatedContentInfo containing TSTInfo
-            content_info = tst_token['content']
+            # TimeStampToken is a ContentInfo containing SignedData
+            # According to RFC 3161 and RFC 5652
 
-            # Decode TSTInfo from EncapsulatedContentInfo
-            tst_info_der = bytes(content_info['eContent'])
+            # ContentInfo ::= SEQUENCE {
+            #   contentType ContentType,
+            #   content [0] EXPLICIT ANY DEFINED BY contentType }
+
+            # The tst_token IS the ContentInfo, we need to extract and decode the SignedData
+            from pyasn1_modules import rfc5652
+
+            # Get the content bytes from ContentInfo
+            signed_data_bytes = bytes(tst_token['content'])
+            logger.debug(f"SignedData bytes length: {len(signed_data_bytes)}")
+
+            # Decode SignedData from the bytes
+            signed_data, _ = decoder.decode(signed_data_bytes, asn1Spec=rfc5652.SignedData())
+            logger.debug(f"SignedData type after decode: {type(signed_data)}")
+
+            # Now navigate the SignedData structure
+            # SignedData ::= SEQUENCE {
+            #   version CMSVersion,
+            #   digestAlgorithms DigestAlgorithmIdentifiers,
+            #   encapContentInfo EncapsulatedContentInfo,
+            #   certificates [0] IMPLICIT CertificateSet OPTIONAL,
+            #   crls [1] IMPLICIT RevocationInfoChoices OPTIONAL,
+            #   signerInfos SignerInfos }
+
+            # Access using dictionary keys (pyasn1-modules defines these)
+            encap_content_info = signed_data['encapContentInfo']
+            logger.debug(f"EncapContentInfo type: {type(encap_content_info)}")
+
+            # EncapsulatedContentInfo ::= SEQUENCE {
+            #   eContentType ContentType,
+            #   eContent [0] EXPLICIT OCTET STRING OPTIONAL }
+
+            # Get eContent
+            e_content_component = encap_content_info['eContent']
+            logger.debug(f"eContent type: {type(e_content_component)}")
+
+            # Convert OctetString to bytes
+            if hasattr(e_content_component, 'asOctets'):
+                tst_info_der = e_content_component.asOctets()
+            else:
+                # Fallback: convert pyasn1 type to bytes
+                tst_info_der = bytes(e_content_component)
+
+            logger.debug(f"Extracted TSTInfo DER bytes: {len(tst_info_der)} bytes")
+
+            # Decode TSTInfo from the DER bytes
             tst_info, _ = decoder.decode(tst_info_der, asn1Spec=rfc3161.TSTInfo())
 
             return tst_info
@@ -424,19 +473,32 @@ class DigiCertTSAService:
         try:
             certificates = []
 
-            # Certificates are in SignedData.certificates
-            if 'certificates' in tst_token and tst_token['certificates']:
-                for cert_choice in tst_token['certificates']:
-                    # cert_choice is a CertificateChoices (usually certificate)
-                    cert_der = bytes(cert_choice['certificate'])
-                    cert = x509.load_der_x509_certificate(cert_der)
-                    certificates.append(cert)
+            # tst_token is ContentInfo, we need to decode SignedData first
+            from pyasn1_modules import rfc5652
 
-                    logger.debug(
-                        f"Extracted certificate: "
-                        f"subject={cert.subject.rfc4514_string()}, "
-                        f"issuer={cert.issuer.rfc4514_string()}"
-                    )
+            signed_data_bytes = bytes(tst_token['content'])
+            signed_data, _ = decoder.decode(signed_data_bytes, asn1Spec=rfc5652.SignedData())
+
+            # Certificates are in SignedData['certificates'] (OPTIONAL [0] IMPLICIT)
+            # Try to get certificates (may not exist)
+            try:
+                certs_component = signed_data['certificates']
+                if certs_component:
+                    for cert_choice in certs_component:
+                        # cert_choice is a CertificateChoices - usually just a Certificate
+                        # Try direct conversion to bytes (certificate is the first/only choice)
+                        cert_der = bytes(cert_choice)
+                        cert = x509.load_der_x509_certificate(cert_der)
+                        certificates.append(cert)
+
+                        logger.debug(
+                            f"Extracted certificate: "
+                            f"subject={cert.subject.rfc4514_string()}, "
+                            f"issuer={cert.issuer.rfc4514_string()}"
+                        )
+            except (KeyError, IndexError):
+                # No certificates field present
+                logger.debug("No certificates present in SignedData")
 
             return certificates
 
