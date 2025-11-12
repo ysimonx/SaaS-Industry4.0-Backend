@@ -99,6 +99,12 @@ class TenantSSOConfigService:
                 tenant.auth_method = 'both'  # Keep local auth + add SSO
                 logger.info(f"Updated tenant {tenant_id} auth_method to 'both'")
 
+            # Synchronize auto_provisioning settings with tenant model
+            if config_metadata.get('auto_provisioning', {}).get('enabled', False):
+                tenant.sso_auto_provisioning = True
+                tenant.sso_default_role = config_metadata['auto_provisioning'].get('default_role', 'viewer')
+                logger.info(f"Enabled auto-provisioning for tenant {tenant_id} with role '{tenant.sso_default_role}'")
+
         try:
             db.session.add(sso_config)
             db.session.commit()
