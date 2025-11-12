@@ -499,6 +499,88 @@ docker-compose logs -f celery-beat
 open http://localhost:5555
 ```
 
+### TSA Timestamping (RFC 3161)
+
+The platform supports **RFC 3161 compliant timestamping** using DigiCert's public TSA for legal proof of document existence at a specific time.
+
+**Architecture**:
+- **Per-Tenant Activation**: Each tenant can enable/disable TSA via `tenant.tsa_enabled`
+- **Automatic Timestamping**: New file uploads are automatically timestamped (if enabled)
+- **SHA-256 Fingerprints**: Uses cryptographically secure SHA-256 (not MD5)
+- **Asynchronous Processing**: Celery tasks handle TSA requests to avoid blocking uploads
+- **Complete Certificate Chain**: Stores full certificate chain for long-term verification
+- **DigiCert Public TSA**: Free service, no authentication required
+
+**Key Components**:
+- [backend/app/services/digicert_tsa_service.py](backend/app/services/digicert_tsa_service.py) - RFC 3161 client
+- [backend/app/tasks/tsa_tasks.py](backend/app/tasks/tsa_tasks.py) - Async timestamping tasks
+- [backend/app/models/file.py](backend/app/models/file.py) - Stores sha256_hash for TSA
+- [backend/app/tenant_db/tenant_migrations.py](backend/app/tenant_db/tenant_migrations.py) - Migration #3 adds sha256_hash
+
+**Configuration** (Environment Variables):
+```bash
+DIGICERT_TSA_URL=http://timestamp.digicert.com
+TSA_REQUEST_TIMEOUT=30          # Seconds
+TSA_MAX_RETRIES=3               # Retry attempts
+```
+
+**Enable TSA for a Tenant**:
+```python
+from app.models.tenant import Tenant
+from app.extensions import db
+
+tenant = Tenant.query.filter_by(name='Acme Corp').first()
+tenant.tsa_enabled = True
+db.session.commit()
+```
+
+**How It Works**:
+1. User uploads a file → FileService calculates MD5 + SHA-256
+2. File record created with both hashes (MD5 for dedup, SHA-256 for TSA)
+3. If `tenant.tsa_enabled=True`, schedule `timestamp_file` task (5s delay)
+4. Celery worker sends SHA-256 to DigiCert TSA
+5. Timestamp token + certificate chain stored in `file.file_metadata['tsa_timestamp']`
+
+**Timestamp Metadata Structure**:
+```json
+{
+  "tsa_timestamp": {
+    "status": "success",
+    "token": "<base64_rfc3161_token>",
+    "algorithm": "sha256",
+    "serial_number": "0x123456789ABCDEF",
+    "gen_time": "2025-01-15T10:30:00Z",
+    "tsa_authority": "DigiCert Timestamp Authority",
+    "policy_oid": "2.16.840.1.114412.7.1",
+    "tsa_certificate": "<base64_cert>",
+    "certificate_chain": ["<base64_cert1>", "<base64_cert2>"],
+    "timestamped_at": "2025-01-15T10:30:05Z",
+    "task_id": "celery-task-uuid"
+  }
+}
+```
+
+**Celery Workers**:
+```bash
+# View TSA worker logs
+docker-compose logs -f celery-worker-tsa
+
+# Monitor TSA queue in Flower
+open http://localhost:5555
+```
+
+**Verification**:
+- Timestamps can be verified using OpenSSL or Adobe Acrobat
+- Certificate chain ensures long-term verification even if TSA cert expires
+- Timestamps are legally binding (RFC 3161 compliant)
+
+**Security Features**:
+- SHA-256 fingerprints (MD5 is cryptographically broken)
+- Complete certificate chain storage
+- Idempotent tasks (won't re-timestamp if already done)
+- Rate limiting (100 timestamps/hour per worker)
+- Retry logic with exponential backoff
+
 ## Key Files to Understand
 
 When making changes, review these files first:
