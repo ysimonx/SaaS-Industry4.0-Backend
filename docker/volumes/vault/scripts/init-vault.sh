@@ -53,10 +53,16 @@ sleep 3
 echo "→ Activation du KV Secrets Engine v2..."
 vault secrets enable -version=2 -path=secret kv 2>/dev/null && echo "✓ KV engine activé" || echo "✓ KV engine déjà activé"
 
+# Activer le Transit secrets engine (pour chiffrement des tokens SSO)
+echo "→ Activation du Transit Secrets Engine..."
+vault secrets enable transit 2>/dev/null && echo "✓ Transit engine activé" || echo "✓ Transit engine déjà activé"
+
 # Vérifier si les secrets existent déjà (idempotence)
 echo "→ Vérification de l'existence des secrets..."
 SECRETS_EXIST=false
-if vault kv get "secret/saas-project/${VAULT_ENV}/database" >/dev/null 2>&1; then
+if vault kv get "secret/saas-project/${VAULT_ENV}/database" >/dev/null 2>&1 && \
+   vault kv get "secret/saas-project/${VAULT_ENV}/jwt" >/dev/null 2>&1 && \
+   vault kv get "secret/saas-project/${VAULT_ENV}/s3" >/dev/null 2>&1; then
     echo "✓ Les secrets existent déjà pour l'environnement '$VAULT_ENV'"
     SECRETS_EXIST=true
 fi
@@ -106,6 +112,8 @@ vault auth enable approle 2>/dev/null && echo "✓ AppRole activé" || echo "✓
 echo "→ Création de la politique Vault pour environnement '$VAULT_ENV'..."
 vault policy write saas-app-policy-${VAULT_ENV} - <<EOF
 # Politique pour l'environnement ${VAULT_ENV}
+
+# Accès aux secrets KV (database, JWT, S3)
 path "secret/data/saas-project/${VAULT_ENV}/*" {
   capabilities = ["read"]
 }
@@ -114,6 +122,28 @@ path "secret/metadata/saas-project/${VAULT_ENV}/*" {
   capabilities = ["list", "read"]
 }
 
+# Accès au Transit Engine pour chiffrement des tokens SSO
+path "transit/keys/*" {
+  capabilities = ["create", "read", "update", "list"]
+}
+
+path "transit/encrypt/*" {
+  capabilities = ["update"]
+}
+
+path "transit/decrypt/*" {
+  capabilities = ["update"]
+}
+
+path "transit/rewrap/*" {
+  capabilities = ["update"]
+}
+
+path "transit/rotate/*" {
+  capabilities = ["update"]
+}
+
+# Token management
 path "auth/token/renew-self" {
   capabilities = ["update"]
 }

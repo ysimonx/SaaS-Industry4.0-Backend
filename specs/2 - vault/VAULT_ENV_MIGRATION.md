@@ -68,7 +68,7 @@ cp .env.docker.minimal .env
 # 1.3. Create secrets file for Vault
 cat > vault/init-data/docker.env <<'EOF'
 DATABASE_URL=postgresql://...
-JWT_SECRET_KEY=$(openssl rand -hex 32)
+JWT_SECRET_KEY=$(head -c 32 /dev/urandom | xxd -p -c 64)
 # ... other secrets
 EOF
 ```

@@ -23,14 +23,16 @@ class TenantSSOConfigService:
     """
 
     @staticmethod
-    def create_sso_config(tenant_id: str, client_id: str, provider_tenant_id: str,
-                         config_metadata: Dict = None, enable: bool = False) -> TenantSSOConfig:
+    def create_sso_config(tenant_id: str, client_id: str, client_secret: str,
+                         provider_tenant_id: str, config_metadata: Dict = None,
+                         enable: bool = False) -> TenantSSOConfig:
         """
         Create a new SSO configuration for a tenant.
 
         Args:
             tenant_id: UUID of the tenant
             client_id: Azure AD Application (client) ID
+            client_secret: Azure AD Application client secret (required for confidential apps)
             provider_tenant_id: Azure AD tenant ID (GUID or domain)
             config_metadata: Additional configuration metadata
             enable: Whether to enable SSO immediately
@@ -63,8 +65,8 @@ class TenantSSOConfigService:
         if config_metadata is None:
             config_metadata = {}
 
-        # Ensure app_type is set to 'public'
-        config_metadata['app_type'] = 'public'
+        # Set app_type to 'confidential' since we require client_secret
+        config_metadata['app_type'] = 'confidential'
 
         # Set default auto-provisioning if not specified
         if 'auto_provisioning' not in config_metadata:
@@ -80,6 +82,7 @@ class TenantSSOConfigService:
             provider_type='azure_ad',
             provider_tenant_id=provider_tenant_id,
             client_id=client_id,
+            client_secret=client_secret,
             redirect_uri=redirect_uri,
             is_enabled=enable,
             config_metadata=config_metadata
@@ -128,7 +131,7 @@ class TenantSSOConfigService:
 
         # Update allowed fields
         allowed_fields = [
-            'client_id', 'provider_tenant_id', 'is_enabled', 'config_metadata'
+            'client_id', 'client_secret', 'provider_tenant_id', 'is_enabled', 'config_metadata'
         ]
 
         for field, value in updates.items():
@@ -137,8 +140,9 @@ class TenantSSOConfigService:
                     # Merge metadata instead of replacing
                     current_metadata = sso_config.config_metadata or {}
                     current_metadata.update(value)
-                    # Ensure app_type remains 'public'
-                    current_metadata['app_type'] = 'public'
+                    # Preserve app_type
+                    if 'app_type' not in value:
+                        current_metadata['app_type'] = current_metadata.get('app_type', 'confidential')
                     sso_config.config_metadata = current_metadata
                 else:
                     setattr(sso_config, field, value)

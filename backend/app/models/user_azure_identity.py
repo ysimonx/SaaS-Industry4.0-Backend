@@ -44,6 +44,7 @@ class UserAzureIdentity(BaseModel, db.Model):
         token_expires_at (datetime): Access token expiration time
         refresh_token_expires_at (datetime): Refresh token expiration time
         last_sync (datetime): Last synchronization with Azure AD
+        sso_metadata (dict): Additional SSO metadata (job title, department, etc.)
 
     Relationships:
         user: Many-to-one relationship with User model
@@ -103,6 +104,10 @@ class UserAzureIdentity(BaseModel, db.Model):
 
     # Synchronization tracking
     last_sync = db.Column(db.DateTime(timezone=True), default=datetime.utcnow)
+
+    # SSO metadata (job title, department, etc. from Microsoft Graph)
+    sso_metadata = db.Column(db.JSON, default=dict)
+    # Additional SSO metadata specific to this Azure identity
 
     # Relationships
     user = relationship('User', back_populates='azure_identities')

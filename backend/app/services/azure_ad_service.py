@@ -2,10 +2,9 @@
 Azure AD Authentication Service
 
 This service handles Azure AD / Microsoft Entra ID authentication using the
-Public Application mode (no client_secret) with PKCE for enhanced security.
+Web mode ( client_secret is required)  for enhanced security.
 
 Key features:
-- OAuth2 Authorization Code Flow with PKCE
 - Token management (access, refresh, ID tokens)
 - JWT validation and claims extraction
 - Multi-tenant support with per-tenant configurations
@@ -50,7 +49,8 @@ class AzureADService:
         "openid",
         "profile",
         "email",
-        "User.Read"
+        "User.Read",
+        "offline_access"  # REQUIRED to receive refresh_token from Azure AD
     ]
 
     def __init__(self, tenant_id: str = None):
@@ -100,12 +100,14 @@ class AzureADService:
     def get_authorization_url(self, redirect_uri: str, state: str = None,
                             code_challenge: str = None, additional_params: Dict = None) -> str:
         """
-        Generate Azure AD authorization URL with PKCE.
+        Generate Azure AD authorization URL with or without PKCE.
+
+        Uses PKCE (Public Client) if no client_secret is configured.
+        Uses traditional flow (Confidential Client) if client_secret exists.
 
         Args:
             redirect_uri: OAuth2 callback URL
             state: Optional state token (will be generated if not provided)
-            code_challenge: PKCE code challenge (will be generated if not provided)
             additional_params: Additional query parameters
 
         Returns:
@@ -120,8 +122,8 @@ class AzureADService:
         if not state:
             state = self.generate_state_token()
 
-        if not code_challenge:
-            _, code_challenge = self.generate_pkce_pair()
+        # Check if using client_secret (Confidential Client) or PKCE (Public Client)
+        use_client_secret = self.sso_config.client_secret and self.sso_config.client_secret.strip()
 
         # Build authorization URL
         params = {
@@ -131,10 +133,18 @@ class AzureADService:
             'response_mode': 'query',
             'scope': ' '.join(self.DEFAULT_SCOPES),
             'state': state,
-            'code_challenge': code_challenge,
-            'code_challenge_method': 'S256',
             'prompt': 'select_account'  # Allow user to select account
         }
+
+        # Only add PKCE parameters if NOT using client_secret
+        if not use_client_secret:
+            if not code_challenge:
+                _, code_challenge = self.generate_pkce_pair()
+            params['code_challenge'] = code_challenge
+            params['code_challenge_method'] = 'S256'
+            logger.info(f"Using PKCE for authorization (Public Client mode)")
+        else:
+            logger.info(f"Using client_secret for authorization (Confidential Client mode)")
 
         # Add domain hint if email is provided
         if additional_params:
@@ -167,15 +177,24 @@ class AzureADService:
         if not self.sso_config:
             raise ValueError("SSO configuration not available")
 
-        # Prepare token request (no client_secret for public application)
+        # Prepare token request
         token_data = {
             'client_id': self.sso_config.client_id,
             'grant_type': 'authorization_code',
             'code': code,
             'redirect_uri': redirect_uri,
-            'code_verifier': code_verifier,
             'scope': ' '.join(self.DEFAULT_SCOPES)
         }
+
+        # Add client_secret if configured (confidential app)
+        # Otherwise use PKCE code_verifier (public app)
+        # Check if client_secret exists and is not empty/None
+        if self.sso_config.client_secret and self.sso_config.client_secret.strip():
+            token_data['client_secret'] = self.sso_config.client_secret
+            logger.info("Using client_secret for token exchange (confidential app)")
+        else:
+            token_data['code_verifier'] = code_verifier
+            logger.info("Using PKCE code_verifier for token exchange (public app)")
 
         try:
             # Request tokens from Azure AD
@@ -187,8 +206,31 @@ class AzureADService:
 
             if response.status_code != 200:
                 error_data = response.json() if response.text else {}
+                error_code = error_data.get('error', '')
+                error_description = error_data.get('error_description', 'Unknown error')
+
                 logger.error(f"Token exchange failed: {response.status_code} - {error_data}")
-                raise ValueError(f"Token exchange failed: {error_data.get('error_description', 'Unknown error')}")
+
+                # Provide specific guidance for common Azure AD errors
+                if 'AADSTS9002327' in error_description:
+                    raise ValueError(
+                        "Azure AD app is configured as 'Single-Page Application'. "
+                        "Please reconfigure it as 'Web' application in Azure Portal. "
+                        "See AZURE_AD_CONFIGURATION_GUIDE.md for details."
+                    )
+                elif 'AADSTS7000218' in error_description:
+                    raise ValueError(
+                        "The application requires a client secret but none was provided. "
+                        "Either add a client secret in Azure Portal or ensure the app "
+                        "is configured for public client flow with PKCE."
+                    )
+                elif 'AADSTS50011' in error_description:
+                    raise ValueError(
+                        f"Redirect URI mismatch. Ensure the callback URL "
+                        f"'{redirect_uri}' is registered in Azure Portal."
+                    )
+
+                raise ValueError(f"Token exchange failed: {error_description}")
 
             token_response = response.json()
 
@@ -219,13 +261,17 @@ class AzureADService:
         if not self.sso_config:
             raise ValueError("SSO configuration not available")
 
-        # Prepare refresh request (no client_secret for public application)
+        # Prepare refresh request
         token_data = {
             'client_id': self.sso_config.client_id,
             'grant_type': 'refresh_token',
             'refresh_token': refresh_token,
             'scope': ' '.join(self.DEFAULT_SCOPES)
         }
+
+        # Add client_secret if configured (confidential app)
+        if self.sso_config.client_secret and self.sso_config.client_secret.strip():
+            token_data['client_secret'] = self.sso_config.client_secret
 
         try:
             response = requests.post(
@@ -236,8 +282,19 @@ class AzureADService:
 
             if response.status_code != 200:
                 error_data = response.json() if response.text else {}
+                error_description = error_data.get('error_description', 'Unknown error')
+
                 logger.error(f"Token refresh failed: {response.status_code} - {error_data}")
-                raise ValueError(f"Token refresh failed: {error_data.get('error_description', 'Unknown error')}")
+
+                # Provide specific guidance for common Azure AD errors
+                if 'AADSTS9002327' in error_description:
+                    raise ValueError(
+                        "Azure AD app is configured as 'Single-Page Application'. "
+                        "Please reconfigure it as 'Web' application in Azure Portal. "
+                        "See AZURE_AD_CONFIGURATION_GUIDE.md for details."
+                    )
+
+                raise ValueError(f"Token refresh failed: {error_description}")
 
             token_response = response.json()
             logger.info(f"Successfully refreshed tokens for tenant {self.tenant_id}")
@@ -384,15 +441,28 @@ class AzureADService:
             if not auto_prov.get('enabled', False):
                 raise ValueError(f"User not found and auto-provisioning is disabled: {email}")
 
-            # Create new user
+            # Extract first_name and last_name from claims
+            # Azure AD peut fournir given_name/family_name ou juste name
+            first_name = id_token_claims.get('given_name', '')
+            last_name = id_token_claims.get('family_name', '')
+
+            # Si given_name/family_name ne sont pas fournis, parser le champ 'name'
+            if not first_name and not last_name:
+                full_name = id_token_claims.get('name', '')
+                if full_name:
+                    name_parts = full_name.split(' ', 1)
+                    first_name = name_parts[0] if len(name_parts) > 0 else ''
+                    last_name = name_parts[1] if len(name_parts) > 1 else ''
+                    logger.info(f"Parsed name '{full_name}' into first_name='{first_name}', last_name='{last_name}'")
+
+            # Create new user (SSO-only, no password)
             user = User(
                 email=email,
-                first_name=id_token_claims.get('given_name', ''),
-                last_name=id_token_claims.get('family_name', ''),
-                sso_provider='azure_ad',
+                first_name=first_name,
+                last_name=last_name,
                 is_active=True
             )
-            # No password for SSO-only user
+            # No password for SSO-only user (password_hash is nullable)
             db.session.add(user)
             db.session.flush()  # Get user ID
 
@@ -415,13 +485,10 @@ class AzureADService:
             logger.info(f"Created user-tenant association with role: {default_role}")
 
         else:
-            # Update existing user's SSO info
+            # Update existing user's info if sync is enabled
             if self.sso_config.get_auto_provisioning_config().get('sync_attributes_on_login', True):
                 user.first_name = id_token_claims.get('given_name', user.first_name)
                 user.last_name = id_token_claims.get('family_name', user.last_name)
-
-                if not user.sso_provider:
-                    user.sso_provider = 'azure_ad'
 
             # Ensure user has access to this tenant
             if not user.has_access_to_tenant(self.tenant_id):
@@ -462,16 +529,33 @@ class AzureADService:
         # Update from claims
         azure_identity.update_from_azure_claims(id_token_claims)
 
-        # Update user metadata
-        if not user.sso_metadata:
-            user.sso_metadata = {}
+        # Update SSO metadata in azure_identity (not in user model)
+        if not azure_identity.sso_metadata:
+            azure_identity.sso_metadata = {}
 
-        user.sso_metadata[f'tenant_{self.tenant_id}'] = {
-            'job_title': id_token_claims.get('jobTitle'),
-            'department': id_token_claims.get('department'),
-            'company': id_token_claims.get('companyName'),
-            'last_sso_login': datetime.utcnow().isoformat()
-        }
+        # Try to get profile info from Microsoft Graph API (more reliable)
+        # Fall back to ID token claims if Graph API fails
+        try:
+            from app.services.microsoft_graph_service import microsoft_graph_service
+            graph_profile = microsoft_graph_service.get_user_profile(tokens.get('access_token'))
+
+            azure_identity.sso_metadata = {
+                'job_title': graph_profile.get('jobTitle') or id_token_claims.get('jobTitle'),
+                'department': graph_profile.get('department') or id_token_claims.get('department'),
+                'company': id_token_claims.get('companyName'),  # Not available in Graph basic profile
+                'office_location': graph_profile.get('officeLocation'),
+                'mobile_phone': graph_profile.get('mobilePhone'),
+                'last_sso_login': datetime.utcnow().isoformat()
+            }
+            logger.info(f"Updated SSO metadata from Microsoft Graph for {email}")
+        except Exception as e:
+            logger.warning(f"Failed to fetch Graph profile, using token claims only: {str(e)}")
+            azure_identity.sso_metadata = {
+                'job_title': id_token_claims.get('jobTitle'),
+                'department': id_token_claims.get('department'),
+                'company': id_token_claims.get('companyName'),
+                'last_sso_login': datetime.utcnow().isoformat()
+            }
 
         # Commit all changes
         db.session.commit()
@@ -503,14 +587,17 @@ class AzureADService:
         return logout_url
 
     @staticmethod
-    def store_pkce_in_session(code_verifier: str, state: str) -> None:
+    def store_pkce_in_session(code_verifier: Optional[str], state: str) -> None:
         """
-        Store PKCE parameters in session for later verification.
+        Store OAuth parameters in session for later verification.
+
+        Stores code_verifier if using PKCE (Public Client).
+        Stores only state if using client_secret (Confidential Client).
 
         Uses Redis if available, falls back to Flask session.
 
         Args:
-            code_verifier: PKCE code verifier
+            code_verifier: PKCE code verifier (None if using client_secret)
             state: OAuth2 state token
         """
         redis_client = redis_manager.get_client()
@@ -534,13 +621,14 @@ class AzureADService:
 
             # Also store state in Flask session for key retrieval
             session['oauth_state'] = state
-            logger.debug(f"Stored PKCE parameters in Redis with key: {redis_key}")
+            logger.info(f"Stored PKCE parameters in Redis with key: {redis_key}, state: {state[:10]}...")
         else:
             # Fallback to Flask session
             session['oauth_state'] = state
             session['oauth_code_verifier'] = code_verifier
             session['oauth_timestamp'] = datetime.utcnow().isoformat()
-            logger.debug("Stored PKCE parameters in Flask session")
+            logger.info(f"Stored PKCE parameters in Flask session, state: {state[:10]}...")
+            logger.debug(f"Session keys after storing: {list(session.keys())}")
 
     @staticmethod
     def retrieve_pkce_from_session() -> Tuple[Optional[str], Optional[str]]:
@@ -552,12 +640,17 @@ class AzureADService:
         Returns:
             Tuple of (code_verifier, state) or (None, None)
         """
+        logger.info(f"Attempting to retrieve PKCE from session. Session keys: {list(session.keys())}")
+
         redis_client = redis_manager.get_client()
 
         # Get state from Flask session (always stored there)
         state = session.pop('oauth_state', None)
 
+        logger.info(f"Retrieved state from Flask session: {state[:10] if state else 'None'}")
+
         if not state:
+            logger.warning("No oauth_state found in Flask session")
             return None, None
 
         if redis_client:
@@ -573,19 +666,22 @@ class AzureADService:
                     # Delete from Redis after retrieval
                     redis_client.delete(redis_key)
 
-                    logger.debug(f"Retrieved PKCE parameters from Redis and deleted key: {redis_key}")
+                    logger.info(f"Retrieved PKCE parameters from Redis and deleted key: {redis_key}, state: {state[:10]}...")
                     return code_verifier, state
                 except json.JSONDecodeError:
                     logger.error("Failed to decode session data from Redis")
+            else:
+                logger.warning(f"No data found in Redis for key: {redis_key}")
 
         # Fallback to Flask session
         code_verifier = session.pop('oauth_code_verifier', None)
         session.pop('oauth_timestamp', None)
 
         if code_verifier and state:
-            logger.debug("Retrieved PKCE parameters from Flask session")
+            logger.info(f"Retrieved PKCE parameters from Flask session, state: {state[:10]}...")
             return code_verifier, state
 
+        logger.warning(f"Failed to retrieve complete PKCE data. State: {state[:10] if state else 'None'}, Code verifier: {'Present' if code_verifier else 'None'}")
         return None, None
 
     @staticmethod

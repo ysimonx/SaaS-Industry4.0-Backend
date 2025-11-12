@@ -2,6 +2,9 @@
 
 **A Production-Ready Foundation for Industry 4.0 SaaS Applications**
 
+- [Quick Start avec Docker (Recommended)](#quick-start)
+- **Approach A: With Vault** - See [Quick Start - Option A](#option-a-with-hashicorp-vault-recommended-for-production-like-setup) for detailed setup
+- **Approach B: Without Vault** - See [Quick Start - Option B](#option-b-without-vault-simple-setup-for-development) for simple development setup
 
 
 ## Features
@@ -23,13 +26,14 @@
 ### ✅ Enterprise Authentication (SSO)
 - Azure AD / Microsoft Entra ID integration
 - Per-tenant SSO configuration
-- Public Application mode (no client_secret needed)
-- OAuth 2.0 Authorization Code Flow with PKCE
+- **Confidential Application mode (client_secret REQUIRED)**
+- **NOT using PKCE - requires client_secret for secure authentication**
 - Auto-provisioning with configurable rules
 - Azure AD group to role mapping
 - Hybrid authentication modes (local, SSO, or both)
 - Encrypted token storage via HashiCorp Vault
 - Multi-tenant identity mapping (different Azure IDs per tenant)
+- Azure AD's token refresh with a celery worker
 
 ### ✅ Document Management
 - Document upload with multipart/form-data
@@ -56,6 +60,11 @@
   - Scheduled maintenance tasks
 - **Flower**: Real-time monitoring dashboard for Celery tasks
 
+- *** ✅ celery-worker-sso : Exécute les tâches de rafraîchissement
+- *** ✅ celery-beat : Schedule les tâches périodiques
+- *** ✅ flower : Dashboard de monitoring (http://localhost:5555)
+
+
 ### ✅ API Features
 - RESTful API design
 - OpenAPI 3.0 specification (Swagger)
@@ -68,7 +77,6 @@
 - JWT-based authentication
 - Password strength validation
 - Azure AD / Microsoft Entra ID SSO support
-- OAuth 2.0 with PKCE (Public Application mode)
 - Multi-factor authentication (via Azure AD)
 - Rate limiting (configurable)
 - SQL injection prevention (SQLAlchemy ORM)
@@ -409,10 +417,11 @@ cp .env.docker.minimal .env
 
 # 1.3. Create secrets file for Vault (OBLIGATOIRE)
 # Les scripts Vault sont déjà dans le repo (vault/config/, vault/scripts/)
-cat > vault/init-data/docker.env <<'EOF'
+mkdir -p docker/volumes/vault/init-data/
+cat > docker/volumes/vault/init-data/docker.env <<'EOF'
 DATABASE_URL=postgresql://postgres:postgres@postgres:5432/saas_platform
 TENANT_DATABASE_URL_TEMPLATE=postgresql://postgres:postgres@postgres:5432/{database_name}
-JWT_SECRET_KEY=$(openssl rand -hex 32)
+JWT_SECRET_KEY=$(head -c 32 /dev/urandom | xxd -p -c 64)
 JWT_ACCESS_TOKEN_EXPIRES=900
 S3_ENDPOINT_URL=http://minio:9000
 S3_ACCESS_KEY_ID=minioadmin
@@ -428,9 +437,9 @@ EOF
 # 2.0. (Optional) Réinitialisation complète de Vault
 # ⚠️  ATTENTION: Cette opération supprime TOUTES les données Vault !
 # Utilisez ceci uniquement si vous voulez recommencer à zéro
-# rm -Rf vault/data 
-# docker-compose down vault vault-unseal
-# docker volume rm saasbackendwithclaude_vault_data 2>/dev/null || true
+rm -Rf docker/volumes/vault/data
+docker-compose down vault vault-unseal
+docker volume rm saasbackendwithclaude_vault_data 2>/dev/null || true
 
 # 2.1. Start Vault and auto-unseal services
 docker-compose up -d vault vault-unseal
@@ -444,7 +453,7 @@ docker exec saas-vault vault status
 # Expected: "Sealed: false"
 
 # 2.4. IMPORTANT: Sauvegarder le token root (première fois seulement)
-cat vault/data/root-token.txt
+cat docker/volumes/vault/data/root-token.txt
 # ⚠️  Sauvegarder ce token dans un gestionnaire de mots de passe !
 
 # ============================================================================
@@ -463,7 +472,7 @@ cat .env.vault
 # Ce fichier contient VAULT_ROLE_ID et VAULT_SECRET_ID
 
 # 3.4. (Optional) Verify secrets are stored in Vault
-VAULT_TOKEN=$(cat vault/data/root-token.txt)
+VAULT_TOKEN=$(cat docker/volumes/vault/data/root-token.txt)
 docker exec -e VAULT_TOKEN=$VAULT_TOKEN saas-vault vault kv get secret/saas-project/docker/database
 
 # ============================================================================
@@ -520,7 +529,7 @@ docker-compose ps
 **Access Services:**
 - **API Server**: http://localhost:4999
 - **API Documentation (Swagger)**: http://localhost:4999/api/docs
-- **Vault UI**: http://localhost:8201/ui (use token from `vault/data/root-token.txt`)
+- **Vault UI**: http://localhost:8201/ui (use token from `docker/volumes/vault/data/root-token.txt`)
   - Note: Port 8201 is used instead of the default 8200 to avoid conflicts with OneDrive on macOS
 - **MinIO Console**: http://localhost:9001 (minioadmin / minioadmin)
 - **Flower (Celery Monitor)**: http://localhost:5555 (real-time task monitoring)
@@ -529,8 +538,8 @@ docker-compose ps
 - **Kafka**: localhost:9092
 
 **Important Vault Files** (NE JAMAIS COMMITER):
-- `vault/data/unseal-keys.json` - Clés pour déverrouiller Vault
-- `vault/data/root-token.txt` - Token administrateur Vault
+- `docker/volumes/vault/data/unseal-keys.json` - Clés pour déverrouiller Vault
+- `docker/volumes/vault/data/root-token.txt` - Token administrateur Vault
 - `.env.vault` - Credentials AppRole pour l'application
 - `vault/init-data/docker.env` - Secrets injectés dans Vault
 
@@ -809,7 +818,7 @@ The platform supports **Azure AD / Microsoft Entra ID** Single Sign-On (SSO) for
 
 ### Setting up Azure AD Application
 
-1. **Register a Public Application in Azure AD**:
+1. **Register an Application in Azure AD**:
    ```bash
    # In Azure Portal (portal.azure.com):
    1. Go to Azure Active Directory → App registrations → New registration
@@ -822,23 +831,30 @@ The platform supports **Azure AD / Microsoft Entra ID** Single Sign-On (SSO) for
    5. Register the application
    ```
 
-2. **Configure the Azure Application**:
+2. **Configure the Azure Application (Confidential Mode)**:
    ```bash
    # In Azure App Registration:
    1. Authentication tab:
-      - Enable "Public client flows" (no client_secret needed)
+      - ⚠️ IMPORTANT: Do NOT enable "Public client flows"
       - Add redirect URIs for all environments
       - Enable ID tokens and Access tokens
 
-   2. API Permissions tab:
+   2. Certificates & secrets tab:
+      - ⚠️ CRITICAL: Click "New client secret"
+      - Description: "SaaS Platform Secret"
+      - Expiration: Choose appropriate duration (12-24 months)
+      - Copy the secret value immediately (shown only once!)
+
+   3. API Permissions tab:
       - Microsoft Graph → User.Read (default)
       - Microsoft Graph → email (optional)
       - Microsoft Graph → profile (optional)
       - Grant admin consent if required
 
-   3. Copy these values:
+   4. Copy these values:
       - Application (client) ID
       - Directory (tenant) ID
+      - Client secret (from step 2)
    ```
 
 ### Configuring SSO for a Tenant
@@ -846,11 +862,13 @@ The platform supports **Azure AD / Microsoft Entra ID** Single Sign-On (SSO) for
 1. **Create SSO Configuration via API**:
    ```bash
    # As tenant admin, configure SSO:
+   # ⚠️ IMPORTANT: client_secret is REQUIRED
    curl -X POST http://localhost:4999/api/tenants/{tenant_id}/sso/config \
      -H "Authorization: Bearer $TOKEN" \
      -H "Content-Type: application/json" \
      -d '{
        "client_id": "your-azure-app-client-id",
+       "client_secret": "your-azure-client-secret",
        "provider_tenant_id": "your-azure-tenant-id",
        "enable": true,
        "config_metadata": {
@@ -931,11 +949,12 @@ The platform can automatically create user accounts during SSO login:
 
 ### Security Features
 
-- **PKCE (Proof Key for Code Exchange)**: Prevents authorization code interception
-- **No Client Secret**: Public Application mode for enhanced security
+- **Confidential Application Mode**: MANDATORY use of client_secret for secure OAuth2 flow
+- **Client Secret Required**: Application configured as confidential (NOT public client)
+- **NO PKCE**: Platform does NOT use Proof Key for Code Exchange (PKCE is for public clients only)
 - **State Token**: CSRF protection during OAuth flow
 - **Encrypted Token Storage**: Azure tokens encrypted via HashiCorp Vault
-- **Token Refresh**: Automatic token refresh before expiration
+- **Token Refresh**: Automatic token refresh before expiration via Celery workers
 - **Multi-Factor Authentication**: Inherited from Azure AD configuration
 
 ### SSO Management Endpoints
@@ -993,7 +1012,8 @@ Common issues and solutions:
 
 2. **"invalid_client" error**:
    - Verify the client_id is correct
-   - Ensure "Public client flows" is enabled in Azure AD
+   - Ensure client_secret is provided and valid
+   - Check that "Public client flows" is DISABLED (we use confidential mode)
 
 3. **Auto-provisioning not working**:
    - Check email domain is in allowed list
@@ -1153,7 +1173,7 @@ docker-compose up -d
 # Initialize secrets in Vault (run once)
 docker-compose exec vault sh -c '
   vault kv put secret/saas-platform \
-    jwt_secret="$(openssl rand -base64 64)" \
+    jwt_secret="$(head -c 32 /dev/urandom | xxd -p -c 64)" \
     db_password="secure_password_here" \
     db_user="postgres" \
     aws_access_key="AKIA..." \

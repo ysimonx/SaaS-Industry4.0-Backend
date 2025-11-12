@@ -619,7 +619,7 @@ The platform supports **Azure AD / Microsoft Entra ID** SSO for enterprise authe
 
 1. SSO Initiation (GET /api/auth/sso/azure/login/{tenant_id})
    ├─ Check tenant SSO configuration
-   ├─ Generate PKCE challenge (Public Application mode)
+   ├─ Verify client_secret is configured (REQUIRED)
    ├─ Create state token for CSRF protection
    └─ Redirect to Azure AD authorization endpoint
 
@@ -630,7 +630,7 @@ The platform supports **Azure AD / Microsoft Entra ID** SSO for enterprise authe
    └─ State token verified for security
 
 3. Token Exchange (GET /api/auth/sso/azure/callback)
-   ├─ Exchange authorization code for tokens
+   ├─ Exchange authorization code for tokens using client_secret
    ├─ Validate ID token signature and claims
    ├─ Extract user information (email, name, object ID)
    └─ Create or update user in local database
@@ -659,9 +659,11 @@ class TenantSSOConfig:
     provider_type       # 'azure_ad' (extensible)
     provider_tenant_id  # Azure AD tenant ID/domain
     client_id          # Azure app registration ID
+    client_secret      # REQUIRED - Azure client secret (confidential mode)
     redirect_uri       # OAuth callback URL
     is_enabled         # Enable/disable SSO
     config_metadata    # JSONB for additional settings:
+                      # - app_type: 'confidential' (REQUIRED)
                       # - auto_provisioning settings
                       # - allowed email domains
                       # - group role mappings
@@ -702,20 +704,35 @@ AUTHENTICATION_MODES = {
 # SSO-only users have nullable password_hash
 ```
 
-#### PKCE Security (Public Application Mode)
+#### Security - Confidential Application Mode
 
-The implementation uses **OAuth 2.0 with PKCE** for enhanced security:
+**CRITICAL: This platform uses Confidential Application mode, NOT Public Client mode**
 
 ```python
-# No client_secret required (Public Application)
-# PKCE prevents authorization code interception
+# OAuth2 Authorization Code Flow with Client Secret (NOT PKCE)
 
-1. Generate code_verifier (random 128 chars)
-2. Calculate code_challenge = SHA256(code_verifier)
-3. Send challenge with authorization request
-4. Store verifier in encrypted session
-5. Include verifier in token exchange
-6. Azure AD validates challenge/verifier pair
+1. Application Type: Confidential (Web Application)
+   - Requires client_secret for token exchange
+   - Does NOT use PKCE (Proof Key for Code Exchange)
+   - PKCE is only for public clients (SPAs, mobile apps)
+
+2. Token Exchange Requirements:
+   - Authorization code from Azure AD
+   - client_id (Application ID)
+   - client_secret (REQUIRED - stored securely in database)
+   - redirect_uri (must match Azure AD configuration)
+
+3. Security Features:
+   - State token for CSRF protection
+   - Client secret encrypted at rest (via Vault Transit)
+   - Secure server-to-server communication
+   - No secret exposure to client-side code
+
+4. Why Confidential Mode:
+   - Backend server can securely store client_secret
+   - More secure than PKCE for server-side applications
+   - Aligns with enterprise security requirements
+   - Allows use of client credentials grant (future)
 ```
 
 #### Auto-Provisioning
@@ -2282,7 +2299,7 @@ docker-compose exec vault vault kv get secret/saas-project/docker/s3
 
 # 4. Update a specific secret field
 docker-compose exec vault vault kv patch secret/saas-project/docker/jwt \
-  secret_key="new_jwt_secret_$(openssl rand -base64 64)"
+  secret_key="new_jwt_secret_$(head -c 32 /dev/urandom | xxd -p -c 64)"
 
 # 5. Add a new secret category
 docker-compose exec vault vault kv put secret/saas-project/docker/email \
@@ -2326,8 +2343,7 @@ docker-compose exec vault vault write -f auth/approle/role/saas-app-role-docker/
 cat > vault/init-data/docker.env <<EOF
 DATABASE_URL=postgresql://saas_user:saas_password@postgres:5432/saas_main
 TENANT_DATABASE_URL_TEMPLATE=postgresql://saas_user:saas_password@postgres:5432/{database_name}
-JWT_SECRET_KEY=$(openssl rand -base64 64)
-JWT_ACCESS_TOKEN_EXPIRES=900
+JWT_SECRET_KEY=$(head -c 32 /dev/urandom | xxd -p -c 64)JWT_ACCESS_TOKEN_EXPIRES=900
 S3_ENDPOINT_URL=http://localstack:4566
 S3_ACCESS_KEY_ID=test_key
 S3_SECRET_ACCESS_KEY=test_secret
@@ -2934,8 +2950,7 @@ path "sys/*" {
 
 ```bash
 # 1. Generate new secret
-NEW_JWT_SECRET=$(openssl rand -base64 64)
-
+NEW_JWT_SECRET=$(head -c 32 /dev/urandom | xxd -p -c 64)
 # 2. Update Vault with new secret (creates new version)
 docker-compose exec vault vault kv put secret/saas-project/prod/jwt \
   secret_key="$NEW_JWT_SECRET" \

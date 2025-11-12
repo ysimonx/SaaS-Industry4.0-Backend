@@ -52,17 +52,30 @@ def initiate_azure_login(tenant_id):
         # Initialize Azure AD service
         azure_service = AzureADService(tenant_id)
 
-        # Generate PKCE parameters
-        code_verifier, code_challenge = azure_service.generate_pkce_pair()
+        # Generate state token (always needed for CSRF protection)
         state = azure_service.generate_state_token()
 
-        # Store PKCE in session
+        # Check if using client_secret (Confidential) or PKCE (Public)
+        use_client_secret = sso_config.client_secret and sso_config.client_secret.strip()
+
+        # Generate PKCE parameters only if NOT using client_secret
+        code_verifier = None
+        code_challenge = None
+        if not use_client_secret:
+            code_verifier, code_challenge = azure_service.generate_pkce_pair()
+            logger.info("Using PKCE (Public Client mode)")
+        else:
+            logger.info("Using client_secret (Confidential Client mode)")
+
+        # Store parameters in session
         azure_service.store_pkce_in_session(code_verifier, state)
         session['sso_tenant_id'] = tenant_id
         session['return_url'] = request.args.get('return_url')
 
-        # Build redirect URI
-        redirect_uri = url_for('sso_auth.azure_callback', _external=True)
+        # Build redirect URI - use the configured redirect_uri from SSO config
+        # This ensures consistency with what's configured in Azure AD
+        redirect_uri = sso_config.redirect_uri
+        logger.info(f"Using configured redirect URI: {redirect_uri}")
 
         # Additional parameters
         additional_params = {}
@@ -73,11 +86,20 @@ def initiate_azure_login(tenant_id):
         auth_url = azure_service.get_authorization_url(
             redirect_uri=redirect_uri,
             state=state,
-            code_challenge=code_challenge,
+            code_challenge=code_challenge,  # Will be None if using client_secret
             additional_params=additional_params
         )
 
         logger.info(f"Initiating Azure AD login for tenant {tenant_id}")
+        logger.info(f"Generated auth URL: {auth_url}")
+
+        # Safety check: Ensure URL doesn't contain HTML entities
+        if '&amp;' in auth_url:
+            logger.error(f"WARNING: Generated URL contains HTML entities: {auth_url}")
+            # Fix the URL by replacing HTML entities
+            auth_url = auth_url.replace('&amp;', '&')
+            logger.info(f"Fixed auth URL: {auth_url}")
+
         return redirect(auth_url)
 
     except Exception as e:
@@ -132,8 +154,16 @@ def azure_callback():
         # Initialize Azure AD service
         azure_service = AzureADService(tenant_id)
 
-        # Exchange code for tokens
-        redirect_uri = url_for('sso_auth.azure_callback', _external=True)
+        # Get SSO config to use the configured redirect_uri
+        from app.models import TenantSSOConfig
+        sso_config = TenantSSOConfig.find_enabled_by_tenant_id(tenant_id)
+        if not sso_config:
+            return jsonify({'error': 'SSO configuration not found'}), 404
+
+        # Exchange code for tokens - use configured redirect_uri for consistency
+        redirect_uri = sso_config.redirect_uri
+        logger.info(f"Using configured redirect URI for token exchange: {redirect_uri}")
+
         token_response = azure_service.exchange_code_for_tokens(
             code=code,
             redirect_uri=redirect_uri,
@@ -367,6 +397,83 @@ def get_azure_user_info():
         return jsonify({'error': str(e)}), 500
 
 
+@bp.route('/detect', methods=['POST'])
+def detect_sso():
+    """
+    Detect SSO provider based on email domain.
+
+    Checks if the user's email domain has SSO configured in any tenant.
+    Used in login flow to redirect users to SSO automatically.
+
+    Request body:
+        {
+            "email": "user@company.com"
+        }
+
+    Returns:
+        {
+            "has_sso": true,
+            "tenants": [
+                {
+                    "tenant_id": "uuid",
+                    "tenant_name": "Acme Corp",
+                    "provider": "azure_ad",
+                    "login_url": "/api/auth/sso/azure/login/uuid"
+                }
+            ]
+        }
+    """
+    try:
+        data = request.get_json()
+        if not data or 'email' not in data:
+            return jsonify({
+                'error': 'Email is required'
+            }), 400
+
+        email = data['email'].lower().strip()
+
+        # Extract domain from email
+        if '@' not in email:
+            return jsonify({
+                'error': 'Invalid email format'
+            }), 400
+
+        domain = '@' + email.split('@')[1]
+
+        # Find tenants with this domain in their whitelist
+        matching_tenants = []
+
+        # Query tenants that have SSO enabled and this domain in their whitelist
+        tenants = Tenant.query.filter(
+            Tenant.auth_method.in_(['sso', 'both']),
+            Tenant.is_active == True,
+            Tenant.sso_domain_whitelist.contains([domain])
+        ).all()
+
+        for tenant in tenants:
+            # Check if SSO is properly configured
+            sso_config = TenantSSOConfig.find_enabled_by_tenant_id(tenant.id)
+            if sso_config:
+                # Validate configuration
+                is_valid, _ = sso_config.validate_configuration()
+                if is_valid:
+                    matching_tenants.append({
+                        'tenant_id': str(tenant.id),
+                        'tenant_name': tenant.name,
+                        'provider': sso_config.provider_type,
+                        'login_url': f"/api/auth/sso/{sso_config.provider_type}/login/{tenant.id}"
+                    })
+
+        return jsonify({
+            'has_sso': len(matching_tenants) > 0,
+            'tenants': matching_tenants
+        }), 200
+
+    except Exception as e:
+        logger.error(f"Error detecting SSO: {str(e)}")
+        return jsonify({'error': 'Failed to detect SSO configuration'}), 500
+
+
 @bp.route('/check-availability/<string:tenant_id>', methods=['GET'])
 def check_sso_availability(tenant_id):
     """
@@ -403,11 +510,19 @@ def check_sso_availability(tenant_id):
         # Validate configuration
         is_valid, error_msg = sso_config.validate_configuration()
 
+        # Build SSO login URL if available
+        sso_login_url = None
+        if is_valid:
+            sso_login_url = url_for('sso_auth.initiate_azure_login',
+                                   tenant_id=tenant_id,
+                                   _external=True)
+
         return jsonify({
             'available': is_valid,
             'auth_method': tenant.auth_method,
             'provider': sso_config.provider_type,
             'auto_provisioning': tenant.sso_auto_provisioning,
+            'sso_login_url': sso_login_url,
             'error': error_msg if not is_valid else None
         }), 200
 
