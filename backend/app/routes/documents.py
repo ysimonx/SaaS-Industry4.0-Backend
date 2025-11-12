@@ -15,7 +15,8 @@ Documents are stored in isolated tenant databases with files in S3.
 
 import logging
 import hashlib
-from flask import Blueprint, request, g
+import base64
+from flask import Blueprint, request, g, make_response
 from marshmallow import ValidationError
 from werkzeug.utils import secure_filename
 
@@ -659,6 +660,138 @@ def download_document(tenant_id: str, document_id: str):
     except Exception as e:
         logger.error(f"Error downloading document: {str(e)}", exc_info=True)
         return internal_error('Failed to download document')
+
+
+@documents_bp.route('/<tenant_id>/files/<file_id>/timestamp/download', methods=['GET'])
+@jwt_required_custom
+def download_timestamp(tenant_id: str, file_id: str):
+    """
+    Download TSA timestamp token as .tsr file (RFC 3161 TimeStampResp).
+    Compatible with OpenSSL and other standard verification tools.
+
+    **Authentication**: JWT required
+    **Authorization**: Must be a member of the tenant with read permission
+
+    **URL Parameters**:
+        tenant_id: UUID of the tenant
+        file_id: UUID of the file
+
+    **Response**:
+        200 OK: Binary timestamp token (DER format) with headers:
+            - Content-Type: application/timestamp-reply
+            - Content-Disposition: attachment; filename="file_{file_id}_timestamp.tsr"
+            - Content-Length: token size in bytes
+
+        400 Bad Request: File has no valid timestamp
+        403 Forbidden: User does not have permission
+        404 Not Found: Tenant or file not found
+        500 Internal Server Error: Server error
+
+    **Example Usage**:
+        # Download timestamp
+        curl -o timestamp.tsr \\
+          -H "Authorization: Bearer $TOKEN" \\
+          http://localhost:4999/api/tenants/{tenant_id}/files/{file_id}/timestamp/download
+
+        # Verify with OpenSSL
+        openssl ts -verify \\
+          -data original_file.pdf \\
+          -in timestamp.tsr \\
+          -CAfile digicert_root.pem
+
+    **Security**:
+        - Validates JWT authentication
+        - Verifies user has access to the tenant
+        - Verifies user has read permission
+        - All downloads are audit-logged
+    """
+    try:
+        user_id = g.user_id
+        logger.info(f"Timestamp download request: tenant_id={tenant_id}, file_id={file_id}, user_id={user_id}")
+
+        # Check tenant access
+        has_access, error_response = check_tenant_access(user_id, tenant_id)
+        if not has_access:
+            logger.warning(f"Access denied: user_id={user_id}, tenant_id={tenant_id}")
+            return error_response
+
+        # Verify user has read permission
+        association = UserTenantAssociation.query.filter_by(
+            user_id=user_id,
+            tenant_id=tenant_id
+        ).first()
+
+        if not association.has_permission('read'):
+            logger.warning(
+                f"Permission denied: user_id={user_id}, tenant_id={tenant_id}, "
+                f"role={association.role}, action=download_timestamp"
+            )
+            from app.utils.responses import forbidden
+            return forbidden('You do not have permission to download timestamps from this tenant')
+
+        # Get tenant database name
+        tenant = Tenant.query.get(tenant_id)
+        database_name = tenant.database_name
+
+        logger.info(
+            f"Access granted for timestamp download: user_id={user_id}, tenant_id={tenant_id}, "
+            f"role={association.role}, database={database_name}"
+        )
+
+        # Switch to tenant database
+        with tenant_db_manager.tenant_db_session(database_name) as session:
+            # Fetch file
+            file = session.query(File).filter_by(id=file_id).first()
+
+            if not file:
+                logger.warning(f"File not found: file_id={file_id}")
+                return not_found('File not found')
+
+            # Verify file has a timestamp
+            tsa_data = file.get_metadata('tsa_timestamp')
+            if not tsa_data or tsa_data.get('status') != 'success':
+                logger.warning(f"File has no valid timestamp: file_id={file_id}, tsa_status={tsa_data.get('status') if tsa_data else 'none'}")
+                return bad_request('File has no valid timestamp')
+
+            # Extract the timestamp token (base64 encoded)
+            timestamp_token_b64 = tsa_data.get('token')
+            if not timestamp_token_b64:
+                logger.error(f"Timestamp token not found in metadata: file_id={file_id}")
+                return internal_error('Timestamp token not found in metadata')
+
+            # Decode from base64 to binary DER format
+            try:
+                timestamp_token_der = base64.b64decode(timestamp_token_b64)
+            except Exception as e:
+                logger.error(f"Failed to decode timestamp token: file_id={file_id}, error={str(e)}")
+                return internal_error('Failed to decode timestamp token')
+
+            # Audit log
+            logger.info(
+                f"AUDIT: Timestamp downloaded - "
+                f"user_id={user_id}, "
+                f"tenant_id={tenant_id}, "
+                f"file_id={file_id}, "
+                f"token_size={len(timestamp_token_der)} bytes, "
+                f"role={association.role}"
+            )
+
+            # Create response with proper Content-Type for RFC 3161
+            response = make_response(timestamp_token_der)
+            response.headers['Content-Type'] = 'application/timestamp-reply'
+            response.headers['Content-Disposition'] = f'attachment; filename="file_{file_id}_timestamp.tsr"'
+            response.headers['Content-Length'] = str(len(timestamp_token_der))
+
+            # Security headers
+            response.headers['X-Content-Type-Options'] = 'nosniff'
+            response.headers['Cache-Control'] = 'no-store, no-cache, must-revalidate, private'
+
+            logger.info(f"Timestamp download completed: file_id={file_id}, size={len(timestamp_token_der)} bytes")
+            return response
+
+    except Exception as e:
+        logger.error(f"Error downloading timestamp: {str(e)}", exc_info=True)
+        return internal_error('Failed to download timestamp')
 
 
 @documents_bp.route('/<tenant_id>/documents/<document_id>/download-url', methods=['GET'])

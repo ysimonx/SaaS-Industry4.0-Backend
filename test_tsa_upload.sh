@@ -89,9 +89,32 @@ WHERE f.id::text = '$FILE_ID';
 EOF
 
 echo
+
+# Step 6: Download timestamp token
+echo -e "${YELLOW}Step 6: Download timestamp token as .tsr file${NC}"
+TSR_FILE="/tmp/tsa_test_${FILE_ID}.tsr"
+HTTP_CODE=$(curl -s -o "$TSR_FILE" -w "%{http_code}" \
+  -H "Authorization: Bearer ${TOKEN}" \
+  "${API_URL}/api/tenants/${TENANT_ID}/files/${FILE_ID}/timestamp/download")
+
+if [ "$HTTP_CODE" = "200" ]; then
+  echo -e "${GREEN}✓ Timestamp downloaded successfully${NC}"
+  echo "  File: $TSR_FILE"
+  echo "  Size: $(stat -f%z "$TSR_FILE" 2>/dev/null || stat -c%s "$TSR_FILE") bytes"
+  echo
+
+  # Step 7: Verify with OpenSSL
+  echo -e "${YELLOW}Step 7: Verify timestamp with OpenSSL${NC}"
+  openssl ts -reply -in "$TSR_FILE" -text 2>&1 | grep -E "Status:|Time stamp:|Serial number:" || true
+  echo
+else
+  echo -e "${RED}❌ Timestamp download failed (HTTP $HTTP_CODE)${NC}"
+fi
+
 echo -e "${GREEN}✓ Test completed${NC}"
 echo
 
 # Cleanup
 rm -f $TEST_FILE
-echo "Test file removed: $TEST_FILE"
+rm -f $TSR_FILE
+echo "Test files removed"
