@@ -41,6 +41,7 @@ from datetime import datetime
 
 from app.models.file import File
 from app.models.document import Document
+from app.models.tenant import Tenant
 from app.utils.database import TenantDatabaseManager
 
 logger = logging.getLogger(__name__)
@@ -75,7 +76,8 @@ class FileService:
         2. Check for existing file with same MD5 (deduplication)
         3. If duplicate exists, return existing File record
         4. If new file, upload to S3 and create File record
-        5. Publish file.uploaded event to Kafka (Phase 6)
+        5. Schedule TSA timestamping (if enabled for tenant)
+        6. Publish file.uploaded event to Kafka (Phase 6)
 
         Args:
             tenant_id: Tenant's UUID string
@@ -207,7 +209,34 @@ class FileService:
                     f"(MD5: {md5_hash}, size: {file_size} bytes, tenant: {tenant_id})"
                 )
 
-                return new_file, None
+            # TSA Timestamping (outside session to avoid long transaction)
+            # Check if TSA is enabled for this tenant
+            tenant = Tenant.query.filter_by(id=tenant_id).first()
+            if tenant and tenant.tsa_enabled:
+                try:
+                    # Import here to avoid circular dependency
+                    from app.tasks.tsa_tasks import timestamp_file
+
+                    # Schedule async timestamping task
+                    # Wait 5 seconds to ensure DB commit is complete
+                    task = timestamp_file.apply_async(
+                        args=[str(new_file.id), tenant_database_name, md5_hash],
+                        countdown=5
+                    )
+
+                    logger.info(
+                        f"TSA timestamping scheduled for file {new_file.id} "
+                        f"(task_id: {task.id}, tenant: {tenant_id})"
+                    )
+
+                except Exception as tsa_error:
+                    # Don't fail the upload if TSA scheduling fails
+                    logger.error(
+                        f"Failed to schedule TSA timestamp for file {new_file.id}: {tsa_error}",
+                        exc_info=True
+                    )
+
+            return new_file, None
 
         except Exception as e:
             logger.error(
