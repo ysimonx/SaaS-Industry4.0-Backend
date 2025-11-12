@@ -77,6 +77,13 @@ class Tenant(BaseModel, db.Model):
     sso_default_role = db.Column(String(20), default='viewer')
     # Rôle par défaut pour les nouveaux utilisateurs SSO
 
+    # TSA (Time-Stamp Authority) Fields
+    tsa_enabled = db.Column(Boolean, default=False, nullable=False)
+    # Active/désactive l'horodatage RFC3161 pour ce tenant
+
+    tsa_provider = db.Column(String(50), default='digicert', nullable=True)
+    # Provider TSA (digicert, etc.) - extensible pour d'autres providers
+
     # Relationships
     user_associations = relationship(
         'UserTenantAssociation',
