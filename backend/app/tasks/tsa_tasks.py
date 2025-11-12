@@ -342,7 +342,7 @@ def bulk_timestamp_files(
                 countdown = idx * stagger_seconds
 
                 task = timestamp_file.apply_async(
-                    args=[str(file.id), tenant_database_name, file.md5_hash],
+                    args=[str(file.id), tenant_database_name, file.sha256_hash],
                     countdown=countdown
                 )
 

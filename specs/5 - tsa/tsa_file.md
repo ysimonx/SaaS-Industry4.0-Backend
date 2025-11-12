@@ -347,7 +347,7 @@ def create_file(self, tenant_id: str, file_data: dict, uploaded_file) -> File:
                 args=[
                     str(new_file.id),
                     tenant.database_name,
-                    new_file.md5_hash
+                    new_file.sha256_hash
                 ],
                 queue='tsa_timestamping',
                 countdown=5  # Wait 5 seconds to ensure DB commit is complete
@@ -1160,7 +1160,7 @@ def create_timestamp_retroactive(tenant_id, file_id):
 
         # Lancer la tâche Celery
         task = timestamp_file.apply_async(
-            args=[str(file_id), tenant.database_name, file.md5_hash],
+            args=[str(file_id), tenant.database_name, file.sha256_hash],
             queue='tsa_timestamping'
         )
 
@@ -1226,7 +1226,7 @@ def create_timestamp_bulk(tenant_id):
                 continue
 
             timestamp_file.apply_async(
-                args=[str(file.id), tenant.database_name, file.md5_hash],
+                args=[str(file.id), tenant.database_name, file.sha256_hash],
                 queue='tsa_timestamping',
                 countdown=tasks_scheduled * 2  # Étalement: 2 secondes entre chaque tâche
             )
