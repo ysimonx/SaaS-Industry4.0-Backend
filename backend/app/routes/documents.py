@@ -84,25 +84,27 @@ def check_tenant_access(user_id: str, tenant_id: str) -> tuple[bool, dict | None
     return True, None
 
 
-def calculate_md5(file_obj) -> str:
+def calculate_hashes(file_obj) -> tuple[str, str]:
     """
-    Calculate MD5 hash of file contents.
+    Calculate MD5 and SHA-256 hashes of file contents.
 
     Args:
         file_obj: File object (FileStorage from werkzeug)
 
     Returns:
-        MD5 hash as hex string (32 characters)
+        Tuple of (md5_hash, sha256_hash) as hex strings
     """
     md5_hash = hashlib.md5()
+    sha256_hash = hashlib.sha256()
 
     # Read file in chunks to handle large files
     file_obj.seek(0)  # Reset file pointer to beginning
     for chunk in iter(lambda: file_obj.read(8192), b''):
         md5_hash.update(chunk)
+        sha256_hash.update(chunk)
 
     file_obj.seek(0)  # Reset file pointer for later use
-    return md5_hash.hexdigest()
+    return md5_hash.hexdigest(), sha256_hash.hexdigest()
 
 
 @documents_bp.route('/<tenant_id>/documents', methods=['GET'])
@@ -305,13 +307,17 @@ def upload_document(tenant_id: str):
             logger.warning("Empty file")
             return bad_request('File is empty')
 
-        # Calculate MD5 hash
-        md5_hash = calculate_md5(file_obj)
-        logger.info(f"File MD5: {md5_hash}, size: {file_size} bytes")
+        # Calculate MD5 and SHA-256 hashes
+        md5_hash, sha256_hash = calculate_hashes(file_obj)
+        logger.info(f"File hashes calculated: MD5={md5_hash}, SHA-256={sha256_hash[:16]}..., size={file_size} bytes")
 
         # Get tenant database name
         tenant = Tenant.query.get(tenant_id)
         database_name = tenant.database_name
+
+        # Track if this is a new file (for TSA processing)
+        is_new_file = False
+        file_id_for_tsa = None
 
         # Switch to tenant database
         with tenant_db_manager.tenant_db_session(database_name) as session:
@@ -324,11 +330,14 @@ def upload_document(tenant_id: str):
                 logger.info(f"Reusing existing file: file_id={file_id}, md5={md5_hash}")
             else:
                 # Create new file record
+                is_new_file = True
+
                 # First create File with temporary s3_path to get file_id
                 temp_s3_path = File.generate_s3_path(database_name, md5_hash, 'temp')
 
                 new_file = File(
                     md5_hash=md5_hash,
+                    sha256_hash=sha256_hash,
                     s3_path=temp_s3_path,
                     file_size=file_size,
                     created_by=user_id
@@ -337,13 +346,14 @@ def upload_document(tenant_id: str):
                 session.flush()  # Get file ID
 
                 file_id = new_file.id
+                file_id_for_tsa = str(file_id)
 
                 # Now generate the final S3 path with the real file_id
                 s3_path = File.generate_s3_path(database_name, md5_hash, str(file_id))
                 new_file.s3_path = s3_path
                 session.flush()  # Update with final s3_path
 
-                logger.info(f"Created new file: file_id={file_id}, md5={md5_hash}, s3_path={s3_path}")
+                logger.info(f"Created new file: file_id={file_id}, md5={md5_hash}, sha256={sha256_hash[:16]}..., s3_path={s3_path}")
 
                 # Upload to S3/MinIO with the correct path
                 success, upload_error = s3_client.upload_file(
@@ -374,10 +384,26 @@ def upload_document(tenant_id: str):
 
             logger.info(f"Document uploaded successfully: document_id={document.id}, file_id={file_id}")
 
-            # TODO: Phase 6 - Send Kafka message
-            # kafka_service.produce_message('document.uploaded', tenant_id, user_id, document_data)
+        # Trigger TSA timestamping if enabled and this is a new file
+        if is_new_file and tenant.tsa_enabled and file_id_for_tsa and sha256_hash:
+            try:
+                from app.tasks.tsa_tasks import timestamp_file
+                task = timestamp_file.apply_async(
+                    args=[file_id_for_tsa, database_name, sha256_hash],
+                    countdown=5  # 5 second delay to ensure DB commit completes
+                )
+                logger.info(
+                    f"TSA timestamp task scheduled for file {file_id_for_tsa} "
+                    f"(task_id: {task.id}, tenant: {tenant.name})"
+                )
+            except Exception as tsa_error:
+                # Don't fail the upload if TSA scheduling fails
+                logger.error(f"Failed to schedule TSA task: {tsa_error}", exc_info=True)
 
-            return created(document_data, 'Document uploaded successfully')
+        # TODO: Phase 6 - Send Kafka message
+        # kafka_service.produce_message('document.uploaded', tenant_id, user_id, document_data)
+
+        return created(document_data, 'Document uploaded successfully')
 
     except Exception as e:
         logger.error(f"Error uploading document: {str(e)}", exc_info=True)
