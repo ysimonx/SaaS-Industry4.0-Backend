@@ -18,6 +18,7 @@ Available Services:
 - DocumentService: Document management, file deduplication, S3/Kafka integration
 - FileService: File uploads, downloads, deduplication, orphaned file cleanup
 - KafkaService: Message production/consumption, event-driven architecture
+- DigiCertTSAService: RFC 3161 timestamping with DigiCert TSA
 """
 
 from app.services.auth_service import AuthService
@@ -26,6 +27,7 @@ from app.services.tenant_service import TenantService
 from app.services.document_service import DocumentService
 from app.services.file_service import FileService
 from app.services.kafka_service import KafkaService
+from app.services.digicert_tsa_service import digicert_tsa_service
 
 __all__ = [
     'AuthService',
@@ -34,4 +36,5 @@ __all__ = [
     'DocumentService',
     'FileService',
     'KafkaService',
+    'digicert_tsa_service',
 ]

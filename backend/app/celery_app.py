@@ -4,6 +4,7 @@ Celery application factory for asynchronous task processing.
 This module configures Celery for handling background tasks including:
 - SSO token refresh
 - Scheduled maintenance tasks
+- TSA timestamping (RFC 3161)
 - Future async operations
 """
 
@@ -34,7 +35,7 @@ def create_celery_app(app: Flask = None) -> Celery:
         'saas_platform',
         broker=broker_url,
         backend=result_backend,
-        include=['app.tasks.sso_tasks', 'app.tasks.maintenance_tasks']
+        include=['app.tasks.sso_tasks', 'app.tasks.maintenance_tasks', 'app.tasks.tsa_tasks']
     )
 
     # Update configuration
@@ -51,6 +52,20 @@ def create_celery_app(app: Flask = None) -> Celery:
             'app.tasks.sso_tasks.*': {'queue': 'sso'},
             'app.tasks.maintenance_tasks.*': {'queue': 'maintenance'},
             'app.tasks.email_tasks.*': {'queue': 'email'},
+            'app.tasks.tsa_tasks.*': {'queue': 'tsa_timestamping'},
+        },
+
+        # Task-specific settings (rate limiting, timeouts)
+        task_annotations={
+            'app.tasks.tsa_tasks.timestamp_file': {
+                'rate_limit': '100/h',  # 100 timestamps per hour (conservative)
+                'time_limit': 120,      # 2 minutes hard limit
+                'soft_time_limit': 90,  # 90 seconds soft limit
+            },
+            'app.tasks.tsa_tasks.bulk_timestamp_files': {
+                'time_limit': 300,      # 5 minutes for scheduling
+                'soft_time_limit': 240,
+            }
         },
 
         # Task priorities

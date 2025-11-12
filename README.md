@@ -42,12 +42,24 @@
 - Document metadata management
 - Pre-signed URL generation for downloads
 - Pagination and filtering
+- **RFC 3161 TSA timestamping** for legal proof of existence
 
 ### ✅ File Management
 - Immutable file storage
 - Reference counting (shared files across documents)
 - Orphaned file detection and cleanup
 - Storage statistics per tenant
+
+### ✅ TSA Timestamping (RFC 3161)
+- **Per-tenant configuration**: Enable/disable TSA per organization
+- **Automatic timestamping**: New file uploads automatically timestamped
+- **DigiCert Public TSA**: Free, no authentication required
+- **SHA-256 fingerprints**: Cryptographically secure hashing
+- **Asynchronous processing**: Non-blocking Celery tasks
+- **Complete certificate chain**: Stored for long-term verification
+- **OpenSSL verification**: Independent timestamp validation
+- **Legally binding**: RFC 3161 compliant timestamps
+- **Download as .tsr**: Standard format compatible with all tools
 
 ### ✅ Async Processing
 - **Kafka**: Event streaming for real-time data processing
@@ -62,6 +74,7 @@
 
 - *** ✅ celery-worker-sso : Exécute les tâches de rafraîchissement
 - *** ✅ celery-beat : Schedule les tâches périodiques
+- *** ✅ celery-worker-tsa : Exécute les tâches d'horodatage
 - *** ✅ flower : Dashboard de monitoring (http://localhost:5555)
 
 
@@ -1027,6 +1040,242 @@ Common issues and solutions:
 4. **Token refresh failing**:
    - Check if refresh token has expired (90 days)
    - Verify Azure AD app permissions haven't changed
+
+---
+
+## TSA Timestamping Configuration
+
+The platform supports **RFC 3161 compliant timestamping** using DigiCert's public TSA service for legal proof of document existence at a specific time.
+
+### What is TSA Timestamping?
+
+TSA (Time-Stamp Authority) timestamping provides cryptographic proof that a document existed at a specific moment in time. This is legally binding and compliant with RFC 3161 standards, making it admissible in court and regulatory proceedings.
+
+**Use Cases:**
+- Legal document archiving
+- Compliance and audit trails
+- Intellectual property protection
+- Contract signing timestamps
+- Data integrity verification
+
+### Enabling TSA for a Tenant
+
+TSA can be enabled/disabled per tenant:
+
+```bash
+# Enable TSA for a tenant (Admin only)
+curl -X PUT http://localhost:4999/api/tenants/{tenant_id}/tsa/enable \
+  -H "Authorization: Bearer $ADMIN_TOKEN"
+
+# Check TSA status
+curl -X GET http://localhost:4999/api/tenants/{tenant_id}/tsa/status \
+  -H "Authorization: Bearer $TOKEN"
+```
+
+Or programmatically in Python:
+
+```python
+from app.models.tenant import Tenant
+from app.extensions import db
+
+tenant = Tenant.query.filter_by(name='Acme Corp').first()
+tenant.tsa_enabled = True
+db.session.commit()
+```
+
+### How It Works
+
+1. **File Upload**: User uploads a file to the tenant
+2. **Hashing**: System calculates MD5 (for dedup) + SHA-256 (for TSA)
+3. **Storage**: File record created in tenant database
+4. **Timestamping**: If TSA enabled, Celery task scheduled (5s delay)
+5. **TSA Request**: Worker sends SHA-256 hash to DigiCert TSA
+6. **Token Storage**: RFC 3161 timestamp token + certificate chain stored in metadata
+
+**Architecture:**
+- **Asynchronous**: Non-blocking Celery tasks (doesn't slow down uploads)
+- **Idempotent**: Won't re-timestamp if already done
+- **Retry Logic**: Automatic retry with exponential backoff
+- **Rate Limited**: 100 timestamps/hour per worker (configurable)
+
+### Downloading and Verifying Timestamps
+
+#### Step 1: Download Timestamp Token
+
+```bash
+# Download timestamp as .tsr file (RFC 3161 format)
+curl -o timestamp.tsr \
+  -H "Authorization: Bearer $TOKEN" \
+  http://localhost:4999/api/tenants/{tenant_id}/files/{file_id}/timestamp/download
+```
+
+#### Step 2: Download Original File
+
+```bash
+# Download the original file to verify against
+curl -o original_file.pdf \
+  -H "Authorization: Bearer $TOKEN" \
+  http://localhost:4999/api/tenants/{tenant_id}/documents/{doc_id}/download
+```
+
+#### Step 3: Download DigiCert Certificate Chain
+
+```bash
+# Download root certificate
+curl -o digicert_root.pem https://cacerts.digicert.com/DigiCertAssuredIDRootCA.crt.pem
+
+# Download intermediate certificate
+curl -o digicert_intermediate.pem https://cacerts.digicert.com/DigiCertSHA2AssuredIDTimestampingCA.crt.pem
+
+# Create complete certificate chain
+cat digicert_intermediate.pem digicert_root.pem > digicert_chain.pem
+```
+
+#### Step 4: Verify with OpenSSL
+
+```bash
+# Perform cryptographic verification
+openssl ts -verify \
+  -data original_file.pdf \
+  -in timestamp.tsr \
+  -CAfile digicert_chain.pem
+
+# Expected output:
+# Using configuration from /opt/homebrew/etc/openssl@3/openssl.cnf
+# Verification: OK
+```
+
+### Important Notes on Certificates
+
+⚠️ **Critical**: Use the correct DigiCert certificate chain:
+
+- **Root Certificate**: `DigiCertAssuredIDRootCA.crt.pem` (NOT Global Root G2)
+- **Intermediate Certificate**: `DigiCertSHA2AssuredIDTimestampingCA.crt.pem`
+- **Chain Order**: Intermediate + Root (concatenated in this order)
+
+Without the complete chain, you'll encounter the error:
+```
+error:17800064:time stamp routines:ts_verify_cert:certificate verify error
+Verify error:unable to get local issuer certificate
+```
+
+### Testing TSA Integration
+
+A complete test script is provided:
+
+```bash
+# Run the TSA upload and verification test
+./test_tsa_upload.sh
+
+# The script will:
+# 1. Login and get JWT token
+# 2. Upload a test file
+# 3. Wait for TSA task to complete
+# 4. Download timestamp token
+# 5. Download DigiCert certificates
+# 6. Verify timestamp with OpenSSL
+# 7. Display verification result
+```
+
+### TSA Endpoints
+
+```bash
+# Enable/Disable TSA
+PUT    /api/tenants/{id}/tsa/enable          # Enable TSA
+PUT    /api/tenants/{id}/tsa/disable         # Disable TSA
+
+# Status and Information
+GET    /api/tenants/{id}/tsa/status          # TSA configuration status
+GET    /api/tenants/{id}/files/{id}/timestamp  # Get timestamp metadata
+
+# Download and Verify
+GET    /api/tenants/{id}/files/{id}/timestamp/download  # Download .tsr file
+POST   /api/tenants/{id}/files/{id}/timestamp/verify    # Verify timestamp
+
+# Retroactive Timestamping (Admin only)
+POST   /api/tenants/{id}/files/{id}/timestamp/create     # Timestamp single file
+POST   /api/tenants/{id}/files/timestamp/bulk            # Bulk timestamping
+```
+
+### Configuration Options
+
+Environment variables for TSA:
+
+```bash
+# DigiCert TSA Configuration
+DIGICERT_TSA_URL=http://timestamp.digicert.com
+TSA_REQUEST_TIMEOUT=30          # Request timeout in seconds
+TSA_MAX_RETRIES=3               # Maximum retry attempts
+
+# Celery Configuration
+CELERY_TSA_QUEUE=tsa_timestamping
+CELERY_TSA_CONCURRENCY=4
+CELERY_TSA_RATE_LIMIT=100/h     # Timestamps per hour
+```
+
+### Security Features
+
+- **SHA-256 Hashing**: Cryptographically secure (MD5 is only for deduplication)
+- **Complete Certificate Chain**: Stored for long-term verification
+- **Immutable Timestamps**: Cannot be modified after creation
+- **Independent Verification**: Can be verified years later without the platform
+- **Legally Binding**: RFC 3161 compliant, admissible in court
+- **Free Service**: DigiCert public TSA requires no authentication
+
+### Long-Term Verification
+
+One of the key advantages of RFC 3161 timestamps is **independent, long-term verification**:
+
+- ✅ Verification possible 10+ years after timestamp creation
+- ✅ No dependency on the original platform
+- ✅ Works even if DigiCert's servers are offline
+- ✅ Compatible with any RFC 3161 compliant tool
+- ✅ Certificate chain ensures trust even after cert expiration
+
+**Example: Verifying a 10-year-old timestamp:**
+
+Even in 2035, you can verify a 2025 timestamp using:
+1. Original file (must be preserved)
+2. Timestamp token (.tsr file from database)
+3. DigiCert public certificates (available online)
+4. OpenSSL or any RFC 3161 tool
+
+### Monitoring TSA Tasks
+
+```bash
+# View TSA worker logs
+docker-compose logs -f celery-worker-tsa
+
+# Access Flower monitoring dashboard
+open http://localhost:5555
+
+# Check TSA queue status
+docker-compose exec celery-worker-tsa celery -A app.celery_app inspect active_queues
+```
+
+### Troubleshooting TSA
+
+Common issues and solutions:
+
+1. **"Timestamp download failed"**:
+   - Check if file has been timestamped (may still be processing)
+   - Wait 10-15 seconds after upload for async task to complete
+   - Check Celery worker logs for errors
+
+2. **"Verification: FAILED" with OpenSSL**:
+   - Ensure you're using the correct certificate chain (Assured ID Root CA)
+   - Verify file hasn't been modified since timestamp
+   - Check that intermediate certificate is included in chain
+
+3. **"Unable to get local issuer certificate"**:
+   - Missing intermediate certificate in chain
+   - Download both root + intermediate certificates
+   - Concatenate in correct order: intermediate first, then root
+
+4. **TSA task not running**:
+   - Check Celery worker is running: `docker-compose ps celery-worker-tsa`
+   - Verify tenant has TSA enabled: `tenant.tsa_enabled == True`
+   - Check Celery logs: `docker-compose logs celery-worker-tsa`
 
 ---
 

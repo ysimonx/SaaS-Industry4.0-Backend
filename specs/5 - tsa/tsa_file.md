@@ -7,6 +7,9 @@
 - Stockage du timestamp au niveau du **File** (dans `file_metadata` JSONB)
 - Processing **asynchrone via Celery** avec queue dédiée `tsa_timestamping`
 
+- le script complet de test avec verification final se trouve
+`scripts/tsa/test_tsa_upload.sh`
+
 ---
 
 ## Analyse de l'Architecture Existante
@@ -572,18 +575,35 @@ curl -o original_file.pdf \
   -H "Authorization: Bearer $TOKEN" \
   http://localhost:4999/api/tenants/12345/documents/67890/download
 
-# 3. Télécharger le certificat racine DigiCert
-wget https://cacerts.digicert.com/DigiCertGlobalRootG2.crt.pem -O digicert_root.pem
+# 3. Télécharger les certificats DigiCert (racine + intermédiaire)
+# IMPORTANT: Le certificat intermédiaire TSA est signé par DigiCert Assured ID Root CA
+# (PAS par Global Root G2)
 
-# 4. Vérifier avec OpenSSL
+# Télécharger le certificat racine correct
+curl -o digicert_root.pem https://cacerts.digicert.com/DigiCertAssuredIDRootCA.crt.pem
+
+# Télécharger le certificat intermédiaire (TSA)
+curl -o digicert_intermediate.pem https://cacerts.digicert.com/DigiCertSHA2AssuredIDTimestampingCA.crt.pem
+
+# Créer la chaîne de certification complète
+cat digicert_intermediate.pem digicert_root.pem > digicert_chain.pem
+
+# 4. Vérifier avec OpenSSL (utiliser la chaîne complète)
 openssl ts -verify \
   -data original_file.pdf \
   -in timestamp.tsr \
-  -CAfile digicert_root.pem
+  -CAfile digicert_chain.pem
 
 # Sortie attendue:
+# Using configuration from /opt/homebrew/etc/openssl@3/openssl.cnf
 # Verification: OK
 ```
+
+**Note importante sur les certificats:**
+- Le certificat TSA DigiCert est signé par **DigiCert Assured ID Root CA**
+- Ne PAS utiliser DigiCert Global Root G2 (différente chaîne de certification)
+- La chaîne complète doit inclure : certificat intermédiaire + certificat racine
+- Sans le certificat intermédiaire, vous obtiendrez l'erreur "unable to get local issuer certificate"
 
 **Format du fichier .tsr:**
 

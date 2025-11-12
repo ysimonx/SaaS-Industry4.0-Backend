@@ -16,6 +16,7 @@ from flask import Flask
 from app.config import get_config
 from app.extensions import db, migrate, jwt, cors, redis_manager
 from app.celery_app import create_celery_app
+from app.utils.database import tenant_db_manager
 
 # Create minimal Flask app for Celery workers (no routes needed)
 def create_celery_flask_app():
@@ -31,6 +32,7 @@ def create_celery_flask_app():
     migrate.init_app(app, db)
     jwt.init_app(app)
     redis_manager.init_app(app)
+    tenant_db_manager.init_app(app)  # Initialize tenant database manager for TSA tasks
 
     return app
 

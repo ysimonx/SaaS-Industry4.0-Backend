@@ -7,12 +7,15 @@
 3. [Multi-Tenancy Strategy](#multi-tenancy-strategy)
 4. [Database Architecture](#database-architecture)
 5. [Authentication & Authorization](#authentication--authorization)
-6. [File Storage Architecture](#file-storage-architecture)
-7. [Kafka Message Processing](#kafka-message-processing)
-8. [API Design](#api-design)
-9. [Security Considerations](#security-considerations)
-10. [Scalability & Performance](#scalability--performance)
-11. [Deployment Architecture](#deployment-architecture)
+6. [Redis Cache & Session Store](#redis-cache--session-store)
+7. [Celery Task Queue Architecture](#celery-task-queue-architecture)
+8. [TSA Timestamping Architecture (RFC 3161)](#tsa-timestamping-architecture-rfc-3161)
+9. [File Storage Architecture](#file-storage-architecture)
+10. [Kafka Message Processing](#kafka-message-processing)
+11. [API Design](#api-design)
+12. [Security Considerations](#security-considerations)
+13. [Scalability & Performance](#scalability--performance)
+14. [Deployment Architecture](#deployment-architecture)
 
 ---
 
@@ -27,7 +30,8 @@ The SaaS Multi-Tenant Backend Platform is a production-ready backend infrastruct
 - **Multi-Tenant Isolation**: Complete data isolation with dedicated databases per tenant
 - **Authentication & Authorization**: JWT-based authentication with role-based access control (RBAC)
 - **Document Management**: S3-based storage with MD5 deduplication within tenant boundaries
-- **Asynchronous Processing**: Kafka-based message queue for background tasks
+- **TSA Timestamping**: RFC 3161 compliant timestamping for legal proof of document existence
+- **Asynchronous Processing**: Kafka-based message queue and Celery task queue for background tasks
 - **RESTful APIs**: Comprehensive REST APIs following OpenAPI 3.0 specification
 - **Horizontal Scalability**: Stateless design supporting multiple API instances
 
@@ -1322,6 +1326,530 @@ def refresh_expiring_tokens():
    - Task failure rates
    - Worker memory usage
    - Redis connection pool
+
+---
+
+## TSA Timestamping Architecture (RFC 3161)
+
+### Overview
+
+The platform implements **RFC 3161 compliant timestamping** using DigiCert's public Time-Stamp Authority (TSA) to provide cryptographic proof of document existence at a specific time. This ensures legal compliance and long-term verification for document authenticity.
+
+### Architecture Components
+
+```
+┌────────────────────────────────────────────────────────────────┐
+│                    TSA Timestamping Flow                        │
+└────────────────────────────────────────────────────────────────┘
+
+1. User uploads file to tenant
+   ↓
+2. FileService calculates MD5 (deduplication) + SHA-256 (TSA)
+   ↓
+3. File record created with both hashes in tenant database
+   ↓
+4. If tenant.tsa_enabled = True:
+   ├─ Schedule timestamp_file Celery task (5s delay)
+   └─ Task added to 'tsa' queue
+   ↓
+5. Celery TSA Worker (celery-worker-tsa):
+   ├─ Retrieves file SHA-256 hash
+   ├─ Sends RFC 3161 TimeStampReq to DigiCert TSA
+   ├─ Receives TimeStampResp with signature + certificate chain
+   ├─ Stores token in file.file_metadata['tsa_timestamp']
+   └─ Updates file record in tenant database
+   ↓
+6. Client can download .tsr token for offline verification
+   └─ GET /api/tenants/{id}/files/{id}/timestamp/download
+
+TSA Service Features:
+- Asynchronous processing (no blocking during upload)
+- Retry logic (3 attempts with exponential backoff)
+- Rate limiting (100 timestamps/hour per worker)
+- Idempotent operations (won't re-timestamp if already done)
+- Complete certificate chain storage
+```
+
+### Database Schema
+
+#### Files Table (Tenant Database)
+
+```sql
+CREATE TABLE files (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    md5_hash VARCHAR(32) NOT NULL,           -- For deduplication
+    sha256_hash VARCHAR(64),                 -- For TSA timestamping
+    s3_path VARCHAR(1024) NOT NULL,
+    file_size BIGINT NOT NULL,
+    mime_type VARCHAR(255),
+    file_metadata JSONB DEFAULT '{}',        -- Stores tsa_timestamp
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Example metadata structure:
+{
+  "tsa_timestamp": {
+    "status": "success",
+    "token": "<base64_rfc3161_token>",
+    "algorithm": "sha256",
+    "serial_number": "0x123456789ABCDEF",
+    "gen_time": "2025-01-15T10:30:00Z",
+    "tsa_authority": "DigiCert Timestamp Authority",
+    "policy_oid": "2.16.840.1.114412.7.1",
+    "tsa_certificate": "<base64_cert>",
+    "certificate_chain": ["<base64_cert1>", "<base64_cert2>"],
+    "timestamped_at": "2025-01-15T10:30:05Z",
+    "task_id": "celery-task-uuid"
+  }
+}
+```
+
+#### Tenant Model (Main Database)
+
+```python
+class Tenant(db.Model):
+    __tablename__ = 'tenants'
+
+    id = db.Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    name = db.Column(db.String(255), nullable=False)
+    slug = db.Column(db.String(255), unique=True, nullable=False)
+    database_name = db.Column(db.String(255), unique=True, nullable=False)
+
+    # TSA Configuration
+    tsa_enabled = db.Column(db.Boolean, default=False, nullable=False)
+
+    # Other fields...
+```
+
+### Service Implementation
+
+#### DigiCertTSAService
+
+Located in: `backend/app/services/digicert_tsa_service.py`
+
+```python
+class DigiCertTSAService:
+    """RFC 3161 compliant TSA client for DigiCert"""
+
+    TSA_URL = os.getenv('DIGICERT_TSA_URL', 'http://timestamp.digicert.com')
+    TIMEOUT = int(os.getenv('TSA_REQUEST_TIMEOUT', '30'))
+    MAX_RETRIES = int(os.getenv('TSA_MAX_RETRIES', '3'))
+
+    @classmethod
+    def timestamp_data(cls, data_hash: bytes, algorithm: str = 'sha256'):
+        """
+        Create RFC 3161 timestamp request for SHA-256 hash
+
+        Args:
+            data_hash: SHA-256 hash of the document (32 bytes)
+            algorithm: Hash algorithm (only 'sha256' supported)
+
+        Returns:
+            dict: {
+                'status': 'success',
+                'token': '<base64_rfc3161_token>',
+                'serial_number': '0x123...',
+                'gen_time': '2025-01-15T10:30:00Z',
+                'tsa_authority': 'DigiCert Timestamp Authority',
+                'policy_oid': '2.16.840.1.114412.7.1',
+                'tsa_certificate': '<base64_cert>',
+                'certificate_chain': ['<cert1>', '<cert2>']
+            }
+        """
+        # Build TimeStampReq using rfc3161ng
+        # Send HTTP POST to TSA URL
+        # Parse TimeStampResp
+        # Extract token, serial, gen_time, certificates
+        # Return structured response
+```
+
+Key features:
+- **SHA-256 only**: MD5 is cryptographically broken, not suitable for TSA
+- **Complete certificate chain**: Stores both TSA certificate and intermediate/root CAs
+- **ASN.1 parsing**: Uses rfc3161ng library for proper RFC 3161 compliance
+- **Error handling**: Returns structured error messages for debugging
+
+#### Celery Task
+
+Located in: `backend/app/tasks/tsa_tasks.py`
+
+```python
+@celery_app.task(bind=True, max_retries=3, default_retry_delay=60)
+def timestamp_file(self, file_id: str, database_name: str):
+    """
+    Asynchronously timestamp a file using DigiCert TSA
+
+    Args:
+        file_id: UUID of the file in tenant database
+        database_name: Tenant database name (e.g., 'tenant_acme_123')
+
+    Flow:
+        1. Retrieve file record from tenant database
+        2. Check if already timestamped (idempotent)
+        3. Get SHA-256 hash from file record
+        4. Call DigiCertTSAService.timestamp_data()
+        5. Store result in file.file_metadata['tsa_timestamp']
+        6. Commit changes to tenant database
+
+    Retry Strategy:
+        - Max retries: 3
+        - Exponential backoff: 60s, 120s, 240s
+        - Retries on: NetworkError, TSAServiceError
+        - No retry on: ValidationError (SHA-256 missing)
+    """
+    try:
+        # Implementation with tenant database context
+        with tenant_db_manager.tenant_db_session(database_name) as session:
+            # File retrieval, timestamping, storage
+    except Exception as e:
+        # Exponential backoff retry
+        raise self.retry(exc=e, countdown=60 * (2 ** self.request.retries))
+```
+
+Task queue configuration:
+```python
+CELERY_TASK_ROUTES = {
+    'app.tasks.tsa_tasks.*': {'queue': 'tsa'},
+}
+
+# Rate limiting: 100 timestamps per hour per worker
+@celery_app.task(rate_limit='100/h')
+def timestamp_file(self, file_id, database_name):
+    # ...
+```
+
+### Certificate Chain Verification
+
+#### DigiCert Certificate Hierarchy
+
+```
+DigiCert Certificate Chain for TSA:
+
+Root CA:
+├─ DigiCert Assured ID Root CA
+   └─ URL: https://cacerts.digicert.com/DigiCertAssuredIDRootCA.crt.pem
+   └─ Valid until: November 10, 2031
+
+Intermediate CA:
+├─ DigiCert SHA2 Assured ID Timestamping CA
+   └─ URL: https://cacerts.digicert.com/DigiCertSHA2AssuredIDTimestampingCA.crt.pem
+   └─ Signed by: DigiCert Assured ID Root CA
+
+TSA Certificate:
+└─ DigiCert Timestamp 2024 (issued by intermediate)
+   └─ Included in TimeStampResp
+```
+
+**IMPORTANT**: The intermediate certificate is signed by **DigiCert Assured ID Root CA**, NOT by DigiCert Global Root G2. Using the wrong root certificate will result in verification failure:
+```
+error:17800064:time stamp routines:ts_verify_cert:certificate verify error
+Verify error:unable to get local issuer certificate
+```
+
+#### OpenSSL Verification Process
+
+Complete 4-step verification with correct certificate chain:
+
+```bash
+# 1. Download timestamp token (.tsr file)
+curl -o timestamp.tsr \
+  -H "Authorization: Bearer $TOKEN" \
+  http://localhost:4999/api/tenants/{tenant_id}/files/{file_id}/timestamp/download
+
+# 2. Download original file
+curl -o original_file.pdf \
+  -H "Authorization: Bearer $TOKEN" \
+  http://localhost:4999/api/tenants/{tenant_id}/documents/{doc_id}/download
+
+# 3. Download DigiCert certificate chain (CRITICAL: use correct root)
+# Download root certificate (DigiCert Assured ID Root CA)
+curl -o digicert_root.pem \
+  https://cacerts.digicert.com/DigiCertAssuredIDRootCA.crt.pem
+
+# Download intermediate certificate (SHA2 Timestamping CA)
+curl -o digicert_intermediate.pem \
+  https://cacerts.digicert.com/DigiCertSHA2AssuredIDTimestampingCA.crt.pem
+
+# Create combined certificate chain file (intermediate + root)
+cat digicert_intermediate.pem digicert_root.pem > digicert_chain.pem
+
+# 4. Verify with OpenSSL
+openssl ts -verify \
+  -data original_file.pdf \
+  -in timestamp.tsr \
+  -CAfile digicert_chain.pem
+
+# Expected output:
+# Verification: OK
+```
+
+The verification confirms:
+- ✅ Timestamp token signature is valid
+- ✅ TSA certificate is trusted (signed by DigiCert root)
+- ✅ File hash matches the timestamped hash
+- ✅ Document existed at the specific time (gen_time)
+
+#### Long-Term Verification
+
+The complete certificate chain storage ensures verification even after certificate expiry:
+
+```
+Current (2025):
+- TSA cert valid → Verify with TSA cert
+
+10 years later (2035):
+- TSA cert expired → Verify with stored certificate chain
+- Root CA still trusted → Verification succeeds
+
+Why this works:
+- Timestamp proves document existed when TSA cert was valid
+- Certificate chain validates the signature at that historical time
+- Trust is based on the time of signing, not current validity
+```
+
+This is critical for legal documents that need verification decades after creation.
+
+### API Endpoints
+
+#### Download Timestamp Token
+
+```http
+GET /api/tenants/{tenant_id}/files/{file_id}/timestamp/download
+Authorization: Bearer <jwt_token>
+```
+
+Response:
+```
+Content-Type: application/timestamp-reply
+Content-Disposition: attachment; filename="timestamp_{file_id}.tsr"
+
+<binary RFC 3161 TimeStampResp in ASN.1 DER format>
+```
+
+The `.tsr` file can be verified offline using OpenSSL or integrated into document signing workflows (e.g., PDF signing with Adobe Acrobat).
+
+#### Check Timestamp Status
+
+```http
+GET /api/tenants/{tenant_id}/files/{file_id}
+Authorization: Bearer <jwt_token>
+```
+
+Response includes TSA metadata:
+```json
+{
+  "id": "123e4567-e89b-12d3-a456-426614174000",
+  "md5_hash": "098f6bcd4621d373cade4e832627b4f6",
+  "sha256_hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "file_metadata": {
+    "tsa_timestamp": {
+      "status": "success",
+      "serial_number": "0x0a1b2c3d4e5f6789",
+      "gen_time": "2025-01-15T10:30:00Z",
+      "tsa_authority": "DigiCert Timestamp Authority",
+      "timestamped_at": "2025-01-15T10:30:05Z"
+    }
+  }
+}
+```
+
+### Configuration
+
+#### Environment Variables
+
+```bash
+# TSA Service Configuration
+DIGICERT_TSA_URL=http://timestamp.digicert.com
+TSA_REQUEST_TIMEOUT=30          # Seconds
+TSA_MAX_RETRIES=3               # Retry attempts
+
+# Celery TSA Worker Configuration
+CELERY_TSA_QUEUE=tsa
+CELERY_TSA_CONCURRENCY=2        # Parallel workers
+CELERY_TSA_RATE_LIMIT=100/h     # Max timestamps per hour
+```
+
+#### Docker Services
+
+```yaml
+# docker-compose.yml
+
+celery-worker-tsa:
+  build: ./backend
+  command: celery -A app.celery_app worker -Q tsa --loglevel=info
+  environment:
+    CELERY_BROKER_URL: redis://redis:6379/3
+    CELERY_RESULT_BACKEND: redis://redis:6379/4
+    DIGICERT_TSA_URL: http://timestamp.digicert.com
+    TSA_REQUEST_TIMEOUT: 30
+  depends_on:
+    - redis
+    - postgres
+  volumes:
+    - ./backend:/app
+```
+
+#### Enable TSA for Tenant
+
+```python
+# Enable TSA via API (admin only)
+PATCH /api/tenants/{tenant_id}
+Authorization: Bearer <admin_jwt_token>
+Content-Type: application/json
+
+{
+  "tsa_enabled": true
+}
+
+# Enable TSA programmatically
+from app.models.tenant import Tenant
+from app.extensions import db
+
+tenant = Tenant.query.filter_by(name='Acme Corp').first()
+tenant.tsa_enabled = True
+db.session.commit()
+```
+
+### Security Features
+
+1. **SHA-256 Hashing**: Uses cryptographically secure SHA-256 (not MD5)
+2. **RFC 3161 Compliance**: Industry-standard timestamping protocol
+3. **Certificate Chain Storage**: Complete trust chain for long-term verification
+4. **Rate Limiting**: Prevents abuse (100 timestamps/hour per worker)
+5. **Idempotent Operations**: Won't re-timestamp already timestamped files
+6. **Asynchronous Processing**: TSA requests don't block file uploads
+7. **Audit Trail**: All timestamp operations logged with task_id
+
+### Use Cases
+
+#### Legal Compliance
+
+- **Contracts**: Prove contract existed before signature date
+- **Intellectual Property**: Establish creation date for patents/copyrights
+- **Financial Records**: Timestamp invoices and receipts for audits
+- **Medical Records**: Prove document integrity for HIPAA compliance
+
+#### Document Authenticity
+
+- **Notarization**: Cryptographic proof equivalent to notary seal
+- **Evidence Preservation**: Tamper-proof timestamps for legal evidence
+- **Archival**: Long-term verification (10+ years)
+
+### Monitoring
+
+#### Celery Flower Dashboard
+
+Monitor TSA tasks at: `http://localhost:5555`
+
+Key metrics:
+- Timestamp requests per hour
+- Task success/failure rates
+- Queue length and processing time
+- Worker memory and CPU usage
+
+```bash
+# View TSA worker logs
+docker-compose logs -f celery-worker-tsa
+
+# Monitor TSA queue
+docker-compose exec redis redis-cli
+> LLEN tsa  # Queue length
+```
+
+#### Task Metrics
+
+```python
+# Example task result
+{
+  'task_id': '550e8400-e29b-41d4-a716-446655440000',
+  'file_id': '123e4567-e89b-12d3-a456-426614174000',
+  'status': 'success',
+  'gen_time': '2025-01-15T10:30:00Z',
+  'processing_time': 1.23,  # seconds
+  'retry_count': 0
+}
+```
+
+### Troubleshooting
+
+#### Common Issues
+
+1. **"SHA-256 hash not found for file"**
+   - Cause: File uploaded before SHA-256 migration
+   - Fix: Run tenant migration #3 to add sha256_hash column
+   ```bash
+   docker-compose exec api python scripts/migrate_all_tenants.py
+   ```
+
+2. **"Certificate verify error: unable to get local issuer certificate"**
+   - Cause: Using wrong root certificate (Global Root G2 instead of Assured ID Root CA)
+   - Fix: Download correct certificate chain (see verification section)
+
+3. **"TSA request timeout after 30 seconds"**
+   - Cause: Network connectivity issues to DigiCert TSA
+   - Fix: Check firewall rules, increase TSA_REQUEST_TIMEOUT
+
+4. **"Rate limit exceeded: 100/h"**
+   - Cause: Too many timestamp requests
+   - Fix: Scale TSA workers or increase rate limit
+
+### Testing
+
+Use the provided test script to verify TSA functionality:
+
+```bash
+# Run complete TSA upload and verification test
+bash test_tsa_upload.sh
+
+# Test includes:
+# 1. Login and get JWT token
+# 2. Upload file to tenant
+# 3. Wait for async TSA task (10 seconds)
+# 4. Check database for TSA metadata
+# 5. Download timestamp token (.tsr file)
+# 6. Display timestamp info with OpenSSL
+# 7. Download DigiCert certificate chain
+# 8. Verify timestamp authenticity with OpenSSL
+# 9. Confirm "Verification: OK"
+```
+
+Expected test output:
+```
+Step 7: Display timestamp info with OpenSSL
+Status: Granted.
+Time stamp: Jan 15 10:30:00 2025 GMT
+Serial number: 0A1B2C3D4E5F6789
+
+Step 9: Verify timestamp authenticity with OpenSSL
+Running OpenSSL verification...
+Verification: OK
+
+✓ VERIFICATION SUCCESSFUL - Timestamp is authentic
+```
+
+### Production Considerations
+
+1. **TSA Service Availability**
+   - DigiCert TSA is a free public service (no SLA)
+   - Consider fallback to secondary TSA provider
+   - Implement circuit breaker pattern for resilience
+
+2. **Scaling**
+   ```bash
+   # Scale TSA workers during high load
+   docker-compose up -d --scale celery-worker-tsa=5
+   ```
+
+3. **Storage**
+   - Average token size: 5-10 KB per file
+   - Store in JSONB for efficient querying
+   - Consider archiving old timestamps to cold storage
+
+4. **Performance**
+   - TSA requests typically complete in 1-2 seconds
+   - Rate limit: 100 timestamps/hour per worker (DigiCert limit)
+   - Use Redis for task queue (sub-second latency)
 
 ---
 

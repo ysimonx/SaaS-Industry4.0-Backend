@@ -4898,3 +4898,1009 @@ WHERE tenants.id = %(id_1)s::UUID AND tenants.is_active = true
 2025-11-10 21:29:13,563 - app - INFO - Flask app created with config: development
 2025-11-10 21:29:13,564 - app - INFO - Debug mode: True
 2025-11-10 21:29:13,564 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-12 09:17:45,956 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-12 09:17:45,957 - app - INFO - Flask app created with config: development
+2025-11-12 09:17:45,957 - app - INFO - Debug mode: True
+2025-11-12 09:17:45,957 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-12 09:17:45,960 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-12 09:17:45,960 - app - INFO - Flask app created with config: development
+2025-11-12 09:17:45,960 - app - INFO - Debug mode: True
+2025-11-12 09:17:45,960 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-12 09:17:46,016 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-12 09:17:46,016 - app - INFO - Flask app created with config: development
+2025-11-12 09:17:46,017 - app - INFO - Debug mode: True
+2025-11-12 09:17:46,017 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-12 09:17:46,034 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-12 09:17:46,034 - app - INFO - Flask app created with config: development
+2025-11-12 09:17:46,034 - app - INFO - Debug mode: True
+2025-11-12 09:17:46,034 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-12 09:18:28,871 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-12 09:18:28,873 - app - INFO - Flask app created with config: development
+2025-11-12 09:18:28,873 - app - INFO - Debug mode: True
+2025-11-12 09:18:28,873 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-12 09:18:36,791 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-12 09:18:36,792 - app - INFO - Flask app created with config: development
+2025-11-12 09:18:36,792 - app - INFO - Debug mode: True
+2025-11-12 09:18:36,792 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-12 09:18:43,099 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-12 09:18:43,099 - app - INFO - Flask app created with config: development
+2025-11-12 09:18:43,100 - app - INFO - Debug mode: True
+2025-11-12 09:18:43,100 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-12 09:19:00,959 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-12 09:19:00,959 - app - INFO - Flask app created with config: development
+2025-11-12 09:19:00,960 - app - INFO - Debug mode: True
+2025-11-12 09:19:00,960 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-12 09:19:00,996 - app.tenant_db.tenant_migrations - DEBUG - Schema version table doesn't exist yet: (psycopg2.errors.UndefinedTable) relation "tenant_schema_version" does not exist
+LINE 1: SELECT version FROM tenant_schema_version ORDER BY version D...
+                            ^
+
+[SQL: SELECT version FROM tenant_schema_version ORDER BY version DESC LIMIT 1]
+(Background on this error at: https://sqlalche.me/e/20/f405)
+2025-11-12 09:19:01,015 - app.tenant_db.tenant_migrations - INFO - Created tenant_schema_version table
+2025-11-12 09:19:01,018 - app.tenant_db.tenant_migrations - INFO - Applying migration v1: initial_schema
+2025-11-12 09:19:01,020 - app.tenant_db.tenant_migrations - INFO - ✓ Migration v1 applied successfully
+2025-11-12 09:19:01,020 - app.tenant_db.tenant_migrations - INFO - Applying migration v2: add_file_metadata_column
+2025-11-12 09:19:01,025 - app.tenant_db.tenant_migrations - INFO - ✓ Migration v2 applied successfully
+2025-11-12 09:26:06,380 - app.utils.decorators - DEBUG - Authenticated user: 0d9694f2-af6c-4724-8980-cb40bf198e9c
+2025-11-12 09:26:21,747 - app.utils.decorators - DEBUG - Authenticated user: 0d9694f2-af6c-4724-8980-cb40bf198e9c
+2025-11-12 09:26:21,834 - app.utils.database - INFO - Created engine for tenant database: tenant_fidwork_916d299c
+2025-11-12 09:26:21,834 - app.utils.database - INFO - Created session factory for tenant database: tenant_fidwork_916d299c
+2025-11-12 09:26:21,865 - app.routes.files - INFO - Retrieved 0 files for tenant 964fd8df-6c81-4698-a7b6-4f1825c71c45 (page 1/0, total: 0)
+2025-11-12 09:26:21,866 - app.utils.database - DEBUG - Committed transaction for tenant: tenant_fidwork_916d299c
+2025-11-12 09:28:45,986 - app.utils.decorators - DEBUG - Authenticated user: 0d9694f2-af6c-4724-8980-cb40bf198e9c
+2025-11-12 09:28:45,989 - app.routes.documents - INFO - Uploading document: tenant_id=964fd8df-6c81-4698-a7b6-4f1825c71c45, user_id=0d9694f2-af6c-4724-8980-cb40bf198e9c
+2025-11-12 09:28:46,030 - app.schemas.document_schema - DEBUG - Validated filename for upload: test.png
+2025-11-12 09:28:46,031 - app.schemas.document_schema - DEBUG - Validated MIME type for upload: image/png
+2025-11-12 09:28:46,031 - app.schemas.document_schema - DEBUG - Normalized filename for upload: test.png
+2025-11-12 09:28:46,031 - app.schemas.document_schema - DEBUG - Normalized MIME type for upload: image/png
+2025-11-12 09:28:46,032 - app.routes.documents - INFO - File MD5: 277bb346154b424f12124775cc9a0f89, size: 321589 bytes
+2025-11-12 09:28:46,037 - app.utils.database - INFO - Created engine for tenant database: tenant_fidwork_916d299c
+2025-11-12 09:28:46,037 - app.utils.database - INFO - Created session factory for tenant database: tenant_fidwork_916d299c
+2025-11-12 09:28:46,060 - app.models.file - DEBUG - Generated S3 path: tenants/tenant_fidwork_916d299c/files/27/7b/277bb346154b424f12124775cc9a0f89_temp
+2025-11-12 09:28:46,061 - app.models.file - INFO - File object initialized: md5=277bb346154b424f12124775cc9a0f89, size=321589, s3_path=tenants/tenant_fidwork_916d299c/files/27/7b/277bb346154b424f12124775cc9a0f89_temp
+2025-11-12 09:28:46,070 - app.models.file - DEBUG - Generated S3 path: tenants/tenant_fidwork_916d299c/files/27/7b/277bb346154b424f12124775cc9a0f89_3c0c3bab-0434-4e6d-91fe-5c6b9b73eeac
+2025-11-12 09:28:46,074 - app.routes.documents - INFO - Created new file: file_id=3c0c3bab-0434-4e6d-91fe-5c6b9b73eeac, md5=277bb346154b424f12124775cc9a0f89, s3_path=tenants/tenant_fidwork_916d299c/files/27/7b/277bb346154b424f12124775cc9a0f89_3c0c3bab-0434-4e6d-91fe-5c6b9b73eeac
+2025-11-12 09:28:46,494 - app.utils.s3_client - DEBUG - S3 client initialized: bucket=saas-documents, region=us-east-1, endpoint=http://minio:9000, public_url=http://minio:9000, use_ssl=False
+2025-11-12 09:28:46,495 - app.utils.s3_client - INFO - S3 client initialized: bucket=saas-documents
+2025-11-12 09:28:46,528 - app.utils.s3_client - DEBUG - Uploaded file to S3: bucket=saas-documents, path=tenants/tenant_fidwork_916d299c/files/27/7b/277bb346154b424f12124775cc9a0f89_3c0c3bab-0434-4e6d-91fe-5c6b9b73eeac, content_type=image/png
+2025-11-12 09:28:46,530 - app.utils.s3_client - INFO - File uploaded to S3: tenants/tenant_fidwork_916d299c/files/27/7b/277bb346154b424f12124775cc9a0f89_3c0c3bab-0434-4e6d-91fe-5c6b9b73eeac
+2025-11-12 09:28:46,533 - app.models.document - INFO - Document object initialized: filename=test.png, mime_type=image/png, file_id=3c0c3bab-0434-4e6d-91fe-5c6b9b73eeac, user_id=0d9694f2-af6c-4724-8980-cb40bf198e9c
+2025-11-12 09:28:46,549 - app.routes.documents - INFO - Document uploaded successfully: document_id=99ce8bb9-e41f-4849-8a05-a346299ba3dd, file_id=3c0c3bab-0434-4e6d-91fe-5c6b9b73eeac
+2025-11-12 09:28:46,552 - app.utils.database - DEBUG - Committed transaction for tenant: tenant_fidwork_916d299c
+2025-11-12 10:14:43,745 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-12 10:14:43,745 - app - INFO - Flask app created with config: development
+2025-11-12 10:14:43,745 - app - INFO - Debug mode: True
+2025-11-12 10:14:43,746 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-12 10:15:06,326 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-12 10:15:06,327 - app - INFO - Flask app created with config: development
+2025-11-12 10:15:06,327 - app - INFO - Debug mode: True
+2025-11-12 10:15:06,327 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-12 10:30:59,522 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-12 10:30:59,522 - app - INFO - Flask app created with config: development
+2025-11-12 10:30:59,523 - app - INFO - Debug mode: True
+2025-11-12 10:30:59,523 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-12 10:30:59,523 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-12 10:30:59,523 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-12 10:30:59,523 - app - INFO - Flask app created with config: development
+2025-11-12 10:30:59,524 - app - INFO - Flask app created with config: development
+2025-11-12 10:30:59,524 - app - INFO - Debug mode: True
+2025-11-12 10:30:59,524 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-12 10:30:59,524 - app - INFO - Debug mode: True
+2025-11-12 10:30:59,524 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-12 10:30:59,527 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-12 10:30:59,527 - app - INFO - Flask app created with config: development
+2025-11-12 10:30:59,527 - app - INFO - Debug mode: True
+2025-11-12 10:30:59,527 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-12 11:07:09,880 - app.utils.decorators - DEBUG - Authenticated user: 0d9694f2-af6c-4724-8980-cb40bf198e9c
+2025-11-12 11:07:09,997 - app.utils.database - INFO - Created engine for tenant database: tenant_fidwork_916d299c
+2025-11-12 11:07:09,998 - app.utils.database - INFO - Created session factory for tenant database: tenant_fidwork_916d299c
+2025-11-12 11:07:10,036 - app.routes.files - INFO - Retrieved 1 files for tenant 964fd8df-6c81-4698-a7b6-4f1825c71c45 (page 1/1, total: 1)
+2025-11-12 11:07:10,038 - app.utils.database - DEBUG - Committed transaction for tenant: tenant_fidwork_916d299c
+2025-11-12 11:07:57,666 - app.utils.decorators - DEBUG - Authenticated user: 0d9694f2-af6c-4724-8980-cb40bf198e9c
+2025-11-12 11:07:57,672 - app.routes.documents - INFO - Uploading document: tenant_id=964fd8df-6c81-4698-a7b6-4f1825c71c45, user_id=0d9694f2-af6c-4724-8980-cb40bf198e9c
+2025-11-12 11:07:57,841 - app.schemas.document_schema - DEBUG - Validated filename for upload: test2.png
+2025-11-12 11:07:57,842 - app.schemas.document_schema - DEBUG - Validated MIME type for upload: image/png
+2025-11-12 11:07:57,842 - app.schemas.document_schema - DEBUG - Normalized filename for upload: test2.png
+2025-11-12 11:07:57,842 - app.schemas.document_schema - DEBUG - Normalized MIME type for upload: image/png
+2025-11-12 11:07:57,843 - app.routes.documents - INFO - File MD5: 277bb346154b424f12124775cc9a0f89, size: 321589 bytes
+2025-11-12 11:07:57,851 - app.utils.database - INFO - Created engine for tenant database: tenant_fidwork_916d299c
+2025-11-12 11:07:57,852 - app.utils.database - INFO - Created session factory for tenant database: tenant_fidwork_916d299c
+2025-11-12 11:07:57,871 - app.routes.documents - INFO - Reusing existing file: file_id=3c0c3bab-0434-4e6d-91fe-5c6b9b73eeac, md5=277bb346154b424f12124775cc9a0f89
+2025-11-12 11:07:57,872 - app.models.document - INFO - Document object initialized: filename=test2.png, mime_type=image/png, file_id=3c0c3bab-0434-4e6d-91fe-5c6b9b73eeac, user_id=0d9694f2-af6c-4724-8980-cb40bf198e9c
+2025-11-12 11:07:57,886 - app.routes.documents - INFO - Document uploaded successfully: document_id=2e4cd6aa-1034-4b68-b1e3-d50bf54ceffd, file_id=3c0c3bab-0434-4e6d-91fe-5c6b9b73eeac
+2025-11-12 11:07:57,892 - app.utils.database - DEBUG - Committed transaction for tenant: tenant_fidwork_916d299c
+2025-11-12 11:12:55,798 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-12 11:12:55,798 - app - INFO - Flask app created with config: development
+2025-11-12 11:12:55,799 - app - INFO - Debug mode: True
+2025-11-12 11:12:55,799 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-12 11:13:08,830 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-12 11:13:08,830 - app - INFO - Flask app created with config: development
+2025-11-12 11:13:08,830 - app - INFO - Debug mode: True
+2025-11-12 11:13:08,830 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-12 11:13:40,055 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-12 11:13:40,055 - app - INFO - Flask app created with config: development
+2025-11-12 11:13:40,055 - app - INFO - Debug mode: True
+2025-11-12 11:13:40,055 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-12 11:13:40,089 - app.tenant_db.tenant_migrations - INFO - Applying migration v3: add_sha256_hash_column
+2025-11-12 11:13:40,101 - app.tenant_db.tenant_migrations - INFO - ✓ Migration v3 applied successfully
+2025-11-12 11:14:59,533 - app.utils.decorators - DEBUG - Authenticated user: 0d9694f2-af6c-4724-8980-cb40bf198e9c
+2025-11-12 11:14:59,536 - app.routes.documents - INFO - Uploading document: tenant_id=964fd8df-6c81-4698-a7b6-4f1825c71c45, user_id=0d9694f2-af6c-4724-8980-cb40bf198e9c
+2025-11-12 11:15:01,671 - app.schemas.document_schema - DEBUG - Validated filename for upload: test2.png
+2025-11-12 11:15:01,672 - app.schemas.document_schema - DEBUG - Validated MIME type for upload: image/png
+2025-11-12 11:15:01,672 - app.schemas.document_schema - DEBUG - Normalized filename for upload: test2.png
+2025-11-12 11:15:01,672 - app.schemas.document_schema - DEBUG - Normalized MIME type for upload: image/png
+2025-11-12 11:15:01,673 - app.routes.documents - INFO - File MD5: 3c0b59b06747c740980aef0c004edc70, size: 109784 bytes
+2025-11-12 11:15:01,683 - app.utils.database - INFO - Created engine for tenant database: tenant_fidwork_916d299c
+2025-11-12 11:15:01,684 - app.utils.database - INFO - Created session factory for tenant database: tenant_fidwork_916d299c
+2025-11-12 11:15:01,707 - app.models.file - DEBUG - Generated S3 path: tenants/tenant_fidwork_916d299c/files/3c/0b/3c0b59b06747c740980aef0c004edc70_temp
+2025-11-12 11:15:01,708 - app.models.file - INFO - File object initialized: md5=3c0b59b06747c740980aef0c004edc70, size=109784, s3_path=tenants/tenant_fidwork_916d299c/files/3c/0b/3c0b59b06747c740980aef0c004edc70_temp
+2025-11-12 11:15:01,717 - app.models.file - DEBUG - Generated S3 path: tenants/tenant_fidwork_916d299c/files/3c/0b/3c0b59b06747c740980aef0c004edc70_3ad77f6a-3b8c-4be6-9db3-e61620f90c0a
+2025-11-12 11:15:01,720 - app.routes.documents - INFO - Created new file: file_id=3ad77f6a-3b8c-4be6-9db3-e61620f90c0a, md5=3c0b59b06747c740980aef0c004edc70, s3_path=tenants/tenant_fidwork_916d299c/files/3c/0b/3c0b59b06747c740980aef0c004edc70_3ad77f6a-3b8c-4be6-9db3-e61620f90c0a
+2025-11-12 11:15:02,322 - app.utils.s3_client - DEBUG - S3 client initialized: bucket=saas-documents, region=us-east-1, endpoint=http://minio:9000, public_url=http://minio:9000, use_ssl=False
+2025-11-12 11:15:02,322 - app.utils.s3_client - INFO - S3 client initialized: bucket=saas-documents
+2025-11-12 11:15:02,365 - app.utils.s3_client - DEBUG - Uploaded file to S3: bucket=saas-documents, path=tenants/tenant_fidwork_916d299c/files/3c/0b/3c0b59b06747c740980aef0c004edc70_3ad77f6a-3b8c-4be6-9db3-e61620f90c0a, content_type=image/png
+2025-11-12 11:15:02,365 - app.utils.s3_client - INFO - File uploaded to S3: tenants/tenant_fidwork_916d299c/files/3c/0b/3c0b59b06747c740980aef0c004edc70_3ad77f6a-3b8c-4be6-9db3-e61620f90c0a
+2025-11-12 11:15:02,366 - app.models.document - INFO - Document object initialized: filename=test2.png, mime_type=image/png, file_id=3ad77f6a-3b8c-4be6-9db3-e61620f90c0a, user_id=0d9694f2-af6c-4724-8980-cb40bf198e9c
+2025-11-12 11:15:02,370 - app.routes.documents - INFO - Document uploaded successfully: document_id=ba24b370-678f-43b9-bbfe-fa59131b7b61, file_id=3ad77f6a-3b8c-4be6-9db3-e61620f90c0a
+2025-11-12 11:15:02,371 - app.utils.database - DEBUG - Committed transaction for tenant: tenant_fidwork_916d299c
+2025-11-12 11:17:36,379 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-12 11:17:36,380 - app - INFO - Flask app created with config: development
+2025-11-12 11:17:36,380 - app - INFO - Debug mode: True
+2025-11-12 11:17:36,380 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-12 11:17:36,381 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-12 11:17:36,381 - app - INFO - Flask app created with config: development
+2025-11-12 11:17:36,381 - app - INFO - Debug mode: True
+2025-11-12 11:17:36,381 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-12 11:17:36,384 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-12 11:17:36,384 - app - INFO - Flask app created with config: development
+2025-11-12 11:17:36,384 - app - INFO - Debug mode: True
+2025-11-12 11:17:36,384 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-12 11:17:36,388 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-12 11:17:36,388 - app - INFO - Flask app created with config: development
+2025-11-12 11:17:36,388 - app - INFO - Debug mode: True
+2025-11-12 11:17:36,388 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-12 11:18:31,231 - app.utils.decorators - DEBUG - Authenticated user: 0d9694f2-af6c-4724-8980-cb40bf198e9c
+2025-11-12 11:18:31,233 - app.routes.documents - INFO - Uploading document: tenant_id=964fd8df-6c81-4698-a7b6-4f1825c71c45, user_id=0d9694f2-af6c-4724-8980-cb40bf198e9c
+2025-11-12 11:18:32,896 - app.schemas.document_schema - DEBUG - Validated filename for upload: go1.jpg
+2025-11-12 11:18:32,897 - app.schemas.document_schema - DEBUG - Validated MIME type for upload: image/jpeg
+2025-11-12 11:18:32,898 - app.schemas.document_schema - DEBUG - Normalized filename for upload: go1.jpg
+2025-11-12 11:18:32,898 - app.schemas.document_schema - DEBUG - Normalized MIME type for upload: image/jpeg
+2025-11-12 11:18:32,899 - app.routes.documents - INFO - File MD5: b4a06d0ae7e2c2954389bb1c88ccf5d2, size: 139114 bytes
+2025-11-12 11:18:32,908 - app.utils.database - INFO - Created engine for tenant database: tenant_fidwork_916d299c
+2025-11-12 11:18:32,908 - app.utils.database - INFO - Created session factory for tenant database: tenant_fidwork_916d299c
+2025-11-12 11:18:32,939 - app.models.file - DEBUG - Generated S3 path: tenants/tenant_fidwork_916d299c/files/b4/a0/b4a06d0ae7e2c2954389bb1c88ccf5d2_temp
+2025-11-12 11:18:32,940 - app.models.file - INFO - File object initialized: md5=b4a06d0ae7e2c2954389bb1c88ccf5d2, size=139114, s3_path=tenants/tenant_fidwork_916d299c/files/b4/a0/b4a06d0ae7e2c2954389bb1c88ccf5d2_temp
+2025-11-12 11:18:32,943 - app.models.file - DEBUG - Generated S3 path: tenants/tenant_fidwork_916d299c/files/b4/a0/b4a06d0ae7e2c2954389bb1c88ccf5d2_0ba4c35e-9720-4688-887e-5e7b6b94f78c
+2025-11-12 11:18:32,946 - app.routes.documents - INFO - Created new file: file_id=0ba4c35e-9720-4688-887e-5e7b6b94f78c, md5=b4a06d0ae7e2c2954389bb1c88ccf5d2, s3_path=tenants/tenant_fidwork_916d299c/files/b4/a0/b4a06d0ae7e2c2954389bb1c88ccf5d2_0ba4c35e-9720-4688-887e-5e7b6b94f78c
+2025-11-12 11:18:33,384 - app.utils.s3_client - DEBUG - S3 client initialized: bucket=saas-documents, region=us-east-1, endpoint=http://minio:9000, public_url=http://minio:9000, use_ssl=False
+2025-11-12 11:18:33,384 - app.utils.s3_client - INFO - S3 client initialized: bucket=saas-documents
+2025-11-12 11:18:33,399 - app.utils.s3_client - DEBUG - Uploaded file to S3: bucket=saas-documents, path=tenants/tenant_fidwork_916d299c/files/b4/a0/b4a06d0ae7e2c2954389bb1c88ccf5d2_0ba4c35e-9720-4688-887e-5e7b6b94f78c, content_type=image/jpeg
+2025-11-12 11:18:33,399 - app.utils.s3_client - INFO - File uploaded to S3: tenants/tenant_fidwork_916d299c/files/b4/a0/b4a06d0ae7e2c2954389bb1c88ccf5d2_0ba4c35e-9720-4688-887e-5e7b6b94f78c
+2025-11-12 11:18:33,400 - app.models.document - INFO - Document object initialized: filename=go1.jpg, mime_type=image/jpeg, file_id=0ba4c35e-9720-4688-887e-5e7b6b94f78c, user_id=0d9694f2-af6c-4724-8980-cb40bf198e9c
+2025-11-12 11:18:33,403 - app.routes.documents - INFO - Document uploaded successfully: document_id=89160c88-2125-4d11-85e9-4bc9faf1da7a, file_id=0ba4c35e-9720-4688-887e-5e7b6b94f78c
+2025-11-12 11:18:33,404 - app.utils.database - DEBUG - Committed transaction for tenant: tenant_fidwork_916d299c
+2025-11-12 11:25:50,296 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-12 11:25:50,298 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-12 11:25:50,298 - app - INFO - Flask app created with config: development
+2025-11-12 11:25:50,298 - app - INFO - Flask app created with config: development
+2025-11-12 11:25:50,299 - app - INFO - Debug mode: True
+2025-11-12 11:25:50,300 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-12 11:25:50,299 - app - INFO - Debug mode: True
+2025-11-12 11:25:50,300 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-12 11:25:50,303 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-12 11:25:50,304 - app - INFO - Flask app created with config: development
+2025-11-12 11:25:50,304 - app - INFO - Debug mode: True
+2025-11-12 11:25:50,304 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-12 11:25:50,409 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-12 11:25:50,409 - app - INFO - Flask app created with config: development
+2025-11-12 11:25:50,409 - app - INFO - Debug mode: True
+2025-11-12 11:25:50,410 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-12 11:27:02,979 - app.utils.decorators - ERROR - JWT validation failed: Signature has expired
+2025-11-12 11:27:10,627 - app.utils.decorators - DEBUG - Authenticated user: 0d9694f2-af6c-4724-8980-cb40bf198e9c
+2025-11-12 11:27:10,628 - app.routes.documents - INFO - Uploading document: tenant_id=964fd8df-6c81-4698-a7b6-4f1825c71c45, user_id=0d9694f2-af6c-4724-8980-cb40bf198e9c
+2025-11-12 11:27:10,635 - app.schemas.document_schema - DEBUG - Validated filename for upload: go3.jpg
+2025-11-12 11:27:10,635 - app.schemas.document_schema - DEBUG - Validated MIME type for upload: image/jpeg
+2025-11-12 11:27:10,635 - app.schemas.document_schema - DEBUG - Normalized filename for upload: go3.jpg
+2025-11-12 11:27:10,636 - app.schemas.document_schema - DEBUG - Normalized MIME type for upload: image/jpeg
+2025-11-12 11:27:10,636 - app.routes.documents - INFO - File hashes calculated: MD5=ffd6c74fc9133da34bb0234280c49fe9, SHA-256=dad69955b704ac20..., size=122768 bytes
+2025-11-12 11:27:10,638 - app.utils.database - INFO - Created engine for tenant database: tenant_fidwork_916d299c
+2025-11-12 11:27:10,638 - app.utils.database - INFO - Created session factory for tenant database: tenant_fidwork_916d299c
+2025-11-12 11:27:10,664 - app.models.file - DEBUG - Generated S3 path: tenants/tenant_fidwork_916d299c/files/ff/d6/ffd6c74fc9133da34bb0234280c49fe9_temp
+2025-11-12 11:27:10,665 - app.models.file - INFO - File object initialized: md5=ffd6c74fc9133da34bb0234280c49fe9, size=122768, s3_path=tenants/tenant_fidwork_916d299c/files/ff/d6/ffd6c74fc9133da34bb0234280c49fe9_temp
+2025-11-12 11:27:10,668 - app.models.file - DEBUG - Generated S3 path: tenants/tenant_fidwork_916d299c/files/ff/d6/ffd6c74fc9133da34bb0234280c49fe9_78049187-f3c5-4b41-9115-8df34cc106e2
+2025-11-12 11:27:10,670 - app.routes.documents - INFO - Created new file: file_id=78049187-f3c5-4b41-9115-8df34cc106e2, md5=ffd6c74fc9133da34bb0234280c49fe9, sha256=dad69955b704ac20..., s3_path=tenants/tenant_fidwork_916d299c/files/ff/d6/ffd6c74fc9133da34bb0234280c49fe9_78049187-f3c5-4b41-9115-8df34cc106e2
+2025-11-12 11:27:11,134 - app.utils.s3_client - DEBUG - S3 client initialized: bucket=saas-documents, region=us-east-1, endpoint=http://minio:9000, public_url=http://minio:9000, use_ssl=False
+2025-11-12 11:27:11,134 - app.utils.s3_client - INFO - S3 client initialized: bucket=saas-documents
+2025-11-12 11:27:11,151 - app.utils.s3_client - DEBUG - Uploaded file to S3: bucket=saas-documents, path=tenants/tenant_fidwork_916d299c/files/ff/d6/ffd6c74fc9133da34bb0234280c49fe9_78049187-f3c5-4b41-9115-8df34cc106e2, content_type=image/jpeg
+2025-11-12 11:27:11,152 - app.utils.s3_client - INFO - File uploaded to S3: tenants/tenant_fidwork_916d299c/files/ff/d6/ffd6c74fc9133da34bb0234280c49fe9_78049187-f3c5-4b41-9115-8df34cc106e2
+2025-11-12 11:27:11,152 - app.models.document - INFO - Document object initialized: filename=go3.jpg, mime_type=image/jpeg, file_id=78049187-f3c5-4b41-9115-8df34cc106e2, user_id=0d9694f2-af6c-4724-8980-cb40bf198e9c
+2025-11-12 11:27:11,158 - app.routes.documents - INFO - Document uploaded successfully: document_id=3807e26e-9da7-4642-b740-9c44400522f8, file_id=78049187-f3c5-4b41-9115-8df34cc106e2
+2025-11-12 11:27:11,160 - app.utils.database - DEBUG - Committed transaction for tenant: tenant_fidwork_916d299c
+2025-11-12 11:27:11,207 - app.celery_app - INFO - Celery configured with broker: redis://redis:6379/3
+2025-11-12 11:27:11,234 - app.routes.documents - INFO - TSA timestamp task scheduled for file 78049187-f3c5-4b41-9115-8df34cc106e2 (task_id: f2a88b55-8e83-4f83-898f-30d99d2fc1c8, tenant: fidwork)
+2025-11-12 11:30:40,425 - app.utils.decorators - DEBUG - Authenticated user: 0d9694f2-af6c-4724-8980-cb40bf198e9c
+2025-11-12 11:30:40,426 - app.routes.documents - INFO - Uploading document: tenant_id=964fd8df-6c81-4698-a7b6-4f1825c71c45, user_id=0d9694f2-af6c-4724-8980-cb40bf198e9c
+2025-11-12 11:30:40,514 - app.schemas.document_schema - DEBUG - Validated filename for upload: go3.jpg
+2025-11-12 11:30:40,515 - app.schemas.document_schema - DEBUG - Validated MIME type for upload: image/jpeg
+2025-11-12 11:30:40,515 - app.schemas.document_schema - DEBUG - Normalized filename for upload: go3.jpg
+2025-11-12 11:30:40,515 - app.schemas.document_schema - DEBUG - Normalized MIME type for upload: image/jpeg
+2025-11-12 11:30:40,516 - app.routes.documents - INFO - File hashes calculated: MD5=ffd6c74fc9133da34bb0234280c49fe9, SHA-256=dad69955b704ac20..., size=122768 bytes
+2025-11-12 11:30:40,519 - app.utils.database - INFO - Created engine for tenant database: tenant_fidwork_916d299c
+2025-11-12 11:30:40,519 - app.utils.database - INFO - Created session factory for tenant database: tenant_fidwork_916d299c
+2025-11-12 11:30:40,539 - app.routes.documents - INFO - Reusing existing file: file_id=78049187-f3c5-4b41-9115-8df34cc106e2, md5=ffd6c74fc9133da34bb0234280c49fe9
+2025-11-12 11:30:40,540 - app.models.document - INFO - Document object initialized: filename=go3.jpg, mime_type=image/jpeg, file_id=78049187-f3c5-4b41-9115-8df34cc106e2, user_id=0d9694f2-af6c-4724-8980-cb40bf198e9c
+2025-11-12 11:30:40,544 - app.routes.documents - INFO - Document uploaded successfully: document_id=30d89e3d-a98a-4aa5-8d9d-abb018da8c68, file_id=78049187-f3c5-4b41-9115-8df34cc106e2
+2025-11-12 11:30:40,545 - app.utils.database - DEBUG - Committed transaction for tenant: tenant_fidwork_916d299c
+2025-11-12 11:31:35,206 - app.utils.decorators - DEBUG - Authenticated user: 0d9694f2-af6c-4724-8980-cb40bf198e9c
+2025-11-12 11:31:35,248 - app.routes.files - INFO - Retrieved 4 files for tenant 964fd8df-6c81-4698-a7b6-4f1825c71c45 (page 1/1, total: 4)
+2025-11-12 11:31:35,249 - app.utils.database - DEBUG - Committed transaction for tenant: tenant_fidwork_916d299c
+2025-11-12 11:35:13,773 - app.utils.decorators - DEBUG - Authenticated user: 0d9694f2-af6c-4724-8980-cb40bf198e9c
+2025-11-12 11:35:13,775 - app.routes.documents - INFO - Uploading document: tenant_id=964fd8df-6c81-4698-a7b6-4f1825c71c45, user_id=0d9694f2-af6c-4724-8980-cb40bf198e9c
+2025-11-12 11:35:13,866 - app.schemas.document_schema - DEBUG - Validated filename for upload: tsa_test.txt
+2025-11-12 11:35:13,867 - app.schemas.document_schema - DEBUG - Validated MIME type for upload: text/plain
+2025-11-12 11:35:13,867 - app.schemas.document_schema - DEBUG - Normalized filename for upload: tsa_test.txt
+2025-11-12 11:35:13,867 - app.schemas.document_schema - DEBUG - Normalized MIME type for upload: text/plain
+2025-11-12 11:35:13,868 - app.routes.documents - INFO - File hashes calculated: MD5=f85194e0709949230ff4d3a45422f429, SHA-256=84ea73a24a5787e8..., size=73 bytes
+2025-11-12 11:35:13,872 - app.utils.database - INFO - Created engine for tenant database: tenant_fidwork_916d299c
+2025-11-12 11:35:13,873 - app.utils.database - INFO - Created session factory for tenant database: tenant_fidwork_916d299c
+2025-11-12 11:35:13,892 - app.models.file - DEBUG - Generated S3 path: tenants/tenant_fidwork_916d299c/files/f8/51/f85194e0709949230ff4d3a45422f429_temp
+2025-11-12 11:35:13,893 - app.models.file - INFO - File object initialized: md5=f85194e0709949230ff4d3a45422f429, size=73, s3_path=tenants/tenant_fidwork_916d299c/files/f8/51/f85194e0709949230ff4d3a45422f429_temp
+2025-11-12 11:35:13,899 - app.models.file - DEBUG - Generated S3 path: tenants/tenant_fidwork_916d299c/files/f8/51/f85194e0709949230ff4d3a45422f429_0526032f-e915-47bd-8def-fb7febfe03d1
+2025-11-12 11:35:13,900 - app.routes.documents - INFO - Created new file: file_id=0526032f-e915-47bd-8def-fb7febfe03d1, md5=f85194e0709949230ff4d3a45422f429, sha256=84ea73a24a5787e8..., s3_path=tenants/tenant_fidwork_916d299c/files/f8/51/f85194e0709949230ff4d3a45422f429_0526032f-e915-47bd-8def-fb7febfe03d1
+2025-11-12 11:35:14,274 - app.utils.s3_client - DEBUG - S3 client initialized: bucket=saas-documents, region=us-east-1, endpoint=http://minio:9000, public_url=http://minio:9000, use_ssl=False
+2025-11-12 11:35:14,275 - app.utils.s3_client - INFO - S3 client initialized: bucket=saas-documents
+2025-11-12 11:35:14,295 - app.utils.s3_client - DEBUG - Uploaded file to S3: bucket=saas-documents, path=tenants/tenant_fidwork_916d299c/files/f8/51/f85194e0709949230ff4d3a45422f429_0526032f-e915-47bd-8def-fb7febfe03d1, content_type=text/plain
+2025-11-12 11:35:14,295 - app.utils.s3_client - INFO - File uploaded to S3: tenants/tenant_fidwork_916d299c/files/f8/51/f85194e0709949230ff4d3a45422f429_0526032f-e915-47bd-8def-fb7febfe03d1
+2025-11-12 11:35:14,295 - app.models.document - INFO - Document object initialized: filename=tsa_test.txt, mime_type=text/plain, file_id=0526032f-e915-47bd-8def-fb7febfe03d1, user_id=0d9694f2-af6c-4724-8980-cb40bf198e9c
+2025-11-12 11:35:14,298 - app.routes.documents - INFO - Document uploaded successfully: document_id=c220881a-a143-457a-a826-3e13e7fb55d7, file_id=0526032f-e915-47bd-8def-fb7febfe03d1
+2025-11-12 11:35:14,299 - app.utils.database - DEBUG - Committed transaction for tenant: tenant_fidwork_916d299c
+2025-11-12 11:35:14,337 - app.celery_app - INFO - Celery configured with broker: redis://redis:6379/3
+2025-11-12 11:35:14,357 - app.routes.documents - INFO - TSA timestamp task scheduled for file 0526032f-e915-47bd-8def-fb7febfe03d1 (task_id: 1a54a58c-e6b7-4104-b233-6baa2d8ca45d, tenant: fidwork)
+2025-11-12 11:37:24,777 - app.utils.decorators - DEBUG - Authenticated user: 0d9694f2-af6c-4724-8980-cb40bf198e9c
+2025-11-12 11:37:24,778 - app.routes.documents - INFO - Uploading document: tenant_id=964fd8df-6c81-4698-a7b6-4f1825c71c45, user_id=0d9694f2-af6c-4724-8980-cb40bf198e9c
+2025-11-12 11:37:24,783 - app.schemas.document_schema - DEBUG - Validated filename for upload: tsa_test.txt
+2025-11-12 11:37:24,784 - app.schemas.document_schema - DEBUG - Validated MIME type for upload: text/plain
+2025-11-12 11:37:24,784 - app.schemas.document_schema - DEBUG - Normalized filename for upload: tsa_test.txt
+2025-11-12 11:37:24,784 - app.schemas.document_schema - DEBUG - Normalized MIME type for upload: text/plain
+2025-11-12 11:37:24,785 - app.routes.documents - INFO - File hashes calculated: MD5=22f61447381697e8c2b69ba4f1a56c03, SHA-256=804e386f46ef6cc5..., size=73 bytes
+2025-11-12 11:37:24,787 - app.utils.database - INFO - Created engine for tenant database: tenant_fidwork_916d299c
+2025-11-12 11:37:24,788 - app.utils.database - INFO - Created session factory for tenant database: tenant_fidwork_916d299c
+2025-11-12 11:37:24,814 - app.models.file - DEBUG - Generated S3 path: tenants/tenant_fidwork_916d299c/files/22/f6/22f61447381697e8c2b69ba4f1a56c03_temp
+2025-11-12 11:37:24,815 - app.models.file - INFO - File object initialized: md5=22f61447381697e8c2b69ba4f1a56c03, size=73, s3_path=tenants/tenant_fidwork_916d299c/files/22/f6/22f61447381697e8c2b69ba4f1a56c03_temp
+2025-11-12 11:37:24,820 - app.models.file - DEBUG - Generated S3 path: tenants/tenant_fidwork_916d299c/files/22/f6/22f61447381697e8c2b69ba4f1a56c03_8c7f1af7-d604-4fb0-8de4-64bd96a32fe5
+2025-11-12 11:37:24,822 - app.routes.documents - INFO - Created new file: file_id=8c7f1af7-d604-4fb0-8de4-64bd96a32fe5, md5=22f61447381697e8c2b69ba4f1a56c03, sha256=804e386f46ef6cc5..., s3_path=tenants/tenant_fidwork_916d299c/files/22/f6/22f61447381697e8c2b69ba4f1a56c03_8c7f1af7-d604-4fb0-8de4-64bd96a32fe5
+2025-11-12 11:37:25,228 - app.utils.s3_client - DEBUG - S3 client initialized: bucket=saas-documents, region=us-east-1, endpoint=http://minio:9000, public_url=http://minio:9000, use_ssl=False
+2025-11-12 11:37:25,229 - app.utils.s3_client - INFO - S3 client initialized: bucket=saas-documents
+2025-11-12 11:37:25,261 - app.utils.s3_client - DEBUG - Uploaded file to S3: bucket=saas-documents, path=tenants/tenant_fidwork_916d299c/files/22/f6/22f61447381697e8c2b69ba4f1a56c03_8c7f1af7-d604-4fb0-8de4-64bd96a32fe5, content_type=text/plain
+2025-11-12 11:37:25,261 - app.utils.s3_client - INFO - File uploaded to S3: tenants/tenant_fidwork_916d299c/files/22/f6/22f61447381697e8c2b69ba4f1a56c03_8c7f1af7-d604-4fb0-8de4-64bd96a32fe5
+2025-11-12 11:37:25,262 - app.models.document - INFO - Document object initialized: filename=tsa_test.txt, mime_type=text/plain, file_id=8c7f1af7-d604-4fb0-8de4-64bd96a32fe5, user_id=0d9694f2-af6c-4724-8980-cb40bf198e9c
+2025-11-12 11:37:25,266 - app.routes.documents - INFO - Document uploaded successfully: document_id=b7cba74a-5204-415c-940f-e0a83fc79b2e, file_id=8c7f1af7-d604-4fb0-8de4-64bd96a32fe5
+2025-11-12 11:37:25,267 - app.utils.database - DEBUG - Committed transaction for tenant: tenant_fidwork_916d299c
+2025-11-12 11:37:25,315 - app.celery_app - INFO - Celery configured with broker: redis://redis:6379/3
+2025-11-12 11:37:25,350 - app.routes.documents - INFO - TSA timestamp task scheduled for file 8c7f1af7-d604-4fb0-8de4-64bd96a32fe5 (task_id: 53a36124-9d70-43f6-9525-67c2ad3edde4, tenant: fidwork)
+2025-11-12 11:38:03,206 - app.utils.decorators - DEBUG - Authenticated user: 0d9694f2-af6c-4724-8980-cb40bf198e9c
+2025-11-12 11:38:03,250 - app.routes.files - INFO - Retrieved 6 files for tenant 964fd8df-6c81-4698-a7b6-4f1825c71c45 (page 1/1, total: 6)
+2025-11-12 11:38:03,252 - app.utils.database - DEBUG - Committed transaction for tenant: tenant_fidwork_916d299c
+2025-11-12 11:40:44,156 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-12 11:40:44,157 - app - INFO - Flask app created with config: development
+2025-11-12 11:40:44,158 - app - INFO - Debug mode: True
+2025-11-12 11:40:44,159 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-12 11:40:44,160 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-12 11:40:44,161 - app - INFO - Flask app created with config: development
+2025-11-12 11:40:44,161 - app - INFO - Debug mode: True
+2025-11-12 11:40:44,161 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-12 11:40:44,161 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-12 11:40:44,161 - app - INFO - Flask app created with config: development
+2025-11-12 11:40:44,161 - app - INFO - Debug mode: True
+2025-11-12 11:40:44,162 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-12 11:40:44,163 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-12 11:40:44,163 - app - INFO - Flask app created with config: development
+2025-11-12 11:40:44,164 - app - INFO - Debug mode: True
+2025-11-12 11:40:44,164 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-12 11:41:42,015 - app.utils.decorators - DEBUG - Authenticated user: 0d9694f2-af6c-4724-8980-cb40bf198e9c
+2025-11-12 11:41:42,016 - app.routes.documents - INFO - Uploading document: tenant_id=964fd8df-6c81-4698-a7b6-4f1825c71c45, user_id=0d9694f2-af6c-4724-8980-cb40bf198e9c
+2025-11-12 11:41:42,021 - app.schemas.document_schema - DEBUG - Validated filename for upload: tsa_test.txt
+2025-11-12 11:41:42,021 - app.schemas.document_schema - DEBUG - Validated MIME type for upload: text/plain
+2025-11-12 11:41:42,021 - app.schemas.document_schema - DEBUG - Normalized filename for upload: tsa_test.txt
+2025-11-12 11:41:42,022 - app.schemas.document_schema - DEBUG - Normalized MIME type for upload: text/plain
+2025-11-12 11:41:42,022 - app.routes.documents - INFO - File hashes calculated: MD5=9759fde908593911623d42c0ea1a1ad0, SHA-256=ddfcd708d339849c..., size=73 bytes
+2025-11-12 11:41:42,025 - app.utils.database - INFO - Created engine for tenant database: tenant_fidwork_916d299c
+2025-11-12 11:41:42,026 - app.utils.database - INFO - Created session factory for tenant database: tenant_fidwork_916d299c
+2025-11-12 11:41:42,045 - app.models.file - DEBUG - Generated S3 path: tenants/tenant_fidwork_916d299c/files/97/59/9759fde908593911623d42c0ea1a1ad0_temp
+2025-11-12 11:41:42,045 - app.models.file - INFO - File object initialized: md5=9759fde908593911623d42c0ea1a1ad0, size=73, s3_path=tenants/tenant_fidwork_916d299c/files/97/59/9759fde908593911623d42c0ea1a1ad0_temp
+2025-11-12 11:41:42,054 - app.models.file - DEBUG - Generated S3 path: tenants/tenant_fidwork_916d299c/files/97/59/9759fde908593911623d42c0ea1a1ad0_f9469dd0-7d84-4590-83e5-d49ea9270d04
+2025-11-12 11:41:42,056 - app.routes.documents - INFO - Created new file: file_id=f9469dd0-7d84-4590-83e5-d49ea9270d04, md5=9759fde908593911623d42c0ea1a1ad0, sha256=ddfcd708d339849c..., s3_path=tenants/tenant_fidwork_916d299c/files/97/59/9759fde908593911623d42c0ea1a1ad0_f9469dd0-7d84-4590-83e5-d49ea9270d04
+2025-11-12 11:41:42,554 - app.utils.s3_client - DEBUG - S3 client initialized: bucket=saas-documents, region=us-east-1, endpoint=http://minio:9000, public_url=http://minio:9000, use_ssl=False
+2025-11-12 11:41:42,554 - app.utils.s3_client - INFO - S3 client initialized: bucket=saas-documents
+2025-11-12 11:41:42,567 - app.utils.s3_client - DEBUG - Uploaded file to S3: bucket=saas-documents, path=tenants/tenant_fidwork_916d299c/files/97/59/9759fde908593911623d42c0ea1a1ad0_f9469dd0-7d84-4590-83e5-d49ea9270d04, content_type=text/plain
+2025-11-12 11:41:42,568 - app.utils.s3_client - INFO - File uploaded to S3: tenants/tenant_fidwork_916d299c/files/97/59/9759fde908593911623d42c0ea1a1ad0_f9469dd0-7d84-4590-83e5-d49ea9270d04
+2025-11-12 11:41:42,568 - app.models.document - INFO - Document object initialized: filename=tsa_test.txt, mime_type=text/plain, file_id=f9469dd0-7d84-4590-83e5-d49ea9270d04, user_id=0d9694f2-af6c-4724-8980-cb40bf198e9c
+2025-11-12 11:41:42,571 - app.routes.documents - INFO - Document uploaded successfully: document_id=4e77f9e4-d60f-4371-9316-67ff077c10ea, file_id=f9469dd0-7d84-4590-83e5-d49ea9270d04
+2025-11-12 11:41:42,574 - app.utils.database - DEBUG - Committed transaction for tenant: tenant_fidwork_916d299c
+2025-11-12 11:41:42,626 - app.celery_app - INFO - Celery configured with broker: redis://redis:6379/3
+2025-11-12 11:41:42,651 - app.routes.documents - INFO - TSA timestamp task scheduled for file f9469dd0-7d84-4590-83e5-d49ea9270d04 (task_id: 5e961fe4-716a-4cc5-8aff-674d4c853e0b, tenant: fidwork)
+2025-11-12 11:47:23,179 - app.utils.decorators - DEBUG - Authenticated user: 0d9694f2-af6c-4724-8980-cb40bf198e9c
+2025-11-12 11:47:23,180 - app.routes.documents - INFO - Uploading document: tenant_id=964fd8df-6c81-4698-a7b6-4f1825c71c45, user_id=0d9694f2-af6c-4724-8980-cb40bf198e9c
+2025-11-12 11:47:23,185 - app.schemas.document_schema - DEBUG - Validated filename for upload: tsa_test.txt
+2025-11-12 11:47:23,185 - app.schemas.document_schema - DEBUG - Validated MIME type for upload: text/plain
+2025-11-12 11:47:23,186 - app.schemas.document_schema - DEBUG - Normalized filename for upload: tsa_test.txt
+2025-11-12 11:47:23,186 - app.schemas.document_schema - DEBUG - Normalized MIME type for upload: text/plain
+2025-11-12 11:47:23,187 - app.routes.documents - INFO - File hashes calculated: MD5=2c7006aaef96843f085ea14d6766bf2d, SHA-256=86cb41f9536ba3d4..., size=73 bytes
+2025-11-12 11:47:23,189 - app.utils.database - INFO - Created engine for tenant database: tenant_fidwork_916d299c
+2025-11-12 11:47:23,190 - app.utils.database - INFO - Created session factory for tenant database: tenant_fidwork_916d299c
+2025-11-12 11:47:23,209 - app.models.file - DEBUG - Generated S3 path: tenants/tenant_fidwork_916d299c/files/2c/70/2c7006aaef96843f085ea14d6766bf2d_temp
+2025-11-12 11:47:23,209 - app.models.file - INFO - File object initialized: md5=2c7006aaef96843f085ea14d6766bf2d, size=73, s3_path=tenants/tenant_fidwork_916d299c/files/2c/70/2c7006aaef96843f085ea14d6766bf2d_temp
+2025-11-12 11:47:23,219 - app.models.file - DEBUG - Generated S3 path: tenants/tenant_fidwork_916d299c/files/2c/70/2c7006aaef96843f085ea14d6766bf2d_84cac556-ebd9-4a92-8ba3-df199e4bc531
+2025-11-12 11:47:23,221 - app.routes.documents - INFO - Created new file: file_id=84cac556-ebd9-4a92-8ba3-df199e4bc531, md5=2c7006aaef96843f085ea14d6766bf2d, sha256=86cb41f9536ba3d4..., s3_path=tenants/tenant_fidwork_916d299c/files/2c/70/2c7006aaef96843f085ea14d6766bf2d_84cac556-ebd9-4a92-8ba3-df199e4bc531
+2025-11-12 11:47:23,532 - app.utils.s3_client - DEBUG - S3 client initialized: bucket=saas-documents, region=us-east-1, endpoint=http://minio:9000, public_url=http://minio:9000, use_ssl=False
+2025-11-12 11:47:23,532 - app.utils.s3_client - INFO - S3 client initialized: bucket=saas-documents
+2025-11-12 11:47:23,551 - app.utils.s3_client - DEBUG - Uploaded file to S3: bucket=saas-documents, path=tenants/tenant_fidwork_916d299c/files/2c/70/2c7006aaef96843f085ea14d6766bf2d_84cac556-ebd9-4a92-8ba3-df199e4bc531, content_type=text/plain
+2025-11-12 11:47:23,551 - app.utils.s3_client - INFO - File uploaded to S3: tenants/tenant_fidwork_916d299c/files/2c/70/2c7006aaef96843f085ea14d6766bf2d_84cac556-ebd9-4a92-8ba3-df199e4bc531
+2025-11-12 11:47:23,552 - app.models.document - INFO - Document object initialized: filename=tsa_test.txt, mime_type=text/plain, file_id=84cac556-ebd9-4a92-8ba3-df199e4bc531, user_id=0d9694f2-af6c-4724-8980-cb40bf198e9c
+2025-11-12 11:47:23,555 - app.routes.documents - INFO - Document uploaded successfully: document_id=7e84291a-c51f-422b-95ae-9c3b327ac942, file_id=84cac556-ebd9-4a92-8ba3-df199e4bc531
+2025-11-12 11:47:23,557 - app.utils.database - DEBUG - Committed transaction for tenant: tenant_fidwork_916d299c
+2025-11-12 11:47:23,591 - app.celery_app - INFO - Celery configured with broker: redis://redis:6379/3
+2025-11-12 11:47:23,615 - app.routes.documents - INFO - TSA timestamp task scheduled for file 84cac556-ebd9-4a92-8ba3-df199e4bc531 (task_id: d02b5324-7274-4f57-8291-e7ad8e8219b5, tenant: fidwork)
+2025-11-12 11:47:45,904 - app.utils.decorators - DEBUG - Authenticated user: 0d9694f2-af6c-4724-8980-cb40bf198e9c
+2025-11-12 11:47:45,906 - app.routes.documents - INFO - Uploading document: tenant_id=964fd8df-6c81-4698-a7b6-4f1825c71c45, user_id=0d9694f2-af6c-4724-8980-cb40bf198e9c
+2025-11-12 11:47:45,986 - app.schemas.document_schema - DEBUG - Validated filename for upload: tsa_test.txt
+2025-11-12 11:47:45,987 - app.schemas.document_schema - DEBUG - Validated MIME type for upload: text/plain
+2025-11-12 11:47:45,987 - app.schemas.document_schema - DEBUG - Normalized filename for upload: tsa_test.txt
+2025-11-12 11:47:45,987 - app.schemas.document_schema - DEBUG - Normalized MIME type for upload: text/plain
+2025-11-12 11:47:45,988 - app.routes.documents - INFO - File hashes calculated: MD5=5fc38eb2d5139acb96073b6691d8a3f3, SHA-256=2ae1d49f0f2dd9da..., size=73 bytes
+2025-11-12 11:47:45,992 - app.utils.database - INFO - Created engine for tenant database: tenant_fidwork_916d299c
+2025-11-12 11:47:45,993 - app.utils.database - INFO - Created session factory for tenant database: tenant_fidwork_916d299c
+2025-11-12 11:47:46,013 - app.models.file - DEBUG - Generated S3 path: tenants/tenant_fidwork_916d299c/files/5f/c3/5fc38eb2d5139acb96073b6691d8a3f3_temp
+2025-11-12 11:47:46,013 - app.models.file - INFO - File object initialized: md5=5fc38eb2d5139acb96073b6691d8a3f3, size=73, s3_path=tenants/tenant_fidwork_916d299c/files/5f/c3/5fc38eb2d5139acb96073b6691d8a3f3_temp
+2025-11-12 11:47:46,019 - app.models.file - DEBUG - Generated S3 path: tenants/tenant_fidwork_916d299c/files/5f/c3/5fc38eb2d5139acb96073b6691d8a3f3_c7ee9b4a-7b55-4e75-ace3-0f887b208d87
+2025-11-12 11:47:46,021 - app.routes.documents - INFO - Created new file: file_id=c7ee9b4a-7b55-4e75-ace3-0f887b208d87, md5=5fc38eb2d5139acb96073b6691d8a3f3, sha256=2ae1d49f0f2dd9da..., s3_path=tenants/tenant_fidwork_916d299c/files/5f/c3/5fc38eb2d5139acb96073b6691d8a3f3_c7ee9b4a-7b55-4e75-ace3-0f887b208d87
+2025-11-12 11:47:46,294 - app.utils.s3_client - DEBUG - S3 client initialized: bucket=saas-documents, region=us-east-1, endpoint=http://minio:9000, public_url=http://minio:9000, use_ssl=False
+2025-11-12 11:47:46,295 - app.utils.s3_client - INFO - S3 client initialized: bucket=saas-documents
+2025-11-12 11:47:46,306 - app.utils.s3_client - DEBUG - Uploaded file to S3: bucket=saas-documents, path=tenants/tenant_fidwork_916d299c/files/5f/c3/5fc38eb2d5139acb96073b6691d8a3f3_c7ee9b4a-7b55-4e75-ace3-0f887b208d87, content_type=text/plain
+2025-11-12 11:47:46,306 - app.utils.s3_client - INFO - File uploaded to S3: tenants/tenant_fidwork_916d299c/files/5f/c3/5fc38eb2d5139acb96073b6691d8a3f3_c7ee9b4a-7b55-4e75-ace3-0f887b208d87
+2025-11-12 11:47:46,307 - app.models.document - INFO - Document object initialized: filename=tsa_test.txt, mime_type=text/plain, file_id=c7ee9b4a-7b55-4e75-ace3-0f887b208d87, user_id=0d9694f2-af6c-4724-8980-cb40bf198e9c
+2025-11-12 11:47:46,310 - app.routes.documents - INFO - Document uploaded successfully: document_id=fdd47b7f-70ab-434b-a437-a7b30513ceb9, file_id=c7ee9b4a-7b55-4e75-ace3-0f887b208d87
+2025-11-12 11:47:46,311 - app.utils.database - DEBUG - Committed transaction for tenant: tenant_fidwork_916d299c
+2025-11-12 11:47:46,346 - app.celery_app - INFO - Celery configured with broker: redis://redis:6379/3
+2025-11-12 11:47:46,369 - app.routes.documents - INFO - TSA timestamp task scheduled for file c7ee9b4a-7b55-4e75-ace3-0f887b208d87 (task_id: 55c76e8a-2239-4a56-b69f-e854fd74a8cd, tenant: fidwork)
+2025-11-12 11:50:35,094 - app.utils.decorators - DEBUG - Authenticated user: 0d9694f2-af6c-4724-8980-cb40bf198e9c
+2025-11-12 11:50:35,096 - app.routes.documents - INFO - Uploading document: tenant_id=964fd8df-6c81-4698-a7b6-4f1825c71c45, user_id=0d9694f2-af6c-4724-8980-cb40bf198e9c
+2025-11-12 11:50:35,174 - app.schemas.document_schema - DEBUG - Validated filename for upload: tsa_test.txt
+2025-11-12 11:50:35,175 - app.schemas.document_schema - DEBUG - Validated MIME type for upload: text/plain
+2025-11-12 11:50:35,175 - app.schemas.document_schema - DEBUG - Normalized filename for upload: tsa_test.txt
+2025-11-12 11:50:35,176 - app.schemas.document_schema - DEBUG - Normalized MIME type for upload: text/plain
+2025-11-12 11:50:35,176 - app.routes.documents - INFO - File hashes calculated: MD5=e0f56785afba4c172178e9550845b8ef, SHA-256=59780861c64bade5..., size=73 bytes
+2025-11-12 11:50:35,179 - app.utils.database - INFO - Created engine for tenant database: tenant_fidwork_916d299c
+2025-11-12 11:50:35,179 - app.utils.database - INFO - Created session factory for tenant database: tenant_fidwork_916d299c
+2025-11-12 11:50:35,201 - app.models.file - DEBUG - Generated S3 path: tenants/tenant_fidwork_916d299c/files/e0/f5/e0f56785afba4c172178e9550845b8ef_temp
+2025-11-12 11:50:35,201 - app.models.file - INFO - File object initialized: md5=e0f56785afba4c172178e9550845b8ef, size=73, s3_path=tenants/tenant_fidwork_916d299c/files/e0/f5/e0f56785afba4c172178e9550845b8ef_temp
+2025-11-12 11:50:35,204 - app.models.file - DEBUG - Generated S3 path: tenants/tenant_fidwork_916d299c/files/e0/f5/e0f56785afba4c172178e9550845b8ef_e8583ee1-1f8b-4718-a3ab-8f4de9061998
+2025-11-12 11:50:35,206 - app.routes.documents - INFO - Created new file: file_id=e8583ee1-1f8b-4718-a3ab-8f4de9061998, md5=e0f56785afba4c172178e9550845b8ef, sha256=59780861c64bade5..., s3_path=tenants/tenant_fidwork_916d299c/files/e0/f5/e0f56785afba4c172178e9550845b8ef_e8583ee1-1f8b-4718-a3ab-8f4de9061998
+2025-11-12 11:50:35,478 - app.utils.s3_client - DEBUG - S3 client initialized: bucket=saas-documents, region=us-east-1, endpoint=http://minio:9000, public_url=http://minio:9000, use_ssl=False
+2025-11-12 11:50:35,479 - app.utils.s3_client - INFO - S3 client initialized: bucket=saas-documents
+2025-11-12 11:50:35,503 - app.utils.s3_client - DEBUG - Uploaded file to S3: bucket=saas-documents, path=tenants/tenant_fidwork_916d299c/files/e0/f5/e0f56785afba4c172178e9550845b8ef_e8583ee1-1f8b-4718-a3ab-8f4de9061998, content_type=text/plain
+2025-11-12 11:50:35,503 - app.utils.s3_client - INFO - File uploaded to S3: tenants/tenant_fidwork_916d299c/files/e0/f5/e0f56785afba4c172178e9550845b8ef_e8583ee1-1f8b-4718-a3ab-8f4de9061998
+2025-11-12 11:50:35,504 - app.models.document - INFO - Document object initialized: filename=tsa_test.txt, mime_type=text/plain, file_id=e8583ee1-1f8b-4718-a3ab-8f4de9061998, user_id=0d9694f2-af6c-4724-8980-cb40bf198e9c
+2025-11-12 11:50:35,507 - app.routes.documents - INFO - Document uploaded successfully: document_id=6e8aa7ee-9107-45da-9f64-07944080664b, file_id=e8583ee1-1f8b-4718-a3ab-8f4de9061998
+2025-11-12 11:50:35,508 - app.utils.database - DEBUG - Committed transaction for tenant: tenant_fidwork_916d299c
+2025-11-12 11:50:35,565 - app.celery_app - INFO - Celery configured with broker: redis://redis:6379/3
+2025-11-12 11:50:35,611 - app.routes.documents - INFO - TSA timestamp task scheduled for file e8583ee1-1f8b-4718-a3ab-8f4de9061998 (task_id: 764efab1-6790-4ed6-a4c4-2b66e4e3352d, tenant: fidwork)
+2025-11-12 11:53:48,247 - app.utils.decorators - DEBUG - Authenticated user: 0d9694f2-af6c-4724-8980-cb40bf198e9c
+2025-11-12 11:53:48,249 - app.routes.documents - INFO - Uploading document: tenant_id=964fd8df-6c81-4698-a7b6-4f1825c71c45, user_id=0d9694f2-af6c-4724-8980-cb40bf198e9c
+2025-11-12 11:53:48,253 - app.schemas.document_schema - DEBUG - Validated filename for upload: tsa_test.txt
+2025-11-12 11:53:48,254 - app.schemas.document_schema - DEBUG - Validated MIME type for upload: text/plain
+2025-11-12 11:53:48,254 - app.schemas.document_schema - DEBUG - Normalized filename for upload: tsa_test.txt
+2025-11-12 11:53:48,254 - app.schemas.document_schema - DEBUG - Normalized MIME type for upload: text/plain
+2025-11-12 11:53:48,254 - app.routes.documents - INFO - File hashes calculated: MD5=008010b1b19cf885aa0b199d8adc9523, SHA-256=548de7656032962b..., size=73 bytes
+2025-11-12 11:53:48,257 - app.models.file - DEBUG - Generated S3 path: tenants/tenant_fidwork_916d299c/files/00/80/008010b1b19cf885aa0b199d8adc9523_temp
+2025-11-12 11:53:48,257 - app.models.file - INFO - File object initialized: md5=008010b1b19cf885aa0b199d8adc9523, size=73, s3_path=tenants/tenant_fidwork_916d299c/files/00/80/008010b1b19cf885aa0b199d8adc9523_temp
+2025-11-12 11:53:48,260 - app.models.file - DEBUG - Generated S3 path: tenants/tenant_fidwork_916d299c/files/00/80/008010b1b19cf885aa0b199d8adc9523_76a73aa5-656e-4515-a1df-4c858ed2fb00
+2025-11-12 11:53:48,261 - app.routes.documents - INFO - Created new file: file_id=76a73aa5-656e-4515-a1df-4c858ed2fb00, md5=008010b1b19cf885aa0b199d8adc9523, sha256=548de7656032962b..., s3_path=tenants/tenant_fidwork_916d299c/files/00/80/008010b1b19cf885aa0b199d8adc9523_76a73aa5-656e-4515-a1df-4c858ed2fb00
+2025-11-12 11:53:48,285 - app.utils.s3_client - DEBUG - Uploaded file to S3: bucket=saas-documents, path=tenants/tenant_fidwork_916d299c/files/00/80/008010b1b19cf885aa0b199d8adc9523_76a73aa5-656e-4515-a1df-4c858ed2fb00, content_type=text/plain
+2025-11-12 11:53:48,285 - app.utils.s3_client - INFO - File uploaded to S3: tenants/tenant_fidwork_916d299c/files/00/80/008010b1b19cf885aa0b199d8adc9523_76a73aa5-656e-4515-a1df-4c858ed2fb00
+2025-11-12 11:53:48,285 - app.models.document - INFO - Document object initialized: filename=tsa_test.txt, mime_type=text/plain, file_id=76a73aa5-656e-4515-a1df-4c858ed2fb00, user_id=0d9694f2-af6c-4724-8980-cb40bf198e9c
+2025-11-12 11:53:48,287 - app.routes.documents - INFO - Document uploaded successfully: document_id=320cded2-f99e-40c0-acd0-fd481ef8efd6, file_id=76a73aa5-656e-4515-a1df-4c858ed2fb00
+2025-11-12 11:53:48,288 - app.utils.database - DEBUG - Committed transaction for tenant: tenant_fidwork_916d299c
+2025-11-12 11:53:48,297 - app.routes.documents - INFO - TSA timestamp task scheduled for file 76a73aa5-656e-4515-a1df-4c858ed2fb00 (task_id: 528cb4bc-c13d-40a4-9f9a-8e02f6ce6d2c, tenant: fidwork)
+2025-11-12 11:57:12,653 - app.utils.decorators - DEBUG - Authenticated user: 0d9694f2-af6c-4724-8980-cb40bf198e9c
+2025-11-12 11:57:12,655 - app.routes.documents - INFO - Uploading document: tenant_id=964fd8df-6c81-4698-a7b6-4f1825c71c45, user_id=0d9694f2-af6c-4724-8980-cb40bf198e9c
+2025-11-12 11:57:12,686 - app.schemas.document_schema - DEBUG - Validated filename for upload: tsa_test.txt
+2025-11-12 11:57:12,686 - app.schemas.document_schema - DEBUG - Validated MIME type for upload: text/plain
+2025-11-12 11:57:12,686 - app.schemas.document_schema - DEBUG - Normalized filename for upload: tsa_test.txt
+2025-11-12 11:57:12,687 - app.schemas.document_schema - DEBUG - Normalized MIME type for upload: text/plain
+2025-11-12 11:57:12,687 - app.routes.documents - INFO - File hashes calculated: MD5=e2984c80b9fd6f4dc7ecdaab5b9c740f, SHA-256=5466b43303f8aa32..., size=73 bytes
+2025-11-12 11:57:12,693 - app.models.file - DEBUG - Generated S3 path: tenants/tenant_fidwork_916d299c/files/e2/98/e2984c80b9fd6f4dc7ecdaab5b9c740f_temp
+2025-11-12 11:57:12,693 - app.models.file - INFO - File object initialized: md5=e2984c80b9fd6f4dc7ecdaab5b9c740f, size=73, s3_path=tenants/tenant_fidwork_916d299c/files/e2/98/e2984c80b9fd6f4dc7ecdaab5b9c740f_temp
+2025-11-12 11:57:12,699 - app.models.file - DEBUG - Generated S3 path: tenants/tenant_fidwork_916d299c/files/e2/98/e2984c80b9fd6f4dc7ecdaab5b9c740f_d104d072-bf65-4867-899b-b11a23a39dac
+2025-11-12 11:57:12,700 - app.routes.documents - INFO - Created new file: file_id=d104d072-bf65-4867-899b-b11a23a39dac, md5=e2984c80b9fd6f4dc7ecdaab5b9c740f, sha256=5466b43303f8aa32..., s3_path=tenants/tenant_fidwork_916d299c/files/e2/98/e2984c80b9fd6f4dc7ecdaab5b9c740f_d104d072-bf65-4867-899b-b11a23a39dac
+2025-11-12 11:57:12,726 - app.utils.s3_client - DEBUG - Uploaded file to S3: bucket=saas-documents, path=tenants/tenant_fidwork_916d299c/files/e2/98/e2984c80b9fd6f4dc7ecdaab5b9c740f_d104d072-bf65-4867-899b-b11a23a39dac, content_type=text/plain
+2025-11-12 11:57:12,726 - app.utils.s3_client - INFO - File uploaded to S3: tenants/tenant_fidwork_916d299c/files/e2/98/e2984c80b9fd6f4dc7ecdaab5b9c740f_d104d072-bf65-4867-899b-b11a23a39dac
+2025-11-12 11:57:12,726 - app.models.document - INFO - Document object initialized: filename=tsa_test.txt, mime_type=text/plain, file_id=d104d072-bf65-4867-899b-b11a23a39dac, user_id=0d9694f2-af6c-4724-8980-cb40bf198e9c
+2025-11-12 11:57:12,728 - app.routes.documents - INFO - Document uploaded successfully: document_id=7a1efa27-b243-460d-8608-636daec17caf, file_id=d104d072-bf65-4867-899b-b11a23a39dac
+2025-11-12 11:57:12,730 - app.utils.database - DEBUG - Committed transaction for tenant: tenant_fidwork_916d299c
+2025-11-12 11:57:12,733 - app.routes.documents - INFO - TSA timestamp task scheduled for file d104d072-bf65-4867-899b-b11a23a39dac (task_id: 117cdab4-8b11-4fef-bae2-e45d7f77cb2f, tenant: fidwork)
+2025-11-12 11:59:59,131 - app.utils.decorators - DEBUG - Authenticated user: 0d9694f2-af6c-4724-8980-cb40bf198e9c
+2025-11-12 11:59:59,134 - app.routes.documents - INFO - Uploading document: tenant_id=964fd8df-6c81-4698-a7b6-4f1825c71c45, user_id=0d9694f2-af6c-4724-8980-cb40bf198e9c
+2025-11-12 11:59:59,180 - app.schemas.document_schema - DEBUG - Validated filename for upload: tsa_test.txt
+2025-11-12 11:59:59,181 - app.schemas.document_schema - DEBUG - Validated MIME type for upload: text/plain
+2025-11-12 11:59:59,181 - app.schemas.document_schema - DEBUG - Normalized filename for upload: tsa_test.txt
+2025-11-12 11:59:59,181 - app.schemas.document_schema - DEBUG - Normalized MIME type for upload: text/plain
+2025-11-12 11:59:59,182 - app.routes.documents - INFO - File hashes calculated: MD5=dc7929a167e16741515928df46ca953d, SHA-256=286d625a80e97321..., size=73 bytes
+2025-11-12 11:59:59,187 - app.models.file - DEBUG - Generated S3 path: tenants/tenant_fidwork_916d299c/files/dc/79/dc7929a167e16741515928df46ca953d_temp
+2025-11-12 11:59:59,187 - app.models.file - INFO - File object initialized: md5=dc7929a167e16741515928df46ca953d, size=73, s3_path=tenants/tenant_fidwork_916d299c/files/dc/79/dc7929a167e16741515928df46ca953d_temp
+2025-11-12 11:59:59,193 - app.models.file - DEBUG - Generated S3 path: tenants/tenant_fidwork_916d299c/files/dc/79/dc7929a167e16741515928df46ca953d_9c62b668-5d90-45ad-b15c-1b4924021a44
+2025-11-12 11:59:59,195 - app.routes.documents - INFO - Created new file: file_id=9c62b668-5d90-45ad-b15c-1b4924021a44, md5=dc7929a167e16741515928df46ca953d, sha256=286d625a80e97321..., s3_path=tenants/tenant_fidwork_916d299c/files/dc/79/dc7929a167e16741515928df46ca953d_9c62b668-5d90-45ad-b15c-1b4924021a44
+2025-11-12 11:59:59,221 - app.utils.s3_client - DEBUG - Uploaded file to S3: bucket=saas-documents, path=tenants/tenant_fidwork_916d299c/files/dc/79/dc7929a167e16741515928df46ca953d_9c62b668-5d90-45ad-b15c-1b4924021a44, content_type=text/plain
+2025-11-12 11:59:59,222 - app.utils.s3_client - INFO - File uploaded to S3: tenants/tenant_fidwork_916d299c/files/dc/79/dc7929a167e16741515928df46ca953d_9c62b668-5d90-45ad-b15c-1b4924021a44
+2025-11-12 11:59:59,222 - app.models.document - INFO - Document object initialized: filename=tsa_test.txt, mime_type=text/plain, file_id=9c62b668-5d90-45ad-b15c-1b4924021a44, user_id=0d9694f2-af6c-4724-8980-cb40bf198e9c
+2025-11-12 11:59:59,224 - app.routes.documents - INFO - Document uploaded successfully: document_id=47593cd1-3de9-4e78-875a-e7f67db02e45, file_id=9c62b668-5d90-45ad-b15c-1b4924021a44
+2025-11-12 11:59:59,226 - app.utils.database - DEBUG - Committed transaction for tenant: tenant_fidwork_916d299c
+2025-11-12 11:59:59,230 - app.routes.documents - INFO - TSA timestamp task scheduled for file 9c62b668-5d90-45ad-b15c-1b4924021a44 (task_id: 4c5dc93b-e7f3-46c8-bbab-06bc33a221ec, tenant: fidwork)
+2025-11-12 12:03:18,896 - app.utils.decorators - DEBUG - Authenticated user: 0d9694f2-af6c-4724-8980-cb40bf198e9c
+2025-11-12 12:03:18,897 - app.routes.documents - INFO - Uploading document: tenant_id=964fd8df-6c81-4698-a7b6-4f1825c71c45, user_id=0d9694f2-af6c-4724-8980-cb40bf198e9c
+2025-11-12 12:03:18,904 - app.schemas.document_schema - DEBUG - Validated filename for upload: tsa_test.txt
+2025-11-12 12:03:18,904 - app.schemas.document_schema - DEBUG - Validated MIME type for upload: text/plain
+2025-11-12 12:03:18,905 - app.schemas.document_schema - DEBUG - Normalized filename for upload: tsa_test.txt
+2025-11-12 12:03:18,905 - app.schemas.document_schema - DEBUG - Normalized MIME type for upload: text/plain
+2025-11-12 12:03:18,905 - app.routes.documents - INFO - File hashes calculated: MD5=7720518d2ba2431af9477044315e0f72, SHA-256=e05dcb05206b821b..., size=73 bytes
+2025-11-12 12:03:18,912 - app.models.file - DEBUG - Generated S3 path: tenants/tenant_fidwork_916d299c/files/77/20/7720518d2ba2431af9477044315e0f72_temp
+2025-11-12 12:03:18,912 - app.models.file - INFO - File object initialized: md5=7720518d2ba2431af9477044315e0f72, size=73, s3_path=tenants/tenant_fidwork_916d299c/files/77/20/7720518d2ba2431af9477044315e0f72_temp
+2025-11-12 12:03:18,915 - app.models.file - DEBUG - Generated S3 path: tenants/tenant_fidwork_916d299c/files/77/20/7720518d2ba2431af9477044315e0f72_401c8bf4-a2e7-4445-8f2c-017898008f9f
+2025-11-12 12:03:18,916 - app.routes.documents - INFO - Created new file: file_id=401c8bf4-a2e7-4445-8f2c-017898008f9f, md5=7720518d2ba2431af9477044315e0f72, sha256=e05dcb05206b821b..., s3_path=tenants/tenant_fidwork_916d299c/files/77/20/7720518d2ba2431af9477044315e0f72_401c8bf4-a2e7-4445-8f2c-017898008f9f
+2025-11-12 12:03:18,942 - app.utils.s3_client - DEBUG - Uploaded file to S3: bucket=saas-documents, path=tenants/tenant_fidwork_916d299c/files/77/20/7720518d2ba2431af9477044315e0f72_401c8bf4-a2e7-4445-8f2c-017898008f9f, content_type=text/plain
+2025-11-12 12:03:18,943 - app.utils.s3_client - INFO - File uploaded to S3: tenants/tenant_fidwork_916d299c/files/77/20/7720518d2ba2431af9477044315e0f72_401c8bf4-a2e7-4445-8f2c-017898008f9f
+2025-11-12 12:03:18,943 - app.models.document - INFO - Document object initialized: filename=tsa_test.txt, mime_type=text/plain, file_id=401c8bf4-a2e7-4445-8f2c-017898008f9f, user_id=0d9694f2-af6c-4724-8980-cb40bf198e9c
+2025-11-12 12:03:18,945 - app.routes.documents - INFO - Document uploaded successfully: document_id=2a8eef0d-0fa3-4eab-86e3-85cef7979c0c, file_id=401c8bf4-a2e7-4445-8f2c-017898008f9f
+2025-11-12 12:03:18,946 - app.utils.database - DEBUG - Committed transaction for tenant: tenant_fidwork_916d299c
+2025-11-12 12:03:18,950 - app.routes.documents - INFO - TSA timestamp task scheduled for file 401c8bf4-a2e7-4445-8f2c-017898008f9f (task_id: ede23b34-06dc-49ff-8c14-f43921f0d75b, tenant: fidwork)
+2025-11-12 12:16:34,821 - app.utils.decorators - DEBUG - Authenticated user: 0d9694f2-af6c-4724-8980-cb40bf198e9c
+2025-11-12 12:16:34,822 - app.routes.documents - INFO - Uploading document: tenant_id=964fd8df-6c81-4698-a7b6-4f1825c71c45, user_id=0d9694f2-af6c-4724-8980-cb40bf198e9c
+2025-11-12 12:16:34,826 - app.schemas.document_schema - DEBUG - Validated filename for upload: tsa_test.txt
+2025-11-12 12:16:34,826 - app.schemas.document_schema - DEBUG - Validated MIME type for upload: text/plain
+2025-11-12 12:16:34,827 - app.schemas.document_schema - DEBUG - Normalized filename for upload: tsa_test.txt
+2025-11-12 12:16:34,827 - app.schemas.document_schema - DEBUG - Normalized MIME type for upload: text/plain
+2025-11-12 12:16:34,827 - app.routes.documents - INFO - File hashes calculated: MD5=4552b25a0d557494efb582a5e33f8189, SHA-256=1fbb973ba9970352..., size=73 bytes
+2025-11-12 12:16:34,835 - app.models.file - DEBUG - Generated S3 path: tenants/tenant_fidwork_916d299c/files/45/52/4552b25a0d557494efb582a5e33f8189_temp
+2025-11-12 12:16:34,835 - app.models.file - INFO - File object initialized: md5=4552b25a0d557494efb582a5e33f8189, size=73, s3_path=tenants/tenant_fidwork_916d299c/files/45/52/4552b25a0d557494efb582a5e33f8189_temp
+2025-11-12 12:16:34,839 - app.models.file - DEBUG - Generated S3 path: tenants/tenant_fidwork_916d299c/files/45/52/4552b25a0d557494efb582a5e33f8189_a9a8584c-aa88-4c45-add8-a2dfecd722ec
+2025-11-12 12:16:34,841 - app.routes.documents - INFO - Created new file: file_id=a9a8584c-aa88-4c45-add8-a2dfecd722ec, md5=4552b25a0d557494efb582a5e33f8189, sha256=1fbb973ba9970352..., s3_path=tenants/tenant_fidwork_916d299c/files/45/52/4552b25a0d557494efb582a5e33f8189_a9a8584c-aa88-4c45-add8-a2dfecd722ec
+2025-11-12 12:16:34,882 - app.utils.s3_client - DEBUG - Uploaded file to S3: bucket=saas-documents, path=tenants/tenant_fidwork_916d299c/files/45/52/4552b25a0d557494efb582a5e33f8189_a9a8584c-aa88-4c45-add8-a2dfecd722ec, content_type=text/plain
+2025-11-12 12:16:34,883 - app.utils.s3_client - INFO - File uploaded to S3: tenants/tenant_fidwork_916d299c/files/45/52/4552b25a0d557494efb582a5e33f8189_a9a8584c-aa88-4c45-add8-a2dfecd722ec
+2025-11-12 12:16:34,883 - app.models.document - INFO - Document object initialized: filename=tsa_test.txt, mime_type=text/plain, file_id=a9a8584c-aa88-4c45-add8-a2dfecd722ec, user_id=0d9694f2-af6c-4724-8980-cb40bf198e9c
+2025-11-12 12:16:34,885 - app.routes.documents - INFO - Document uploaded successfully: document_id=7da1bcb9-af0a-4abb-9873-0c9debca2774, file_id=a9a8584c-aa88-4c45-add8-a2dfecd722ec
+2025-11-12 12:16:34,886 - app.utils.database - DEBUG - Committed transaction for tenant: tenant_fidwork_916d299c
+2025-11-12 12:16:34,899 - app.routes.documents - INFO - TSA timestamp task scheduled for file a9a8584c-aa88-4c45-add8-a2dfecd722ec (task_id: f4223c53-2746-4a69-8b2f-ff3b3ce12463, tenant: fidwork)
+2025-11-12 12:19:41,410 - app.utils.decorators - DEBUG - Authenticated user: 0d9694f2-af6c-4724-8980-cb40bf198e9c
+2025-11-12 12:19:41,416 - app.routes.documents - INFO - Uploading document: tenant_id=964fd8df-6c81-4698-a7b6-4f1825c71c45, user_id=0d9694f2-af6c-4724-8980-cb40bf198e9c
+2025-11-12 12:19:41,443 - app.schemas.document_schema - DEBUG - Validated filename for upload: tsa_test.txt
+2025-11-12 12:19:41,444 - app.schemas.document_schema - DEBUG - Validated MIME type for upload: text/plain
+2025-11-12 12:19:41,445 - app.schemas.document_schema - DEBUG - Normalized filename for upload: tsa_test.txt
+2025-11-12 12:19:41,445 - app.schemas.document_schema - DEBUG - Normalized MIME type for upload: text/plain
+2025-11-12 12:19:41,446 - app.routes.documents - INFO - File hashes calculated: MD5=68fccda8171ec30973cc3580be313d40, SHA-256=53e46799ebf16d0e..., size=73 bytes
+2025-11-12 12:19:41,458 - app.models.file - DEBUG - Generated S3 path: tenants/tenant_fidwork_916d299c/files/68/fc/68fccda8171ec30973cc3580be313d40_temp
+2025-11-12 12:19:41,461 - app.models.file - INFO - File object initialized: md5=68fccda8171ec30973cc3580be313d40, size=73, s3_path=tenants/tenant_fidwork_916d299c/files/68/fc/68fccda8171ec30973cc3580be313d40_temp
+2025-11-12 12:19:41,483 - app.models.file - DEBUG - Generated S3 path: tenants/tenant_fidwork_916d299c/files/68/fc/68fccda8171ec30973cc3580be313d40_16d79bad-3af9-4d35-9fa9-487c856fc295
+2025-11-12 12:19:41,488 - app.routes.documents - INFO - Created new file: file_id=16d79bad-3af9-4d35-9fa9-487c856fc295, md5=68fccda8171ec30973cc3580be313d40, sha256=53e46799ebf16d0e..., s3_path=tenants/tenant_fidwork_916d299c/files/68/fc/68fccda8171ec30973cc3580be313d40_16d79bad-3af9-4d35-9fa9-487c856fc295
+2025-11-12 12:19:41,590 - app.utils.s3_client - DEBUG - Uploaded file to S3: bucket=saas-documents, path=tenants/tenant_fidwork_916d299c/files/68/fc/68fccda8171ec30973cc3580be313d40_16d79bad-3af9-4d35-9fa9-487c856fc295, content_type=text/plain
+2025-11-12 12:19:41,590 - app.utils.s3_client - INFO - File uploaded to S3: tenants/tenant_fidwork_916d299c/files/68/fc/68fccda8171ec30973cc3580be313d40_16d79bad-3af9-4d35-9fa9-487c856fc295
+2025-11-12 12:19:41,591 - app.models.document - INFO - Document object initialized: filename=tsa_test.txt, mime_type=text/plain, file_id=16d79bad-3af9-4d35-9fa9-487c856fc295, user_id=0d9694f2-af6c-4724-8980-cb40bf198e9c
+2025-11-12 12:19:41,598 - app.routes.documents - INFO - Document uploaded successfully: document_id=12db31c8-b15e-42d5-8a6d-cd70cbe0c460, file_id=16d79bad-3af9-4d35-9fa9-487c856fc295
+2025-11-12 12:19:41,600 - app.utils.database - DEBUG - Committed transaction for tenant: tenant_fidwork_916d299c
+2025-11-12 12:19:41,614 - app.routes.documents - INFO - TSA timestamp task scheduled for file 16d79bad-3af9-4d35-9fa9-487c856fc295 (task_id: 637cc0b6-3a7d-4c86-80de-9b1d26a0d1a5, tenant: fidwork)
+2025-11-12 12:50:08,424 - app.utils.decorators - DEBUG - Authenticated user: 0d9694f2-af6c-4724-8980-cb40bf198e9c
+2025-11-12 12:50:08,426 - app.routes.documents - INFO - Uploading document: tenant_id=964fd8df-6c81-4698-a7b6-4f1825c71c45, user_id=0d9694f2-af6c-4724-8980-cb40bf198e9c
+2025-11-12 12:50:08,485 - app.schemas.document_schema - DEBUG - Validated filename for upload: yo.png
+2025-11-12 12:50:08,486 - app.schemas.document_schema - DEBUG - Validated MIME type for upload: image/png
+2025-11-12 12:50:08,486 - app.schemas.document_schema - DEBUG - Normalized filename for upload: yo.png
+2025-11-12 12:50:08,486 - app.schemas.document_schema - DEBUG - Normalized MIME type for upload: image/png
+2025-11-12 12:50:08,488 - app.routes.documents - INFO - File hashes calculated: MD5=0051b2f062e96a3befd62c529ddce834, SHA-256=59924b0de886d14d..., size=194022 bytes
+2025-11-12 12:50:08,518 - app.models.file - DEBUG - Generated S3 path: tenants/tenant_fidwork_916d299c/files/00/51/0051b2f062e96a3befd62c529ddce834_temp
+2025-11-12 12:50:08,520 - app.models.file - INFO - File object initialized: md5=0051b2f062e96a3befd62c529ddce834, size=194022, s3_path=tenants/tenant_fidwork_916d299c/files/00/51/0051b2f062e96a3befd62c529ddce834_temp
+2025-11-12 12:50:08,524 - app.models.file - DEBUG - Generated S3 path: tenants/tenant_fidwork_916d299c/files/00/51/0051b2f062e96a3befd62c529ddce834_a609fb4c-a60e-40af-ab2e-e24451fb009b
+2025-11-12 12:50:08,525 - app.routes.documents - INFO - Created new file: file_id=a609fb4c-a60e-40af-ab2e-e24451fb009b, md5=0051b2f062e96a3befd62c529ddce834, sha256=59924b0de886d14d..., s3_path=tenants/tenant_fidwork_916d299c/files/00/51/0051b2f062e96a3befd62c529ddce834_a609fb4c-a60e-40af-ab2e-e24451fb009b
+2025-11-12 12:50:08,558 - app.utils.s3_client - DEBUG - Uploaded file to S3: bucket=saas-documents, path=tenants/tenant_fidwork_916d299c/files/00/51/0051b2f062e96a3befd62c529ddce834_a609fb4c-a60e-40af-ab2e-e24451fb009b, content_type=image/png
+2025-11-12 12:50:08,559 - app.utils.s3_client - INFO - File uploaded to S3: tenants/tenant_fidwork_916d299c/files/00/51/0051b2f062e96a3befd62c529ddce834_a609fb4c-a60e-40af-ab2e-e24451fb009b
+2025-11-12 12:50:08,559 - app.models.document - INFO - Document object initialized: filename=yo.png, mime_type=image/png, file_id=a609fb4c-a60e-40af-ab2e-e24451fb009b, user_id=0d9694f2-af6c-4724-8980-cb40bf198e9c
+2025-11-12 12:50:08,563 - app.routes.documents - INFO - Document uploaded successfully: document_id=049b1a17-f491-42bc-8b41-01e9ee2f262d, file_id=a609fb4c-a60e-40af-ab2e-e24451fb009b
+2025-11-12 12:50:08,565 - app.utils.database - DEBUG - Committed transaction for tenant: tenant_fidwork_916d299c
+2025-11-12 12:50:08,571 - app.routes.documents - INFO - TSA timestamp task scheduled for file a609fb4c-a60e-40af-ab2e-e24451fb009b (task_id: 105e176c-09be-488c-9891-0caa59e78d6b, tenant: fidwork)
+2025-11-12 12:59:31,292 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-12 12:59:31,292 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-12 12:59:31,293 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-12 12:59:31,293 - app - INFO - Flask app created with config: development
+2025-11-12 12:59:31,293 - app - INFO - Flask app created with config: development
+2025-11-12 12:59:31,293 - app - INFO - Flask app created with config: development
+2025-11-12 12:59:31,293 - app - INFO - Debug mode: True
+2025-11-12 12:59:31,293 - app - INFO - Debug mode: True
+2025-11-12 12:59:31,293 - app - INFO - Debug mode: True
+2025-11-12 12:59:31,293 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-12 12:59:31,293 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-12 12:59:31,294 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-12 12:59:31,298 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-12 12:59:31,298 - app - INFO - Flask app created with config: development
+2025-11-12 12:59:31,299 - app - INFO - Debug mode: True
+2025-11-12 12:59:31,299 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-12 12:59:39,542 - app.utils.decorators - DEBUG - Authenticated user: 0d9694f2-af6c-4724-8980-cb40bf198e9c
+2025-11-12 12:59:39,544 - app.routes.documents - INFO - Uploading document: tenant_id=964fd8df-6c81-4698-a7b6-4f1825c71c45, user_id=0d9694f2-af6c-4724-8980-cb40bf198e9c
+2025-11-12 12:59:39,601 - app.schemas.document_schema - DEBUG - Validated filename for upload: tsa_test.txt
+2025-11-12 12:59:39,601 - app.schemas.document_schema - DEBUG - Validated MIME type for upload: text/plain
+2025-11-12 12:59:39,601 - app.schemas.document_schema - DEBUG - Normalized filename for upload: tsa_test.txt
+2025-11-12 12:59:39,601 - app.schemas.document_schema - DEBUG - Normalized MIME type for upload: text/plain
+2025-11-12 12:59:39,602 - app.routes.documents - INFO - File hashes calculated: MD5=9fdca40ff5dd3816916b6b12f458111a, SHA-256=ca0d1ec148aef059..., size=73 bytes
+2025-11-12 12:59:39,612 - app.utils.database - INFO - Created engine for tenant database: tenant_fidwork_916d299c
+2025-11-12 12:59:39,613 - app.utils.database - INFO - Created session factory for tenant database: tenant_fidwork_916d299c
+2025-11-12 12:59:39,636 - app.models.file - DEBUG - Generated S3 path: tenants/tenant_fidwork_916d299c/files/9f/dc/9fdca40ff5dd3816916b6b12f458111a_temp
+2025-11-12 12:59:39,636 - app.models.file - INFO - File object initialized: md5=9fdca40ff5dd3816916b6b12f458111a, size=73, s3_path=tenants/tenant_fidwork_916d299c/files/9f/dc/9fdca40ff5dd3816916b6b12f458111a_temp
+2025-11-12 12:59:39,643 - app.models.file - DEBUG - Generated S3 path: tenants/tenant_fidwork_916d299c/files/9f/dc/9fdca40ff5dd3816916b6b12f458111a_ba45d1f1-0dbe-4de4-aab5-c59c80d75e00
+2025-11-12 12:59:39,645 - app.routes.documents - INFO - Created new file: file_id=ba45d1f1-0dbe-4de4-aab5-c59c80d75e00, md5=9fdca40ff5dd3816916b6b12f458111a, sha256=ca0d1ec148aef059..., s3_path=tenants/tenant_fidwork_916d299c/files/9f/dc/9fdca40ff5dd3816916b6b12f458111a_ba45d1f1-0dbe-4de4-aab5-c59c80d75e00
+2025-11-12 12:59:40,221 - app.utils.s3_client - DEBUG - S3 client initialized: bucket=saas-documents, region=us-east-1, endpoint=http://minio:9000, public_url=http://minio:9000, use_ssl=False
+2025-11-12 12:59:40,222 - app.utils.s3_client - INFO - S3 client initialized: bucket=saas-documents
+2025-11-12 12:59:40,245 - app.utils.s3_client - DEBUG - Uploaded file to S3: bucket=saas-documents, path=tenants/tenant_fidwork_916d299c/files/9f/dc/9fdca40ff5dd3816916b6b12f458111a_ba45d1f1-0dbe-4de4-aab5-c59c80d75e00, content_type=text/plain
+2025-11-12 12:59:40,245 - app.utils.s3_client - INFO - File uploaded to S3: tenants/tenant_fidwork_916d299c/files/9f/dc/9fdca40ff5dd3816916b6b12f458111a_ba45d1f1-0dbe-4de4-aab5-c59c80d75e00
+2025-11-12 12:59:40,246 - app.models.document - INFO - Document object initialized: filename=tsa_test.txt, mime_type=text/plain, file_id=ba45d1f1-0dbe-4de4-aab5-c59c80d75e00, user_id=0d9694f2-af6c-4724-8980-cb40bf198e9c
+2025-11-12 12:59:40,250 - app.routes.documents - INFO - Document uploaded successfully: document_id=28c96f32-ca8d-4bfd-8bf7-cd778a1685cd, file_id=ba45d1f1-0dbe-4de4-aab5-c59c80d75e00
+2025-11-12 12:59:40,251 - app.utils.database - DEBUG - Committed transaction for tenant: tenant_fidwork_916d299c
+2025-11-12 12:59:40,320 - app.celery_app - INFO - Celery configured with broker: redis://redis:6379/3
+2025-11-12 12:59:40,356 - app.routes.documents - INFO - TSA timestamp task scheduled for file ba45d1f1-0dbe-4de4-aab5-c59c80d75e00 (task_id: 269f2fd7-a9fd-43fb-9d5d-a7956a8c67a1, tenant: fidwork)
+2025-11-12 13:00:47,659 - app.utils.decorators - DEBUG - Authenticated user: 0d9694f2-af6c-4724-8980-cb40bf198e9c
+2025-11-12 13:00:47,661 - app.routes.documents - INFO - Timestamp download request: tenant_id=964fd8df-6c81-4698-a7b6-4f1825c71c45, file_id=ba45d1f1-0dbe-4de4-aab5-c59c80d75e00, user_id=0d9694f2-af6c-4724-8980-cb40bf198e9c
+2025-11-12 13:00:47,731 - app.routes.documents - INFO - Access granted for timestamp download: user_id=0d9694f2-af6c-4724-8980-cb40bf198e9c, tenant_id=964fd8df-6c81-4698-a7b6-4f1825c71c45, role=admin, database=tenant_fidwork_916d299c
+2025-11-12 13:00:47,733 - app.utils.database - INFO - Created engine for tenant database: tenant_fidwork_916d299c
+2025-11-12 13:00:47,734 - app.utils.database - INFO - Created session factory for tenant database: tenant_fidwork_916d299c
+2025-11-12 13:00:47,752 - app.routes.documents - INFO - AUDIT: Timestamp downloaded - user_id=0d9694f2-af6c-4724-8980-cb40bf198e9c, tenant_id=964fd8df-6c81-4698-a7b6-4f1825c71c45, file_id=ba45d1f1-0dbe-4de4-aab5-c59c80d75e00, token_size=6006 bytes, role=admin
+2025-11-12 13:00:47,753 - app.routes.documents - INFO - Timestamp download completed: file_id=ba45d1f1-0dbe-4de4-aab5-c59c80d75e00, size=6006 bytes
+2025-11-12 13:00:47,754 - app.utils.database - DEBUG - Committed transaction for tenant: tenant_fidwork_916d299c
+2025-11-12 13:01:17,019 - app.utils.decorators - DEBUG - Authenticated user: 0d9694f2-af6c-4724-8980-cb40bf198e9c
+2025-11-12 13:01:17,020 - app.routes.documents - INFO - Uploading document: tenant_id=964fd8df-6c81-4698-a7b6-4f1825c71c45, user_id=0d9694f2-af6c-4724-8980-cb40bf198e9c
+2025-11-12 13:01:17,029 - app.schemas.document_schema - DEBUG - Validated filename for upload: tsa_test.txt
+2025-11-12 13:01:17,029 - app.schemas.document_schema - DEBUG - Validated MIME type for upload: text/plain
+2025-11-12 13:01:17,030 - app.schemas.document_schema - DEBUG - Normalized filename for upload: tsa_test.txt
+2025-11-12 13:01:17,030 - app.schemas.document_schema - DEBUG - Normalized MIME type for upload: text/plain
+2025-11-12 13:01:17,030 - app.routes.documents - INFO - File hashes calculated: MD5=15d166f78c09c517452645722995b383, SHA-256=efb3b540e20a3229..., size=73 bytes
+2025-11-12 13:01:17,033 - app.utils.database - INFO - Created engine for tenant database: tenant_fidwork_916d299c
+2025-11-12 13:01:17,034 - app.utils.database - INFO - Created session factory for tenant database: tenant_fidwork_916d299c
+2025-11-12 13:01:17,058 - app.models.file - DEBUG - Generated S3 path: tenants/tenant_fidwork_916d299c/files/15/d1/15d166f78c09c517452645722995b383_temp
+2025-11-12 13:01:17,059 - app.models.file - INFO - File object initialized: md5=15d166f78c09c517452645722995b383, size=73, s3_path=tenants/tenant_fidwork_916d299c/files/15/d1/15d166f78c09c517452645722995b383_temp
+2025-11-12 13:01:17,064 - app.models.file - DEBUG - Generated S3 path: tenants/tenant_fidwork_916d299c/files/15/d1/15d166f78c09c517452645722995b383_853a4c14-bc04-4ccc-914e-491738a1aa4e
+2025-11-12 13:01:17,066 - app.routes.documents - INFO - Created new file: file_id=853a4c14-bc04-4ccc-914e-491738a1aa4e, md5=15d166f78c09c517452645722995b383, sha256=efb3b540e20a3229..., s3_path=tenants/tenant_fidwork_916d299c/files/15/d1/15d166f78c09c517452645722995b383_853a4c14-bc04-4ccc-914e-491738a1aa4e
+2025-11-12 13:01:17,348 - app.utils.s3_client - DEBUG - S3 client initialized: bucket=saas-documents, region=us-east-1, endpoint=http://minio:9000, public_url=http://minio:9000, use_ssl=False
+2025-11-12 13:01:17,348 - app.utils.s3_client - INFO - S3 client initialized: bucket=saas-documents
+2025-11-12 13:01:17,363 - app.utils.s3_client - DEBUG - Uploaded file to S3: bucket=saas-documents, path=tenants/tenant_fidwork_916d299c/files/15/d1/15d166f78c09c517452645722995b383_853a4c14-bc04-4ccc-914e-491738a1aa4e, content_type=text/plain
+2025-11-12 13:01:17,363 - app.utils.s3_client - INFO - File uploaded to S3: tenants/tenant_fidwork_916d299c/files/15/d1/15d166f78c09c517452645722995b383_853a4c14-bc04-4ccc-914e-491738a1aa4e
+2025-11-12 13:01:17,363 - app.models.document - INFO - Document object initialized: filename=tsa_test.txt, mime_type=text/plain, file_id=853a4c14-bc04-4ccc-914e-491738a1aa4e, user_id=0d9694f2-af6c-4724-8980-cb40bf198e9c
+2025-11-12 13:01:17,366 - app.routes.documents - INFO - Document uploaded successfully: document_id=2c1011a9-43bd-4c88-90ad-69d3e4f88aa6, file_id=853a4c14-bc04-4ccc-914e-491738a1aa4e
+2025-11-12 13:01:17,367 - app.utils.database - DEBUG - Committed transaction for tenant: tenant_fidwork_916d299c
+2025-11-12 13:01:17,401 - app.celery_app - INFO - Celery configured with broker: redis://redis:6379/3
+2025-11-12 13:01:17,424 - app.routes.documents - INFO - TSA timestamp task scheduled for file 853a4c14-bc04-4ccc-914e-491738a1aa4e (task_id: 6548f454-f054-4b64-8478-390e6ff498ca, tenant: fidwork)
+2025-11-12 13:01:27,751 - app.utils.decorators - DEBUG - Authenticated user: 0d9694f2-af6c-4724-8980-cb40bf198e9c
+2025-11-12 13:01:27,753 - app.routes.documents - INFO - Timestamp download request: tenant_id=964fd8df-6c81-4698-a7b6-4f1825c71c45, file_id=853a4c14-bc04-4ccc-914e-491738a1aa4e, user_id=0d9694f2-af6c-4724-8980-cb40bf198e9c
+2025-11-12 13:01:27,774 - app.routes.documents - INFO - Access granted for timestamp download: user_id=0d9694f2-af6c-4724-8980-cb40bf198e9c, tenant_id=964fd8df-6c81-4698-a7b6-4f1825c71c45, role=admin, database=tenant_fidwork_916d299c
+2025-11-12 13:01:27,780 - app.routes.documents - INFO - AUDIT: Timestamp downloaded - user_id=0d9694f2-af6c-4724-8980-cb40bf198e9c, tenant_id=964fd8df-6c81-4698-a7b6-4f1825c71c45, file_id=853a4c14-bc04-4ccc-914e-491738a1aa4e, token_size=6007 bytes, role=admin
+2025-11-12 13:01:27,780 - app.routes.documents - INFO - Timestamp download completed: file_id=853a4c14-bc04-4ccc-914e-491738a1aa4e, size=6007 bytes
+2025-11-12 13:01:27,781 - app.utils.database - DEBUG - Committed transaction for tenant: tenant_fidwork_916d299c
+2025-11-12 13:02:19,089 - app.utils.decorators - DEBUG - Authenticated user: 0d9694f2-af6c-4724-8980-cb40bf198e9c
+2025-11-12 13:02:19,091 - app.routes.documents - INFO - Timestamp download request: tenant_id=964fd8df-6c81-4698-a7b6-4f1825c71c45, file_id=a9a8584c-a60e-40af-ab2e-e24451fb009b, user_id=0d9694f2-af6c-4724-8980-cb40bf198e9c
+2025-11-12 13:02:19,126 - app.routes.documents - INFO - Access granted for timestamp download: user_id=0d9694f2-af6c-4724-8980-cb40bf198e9c, tenant_id=964fd8df-6c81-4698-a7b6-4f1825c71c45, role=admin, database=tenant_fidwork_916d299c
+2025-11-12 13:02:19,133 - app.routes.documents - WARNING - File not found: file_id=a9a8584c-a60e-40af-ab2e-e24451fb009b
+2025-11-12 13:02:19,134 - app.utils.database - DEBUG - Committed transaction for tenant: tenant_fidwork_916d299c
+2025-11-12 13:04:41,275 - app.utils.decorators - ERROR - JWT validation failed: Signature has expired
+2025-11-12 13:04:51,849 - app.utils.decorators - DEBUG - Authenticated user: 0d9694f2-af6c-4724-8980-cb40bf198e9c
+2025-11-12 13:04:51,851 - app.routes.documents - INFO - Timestamp download request: tenant_id=964fd8df-6c81-4698-a7b6-4f1825c71c45, file_id=ba45d1f1-0dbe-4de4-aab5-c59c80d75e00, user_id=0d9694f2-af6c-4724-8980-cb40bf198e9c
+2025-11-12 13:04:51,871 - app.routes.documents - INFO - Access granted for timestamp download: user_id=0d9694f2-af6c-4724-8980-cb40bf198e9c, tenant_id=964fd8df-6c81-4698-a7b6-4f1825c71c45, role=admin, database=tenant_fidwork_916d299c
+2025-11-12 13:04:51,876 - app.routes.documents - INFO - AUDIT: Timestamp downloaded - user_id=0d9694f2-af6c-4724-8980-cb40bf198e9c, tenant_id=964fd8df-6c81-4698-a7b6-4f1825c71c45, file_id=ba45d1f1-0dbe-4de4-aab5-c59c80d75e00, token_size=6006 bytes, role=admin
+2025-11-12 13:04:51,877 - app.routes.documents - INFO - Timestamp download completed: file_id=ba45d1f1-0dbe-4de4-aab5-c59c80d75e00, size=6006 bytes
+2025-11-12 13:04:51,878 - app.utils.database - DEBUG - Committed transaction for tenant: tenant_fidwork_916d299c
+2025-11-12 13:05:56,503 - app.utils.decorators - DEBUG - Authenticated user: 0d9694f2-af6c-4724-8980-cb40bf198e9c
+2025-11-12 13:05:56,545 - app.routes.files - INFO - Retrieved 19 files for tenant 964fd8df-6c81-4698-a7b6-4f1825c71c45 (page 1/1, total: 19)
+2025-11-12 13:05:56,547 - app.utils.database - DEBUG - Committed transaction for tenant: tenant_fidwork_916d299c
+2025-11-12 13:06:13,720 - app.utils.decorators - DEBUG - Authenticated user: 0d9694f2-af6c-4724-8980-cb40bf198e9c
+2025-11-12 13:06:13,722 - app.routes.documents - INFO - Timestamp download request: tenant_id=964fd8df-6c81-4698-a7b6-4f1825c71c45, file_id=853a4c14-bc04-4ccc-914e-491738a1aa4e, user_id=0d9694f2-af6c-4724-8980-cb40bf198e9c
+2025-11-12 13:06:13,738 - app.routes.documents - INFO - Access granted for timestamp download: user_id=0d9694f2-af6c-4724-8980-cb40bf198e9c, tenant_id=964fd8df-6c81-4698-a7b6-4f1825c71c45, role=admin, database=tenant_fidwork_916d299c
+2025-11-12 13:06:13,740 - app.routes.documents - INFO - AUDIT: Timestamp downloaded - user_id=0d9694f2-af6c-4724-8980-cb40bf198e9c, tenant_id=964fd8df-6c81-4698-a7b6-4f1825c71c45, file_id=853a4c14-bc04-4ccc-914e-491738a1aa4e, token_size=6007 bytes, role=admin
+2025-11-12 13:06:13,740 - app.routes.documents - INFO - Timestamp download completed: file_id=853a4c14-bc04-4ccc-914e-491738a1aa4e, size=6007 bytes
+2025-11-12 13:06:13,741 - app.utils.database - DEBUG - Committed transaction for tenant: tenant_fidwork_916d299c
+2025-11-12 13:11:45,256 - app.utils.decorators - DEBUG - Authenticated user: 0d9694f2-af6c-4724-8980-cb40bf198e9c
+2025-11-12 13:11:45,258 - app.routes.documents - INFO - Uploading document: tenant_id=964fd8df-6c81-4698-a7b6-4f1825c71c45, user_id=0d9694f2-af6c-4724-8980-cb40bf198e9c
+2025-11-12 13:11:45,287 - app.schemas.document_schema - DEBUG - Validated filename for upload: tsa_test.txt
+2025-11-12 13:11:45,288 - app.schemas.document_schema - DEBUG - Validated MIME type for upload: text/plain
+2025-11-12 13:11:45,289 - app.schemas.document_schema - DEBUG - Normalized filename for upload: tsa_test.txt
+2025-11-12 13:11:45,289 - app.schemas.document_schema - DEBUG - Normalized MIME type for upload: text/plain
+2025-11-12 13:11:45,289 - app.routes.documents - INFO - File hashes calculated: MD5=574b4b822dbbcdee029be7d484328a4f, SHA-256=a14400893e527dbc..., size=73 bytes
+2025-11-12 13:11:45,295 - app.utils.database - INFO - Created engine for tenant database: tenant_fidwork_916d299c
+2025-11-12 13:11:45,296 - app.utils.database - INFO - Created session factory for tenant database: tenant_fidwork_916d299c
+2025-11-12 13:11:45,328 - app.models.file - DEBUG - Generated S3 path: tenants/tenant_fidwork_916d299c/files/57/4b/574b4b822dbbcdee029be7d484328a4f_temp
+2025-11-12 13:11:45,329 - app.models.file - INFO - File object initialized: md5=574b4b822dbbcdee029be7d484328a4f, size=73, s3_path=tenants/tenant_fidwork_916d299c/files/57/4b/574b4b822dbbcdee029be7d484328a4f_temp
+2025-11-12 13:11:45,340 - app.models.file - DEBUG - Generated S3 path: tenants/tenant_fidwork_916d299c/files/57/4b/574b4b822dbbcdee029be7d484328a4f_38e64fc7-7019-4094-b8cb-9056370f0f0d
+2025-11-12 13:11:45,342 - app.routes.documents - INFO - Created new file: file_id=38e64fc7-7019-4094-b8cb-9056370f0f0d, md5=574b4b822dbbcdee029be7d484328a4f, sha256=a14400893e527dbc..., s3_path=tenants/tenant_fidwork_916d299c/files/57/4b/574b4b822dbbcdee029be7d484328a4f_38e64fc7-7019-4094-b8cb-9056370f0f0d
+2025-11-12 13:11:45,606 - app.utils.s3_client - DEBUG - S3 client initialized: bucket=saas-documents, region=us-east-1, endpoint=http://minio:9000, public_url=http://minio:9000, use_ssl=False
+2025-11-12 13:11:45,606 - app.utils.s3_client - INFO - S3 client initialized: bucket=saas-documents
+2025-11-12 13:11:45,619 - app.utils.s3_client - DEBUG - Uploaded file to S3: bucket=saas-documents, path=tenants/tenant_fidwork_916d299c/files/57/4b/574b4b822dbbcdee029be7d484328a4f_38e64fc7-7019-4094-b8cb-9056370f0f0d, content_type=text/plain
+2025-11-12 13:11:45,619 - app.utils.s3_client - INFO - File uploaded to S3: tenants/tenant_fidwork_916d299c/files/57/4b/574b4b822dbbcdee029be7d484328a4f_38e64fc7-7019-4094-b8cb-9056370f0f0d
+2025-11-12 13:11:45,619 - app.models.document - INFO - Document object initialized: filename=tsa_test.txt, mime_type=text/plain, file_id=38e64fc7-7019-4094-b8cb-9056370f0f0d, user_id=0d9694f2-af6c-4724-8980-cb40bf198e9c
+2025-11-12 13:11:45,622 - app.routes.documents - INFO - Document uploaded successfully: document_id=f8379104-927a-4b44-b27a-3f96bda0962b, file_id=38e64fc7-7019-4094-b8cb-9056370f0f0d
+2025-11-12 13:11:45,623 - app.utils.database - DEBUG - Committed transaction for tenant: tenant_fidwork_916d299c
+2025-11-12 13:11:45,647 - app.celery_app - INFO - Celery configured with broker: redis://redis:6379/3
+2025-11-12 13:11:45,667 - app.routes.documents - INFO - TSA timestamp task scheduled for file 38e64fc7-7019-4094-b8cb-9056370f0f0d (task_id: 66d09cd2-e1c6-4e58-bb5b-8db7d7602672, tenant: fidwork)
+2025-11-12 13:11:56,012 - app.utils.decorators - DEBUG - Authenticated user: 0d9694f2-af6c-4724-8980-cb40bf198e9c
+2025-11-12 13:11:56,013 - app.routes.documents - INFO - Timestamp download request: tenant_id=964fd8df-6c81-4698-a7b6-4f1825c71c45, file_id=38e64fc7-7019-4094-b8cb-9056370f0f0d, user_id=0d9694f2-af6c-4724-8980-cb40bf198e9c
+2025-11-12 13:11:56,026 - app.routes.documents - INFO - Access granted for timestamp download: user_id=0d9694f2-af6c-4724-8980-cb40bf198e9c, tenant_id=964fd8df-6c81-4698-a7b6-4f1825c71c45, role=admin, database=tenant_fidwork_916d299c
+2025-11-12 13:11:56,028 - app.routes.documents - INFO - AUDIT: Timestamp downloaded - user_id=0d9694f2-af6c-4724-8980-cb40bf198e9c, tenant_id=964fd8df-6c81-4698-a7b6-4f1825c71c45, file_id=38e64fc7-7019-4094-b8cb-9056370f0f0d, token_size=6007 bytes, role=admin
+2025-11-12 13:11:56,029 - app.routes.documents - INFO - Timestamp download completed: file_id=38e64fc7-7019-4094-b8cb-9056370f0f0d, size=6007 bytes
+2025-11-12 13:11:56,029 - app.utils.database - DEBUG - Committed transaction for tenant: tenant_fidwork_916d299c
+2025-11-12 13:11:56,344 - app.utils.decorators - DEBUG - Authenticated user: 0d9694f2-af6c-4724-8980-cb40bf198e9c
+2025-11-12 13:11:56,345 - app.routes.documents - INFO - Download request: tenant_id=964fd8df-6c81-4698-a7b6-4f1825c71c45, document_id=f8379104-927a-4b44-b27a-3f96bda0962b, user_id=0d9694f2-af6c-4724-8980-cb40bf198e9c
+2025-11-12 13:11:56,350 - app.routes.documents - INFO - Access granted: user_id=0d9694f2-af6c-4724-8980-cb40bf198e9c, tenant_id=964fd8df-6c81-4698-a7b6-4f1825c71c45, role=admin, database=tenant_fidwork_916d299c
+2025-11-12 13:11:56,361 - app.routes.documents - INFO - AUDIT: Download initiated - user_id=0d9694f2-af6c-4724-8980-cb40bf198e9c, tenant_id=964fd8df-6c81-4698-a7b6-4f1825c71c45, document_id=f8379104-927a-4b44-b27a-3f96bda0962b, filename=tsa_test.txt, size=73, md5=574b4b822dbbcdee029be7d484328a4f, role=admin
+2025-11-12 13:11:56,576 - app.utils.s3_client - DEBUG - S3 client initialized: bucket=saas-documents, region=us-east-1, endpoint=http://minio:9000, public_url=http://minio:9000, use_ssl=False
+2025-11-12 13:11:56,576 - app.utils.s3_client - INFO - S3 client initialized: bucket=saas-documents
+2025-11-12 13:11:56,585 - app.utils.s3_client - INFO - Retrieved S3 object for streaming: tenants/tenant_fidwork_916d299c/files/57/4b/574b4b822dbbcdee029be7d484328a4f_38e64fc7-7019-4094-b8cb-9056370f0f0d
+2025-11-12 13:11:56,585 - app.routes.documents - INFO - Download stream started: document_id=f8379104-927a-4b44-b27a-3f96bda0962b, size=73 bytes
+2025-11-12 13:11:56,586 - app.utils.database - DEBUG - Committed transaction for tenant: tenant_fidwork_916d299c
+2025-11-12 13:11:56,586 - app.routes.documents - INFO - AUDIT: Download completed successfully - user_id=0d9694f2-af6c-4724-8980-cb40bf198e9c, document_id=f8379104-927a-4b44-b27a-3f96bda0962b, filename=tsa_test.txt, size=73
+2025-11-12 13:13:46,883 - app.utils.decorators - DEBUG - Authenticated user: 0d9694f2-af6c-4724-8980-cb40bf198e9c
+2025-11-12 13:13:46,885 - app.routes.documents - INFO - Uploading document: tenant_id=964fd8df-6c81-4698-a7b6-4f1825c71c45, user_id=0d9694f2-af6c-4724-8980-cb40bf198e9c
+2025-11-12 13:13:46,908 - app.schemas.document_schema - DEBUG - Validated filename for upload: tsa_test.txt
+2025-11-12 13:13:46,909 - app.schemas.document_schema - DEBUG - Validated MIME type for upload: text/plain
+2025-11-12 13:13:46,909 - app.schemas.document_schema - DEBUG - Normalized filename for upload: tsa_test.txt
+2025-11-12 13:13:46,909 - app.schemas.document_schema - DEBUG - Normalized MIME type for upload: text/plain
+2025-11-12 13:13:46,910 - app.routes.documents - INFO - File hashes calculated: MD5=bdb9788b74acbf9f0772c8e0e32fe726, SHA-256=267d2a116d3d7379..., size=73 bytes
+2025-11-12 13:13:46,923 - app.models.file - DEBUG - Generated S3 path: tenants/tenant_fidwork_916d299c/files/bd/b9/bdb9788b74acbf9f0772c8e0e32fe726_temp
+2025-11-12 13:13:46,924 - app.models.file - INFO - File object initialized: md5=bdb9788b74acbf9f0772c8e0e32fe726, size=73, s3_path=tenants/tenant_fidwork_916d299c/files/bd/b9/bdb9788b74acbf9f0772c8e0e32fe726_temp
+2025-11-12 13:13:46,944 - app.models.file - DEBUG - Generated S3 path: tenants/tenant_fidwork_916d299c/files/bd/b9/bdb9788b74acbf9f0772c8e0e32fe726_1a99f69a-f52a-4e97-ad01-0ad7aacd319b
+2025-11-12 13:13:46,946 - app.routes.documents - INFO - Created new file: file_id=1a99f69a-f52a-4e97-ad01-0ad7aacd319b, md5=bdb9788b74acbf9f0772c8e0e32fe726, sha256=267d2a116d3d7379..., s3_path=tenants/tenant_fidwork_916d299c/files/bd/b9/bdb9788b74acbf9f0772c8e0e32fe726_1a99f69a-f52a-4e97-ad01-0ad7aacd319b
+2025-11-12 13:13:46,979 - app.utils.s3_client - DEBUG - Uploaded file to S3: bucket=saas-documents, path=tenants/tenant_fidwork_916d299c/files/bd/b9/bdb9788b74acbf9f0772c8e0e32fe726_1a99f69a-f52a-4e97-ad01-0ad7aacd319b, content_type=text/plain
+2025-11-12 13:13:46,980 - app.utils.s3_client - INFO - File uploaded to S3: tenants/tenant_fidwork_916d299c/files/bd/b9/bdb9788b74acbf9f0772c8e0e32fe726_1a99f69a-f52a-4e97-ad01-0ad7aacd319b
+2025-11-12 13:13:46,980 - app.models.document - INFO - Document object initialized: filename=tsa_test.txt, mime_type=text/plain, file_id=1a99f69a-f52a-4e97-ad01-0ad7aacd319b, user_id=0d9694f2-af6c-4724-8980-cb40bf198e9c
+2025-11-12 13:13:46,983 - app.routes.documents - INFO - Document uploaded successfully: document_id=e08ebfa9-b82b-4faf-a44f-a2ffe4331ad3, file_id=1a99f69a-f52a-4e97-ad01-0ad7aacd319b
+2025-11-12 13:13:46,984 - app.utils.database - DEBUG - Committed transaction for tenant: tenant_fidwork_916d299c
+2025-11-12 13:13:47,028 - app.celery_app - INFO - Celery configured with broker: redis://redis:6379/3
+2025-11-12 13:13:47,052 - app.routes.documents - INFO - TSA timestamp task scheduled for file 1a99f69a-f52a-4e97-ad01-0ad7aacd319b (task_id: f4d60055-947c-4127-bba0-751191afe089, tenant: fidwork)
+2025-11-12 13:13:57,315 - app.utils.decorators - DEBUG - Authenticated user: 0d9694f2-af6c-4724-8980-cb40bf198e9c
+2025-11-12 13:13:57,315 - app.routes.documents - INFO - Timestamp download request: tenant_id=964fd8df-6c81-4698-a7b6-4f1825c71c45, file_id=1a99f69a-f52a-4e97-ad01-0ad7aacd319b, user_id=0d9694f2-af6c-4724-8980-cb40bf198e9c
+2025-11-12 13:13:57,320 - app.routes.documents - INFO - Access granted for timestamp download: user_id=0d9694f2-af6c-4724-8980-cb40bf198e9c, tenant_id=964fd8df-6c81-4698-a7b6-4f1825c71c45, role=admin, database=tenant_fidwork_916d299c
+2025-11-12 13:13:57,321 - app.routes.documents - INFO - AUDIT: Timestamp downloaded - user_id=0d9694f2-af6c-4724-8980-cb40bf198e9c, tenant_id=964fd8df-6c81-4698-a7b6-4f1825c71c45, file_id=1a99f69a-f52a-4e97-ad01-0ad7aacd319b, token_size=6008 bytes, role=admin
+2025-11-12 13:13:57,322 - app.routes.documents - INFO - Timestamp download completed: file_id=1a99f69a-f52a-4e97-ad01-0ad7aacd319b, size=6008 bytes
+2025-11-12 13:13:57,322 - app.utils.database - DEBUG - Committed transaction for tenant: tenant_fidwork_916d299c
+2025-11-12 13:13:57,541 - app.utils.decorators - DEBUG - Authenticated user: 0d9694f2-af6c-4724-8980-cb40bf198e9c
+2025-11-12 13:13:57,542 - app.routes.documents - INFO - Download request: tenant_id=964fd8df-6c81-4698-a7b6-4f1825c71c45, document_id=e08ebfa9-b82b-4faf-a44f-a2ffe4331ad3, user_id=0d9694f2-af6c-4724-8980-cb40bf198e9c
+2025-11-12 13:13:57,557 - app.routes.documents - INFO - Access granted: user_id=0d9694f2-af6c-4724-8980-cb40bf198e9c, tenant_id=964fd8df-6c81-4698-a7b6-4f1825c71c45, role=admin, database=tenant_fidwork_916d299c
+2025-11-12 13:13:57,567 - app.routes.documents - INFO - AUDIT: Download initiated - user_id=0d9694f2-af6c-4724-8980-cb40bf198e9c, tenant_id=964fd8df-6c81-4698-a7b6-4f1825c71c45, document_id=e08ebfa9-b82b-4faf-a44f-a2ffe4331ad3, filename=tsa_test.txt, size=73, md5=bdb9788b74acbf9f0772c8e0e32fe726, role=admin
+2025-11-12 13:13:57,593 - app.utils.s3_client - INFO - Retrieved S3 object for streaming: tenants/tenant_fidwork_916d299c/files/bd/b9/bdb9788b74acbf9f0772c8e0e32fe726_1a99f69a-f52a-4e97-ad01-0ad7aacd319b
+2025-11-12 13:13:57,594 - app.routes.documents - INFO - Download stream started: document_id=e08ebfa9-b82b-4faf-a44f-a2ffe4331ad3, size=73 bytes
+2025-11-12 13:13:57,595 - app.utils.database - DEBUG - Committed transaction for tenant: tenant_fidwork_916d299c
+2025-11-12 13:13:57,597 - app.routes.documents - INFO - AUDIT: Download completed successfully - user_id=0d9694f2-af6c-4724-8980-cb40bf198e9c, document_id=e08ebfa9-b82b-4faf-a44f-a2ffe4331ad3, filename=tsa_test.txt, size=73
+2025-11-12 13:15:21,540 - app.utils.decorators - DEBUG - Authenticated user: 0d9694f2-af6c-4724-8980-cb40bf198e9c
+2025-11-12 13:15:21,541 - app.routes.documents - INFO - Uploading document: tenant_id=964fd8df-6c81-4698-a7b6-4f1825c71c45, user_id=0d9694f2-af6c-4724-8980-cb40bf198e9c
+2025-11-12 13:15:21,561 - app.schemas.document_schema - DEBUG - Validated filename for upload: tsa_test.txt
+2025-11-12 13:15:21,562 - app.schemas.document_schema - DEBUG - Validated MIME type for upload: text/plain
+2025-11-12 13:15:21,562 - app.schemas.document_schema - DEBUG - Normalized filename for upload: tsa_test.txt
+2025-11-12 13:15:21,562 - app.schemas.document_schema - DEBUG - Normalized MIME type for upload: text/plain
+2025-11-12 13:15:21,562 - app.routes.documents - INFO - File hashes calculated: MD5=b0ad832f230fa69c7495d7d2fb9a0c74, SHA-256=c925ac81fc37955f..., size=73 bytes
+2025-11-12 13:15:21,567 - app.models.file - DEBUG - Generated S3 path: tenants/tenant_fidwork_916d299c/files/b0/ad/b0ad832f230fa69c7495d7d2fb9a0c74_temp
+2025-11-12 13:15:21,570 - app.models.file - INFO - File object initialized: md5=b0ad832f230fa69c7495d7d2fb9a0c74, size=73, s3_path=tenants/tenant_fidwork_916d299c/files/b0/ad/b0ad832f230fa69c7495d7d2fb9a0c74_temp
+2025-11-12 13:15:21,579 - app.models.file - DEBUG - Generated S3 path: tenants/tenant_fidwork_916d299c/files/b0/ad/b0ad832f230fa69c7495d7d2fb9a0c74_cab7c10e-99fe-479c-b2e9-35d73a9b6337
+2025-11-12 13:15:21,581 - app.routes.documents - INFO - Created new file: file_id=cab7c10e-99fe-479c-b2e9-35d73a9b6337, md5=b0ad832f230fa69c7495d7d2fb9a0c74, sha256=c925ac81fc37955f..., s3_path=tenants/tenant_fidwork_916d299c/files/b0/ad/b0ad832f230fa69c7495d7d2fb9a0c74_cab7c10e-99fe-479c-b2e9-35d73a9b6337
+2025-11-12 13:15:21,600 - app.utils.s3_client - DEBUG - Uploaded file to S3: bucket=saas-documents, path=tenants/tenant_fidwork_916d299c/files/b0/ad/b0ad832f230fa69c7495d7d2fb9a0c74_cab7c10e-99fe-479c-b2e9-35d73a9b6337, content_type=text/plain
+2025-11-12 13:15:21,600 - app.utils.s3_client - INFO - File uploaded to S3: tenants/tenant_fidwork_916d299c/files/b0/ad/b0ad832f230fa69c7495d7d2fb9a0c74_cab7c10e-99fe-479c-b2e9-35d73a9b6337
+2025-11-12 13:15:21,601 - app.models.document - INFO - Document object initialized: filename=tsa_test.txt, mime_type=text/plain, file_id=cab7c10e-99fe-479c-b2e9-35d73a9b6337, user_id=0d9694f2-af6c-4724-8980-cb40bf198e9c
+2025-11-12 13:15:21,602 - app.routes.documents - INFO - Document uploaded successfully: document_id=77b95bcf-e241-49cc-bcba-3d4231d44286, file_id=cab7c10e-99fe-479c-b2e9-35d73a9b6337
+2025-11-12 13:15:21,604 - app.utils.database - DEBUG - Committed transaction for tenant: tenant_fidwork_916d299c
+2025-11-12 13:15:21,608 - app.routes.documents - INFO - TSA timestamp task scheduled for file cab7c10e-99fe-479c-b2e9-35d73a9b6337 (task_id: 34137212-560c-49d0-8854-9432116cef00, tenant: fidwork)
+2025-11-12 13:15:31,927 - app.utils.decorators - DEBUG - Authenticated user: 0d9694f2-af6c-4724-8980-cb40bf198e9c
+2025-11-12 13:15:31,928 - app.routes.documents - INFO - Timestamp download request: tenant_id=964fd8df-6c81-4698-a7b6-4f1825c71c45, file_id=cab7c10e-99fe-479c-b2e9-35d73a9b6337, user_id=0d9694f2-af6c-4724-8980-cb40bf198e9c
+2025-11-12 13:15:31,945 - app.routes.documents - INFO - Access granted for timestamp download: user_id=0d9694f2-af6c-4724-8980-cb40bf198e9c, tenant_id=964fd8df-6c81-4698-a7b6-4f1825c71c45, role=admin, database=tenant_fidwork_916d299c
+2025-11-12 13:15:31,947 - app.routes.documents - INFO - AUDIT: Timestamp downloaded - user_id=0d9694f2-af6c-4724-8980-cb40bf198e9c, tenant_id=964fd8df-6c81-4698-a7b6-4f1825c71c45, file_id=cab7c10e-99fe-479c-b2e9-35d73a9b6337, token_size=6008 bytes, role=admin
+2025-11-12 13:15:31,948 - app.routes.documents - INFO - Timestamp download completed: file_id=cab7c10e-99fe-479c-b2e9-35d73a9b6337, size=6008 bytes
+2025-11-12 13:15:31,949 - app.utils.database - DEBUG - Committed transaction for tenant: tenant_fidwork_916d299c
+2025-11-12 13:15:33,124 - app.utils.decorators - DEBUG - Authenticated user: 0d9694f2-af6c-4724-8980-cb40bf198e9c
+2025-11-12 13:15:33,125 - app.routes.documents - INFO - Download request: tenant_id=964fd8df-6c81-4698-a7b6-4f1825c71c45, document_id=77b95bcf-e241-49cc-bcba-3d4231d44286, user_id=0d9694f2-af6c-4724-8980-cb40bf198e9c
+2025-11-12 13:15:33,128 - app.routes.documents - INFO - Access granted: user_id=0d9694f2-af6c-4724-8980-cb40bf198e9c, tenant_id=964fd8df-6c81-4698-a7b6-4f1825c71c45, role=admin, database=tenant_fidwork_916d299c
+2025-11-12 13:15:33,132 - app.routes.documents - INFO - AUDIT: Download initiated - user_id=0d9694f2-af6c-4724-8980-cb40bf198e9c, tenant_id=964fd8df-6c81-4698-a7b6-4f1825c71c45, document_id=77b95bcf-e241-49cc-bcba-3d4231d44286, filename=tsa_test.txt, size=73, md5=b0ad832f230fa69c7495d7d2fb9a0c74, role=admin
+2025-11-12 13:15:33,149 - app.utils.s3_client - INFO - Retrieved S3 object for streaming: tenants/tenant_fidwork_916d299c/files/b0/ad/b0ad832f230fa69c7495d7d2fb9a0c74_cab7c10e-99fe-479c-b2e9-35d73a9b6337
+2025-11-12 13:15:33,150 - app.routes.documents - INFO - Download stream started: document_id=77b95bcf-e241-49cc-bcba-3d4231d44286, size=73 bytes
+2025-11-12 13:15:33,150 - app.utils.database - DEBUG - Committed transaction for tenant: tenant_fidwork_916d299c
+2025-11-12 13:15:33,151 - app.routes.documents - INFO - AUDIT: Download completed successfully - user_id=0d9694f2-af6c-4724-8980-cb40bf198e9c, document_id=77b95bcf-e241-49cc-bcba-3d4231d44286, filename=tsa_test.txt, size=73
+2025-11-12 13:18:14,694 - app.utils.decorators - DEBUG - Authenticated user: 0d9694f2-af6c-4724-8980-cb40bf198e9c
+2025-11-12 13:18:14,695 - app.routes.documents - INFO - Uploading document: tenant_id=964fd8df-6c81-4698-a7b6-4f1825c71c45, user_id=0d9694f2-af6c-4724-8980-cb40bf198e9c
+2025-11-12 13:18:14,714 - app.schemas.document_schema - DEBUG - Validated filename for upload: tsa_test.txt
+2025-11-12 13:18:14,715 - app.schemas.document_schema - DEBUG - Validated MIME type for upload: text/plain
+2025-11-12 13:18:14,715 - app.schemas.document_schema - DEBUG - Normalized filename for upload: tsa_test.txt
+2025-11-12 13:18:14,715 - app.schemas.document_schema - DEBUG - Normalized MIME type for upload: text/plain
+2025-11-12 13:18:14,715 - app.routes.documents - INFO - File hashes calculated: MD5=e529f37a9ace6877ba6e5f408f9c1356, SHA-256=bb79ec33710c5563..., size=73 bytes
+2025-11-12 13:18:14,723 - app.models.file - DEBUG - Generated S3 path: tenants/tenant_fidwork_916d299c/files/e5/29/e529f37a9ace6877ba6e5f408f9c1356_temp
+2025-11-12 13:18:14,724 - app.models.file - INFO - File object initialized: md5=e529f37a9ace6877ba6e5f408f9c1356, size=73, s3_path=tenants/tenant_fidwork_916d299c/files/e5/29/e529f37a9ace6877ba6e5f408f9c1356_temp
+2025-11-12 13:18:14,731 - app.models.file - DEBUG - Generated S3 path: tenants/tenant_fidwork_916d299c/files/e5/29/e529f37a9ace6877ba6e5f408f9c1356_7b35c5e3-2c23-4073-816f-202fcabb8efa
+2025-11-12 13:18:14,733 - app.routes.documents - INFO - Created new file: file_id=7b35c5e3-2c23-4073-816f-202fcabb8efa, md5=e529f37a9ace6877ba6e5f408f9c1356, sha256=bb79ec33710c5563..., s3_path=tenants/tenant_fidwork_916d299c/files/e5/29/e529f37a9ace6877ba6e5f408f9c1356_7b35c5e3-2c23-4073-816f-202fcabb8efa
+2025-11-12 13:18:14,764 - app.utils.s3_client - DEBUG - Uploaded file to S3: bucket=saas-documents, path=tenants/tenant_fidwork_916d299c/files/e5/29/e529f37a9ace6877ba6e5f408f9c1356_7b35c5e3-2c23-4073-816f-202fcabb8efa, content_type=text/plain
+2025-11-12 13:18:14,764 - app.utils.s3_client - INFO - File uploaded to S3: tenants/tenant_fidwork_916d299c/files/e5/29/e529f37a9ace6877ba6e5f408f9c1356_7b35c5e3-2c23-4073-816f-202fcabb8efa
+2025-11-12 13:18:14,764 - app.models.document - INFO - Document object initialized: filename=tsa_test.txt, mime_type=text/plain, file_id=7b35c5e3-2c23-4073-816f-202fcabb8efa, user_id=0d9694f2-af6c-4724-8980-cb40bf198e9c
+2025-11-12 13:18:14,766 - app.routes.documents - INFO - Document uploaded successfully: document_id=8ac076e6-289c-4919-992c-c02e00a6c68c, file_id=7b35c5e3-2c23-4073-816f-202fcabb8efa
+2025-11-12 13:18:14,767 - app.utils.database - DEBUG - Committed transaction for tenant: tenant_fidwork_916d299c
+2025-11-12 13:18:14,776 - app.routes.documents - INFO - TSA timestamp task scheduled for file 7b35c5e3-2c23-4073-816f-202fcabb8efa (task_id: e972ac6a-955a-458c-b4fd-3b6fdb467494, tenant: fidwork)
+2025-11-12 13:18:25,139 - app.utils.decorators - DEBUG - Authenticated user: 0d9694f2-af6c-4724-8980-cb40bf198e9c
+2025-11-12 13:18:25,140 - app.routes.documents - INFO - Timestamp download request: tenant_id=964fd8df-6c81-4698-a7b6-4f1825c71c45, file_id=7b35c5e3-2c23-4073-816f-202fcabb8efa, user_id=0d9694f2-af6c-4724-8980-cb40bf198e9c
+2025-11-12 13:18:25,144 - app.routes.documents - INFO - Access granted for timestamp download: user_id=0d9694f2-af6c-4724-8980-cb40bf198e9c, tenant_id=964fd8df-6c81-4698-a7b6-4f1825c71c45, role=admin, database=tenant_fidwork_916d299c
+2025-11-12 13:18:25,146 - app.routes.documents - INFO - AUDIT: Timestamp downloaded - user_id=0d9694f2-af6c-4724-8980-cb40bf198e9c, tenant_id=964fd8df-6c81-4698-a7b6-4f1825c71c45, file_id=7b35c5e3-2c23-4073-816f-202fcabb8efa, token_size=6007 bytes, role=admin
+2025-11-12 13:18:25,146 - app.routes.documents - INFO - Timestamp download completed: file_id=7b35c5e3-2c23-4073-816f-202fcabb8efa, size=6007 bytes
+2025-11-12 13:18:25,147 - app.utils.database - DEBUG - Committed transaction for tenant: tenant_fidwork_916d299c
+2025-11-12 13:18:25,375 - app.utils.decorators - DEBUG - Authenticated user: 0d9694f2-af6c-4724-8980-cb40bf198e9c
+2025-11-12 13:18:25,376 - app.routes.documents - INFO - Download request: tenant_id=964fd8df-6c81-4698-a7b6-4f1825c71c45, document_id=8ac076e6-289c-4919-992c-c02e00a6c68c, user_id=0d9694f2-af6c-4724-8980-cb40bf198e9c
+2025-11-12 13:18:25,380 - app.routes.documents - INFO - Access granted: user_id=0d9694f2-af6c-4724-8980-cb40bf198e9c, tenant_id=964fd8df-6c81-4698-a7b6-4f1825c71c45, role=admin, database=tenant_fidwork_916d299c
+2025-11-12 13:18:25,392 - app.routes.documents - INFO - AUDIT: Download initiated - user_id=0d9694f2-af6c-4724-8980-cb40bf198e9c, tenant_id=964fd8df-6c81-4698-a7b6-4f1825c71c45, document_id=8ac076e6-289c-4919-992c-c02e00a6c68c, filename=tsa_test.txt, size=73, md5=e529f37a9ace6877ba6e5f408f9c1356, role=admin
+2025-11-12 13:18:25,414 - app.utils.s3_client - INFO - Retrieved S3 object for streaming: tenants/tenant_fidwork_916d299c/files/e5/29/e529f37a9ace6877ba6e5f408f9c1356_7b35c5e3-2c23-4073-816f-202fcabb8efa
+2025-11-12 13:18:25,415 - app.routes.documents - INFO - Download stream started: document_id=8ac076e6-289c-4919-992c-c02e00a6c68c, size=73 bytes
+2025-11-12 13:18:25,415 - app.utils.database - DEBUG - Committed transaction for tenant: tenant_fidwork_916d299c
+2025-11-12 13:18:25,416 - app.routes.documents - INFO - AUDIT: Download completed successfully - user_id=0d9694f2-af6c-4724-8980-cb40bf198e9c, document_id=8ac076e6-289c-4919-992c-c02e00a6c68c, filename=tsa_test.txt, size=73
+2025-11-12 13:30:23,291 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-12 13:30:23,291 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-12 13:30:23,291 - app - INFO - Flask app created with config: development
+2025-11-12 13:30:23,291 - app - INFO - Flask app created with config: development
+2025-11-12 13:30:23,291 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-12 13:30:23,291 - app - INFO - Debug mode: True
+2025-11-12 13:30:23,292 - app - INFO - Debug mode: True
+2025-11-12 13:30:23,292 - app - INFO - Flask app created with config: development
+2025-11-12 13:30:23,292 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-12 13:30:23,292 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-12 13:30:23,292 - app - INFO - Debug mode: True
+2025-11-12 13:30:23,293 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-12 13:30:23,298 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-12 13:30:23,298 - app - INFO - Flask app created with config: development
+2025-11-12 13:30:23,299 - app - INFO - Debug mode: True
+2025-11-12 13:30:23,299 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-12 13:31:04,334 - app.utils.decorators - DEBUG - Authenticated user: 0d9694f2-af6c-4724-8980-cb40bf198e9c
+2025-11-12 13:31:04,335 - app.routes.documents - INFO - Uploading document: tenant_id=964fd8df-6c81-4698-a7b6-4f1825c71c45, user_id=0d9694f2-af6c-4724-8980-cb40bf198e9c
+2025-11-12 13:31:04,339 - app.schemas.document_schema - DEBUG - Validated filename for upload: manual_test.txt
+2025-11-12 13:31:04,340 - app.schemas.document_schema - DEBUG - Validated MIME type for upload: text/plain
+2025-11-12 13:31:04,340 - app.schemas.document_schema - DEBUG - Normalized filename for upload: manual_test.txt
+2025-11-12 13:31:04,340 - app.schemas.document_schema - DEBUG - Normalized MIME type for upload: text/plain
+2025-11-12 13:31:04,341 - app.routes.documents - INFO - File hashes calculated: MD5=f5833c3a1b8af248366c60e375fdd34c, SHA-256=f3a836f0e4901a40..., size=65 bytes
+2025-11-12 13:31:04,344 - app.utils.database - INFO - Created engine for tenant database: tenant_fidwork_916d299c
+2025-11-12 13:31:04,344 - app.utils.database - INFO - Created session factory for tenant database: tenant_fidwork_916d299c
+2025-11-12 13:31:04,367 - app.models.file - DEBUG - Generated S3 path: tenants/tenant_fidwork_916d299c/files/f5/83/f5833c3a1b8af248366c60e375fdd34c_temp
+2025-11-12 13:31:04,368 - app.models.file - INFO - File object initialized: md5=f5833c3a1b8af248366c60e375fdd34c, size=65, s3_path=tenants/tenant_fidwork_916d299c/files/f5/83/f5833c3a1b8af248366c60e375fdd34c_temp
+2025-11-12 13:31:04,376 - app.models.file - DEBUG - Generated S3 path: tenants/tenant_fidwork_916d299c/files/f5/83/f5833c3a1b8af248366c60e375fdd34c_aaaee5a9-1297-4c5e-b83d-7bdad275ffd1
+2025-11-12 13:31:04,379 - app.routes.documents - INFO - Created new file: file_id=aaaee5a9-1297-4c5e-b83d-7bdad275ffd1, md5=f5833c3a1b8af248366c60e375fdd34c, sha256=f3a836f0e4901a40..., s3_path=tenants/tenant_fidwork_916d299c/files/f5/83/f5833c3a1b8af248366c60e375fdd34c_aaaee5a9-1297-4c5e-b83d-7bdad275ffd1
+2025-11-12 13:31:05,010 - app.utils.s3_client - DEBUG - S3 client initialized: bucket=saas-documents, region=us-east-1, endpoint=http://minio:9000, public_url=http://minio:9000, use_ssl=False
+2025-11-12 13:31:05,010 - app.utils.s3_client - INFO - S3 client initialized: bucket=saas-documents
+2025-11-12 13:31:05,027 - app.utils.s3_client - DEBUG - Uploaded file to S3: bucket=saas-documents, path=tenants/tenant_fidwork_916d299c/files/f5/83/f5833c3a1b8af248366c60e375fdd34c_aaaee5a9-1297-4c5e-b83d-7bdad275ffd1, content_type=text/plain
+2025-11-12 13:31:05,028 - app.utils.s3_client - INFO - File uploaded to S3: tenants/tenant_fidwork_916d299c/files/f5/83/f5833c3a1b8af248366c60e375fdd34c_aaaee5a9-1297-4c5e-b83d-7bdad275ffd1
+2025-11-12 13:31:05,028 - app.models.document - INFO - Document object initialized: filename=manual_test.txt, mime_type=text/plain, file_id=aaaee5a9-1297-4c5e-b83d-7bdad275ffd1, user_id=0d9694f2-af6c-4724-8980-cb40bf198e9c
+2025-11-12 13:31:05,032 - app.routes.documents - INFO - Document uploaded successfully: document_id=b9e543a5-f5ad-4eab-8c5f-483cf7eb15dd, file_id=aaaee5a9-1297-4c5e-b83d-7bdad275ffd1
+2025-11-12 13:31:05,034 - app.utils.database - DEBUG - Committed transaction for tenant: tenant_fidwork_916d299c
+2025-11-12 13:31:05,096 - app.celery_app - INFO - Celery configured with broker: redis://redis:6379/3
+2025-11-12 13:31:05,125 - app.routes.documents - INFO - TSA timestamp task scheduled for file aaaee5a9-1297-4c5e-b83d-7bdad275ffd1 (task_id: fecc7bd8-0de1-47e9-8d3c-73523f31b8a7, tenant: fidwork)
+2025-11-12 13:31:08,702 - app.utils.decorators - DEBUG - Authenticated user: 0d9694f2-af6c-4724-8980-cb40bf198e9c
+2025-11-12 13:31:08,708 - app.routes.documents - INFO - Manual timestamp request: tenant_id=964fd8df-6c81-4698-a7b6-4f1825c71c45, file_id=aaaee5a9-1297-4c5e-b83d-7bdad275ffd1, user_id=0d9694f2-af6c-4724-8980-cb40bf198e9c
+2025-11-12 13:31:08,766 - app.routes.documents - INFO - AUDIT: Manual timestamp task scheduled - user_id=0d9694f2-af6c-4724-8980-cb40bf198e9c, tenant_id=964fd8df-6c81-4698-a7b6-4f1825c71c45, file_id=aaaee5a9-1297-4c5e-b83d-7bdad275ffd1, task_id=4c7dba67-8930-4dae-bce5-f01289b70cae, force=False
+2025-11-12 13:31:08,770 - app.utils.database - DEBUG - Committed transaction for tenant: tenant_fidwork_916d299c
+2025-11-12 13:31:24,103 - app.utils.decorators - DEBUG - Authenticated user: 0d9694f2-af6c-4724-8980-cb40bf198e9c
+2025-11-12 13:31:24,104 - app.routes.documents - INFO - Timestamp download request: tenant_id=964fd8df-6c81-4698-a7b6-4f1825c71c45, file_id=aaaee5a9-1297-4c5e-b83d-7bdad275ffd1, user_id=0d9694f2-af6c-4724-8980-cb40bf198e9c
+2025-11-12 13:31:24,176 - app.routes.documents - INFO - Access granted for timestamp download: user_id=0d9694f2-af6c-4724-8980-cb40bf198e9c, tenant_id=964fd8df-6c81-4698-a7b6-4f1825c71c45, role=admin, database=tenant_fidwork_916d299c
+2025-11-12 13:31:24,177 - app.utils.database - INFO - Created engine for tenant database: tenant_fidwork_916d299c
+2025-11-12 13:31:24,177 - app.utils.database - INFO - Created session factory for tenant database: tenant_fidwork_916d299c
+2025-11-12 13:31:24,190 - app.routes.documents - INFO - AUDIT: Timestamp downloaded - user_id=0d9694f2-af6c-4724-8980-cb40bf198e9c, tenant_id=964fd8df-6c81-4698-a7b6-4f1825c71c45, file_id=aaaee5a9-1297-4c5e-b83d-7bdad275ffd1, token_size=6008 bytes, role=admin
+2025-11-12 13:31:24,190 - app.routes.documents - INFO - Timestamp download completed: file_id=aaaee5a9-1297-4c5e-b83d-7bdad275ffd1, size=6008 bytes
+2025-11-12 13:31:24,191 - app.utils.database - DEBUG - Committed transaction for tenant: tenant_fidwork_916d299c
+2025-11-12 13:32:18,639 - app.utils.decorators - DEBUG - Authenticated user: 0d9694f2-af6c-4724-8980-cb40bf198e9c
+2025-11-12 13:32:18,641 - app.routes.documents - INFO - Uploading document: tenant_id=964fd8df-6c81-4698-a7b6-4f1825c71c45, user_id=0d9694f2-af6c-4724-8980-cb40bf198e9c
+2025-11-12 13:32:18,723 - app.schemas.document_schema - DEBUG - Validated filename for upload: bulk_test_1.txt
+2025-11-12 13:32:18,724 - app.schemas.document_schema - DEBUG - Validated MIME type for upload: text/plain
+2025-11-12 13:32:18,724 - app.schemas.document_schema - DEBUG - Normalized filename for upload: bulk_test_1.txt
+2025-11-12 13:32:18,724 - app.schemas.document_schema - DEBUG - Normalized MIME type for upload: text/plain
+2025-11-12 13:32:18,724 - app.routes.documents - INFO - File hashes calculated: MD5=82026ab6b26baef97a44920507793e1b, SHA-256=85c5a1358b445a7c..., size=48 bytes
+2025-11-12 13:32:18,729 - app.utils.database - INFO - Created engine for tenant database: tenant_fidwork_916d299c
+2025-11-12 13:32:18,729 - app.utils.database - INFO - Created session factory for tenant database: tenant_fidwork_916d299c
+2025-11-12 13:32:18,750 - app.models.file - DEBUG - Generated S3 path: tenants/tenant_fidwork_916d299c/files/82/02/82026ab6b26baef97a44920507793e1b_temp
+2025-11-12 13:32:18,750 - app.models.file - INFO - File object initialized: md5=82026ab6b26baef97a44920507793e1b, size=48, s3_path=tenants/tenant_fidwork_916d299c/files/82/02/82026ab6b26baef97a44920507793e1b_temp
+2025-11-12 13:32:18,755 - app.models.file - DEBUG - Generated S3 path: tenants/tenant_fidwork_916d299c/files/82/02/82026ab6b26baef97a44920507793e1b_38dd7b9b-c406-4d80-a97e-271e0c7776c3
+2025-11-12 13:32:18,757 - app.routes.documents - INFO - Created new file: file_id=38dd7b9b-c406-4d80-a97e-271e0c7776c3, md5=82026ab6b26baef97a44920507793e1b, sha256=85c5a1358b445a7c..., s3_path=tenants/tenant_fidwork_916d299c/files/82/02/82026ab6b26baef97a44920507793e1b_38dd7b9b-c406-4d80-a97e-271e0c7776c3
+2025-11-12 13:32:19,180 - app.utils.s3_client - DEBUG - S3 client initialized: bucket=saas-documents, region=us-east-1, endpoint=http://minio:9000, public_url=http://minio:9000, use_ssl=False
+2025-11-12 13:32:19,180 - app.utils.s3_client - INFO - S3 client initialized: bucket=saas-documents
+2025-11-12 13:32:19,195 - app.utils.s3_client - DEBUG - Uploaded file to S3: bucket=saas-documents, path=tenants/tenant_fidwork_916d299c/files/82/02/82026ab6b26baef97a44920507793e1b_38dd7b9b-c406-4d80-a97e-271e0c7776c3, content_type=text/plain
+2025-11-12 13:32:19,195 - app.utils.s3_client - INFO - File uploaded to S3: tenants/tenant_fidwork_916d299c/files/82/02/82026ab6b26baef97a44920507793e1b_38dd7b9b-c406-4d80-a97e-271e0c7776c3
+2025-11-12 13:32:19,196 - app.models.document - INFO - Document object initialized: filename=bulk_test_1.txt, mime_type=text/plain, file_id=38dd7b9b-c406-4d80-a97e-271e0c7776c3, user_id=0d9694f2-af6c-4724-8980-cb40bf198e9c
+2025-11-12 13:32:19,199 - app.routes.documents - INFO - Document uploaded successfully: document_id=4147ee9d-8e46-4638-b25c-7a89fd024f67, file_id=38dd7b9b-c406-4d80-a97e-271e0c7776c3
+2025-11-12 13:32:19,200 - app.utils.database - DEBUG - Committed transaction for tenant: tenant_fidwork_916d299c
+2025-11-12 13:32:19,246 - app.celery_app - INFO - Celery configured with broker: redis://redis:6379/3
+2025-11-12 13:32:19,278 - app.routes.documents - INFO - TSA timestamp task scheduled for file 38dd7b9b-c406-4d80-a97e-271e0c7776c3 (task_id: c7c21c66-40bd-491a-9c3b-c164b09752c3, tenant: fidwork)
+2025-11-12 13:32:19,326 - app.utils.decorators - DEBUG - Authenticated user: 0d9694f2-af6c-4724-8980-cb40bf198e9c
+2025-11-12 13:32:19,329 - app.routes.documents - INFO - Uploading document: tenant_id=964fd8df-6c81-4698-a7b6-4f1825c71c45, user_id=0d9694f2-af6c-4724-8980-cb40bf198e9c
+2025-11-12 13:32:19,407 - app.schemas.document_schema - DEBUG - Validated filename for upload: bulk_test_2.txt
+2025-11-12 13:32:19,408 - app.schemas.document_schema - DEBUG - Validated MIME type for upload: text/plain
+2025-11-12 13:32:19,408 - app.schemas.document_schema - DEBUG - Normalized filename for upload: bulk_test_2.txt
+2025-11-12 13:32:19,409 - app.schemas.document_schema - DEBUG - Normalized MIME type for upload: text/plain
+2025-11-12 13:32:19,409 - app.routes.documents - INFO - File hashes calculated: MD5=07ec1a202c2cf3984e31c4c0046bd491, SHA-256=3fc735b5e57d8a04..., size=48 bytes
+2025-11-12 13:32:19,413 - app.utils.database - INFO - Created engine for tenant database: tenant_fidwork_916d299c
+2025-11-12 13:32:19,414 - app.utils.database - INFO - Created session factory for tenant database: tenant_fidwork_916d299c
+2025-11-12 13:32:19,432 - app.models.file - DEBUG - Generated S3 path: tenants/tenant_fidwork_916d299c/files/07/ec/07ec1a202c2cf3984e31c4c0046bd491_temp
+2025-11-12 13:32:19,433 - app.models.file - INFO - File object initialized: md5=07ec1a202c2cf3984e31c4c0046bd491, size=48, s3_path=tenants/tenant_fidwork_916d299c/files/07/ec/07ec1a202c2cf3984e31c4c0046bd491_temp
+2025-11-12 13:32:19,438 - app.models.file - DEBUG - Generated S3 path: tenants/tenant_fidwork_916d299c/files/07/ec/07ec1a202c2cf3984e31c4c0046bd491_ed226286-3319-4487-9ce9-4f622340e679
+2025-11-12 13:32:19,440 - app.routes.documents - INFO - Created new file: file_id=ed226286-3319-4487-9ce9-4f622340e679, md5=07ec1a202c2cf3984e31c4c0046bd491, sha256=3fc735b5e57d8a04..., s3_path=tenants/tenant_fidwork_916d299c/files/07/ec/07ec1a202c2cf3984e31c4c0046bd491_ed226286-3319-4487-9ce9-4f622340e679
+2025-11-12 13:32:19,699 - app.utils.s3_client - DEBUG - S3 client initialized: bucket=saas-documents, region=us-east-1, endpoint=http://minio:9000, public_url=http://minio:9000, use_ssl=False
+2025-11-12 13:32:19,699 - app.utils.s3_client - INFO - S3 client initialized: bucket=saas-documents
+2025-11-12 13:32:19,709 - app.utils.s3_client - DEBUG - Uploaded file to S3: bucket=saas-documents, path=tenants/tenant_fidwork_916d299c/files/07/ec/07ec1a202c2cf3984e31c4c0046bd491_ed226286-3319-4487-9ce9-4f622340e679, content_type=text/plain
+2025-11-12 13:32:19,709 - app.utils.s3_client - INFO - File uploaded to S3: tenants/tenant_fidwork_916d299c/files/07/ec/07ec1a202c2cf3984e31c4c0046bd491_ed226286-3319-4487-9ce9-4f622340e679
+2025-11-12 13:32:19,710 - app.models.document - INFO - Document object initialized: filename=bulk_test_2.txt, mime_type=text/plain, file_id=ed226286-3319-4487-9ce9-4f622340e679, user_id=0d9694f2-af6c-4724-8980-cb40bf198e9c
+2025-11-12 13:32:19,712 - app.routes.documents - INFO - Document uploaded successfully: document_id=be8e471a-d919-4db2-a0e6-9d99f2662424, file_id=ed226286-3319-4487-9ce9-4f622340e679
+2025-11-12 13:32:19,713 - app.utils.database - DEBUG - Committed transaction for tenant: tenant_fidwork_916d299c
+2025-11-12 13:32:19,739 - app.celery_app - INFO - Celery configured with broker: redis://redis:6379/3
+2025-11-12 13:32:19,765 - app.routes.documents - INFO - TSA timestamp task scheduled for file ed226286-3319-4487-9ce9-4f622340e679 (task_id: 9d22e30d-2896-4f4e-ab03-beedcdb56b45, tenant: fidwork)
+2025-11-12 13:32:19,797 - app.utils.decorators - DEBUG - Authenticated user: 0d9694f2-af6c-4724-8980-cb40bf198e9c
+2025-11-12 13:32:19,797 - app.routes.documents - INFO - Uploading document: tenant_id=964fd8df-6c81-4698-a7b6-4f1825c71c45, user_id=0d9694f2-af6c-4724-8980-cb40bf198e9c
+2025-11-12 13:32:19,803 - app.schemas.document_schema - DEBUG - Validated filename for upload: bulk_test_3.txt
+2025-11-12 13:32:19,803 - app.schemas.document_schema - DEBUG - Validated MIME type for upload: text/plain
+2025-11-12 13:32:19,803 - app.schemas.document_schema - DEBUG - Normalized filename for upload: bulk_test_3.txt
+2025-11-12 13:32:19,804 - app.schemas.document_schema - DEBUG - Normalized MIME type for upload: text/plain
+2025-11-12 13:32:19,804 - app.routes.documents - INFO - File hashes calculated: MD5=d50093cfa89fcf9bad1f49be77068426, SHA-256=76388f08b3fba3a6..., size=48 bytes
+2025-11-12 13:32:19,807 - app.models.file - DEBUG - Generated S3 path: tenants/tenant_fidwork_916d299c/files/d5/00/d50093cfa89fcf9bad1f49be77068426_temp
+2025-11-12 13:32:19,807 - app.models.file - INFO - File object initialized: md5=d50093cfa89fcf9bad1f49be77068426, size=48, s3_path=tenants/tenant_fidwork_916d299c/files/d5/00/d50093cfa89fcf9bad1f49be77068426_temp
+2025-11-12 13:32:19,809 - app.models.file - DEBUG - Generated S3 path: tenants/tenant_fidwork_916d299c/files/d5/00/d50093cfa89fcf9bad1f49be77068426_6f76ccf6-871a-4380-9aec-6f89223e4f2a
+2025-11-12 13:32:19,810 - app.routes.documents - INFO - Created new file: file_id=6f76ccf6-871a-4380-9aec-6f89223e4f2a, md5=d50093cfa89fcf9bad1f49be77068426, sha256=76388f08b3fba3a6..., s3_path=tenants/tenant_fidwork_916d299c/files/d5/00/d50093cfa89fcf9bad1f49be77068426_6f76ccf6-871a-4380-9aec-6f89223e4f2a
+2025-11-12 13:32:19,818 - app.utils.s3_client - DEBUG - Uploaded file to S3: bucket=saas-documents, path=tenants/tenant_fidwork_916d299c/files/d5/00/d50093cfa89fcf9bad1f49be77068426_6f76ccf6-871a-4380-9aec-6f89223e4f2a, content_type=text/plain
+2025-11-12 13:32:19,818 - app.utils.s3_client - INFO - File uploaded to S3: tenants/tenant_fidwork_916d299c/files/d5/00/d50093cfa89fcf9bad1f49be77068426_6f76ccf6-871a-4380-9aec-6f89223e4f2a
+2025-11-12 13:32:19,819 - app.models.document - INFO - Document object initialized: filename=bulk_test_3.txt, mime_type=text/plain, file_id=6f76ccf6-871a-4380-9aec-6f89223e4f2a, user_id=0d9694f2-af6c-4724-8980-cb40bf198e9c
+2025-11-12 13:32:19,820 - app.routes.documents - INFO - Document uploaded successfully: document_id=a184c83a-cb08-4a12-be03-1efbc3e7112f, file_id=6f76ccf6-871a-4380-9aec-6f89223e4f2a
+2025-11-12 13:32:19,822 - app.utils.database - DEBUG - Committed transaction for tenant: tenant_fidwork_916d299c
+2025-11-12 13:32:19,823 - app.routes.documents - INFO - TSA timestamp task scheduled for file 6f76ccf6-871a-4380-9aec-6f89223e4f2a (task_id: e00bbdba-5703-4521-9648-37e789521658, tenant: fidwork)
+2025-11-12 13:32:25,191 - app.utils.decorators - DEBUG - Authenticated user: 0d9694f2-af6c-4724-8980-cb40bf198e9c
+2025-11-12 13:32:25,193 - app.routes.documents - INFO - Bulk timestamp request: tenant_id=964fd8df-6c81-4698-a7b6-4f1825c71c45, user_id=0d9694f2-af6c-4724-8980-cb40bf198e9c
+2025-11-12 13:32:25,277 - app.celery_app - INFO - Celery configured with broker: redis://redis:6379/3
+2025-11-12 13:32:25,312 - app.routes.documents - INFO - AUDIT: Bulk timestamp tasks scheduled - user_id=0d9694f2-af6c-4724-8980-cb40bf198e9c, tenant_id=964fd8df-6c81-4698-a7b6-4f1825c71c45, total_files=14, estimated_minutes=2.4
+2025-11-12 13:32:25,313 - app.utils.database - DEBUG - Committed transaction for tenant: tenant_fidwork_916d299c
+2025-11-12 13:36:46,190 - app.utils.decorators - ERROR - JWT validation failed: Signature has expired
+2025-11-12 13:36:51,475 - app.utils.decorators - DEBUG - Authenticated user: 0d9694f2-af6c-4724-8980-cb40bf198e9c
+2025-11-12 13:36:51,476 - app.routes.documents - INFO - Bulk timestamp request: tenant_id=:tenant_id, user_id=0d9694f2-af6c-4724-8980-cb40bf198e9c
+2025-11-12 13:36:51,481 - app.routes.documents - ERROR - Error in bulk timestamp: (psycopg2.errors.InvalidTextRepresentation) invalid input syntax for type uuid: ":tenant_id"
+LINE 3: WHERE tenants.id = ':tenant_id'::UUID AND tenants.is_active ...
+                           ^
+
+[SQL: SELECT tenants.name AS tenants_name, tenants.database_name AS tenants_database_name, tenants.is_active AS tenants_is_active, tenants.auth_method AS tenants_auth_method, tenants.sso_domain_whitelist AS tenants_sso_domain_whitelist, tenants.sso_auto_provisioning AS tenants_sso_auto_provisioning, tenants.sso_default_role AS tenants_sso_default_role, tenants.tsa_enabled AS tenants_tsa_enabled, tenants.tsa_provider AS tenants_tsa_provider, tenants.id AS tenants_id, tenants.created_at AS tenants_created_at, tenants.updated_at AS tenants_updated_at, tenants.created_by AS tenants_created_by 
+FROM tenants 
+WHERE tenants.id = %(id_1)s::UUID AND tenants.is_active = true 
+ LIMIT %(param_1)s]
+[parameters: {'id_1': ':tenant_id', 'param_1': 1}]
+(Background on this error at: https://sqlalche.me/e/20/9h9h)
+Traceback (most recent call last):
+  File "/opt/venv/lib/python3.11/site-packages/sqlalchemy/engine/base.py", line 1967, in _exec_single_context
+    self.dialect.do_execute(
+  File "/opt/venv/lib/python3.11/site-packages/sqlalchemy/engine/default.py", line 951, in do_execute
+    cursor.execute(statement, parameters)
+psycopg2.errors.InvalidTextRepresentation: invalid input syntax for type uuid: ":tenant_id"
+LINE 3: WHERE tenants.id = ':tenant_id'::UUID AND tenants.is_active ...
+                           ^
+
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/app/app/routes/documents.py", line 978, in bulk_timestamp
+    has_access, error_response = check_tenant_access(user_id, tenant_id)
+                                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/app/app/routes/documents.py", line 72, in check_tenant_access
+    tenant = Tenant.query.filter_by(id=tenant_id, is_active=True).first()
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/venv/lib/python3.11/site-packages/sqlalchemy/orm/query.py", line 2759, in first
+    return self.limit(1)._iter().first()  # type: ignore
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/venv/lib/python3.11/site-packages/sqlalchemy/orm/query.py", line 2857, in _iter
+    result: Union[ScalarResult[_T], Result[_T]] = self.session.execute(
+                                                  ^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/venv/lib/python3.11/site-packages/sqlalchemy/orm/session.py", line 2351, in execute
+    return self._execute_internal(
+           ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/venv/lib/python3.11/site-packages/sqlalchemy/orm/session.py", line 2249, in _execute_internal
+    result: Result[Any] = compile_state_cls.orm_execute_statement(
+                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/venv/lib/python3.11/site-packages/sqlalchemy/orm/context.py", line 306, in orm_execute_statement
+    result = conn.execute(
+             ^^^^^^^^^^^^^
+  File "/opt/venv/lib/python3.11/site-packages/sqlalchemy/engine/base.py", line 1419, in execute
+    return meth(
+           ^^^^^
+  File "/opt/venv/lib/python3.11/site-packages/sqlalchemy/sql/elements.py", line 526, in _execute_on_connection
+    return connection._execute_clauseelement(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/venv/lib/python3.11/site-packages/sqlalchemy/engine/base.py", line 1641, in _execute_clauseelement
+    ret = self._execute_context(
+          ^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/venv/lib/python3.11/site-packages/sqlalchemy/engine/base.py", line 1846, in _execute_context
+    return self._exec_single_context(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/venv/lib/python3.11/site-packages/sqlalchemy/engine/base.py", line 1986, in _exec_single_context
+    self._handle_dbapi_exception(
+  File "/opt/venv/lib/python3.11/site-packages/sqlalchemy/engine/base.py", line 2355, in _handle_dbapi_exception
+    raise sqlalchemy_exception.with_traceback(exc_info[2]) from e
+  File "/opt/venv/lib/python3.11/site-packages/sqlalchemy/engine/base.py", line 1967, in _exec_single_context
+    self.dialect.do_execute(
+  File "/opt/venv/lib/python3.11/site-packages/sqlalchemy/engine/default.py", line 951, in do_execute
+    cursor.execute(statement, parameters)
+sqlalchemy.exc.DataError: (psycopg2.errors.InvalidTextRepresentation) invalid input syntax for type uuid: ":tenant_id"
+LINE 3: WHERE tenants.id = ':tenant_id'::UUID AND tenants.is_active ...
+                           ^
+
+[SQL: SELECT tenants.name AS tenants_name, tenants.database_name AS tenants_database_name, tenants.is_active AS tenants_is_active, tenants.auth_method AS tenants_auth_method, tenants.sso_domain_whitelist AS tenants_sso_domain_whitelist, tenants.sso_auto_provisioning AS tenants_sso_auto_provisioning, tenants.sso_default_role AS tenants_sso_default_role, tenants.tsa_enabled AS tenants_tsa_enabled, tenants.tsa_provider AS tenants_tsa_provider, tenants.id AS tenants_id, tenants.created_at AS tenants_created_at, tenants.updated_at AS tenants_updated_at, tenants.created_by AS tenants_created_by 
+FROM tenants 
+WHERE tenants.id = %(id_1)s::UUID AND tenants.is_active = true 
+ LIMIT %(param_1)s]
+[parameters: {'id_1': ':tenant_id', 'param_1': 1}]
+(Background on this error at: https://sqlalche.me/e/20/9h9h)
+2025-11-12 13:38:12,296 - app.utils.decorators - DEBUG - Authenticated user: 0d9694f2-af6c-4724-8980-cb40bf198e9c
+2025-11-12 13:38:12,299 - app.routes.documents - INFO - Bulk timestamp request: tenant_id=964fd8df-6c81-4698-a7b6-4f1825c71c45, user_id=0d9694f2-af6c-4724-8980-cb40bf198e9c
+2025-11-12 13:38:12,334 - app.routes.documents - ERROR - Error in bulk timestamp: 415 Unsupported Media Type: Did not attempt to load JSON data because the request Content-Type was not 'application/json'.
+Traceback (most recent call last):
+  File "/app/app/routes/documents.py", line 1008, in bulk_timestamp
+    request_data = request.get_json()
+                   ^^^^^^^^^^^^^^^^^^
+  File "/opt/venv/lib/python3.11/site-packages/werkzeug/wrappers/request.py", line 604, in get_json
+    return self.on_json_loading_failed(None)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/venv/lib/python3.11/site-packages/flask/wrappers.py", line 214, in on_json_loading_failed
+    return super().on_json_loading_failed(e)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/venv/lib/python3.11/site-packages/werkzeug/wrappers/request.py", line 647, in on_json_loading_failed
+    raise UnsupportedMediaType(
+werkzeug.exceptions.UnsupportedMediaType: 415 Unsupported Media Type: Did not attempt to load JSON data because the request Content-Type was not 'application/json'.
+2025-11-12 13:38:56,984 - app.utils.decorators - DEBUG - Authenticated user: 0d9694f2-af6c-4724-8980-cb40bf198e9c
+2025-11-12 13:38:56,985 - app.routes.documents - INFO - Bulk timestamp request: tenant_id=964fd8df-6c81-4698-a7b6-4f1825c71c45, user_id=0d9694f2-af6c-4724-8980-cb40bf198e9c
+2025-11-12 13:38:57,013 - app.routes.documents - ERROR - Error in bulk timestamp: 415 Unsupported Media Type: Did not attempt to load JSON data because the request Content-Type was not 'application/json'.
+Traceback (most recent call last):
+  File "/app/app/routes/documents.py", line 1008, in bulk_timestamp
+    request_data = request.get_json()
+                   ^^^^^^^^^^^^^^^^^^
+  File "/opt/venv/lib/python3.11/site-packages/werkzeug/wrappers/request.py", line 604, in get_json
+    return self.on_json_loading_failed(None)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/venv/lib/python3.11/site-packages/flask/wrappers.py", line 214, in on_json_loading_failed
+    return super().on_json_loading_failed(e)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/venv/lib/python3.11/site-packages/werkzeug/wrappers/request.py", line 647, in on_json_loading_failed
+    raise UnsupportedMediaType(
+werkzeug.exceptions.UnsupportedMediaType: 415 Unsupported Media Type: Did not attempt to load JSON data because the request Content-Type was not 'application/json'.
+2025-11-12 13:39:44,466 - app.utils.decorators - DEBUG - Authenticated user: 0d9694f2-af6c-4724-8980-cb40bf198e9c
+2025-11-12 13:39:44,468 - app.routes.documents - INFO - Bulk timestamp request: tenant_id=964fd8df-6c81-4698-a7b6-4f1825c71c45, user_id=0d9694f2-af6c-4724-8980-cb40bf198e9c
+2025-11-12 13:39:44,493 - app.routes.documents - ERROR - Error in bulk timestamp: 415 Unsupported Media Type: Did not attempt to load JSON data because the request Content-Type was not 'application/json'.
+Traceback (most recent call last):
+  File "/app/app/routes/documents.py", line 1008, in bulk_timestamp
+    request_data = request.get_json()
+                   ^^^^^^^^^^^^^^^^^^
+  File "/opt/venv/lib/python3.11/site-packages/werkzeug/wrappers/request.py", line 604, in get_json
+    return self.on_json_loading_failed(None)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/venv/lib/python3.11/site-packages/flask/wrappers.py", line 214, in on_json_loading_failed
+    return super().on_json_loading_failed(e)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/venv/lib/python3.11/site-packages/werkzeug/wrappers/request.py", line 647, in on_json_loading_failed
+    raise UnsupportedMediaType(
+werkzeug.exceptions.UnsupportedMediaType: 415 Unsupported Media Type: Did not attempt to load JSON data because the request Content-Type was not 'application/json'.
+2025-11-12 13:40:03,543 - app.utils.decorators - DEBUG - Authenticated user: 0d9694f2-af6c-4724-8980-cb40bf198e9c
+2025-11-12 13:40:03,545 - app.routes.documents - INFO - Bulk timestamp request: tenant_id=964fd8df-6c81-4698-a7b6-4f1825c71c45, user_id=0d9694f2-af6c-4724-8980-cb40bf198e9c
+2025-11-12 13:40:03,585 - app.routes.documents - ERROR - Error in bulk timestamp: 415 Unsupported Media Type: Did not attempt to load JSON data because the request Content-Type was not 'application/json'.
+Traceback (most recent call last):
+  File "/app/app/routes/documents.py", line 1008, in bulk_timestamp
+    request_data = request.get_json()
+                   ^^^^^^^^^^^^^^^^^^
+  File "/opt/venv/lib/python3.11/site-packages/werkzeug/wrappers/request.py", line 604, in get_json
+    return self.on_json_loading_failed(None)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/venv/lib/python3.11/site-packages/flask/wrappers.py", line 214, in on_json_loading_failed
+    return super().on_json_loading_failed(e)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/venv/lib/python3.11/site-packages/werkzeug/wrappers/request.py", line 647, in on_json_loading_failed
+    raise UnsupportedMediaType(
+werkzeug.exceptions.UnsupportedMediaType: 415 Unsupported Media Type: Did not attempt to load JSON data because the request Content-Type was not 'application/json'.
+2025-11-12 13:40:41,444 - app.utils.decorators - DEBUG - Authenticated user: 0d9694f2-af6c-4724-8980-cb40bf198e9c
+2025-11-12 13:40:41,446 - app.routes.documents - INFO - Bulk timestamp request: tenant_id=964fd8df-6c81-4698-a7b6-4f1825c71c45, user_id=0d9694f2-af6c-4724-8980-cb40bf198e9c
+2025-11-12 13:40:41,521 - app.routes.documents - INFO - AUDIT: Bulk timestamp tasks scheduled - user_id=0d9694f2-af6c-4724-8980-cb40bf198e9c, tenant_id=964fd8df-6c81-4698-a7b6-4f1825c71c45, total_files=1, estimated_minutes=0.2
+2025-11-12 13:40:41,523 - app.utils.database - DEBUG - Committed transaction for tenant: tenant_fidwork_916d299c
+2025-11-12 13:40:54,008 - app.utils.decorators - DEBUG - Authenticated user: 0d9694f2-af6c-4724-8980-cb40bf198e9c
+2025-11-12 13:40:54,010 - app.routes.documents - INFO - Bulk timestamp request: tenant_id=964fd8df-6c81-4698-a7b6-4f1825c71c45, user_id=0d9694f2-af6c-4724-8980-cb40bf198e9c
+2025-11-12 13:40:54,060 - app.routes.documents - WARNING - No files found matching criteria: tenant_id=964fd8df-6c81-4698-a7b6-4f1825c71c45
+2025-11-12 13:40:54,062 - app.utils.database - DEBUG - Committed transaction for tenant: tenant_fidwork_916d299c
+2025-11-12 13:40:55,083 - app.utils.decorators - DEBUG - Authenticated user: 0d9694f2-af6c-4724-8980-cb40bf198e9c
+2025-11-12 13:40:55,087 - app.routes.documents - INFO - Bulk timestamp request: tenant_id=964fd8df-6c81-4698-a7b6-4f1825c71c45, user_id=0d9694f2-af6c-4724-8980-cb40bf198e9c
+2025-11-12 13:40:55,128 - app.routes.documents - WARNING - No files found matching criteria: tenant_id=964fd8df-6c81-4698-a7b6-4f1825c71c45
+2025-11-12 13:40:55,130 - app.utils.database - DEBUG - Committed transaction for tenant: tenant_fidwork_916d299c
+2025-11-12 13:40:55,753 - app.utils.decorators - DEBUG - Authenticated user: 0d9694f2-af6c-4724-8980-cb40bf198e9c
+2025-11-12 13:40:55,753 - app.routes.documents - INFO - Bulk timestamp request: tenant_id=964fd8df-6c81-4698-a7b6-4f1825c71c45, user_id=0d9694f2-af6c-4724-8980-cb40bf198e9c
+2025-11-12 13:40:55,760 - app.routes.documents - WARNING - No files found matching criteria: tenant_id=964fd8df-6c81-4698-a7b6-4f1825c71c45
+2025-11-12 13:40:55,760 - app.utils.database - DEBUG - Committed transaction for tenant: tenant_fidwork_916d299c
