@@ -479,6 +479,10 @@ docker exec -e VAULT_TOKEN=$VAULT_TOKEN saas-vault vault kv get secret/saas-proj
 # ÉTAPE 4: Démarrage de l'application
 # ============================================================================
 
+# 4.0. Create docker volumes info not exists
+mkdir -p docker/volumes/minio/data
+mkdir -p docker/volumes/posgres/data
+
 # 4.1. Start all remaining services (API, Worker, PostgreSQL, Kafka, MinIO)
 docker-compose up -d
 

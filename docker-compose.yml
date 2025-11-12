@@ -91,7 +91,7 @@ services:
       MINIO_ROOT_PASSWORD: minioadmin
     command: server /data --console-address ":9001"
     volumes:
-      - minio_data:/data
+      - ./docker/volumes/minio/data:/data
     networks:
       - saas-network
     healthcheck:
@@ -478,8 +478,6 @@ services:
 
 # Named volumes for data persistence
 volumes:
-  minio_data:
-    driver: local
   kafka_data:
     driver: local
   zookeeper_data:
@@ -487,6 +485,7 @@ volumes:
   zookeeper_logs:
     driver: local
   # vault_data: Supprimé - utilisation de bind mount local ./vault/data
+  # minio_data: Supprimé - utilisation de bind mount local ./docker/volumes/minio/data
   redis_data:
     driver: local
   celery_beat_schedule:
