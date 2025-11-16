@@ -75,6 +75,7 @@
 - *** ✅ celery-worker-sso : Exécute les tâches de rafraîchissement
 - *** ✅ celery-beat : Schedule les tâches périodiques
 - *** ✅ celery-worker-tsa : Exécute les tâches d'horodatage
+- *** ✅ celery-worker-monitoring : Exécute les vérifications de santé
 - *** ✅ flower : Dashboard de monitoring (http://localhost:5555)
 
 
@@ -103,6 +104,17 @@
 - Logging and monitoring hooks
 - Environment-based configuration
 - Database migration system
+
+### ✅ Health Monitoring (Healthchecks.io)
+- **Self-Hosted Monitoring**: Healthchecks.io integration for service uptime
+- **Comprehensive Coverage**: Monitoring for all critical services
+  - PostgreSQL, Redis, Flask API
+  - Celery workers and Beat scheduler
+  - Kafka, MinIO, Vault
+- **Automated Checks**: Celery-based periodic health verifications
+- **Alert Channels**: Email, Slack, webhook notifications
+- **Grace Periods**: Smart timeout configuration to avoid false alerts
+- **Dashboard**: Web UI at http://localhost:8000 for monitoring status
 
 ## SaaS Backend for Industry 4.0
 
@@ -253,6 +265,9 @@ This platform is designed as a foundation to support advanced Industry 4.0 capab
 | **Async Processing** | Kafka event streaming | ✅ Production-ready |
 | | Celery task queue | ✅ Production-ready |
 | | Background workers | ✅ Production-ready |
+| **Monitoring** | Healthchecks.io integration | ✅ Production-ready |
+| | Service health checks | ✅ Production-ready |
+| | Automated alerting | ✅ Production-ready |
 | **IoT & Big Data** | High-throughput data ingestion | 🚧 Roadmap |
 | | Time-series database | 🚧 Roadmap |
 | | Industrial protocol support | 🚧 Roadmap |
@@ -2247,6 +2262,7 @@ SOFTWARE.
 - **Architecture**: See [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)
 - **Docker Deployment**: See [DOCKER.md](DOCKER.md)
 - **API Reference**: See [swagger.yaml](swagger.yaml)
+- **Health Monitoring**: See [specs/6 - healthcheck/](specs/6%20-%20healthcheck/) for detailed monitoring documentation
 
 ### Getting Help
 - **Issues**: [GitHub Issues](https://github.com/your-org/SaaSBackendWithClaude/issues)
