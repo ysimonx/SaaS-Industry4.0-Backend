@@ -5904,3 +5904,827 @@ werkzeug.exceptions.UnsupportedMediaType: 415 Unsupported Media Type: Did not at
 2025-11-12 13:40:55,753 - app.routes.documents - INFO - Bulk timestamp request: tenant_id=964fd8df-6c81-4698-a7b6-4f1825c71c45, user_id=0d9694f2-af6c-4724-8980-cb40bf198e9c
 2025-11-12 13:40:55,760 - app.routes.documents - WARNING - No files found matching criteria: tenant_id=964fd8df-6c81-4698-a7b6-4f1825c71c45
 2025-11-12 13:40:55,760 - app.utils.database - DEBUG - Committed transaction for tenant: tenant_fidwork_916d299c
+2025-11-16 14:03:23,083 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-16 14:03:23,084 - app - INFO - Flask app created with config: development
+2025-11-16 14:03:23,084 - app - INFO - Debug mode: True
+2025-11-16 14:03:23,084 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-16 14:03:23,086 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-16 14:03:23,087 - app - INFO - Flask app created with config: development
+2025-11-16 14:03:23,087 - app - INFO - Debug mode: True
+2025-11-16 14:03:23,087 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-16 14:03:23,101 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-16 14:03:23,103 - app - INFO - Flask app created with config: development
+2025-11-16 14:03:23,108 - app - INFO - Debug mode: True
+2025-11-16 14:03:23,109 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-16 14:03:23,114 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-16 14:03:23,114 - app - INFO - Flask app created with config: development
+2025-11-16 14:03:23,114 - app - INFO - Debug mode: True
+2025-11-16 14:03:23,115 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-16 14:04:01,384 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-16 14:04:01,385 - app - INFO - Flask app created with config: development
+2025-11-16 14:04:01,385 - app - INFO - Debug mode: True
+2025-11-16 14:04:01,386 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-16 14:04:01,391 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-16 14:04:01,393 - app - INFO - Flask app created with config: development
+2025-11-16 14:04:01,393 - app - INFO - Debug mode: True
+2025-11-16 14:04:01,394 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-16 14:04:01,398 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-16 14:04:01,398 - app - INFO - Flask app created with config: development
+2025-11-16 14:04:01,399 - app - INFO - Debug mode: True
+2025-11-16 14:04:01,399 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-16 14:04:01,416 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-16 14:04:01,417 - app - INFO - Flask app created with config: development
+2025-11-16 14:04:01,417 - app - INFO - Debug mode: True
+2025-11-16 14:04:01,417 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-16 14:05:55,081 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-16 14:05:55,082 - app - INFO - Flask app created with config: development
+2025-11-16 14:05:55,086 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-16 14:05:55,085 - app - INFO - Debug mode: True
+2025-11-16 14:05:55,088 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-16 14:05:55,087 - app - INFO - Flask app created with config: development
+2025-11-16 14:05:55,089 - app - INFO - Debug mode: True
+2025-11-16 14:05:55,089 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-16 14:05:55,145 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-16 14:05:55,145 - app - INFO - Flask app created with config: development
+2025-11-16 14:05:55,145 - app - INFO - Debug mode: True
+2025-11-16 14:05:55,146 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-16 14:05:55,195 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-16 14:05:55,195 - app - INFO - Flask app created with config: development
+2025-11-16 14:05:55,195 - app - INFO - Debug mode: True
+2025-11-16 14:05:55,195 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-16 14:08:06,500 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-16 14:08:06,503 - app - INFO - Flask app created with config: development
+2025-11-16 14:08:06,504 - app - INFO - Debug mode: True
+2025-11-16 14:08:06,504 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-16 14:08:06,504 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-16 14:08:06,507 - app - INFO - Flask app created with config: development
+2025-11-16 14:08:06,507 - app - INFO - Debug mode: True
+2025-11-16 14:08:06,507 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-16 14:08:06,567 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-16 14:08:06,567 - app - INFO - Flask app created with config: development
+2025-11-16 14:08:06,567 - app - INFO - Debug mode: True
+2025-11-16 14:08:06,568 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-16 14:08:06,605 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-16 14:08:06,606 - app - INFO - Flask app created with config: development
+2025-11-16 14:08:06,606 - app - INFO - Debug mode: True
+2025-11-16 14:08:06,606 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-16 14:09:33,425 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-16 14:09:33,427 - app - INFO - Flask app created with config: development
+2025-11-16 14:09:33,428 - app - INFO - Debug mode: True
+2025-11-16 14:09:33,430 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-16 14:09:33,439 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-16 14:09:33,445 - app - INFO - Flask app created with config: development
+2025-11-16 14:09:33,446 - app - INFO - Debug mode: True
+2025-11-16 14:09:33,449 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-16 14:09:33,451 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-16 14:09:33,452 - app - INFO - Flask app created with config: development
+2025-11-16 14:09:33,452 - app - INFO - Debug mode: True
+2025-11-16 14:09:33,452 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-16 14:09:33,504 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-16 14:09:33,512 - app - INFO - Flask app created with config: development
+2025-11-16 14:09:33,514 - app - INFO - Debug mode: True
+2025-11-16 14:09:33,516 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-16 14:15:59,922 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-16 14:15:59,924 - app - INFO - Flask app created with config: development
+2025-11-16 14:15:59,925 - app - INFO - Debug mode: True
+2025-11-16 14:15:59,926 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-16 14:15:59,939 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-16 14:15:59,946 - app - INFO - Flask app created with config: development
+2025-11-16 14:15:59,952 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-16 14:15:59,953 - app - INFO - Debug mode: True
+2025-11-16 14:15:59,954 - app - INFO - Flask app created with config: development
+2025-11-16 14:15:59,954 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-16 14:15:59,954 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-16 14:15:59,955 - app - INFO - Debug mode: True
+2025-11-16 14:15:59,956 - app - INFO - Flask app created with config: development
+2025-11-16 14:15:59,959 - app - INFO - Debug mode: True
+2025-11-16 14:15:59,958 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-16 14:15:59,959 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-16 14:20:35,818 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-16 14:20:35,818 - app - INFO - Flask app created with config: development
+2025-11-16 14:20:35,819 - app - INFO - Debug mode: True
+2025-11-16 14:20:35,819 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-16 14:20:35,952 - app.monitoring.healthchecks_client - ERROR - Failed to create check: 404 - 
+<!doctype html>
+<html lang="en">
+<head>
+  <title>Not Found</title>
+</head>
+<body>
+  <h1>Not Found</h1><p>The requested resource was not found on this server.</p>
+</body>
+</html>
+
+2025-11-16 14:20:36,489 - app.monitoring.healthchecks_client - ERROR - Failed to create check: 404 - 
+<!doctype html>
+<html lang="en">
+<head>
+  <title>Not Found</title>
+</head>
+<body>
+  <h1>Not Found</h1><p>The requested resource was not found on this server.</p>
+</body>
+</html>
+
+2025-11-16 14:20:37,019 - app.monitoring.healthchecks_client - ERROR - Failed to create check: 404 - 
+<!doctype html>
+<html lang="en">
+<head>
+  <title>Not Found</title>
+</head>
+<body>
+  <h1>Not Found</h1><p>The requested resource was not found on this server.</p>
+</body>
+</html>
+
+2025-11-16 14:20:37,531 - app.monitoring.healthchecks_client - ERROR - Failed to create check: 404 - 
+<!doctype html>
+<html lang="en">
+<head>
+  <title>Not Found</title>
+</head>
+<body>
+  <h1>Not Found</h1><p>The requested resource was not found on this server.</p>
+</body>
+</html>
+
+2025-11-16 14:20:38,035 - app.monitoring.healthchecks_client - ERROR - Failed to create check: 404 - 
+<!doctype html>
+<html lang="en">
+<head>
+  <title>Not Found</title>
+</head>
+<body>
+  <h1>Not Found</h1><p>The requested resource was not found on this server.</p>
+</body>
+</html>
+
+2025-11-16 14:20:38,543 - app.monitoring.healthchecks_client - ERROR - Failed to create check: 404 - 
+<!doctype html>
+<html lang="en">
+<head>
+  <title>Not Found</title>
+</head>
+<body>
+  <h1>Not Found</h1><p>The requested resource was not found on this server.</p>
+</body>
+</html>
+
+2025-11-16 14:20:39,055 - app.monitoring.healthchecks_client - ERROR - Failed to create check: 404 - 
+<!doctype html>
+<html lang="en">
+<head>
+  <title>Not Found</title>
+</head>
+<body>
+  <h1>Not Found</h1><p>The requested resource was not found on this server.</p>
+</body>
+</html>
+
+2025-11-16 14:20:39,561 - app.monitoring.healthchecks_client - ERROR - Failed to create check: 404 - 
+<!doctype html>
+<html lang="en">
+<head>
+  <title>Not Found</title>
+</head>
+<body>
+  <h1>Not Found</h1><p>The requested resource was not found on this server.</p>
+</body>
+</html>
+
+2025-11-16 14:20:40,069 - app.monitoring.healthchecks_client - ERROR - Failed to create check: 404 - 
+<!doctype html>
+<html lang="en">
+<head>
+  <title>Not Found</title>
+</head>
+<body>
+  <h1>Not Found</h1><p>The requested resource was not found on this server.</p>
+</body>
+</html>
+
+2025-11-16 14:20:40,578 - app.monitoring.healthchecks_client - ERROR - Failed to create check: 404 - 
+<!doctype html>
+<html lang="en">
+<head>
+  <title>Not Found</title>
+</head>
+<body>
+  <h1>Not Found</h1><p>The requested resource was not found on this server.</p>
+</body>
+</html>
+
+2025-11-16 14:20:41,083 - app.monitoring.healthchecks_client - ERROR - Failed to create check: 404 - 
+<!doctype html>
+<html lang="en">
+<head>
+  <title>Not Found</title>
+</head>
+<body>
+  <h1>Not Found</h1><p>The requested resource was not found on this server.</p>
+</body>
+</html>
+
+2025-11-16 14:20:41,593 - app.monitoring.healthchecks_client - ERROR - Failed to create check: 404 - 
+<!doctype html>
+<html lang="en">
+<head>
+  <title>Not Found</title>
+</head>
+<body>
+  <h1>Not Found</h1><p>The requested resource was not found on this server.</p>
+</body>
+</html>
+
+2025-11-16 14:20:42,097 - app.monitoring.healthchecks_client - ERROR - Failed to create check: 404 - 
+<!doctype html>
+<html lang="en">
+<head>
+  <title>Not Found</title>
+</head>
+<body>
+  <h1>Not Found</h1><p>The requested resource was not found on this server.</p>
+</body>
+</html>
+
+2025-11-16 14:20:42,605 - app.monitoring.healthchecks_client - ERROR - Failed to create check: 404 - 
+<!doctype html>
+<html lang="en">
+<head>
+  <title>Not Found</title>
+</head>
+<body>
+  <h1>Not Found</h1><p>The requested resource was not found on this server.</p>
+</body>
+</html>
+
+2025-11-16 14:25:50,988 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-16 14:25:50,989 - app - INFO - Flask app created with config: development
+2025-11-16 14:25:50,989 - app - INFO - Debug mode: True
+2025-11-16 14:25:50,989 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-16 14:25:51,016 - app.monitoring.healthchecks_client - ERROR - Failed to create check: 404 - 
+<!doctype html>
+<html lang="en">
+<head>
+  <title>Not Found</title>
+</head>
+<body>
+  <h1>Not Found</h1><p>The requested resource was not found on this server.</p>
+</body>
+</html>
+
+2025-11-16 14:25:51,537 - app.monitoring.healthchecks_client - ERROR - Failed to create check: 404 - 
+<!doctype html>
+<html lang="en">
+<head>
+  <title>Not Found</title>
+</head>
+<body>
+  <h1>Not Found</h1><p>The requested resource was not found on this server.</p>
+</body>
+</html>
+
+2025-11-16 14:25:52,056 - app.monitoring.healthchecks_client - ERROR - Failed to create check: 404 - 
+<!doctype html>
+<html lang="en">
+<head>
+  <title>Not Found</title>
+</head>
+<body>
+  <h1>Not Found</h1><p>The requested resource was not found on this server.</p>
+</body>
+</html>
+
+2025-11-16 14:25:52,561 - app.monitoring.healthchecks_client - ERROR - Failed to create check: 404 - 
+<!doctype html>
+<html lang="en">
+<head>
+  <title>Not Found</title>
+</head>
+<body>
+  <h1>Not Found</h1><p>The requested resource was not found on this server.</p>
+</body>
+</html>
+
+2025-11-16 14:25:53,072 - app.monitoring.healthchecks_client - ERROR - Failed to create check: 404 - 
+<!doctype html>
+<html lang="en">
+<head>
+  <title>Not Found</title>
+</head>
+<body>
+  <h1>Not Found</h1><p>The requested resource was not found on this server.</p>
+</body>
+</html>
+
+2025-11-16 14:25:53,585 - app.monitoring.healthchecks_client - ERROR - Failed to create check: 404 - 
+<!doctype html>
+<html lang="en">
+<head>
+  <title>Not Found</title>
+</head>
+<body>
+  <h1>Not Found</h1><p>The requested resource was not found on this server.</p>
+</body>
+</html>
+
+2025-11-16 14:25:54,089 - app.monitoring.healthchecks_client - ERROR - Failed to create check: 404 - 
+<!doctype html>
+<html lang="en">
+<head>
+  <title>Not Found</title>
+</head>
+<body>
+  <h1>Not Found</h1><p>The requested resource was not found on this server.</p>
+</body>
+</html>
+
+2025-11-16 14:25:54,604 - app.monitoring.healthchecks_client - ERROR - Failed to create check: 404 - 
+<!doctype html>
+<html lang="en">
+<head>
+  <title>Not Found</title>
+</head>
+<body>
+  <h1>Not Found</h1><p>The requested resource was not found on this server.</p>
+</body>
+</html>
+
+2025-11-16 14:25:55,113 - app.monitoring.healthchecks_client - ERROR - Failed to create check: 404 - 
+<!doctype html>
+<html lang="en">
+<head>
+  <title>Not Found</title>
+</head>
+<body>
+  <h1>Not Found</h1><p>The requested resource was not found on this server.</p>
+</body>
+</html>
+
+2025-11-16 14:25:55,617 - app.monitoring.healthchecks_client - ERROR - Failed to create check: 404 - 
+<!doctype html>
+<html lang="en">
+<head>
+  <title>Not Found</title>
+</head>
+<body>
+  <h1>Not Found</h1><p>The requested resource was not found on this server.</p>
+</body>
+</html>
+
+2025-11-16 14:25:56,122 - app.monitoring.healthchecks_client - ERROR - Failed to create check: 404 - 
+<!doctype html>
+<html lang="en">
+<head>
+  <title>Not Found</title>
+</head>
+<body>
+  <h1>Not Found</h1><p>The requested resource was not found on this server.</p>
+</body>
+</html>
+
+2025-11-16 14:25:56,626 - app.monitoring.healthchecks_client - ERROR - Failed to create check: 404 - 
+<!doctype html>
+<html lang="en">
+<head>
+  <title>Not Found</title>
+</head>
+<body>
+  <h1>Not Found</h1><p>The requested resource was not found on this server.</p>
+</body>
+</html>
+
+2025-11-16 14:25:57,135 - app.monitoring.healthchecks_client - ERROR - Failed to create check: 404 - 
+<!doctype html>
+<html lang="en">
+<head>
+  <title>Not Found</title>
+</head>
+<body>
+  <h1>Not Found</h1><p>The requested resource was not found on this server.</p>
+</body>
+</html>
+
+2025-11-16 14:25:57,645 - app.monitoring.healthchecks_client - ERROR - Failed to create check: 404 - 
+<!doctype html>
+<html lang="en">
+<head>
+  <title>Not Found</title>
+</head>
+<body>
+  <h1>Not Found</h1><p>The requested resource was not found on this server.</p>
+</body>
+</html>
+
+2025-11-16 14:27:27,096 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-16 14:27:27,097 - app - INFO - Flask app created with config: development
+2025-11-16 14:27:27,100 - app - INFO - Debug mode: True
+2025-11-16 14:27:27,107 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-16 14:27:27,108 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-16 14:27:27,110 - app - INFO - Flask app created with config: development
+2025-11-16 14:27:27,112 - app - INFO - Debug mode: True
+2025-11-16 14:27:27,112 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-16 14:27:27,118 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-16 14:27:27,119 - app - INFO - Flask app created with config: development
+2025-11-16 14:27:27,120 - app - INFO - Debug mode: True
+2025-11-16 14:27:27,122 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-16 14:27:27,150 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-16 14:27:27,151 - app - INFO - Flask app created with config: development
+2025-11-16 14:27:27,152 - app - INFO - Debug mode: True
+2025-11-16 14:27:27,153 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-16 14:28:37,239 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-16 14:28:37,239 - app - INFO - Flask app created with config: development
+2025-11-16 14:28:37,241 - app - INFO - Debug mode: True
+2025-11-16 14:28:37,241 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-16 14:28:37,265 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-16 14:28:37,266 - app - INFO - Flask app created with config: development
+2025-11-16 14:28:37,266 - app - INFO - Debug mode: True
+2025-11-16 14:28:37,268 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-16 14:28:37,272 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-16 14:28:37,272 - app - INFO - Flask app created with config: development
+2025-11-16 14:28:37,272 - app - INFO - Debug mode: True
+2025-11-16 14:28:37,273 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-16 14:28:37,280 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-16 14:28:37,280 - app - INFO - Flask app created with config: development
+2025-11-16 14:28:37,280 - app - INFO - Debug mode: True
+2025-11-16 14:28:37,280 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-16 14:28:47,247 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-16 14:28:47,248 - app - INFO - Flask app created with config: development
+2025-11-16 14:28:47,248 - app - INFO - Debug mode: True
+2025-11-16 14:28:47,248 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-16 14:28:47,269 - app.monitoring.healthchecks_client - ERROR - Failed to create check: 404 - 
+<!doctype html>
+<html lang="en">
+<head>
+  <title>Not Found</title>
+</head>
+<body>
+  <h1>Not Found</h1><p>The requested resource was not found on this server.</p>
+</body>
+</html>
+
+2025-11-16 14:28:47,796 - app.monitoring.healthchecks_client - ERROR - Failed to create check: 404 - 
+<!doctype html>
+<html lang="en">
+<head>
+  <title>Not Found</title>
+</head>
+<body>
+  <h1>Not Found</h1><p>The requested resource was not found on this server.</p>
+</body>
+</html>
+
+2025-11-16 14:28:48,314 - app.monitoring.healthchecks_client - ERROR - Failed to create check: 404 - 
+<!doctype html>
+<html lang="en">
+<head>
+  <title>Not Found</title>
+</head>
+<body>
+  <h1>Not Found</h1><p>The requested resource was not found on this server.</p>
+</body>
+</html>
+
+2025-11-16 14:28:48,822 - app.monitoring.healthchecks_client - ERROR - Failed to create check: 404 - 
+<!doctype html>
+<html lang="en">
+<head>
+  <title>Not Found</title>
+</head>
+<body>
+  <h1>Not Found</h1><p>The requested resource was not found on this server.</p>
+</body>
+</html>
+
+2025-11-16 14:28:49,331 - app.monitoring.healthchecks_client - ERROR - Failed to create check: 404 - 
+<!doctype html>
+<html lang="en">
+<head>
+  <title>Not Found</title>
+</head>
+<body>
+  <h1>Not Found</h1><p>The requested resource was not found on this server.</p>
+</body>
+</html>
+
+2025-11-16 14:28:49,838 - app.monitoring.healthchecks_client - ERROR - Failed to create check: 404 - 
+<!doctype html>
+<html lang="en">
+<head>
+  <title>Not Found</title>
+</head>
+<body>
+  <h1>Not Found</h1><p>The requested resource was not found on this server.</p>
+</body>
+</html>
+
+2025-11-16 14:28:50,347 - app.monitoring.healthchecks_client - ERROR - Failed to create check: 404 - 
+<!doctype html>
+<html lang="en">
+<head>
+  <title>Not Found</title>
+</head>
+<body>
+  <h1>Not Found</h1><p>The requested resource was not found on this server.</p>
+</body>
+</html>
+
+2025-11-16 14:28:50,854 - app.monitoring.healthchecks_client - ERROR - Failed to create check: 404 - 
+<!doctype html>
+<html lang="en">
+<head>
+  <title>Not Found</title>
+</head>
+<body>
+  <h1>Not Found</h1><p>The requested resource was not found on this server.</p>
+</body>
+</html>
+
+2025-11-16 14:28:51,360 - app.monitoring.healthchecks_client - ERROR - Failed to create check: 404 - 
+<!doctype html>
+<html lang="en">
+<head>
+  <title>Not Found</title>
+</head>
+<body>
+  <h1>Not Found</h1><p>The requested resource was not found on this server.</p>
+</body>
+</html>
+
+2025-11-16 14:28:51,868 - app.monitoring.healthchecks_client - ERROR - Failed to create check: 404 - 
+<!doctype html>
+<html lang="en">
+<head>
+  <title>Not Found</title>
+</head>
+<body>
+  <h1>Not Found</h1><p>The requested resource was not found on this server.</p>
+</body>
+</html>
+
+2025-11-16 14:28:52,372 - app.monitoring.healthchecks_client - ERROR - Failed to create check: 404 - 
+<!doctype html>
+<html lang="en">
+<head>
+  <title>Not Found</title>
+</head>
+<body>
+  <h1>Not Found</h1><p>The requested resource was not found on this server.</p>
+</body>
+</html>
+
+2025-11-16 14:28:52,881 - app.monitoring.healthchecks_client - ERROR - Failed to create check: 404 - 
+<!doctype html>
+<html lang="en">
+<head>
+  <title>Not Found</title>
+</head>
+<body>
+  <h1>Not Found</h1><p>The requested resource was not found on this server.</p>
+</body>
+</html>
+
+2025-11-16 14:28:53,386 - app.monitoring.healthchecks_client - ERROR - Failed to create check: 404 - 
+<!doctype html>
+<html lang="en">
+<head>
+  <title>Not Found</title>
+</head>
+<body>
+  <h1>Not Found</h1><p>The requested resource was not found on this server.</p>
+</body>
+</html>
+
+2025-11-16 14:28:53,897 - app.monitoring.healthchecks_client - ERROR - Failed to create check: 404 - 
+<!doctype html>
+<html lang="en">
+<head>
+  <title>Not Found</title>
+</head>
+<body>
+  <h1>Not Found</h1><p>The requested resource was not found on this server.</p>
+</body>
+</html>
+
+2025-11-16 14:31:07,121 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-16 14:31:07,121 - app - INFO - Flask app created with config: development
+2025-11-16 14:31:07,122 - app - INFO - Debug mode: True
+2025-11-16 14:31:07,123 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-16 14:31:07,124 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-16 14:31:07,124 - app - INFO - Flask app created with config: development
+2025-11-16 14:31:07,125 - app - INFO - Debug mode: True
+2025-11-16 14:31:07,126 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-16 14:31:07,157 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-16 14:31:07,158 - app - INFO - Flask app created with config: development
+2025-11-16 14:31:07,159 - app - INFO - Debug mode: True
+2025-11-16 14:31:07,160 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-16 14:31:07,248 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-16 14:31:07,248 - app - INFO - Flask app created with config: development
+2025-11-16 14:31:07,248 - app - INFO - Debug mode: True
+2025-11-16 14:31:07,249 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-16 14:31:24,886 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-16 14:31:24,887 - app - INFO - Flask app created with config: development
+2025-11-16 14:31:24,887 - app - INFO - Debug mode: True
+2025-11-16 14:31:24,887 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-16 14:31:24,923 - app.monitoring.healthchecks_client - ERROR - Failed to create check: 404 - 
+<!doctype html>
+<html lang="en">
+<head>
+  <title>Not Found</title>
+</head>
+<body>
+  <h1>Not Found</h1><p>The requested resource was not found on this server.</p>
+</body>
+</html>
+
+2025-11-16 14:31:25,461 - app.monitoring.healthchecks_client - ERROR - Failed to create check: 404 - 
+<!doctype html>
+<html lang="en">
+<head>
+  <title>Not Found</title>
+</head>
+<body>
+  <h1>Not Found</h1><p>The requested resource was not found on this server.</p>
+</body>
+</html>
+
+2025-11-16 14:31:25,976 - app.monitoring.healthchecks_client - ERROR - Failed to create check: 404 - 
+<!doctype html>
+<html lang="en">
+<head>
+  <title>Not Found</title>
+</head>
+<body>
+  <h1>Not Found</h1><p>The requested resource was not found on this server.</p>
+</body>
+</html>
+
+2025-11-16 14:31:26,487 - app.monitoring.healthchecks_client - ERROR - Failed to create check: 404 - 
+<!doctype html>
+<html lang="en">
+<head>
+  <title>Not Found</title>
+</head>
+<body>
+  <h1>Not Found</h1><p>The requested resource was not found on this server.</p>
+</body>
+</html>
+
+2025-11-16 14:31:26,995 - app.monitoring.healthchecks_client - ERROR - Failed to create check: 404 - 
+<!doctype html>
+<html lang="en">
+<head>
+  <title>Not Found</title>
+</head>
+<body>
+  <h1>Not Found</h1><p>The requested resource was not found on this server.</p>
+</body>
+</html>
+
+2025-11-16 14:31:27,507 - app.monitoring.healthchecks_client - ERROR - Failed to create check: 404 - 
+<!doctype html>
+<html lang="en">
+<head>
+  <title>Not Found</title>
+</head>
+<body>
+  <h1>Not Found</h1><p>The requested resource was not found on this server.</p>
+</body>
+</html>
+
+2025-11-16 14:31:28,011 - app.monitoring.healthchecks_client - ERROR - Failed to create check: 404 - 
+<!doctype html>
+<html lang="en">
+<head>
+  <title>Not Found</title>
+</head>
+<body>
+  <h1>Not Found</h1><p>The requested resource was not found on this server.</p>
+</body>
+</html>
+
+2025-11-16 14:31:28,523 - app.monitoring.healthchecks_client - ERROR - Failed to create check: 404 - 
+<!doctype html>
+<html lang="en">
+<head>
+  <title>Not Found</title>
+</head>
+<body>
+  <h1>Not Found</h1><p>The requested resource was not found on this server.</p>
+</body>
+</html>
+
+2025-11-16 14:31:29,026 - app.monitoring.healthchecks_client - ERROR - Failed to create check: 404 - 
+<!doctype html>
+<html lang="en">
+<head>
+  <title>Not Found</title>
+</head>
+<body>
+  <h1>Not Found</h1><p>The requested resource was not found on this server.</p>
+</body>
+</html>
+
+2025-11-16 14:31:29,536 - app.monitoring.healthchecks_client - ERROR - Failed to create check: 404 - 
+<!doctype html>
+<html lang="en">
+<head>
+  <title>Not Found</title>
+</head>
+<body>
+  <h1>Not Found</h1><p>The requested resource was not found on this server.</p>
+</body>
+</html>
+
+2025-11-16 14:31:30,040 - app.monitoring.healthchecks_client - ERROR - Failed to create check: 404 - 
+<!doctype html>
+<html lang="en">
+<head>
+  <title>Not Found</title>
+</head>
+<body>
+  <h1>Not Found</h1><p>The requested resource was not found on this server.</p>
+</body>
+</html>
+
+2025-11-16 14:31:30,544 - app.monitoring.healthchecks_client - ERROR - Failed to create check: 404 - 
+<!doctype html>
+<html lang="en">
+<head>
+  <title>Not Found</title>
+</head>
+<body>
+  <h1>Not Found</h1><p>The requested resource was not found on this server.</p>
+</body>
+</html>
+
+2025-11-16 14:31:31,054 - app.monitoring.healthchecks_client - ERROR - Failed to create check: 404 - 
+<!doctype html>
+<html lang="en">
+<head>
+  <title>Not Found</title>
+</head>
+<body>
+  <h1>Not Found</h1><p>The requested resource was not found on this server.</p>
+</body>
+</html>
+
+2025-11-16 14:31:31,558 - app.monitoring.healthchecks_client - ERROR - Failed to create check: 404 - 
+<!doctype html>
+<html lang="en">
+<head>
+  <title>Not Found</title>
+</head>
+<body>
+  <h1>Not Found</h1><p>The requested resource was not found on this server.</p>
+</body>
+</html>
+
+2025-11-16 14:32:50,208 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-16 14:32:50,209 - app - INFO - Flask app created with config: development
+2025-11-16 14:32:50,211 - app - INFO - Debug mode: True
+2025-11-16 14:32:50,212 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-16 14:32:50,222 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-16 14:32:50,222 - app - INFO - Flask app created with config: development
+2025-11-16 14:32:50,223 - app - INFO - Debug mode: True
+2025-11-16 14:32:50,223 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-16 14:32:50,264 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-16 14:32:50,265 - app - INFO - Flask app created with config: development
+2025-11-16 14:32:50,265 - app - INFO - Debug mode: True
+2025-11-16 14:32:50,265 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-16 14:32:50,272 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-16 14:32:50,273 - app - INFO - Flask app created with config: development
+2025-11-16 14:32:50,273 - app - INFO - Debug mode: True
+2025-11-16 14:32:50,273 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-16 14:33:12,830 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-16 14:33:12,831 - app - INFO - Flask app created with config: development
+2025-11-16 14:33:12,831 - app - INFO - Debug mode: True
+2025-11-16 14:33:12,831 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-16 14:33:12,874 - app.monitoring.healthchecks_client - ERROR - Failed to create check: 400 - {"error": "json validation error: timeout is too small"}
+2025-11-16 14:33:13,392 - app.monitoring.healthchecks_client - ERROR - Failed to create check: 400 - {"error": "json validation error: timeout is too small"}
+2025-11-16 14:33:13,918 - app.monitoring.healthchecks_client - INFO - Check 'Flask API' created with ID http://localhost:8000/ping/def4ca4e-ad69-46b6-8e5e-9d6fe6f7eea8
+2025-11-16 14:33:14,441 - app.monitoring.healthchecks_client - INFO - Check 'Celery Worker SSO' created with ID http://localhost:8000/ping/35f1eb10-1e5a-4cdd-85ef-c130cb721f10
+2025-11-16 14:33:14,979 - app.monitoring.healthchecks_client - INFO - Check 'Celery Beat Scheduler' created with ID http://localhost:8000/ping/dad7bbda-88e7-412e-b1f4-d08f927744c2
+2025-11-16 14:33:15,511 - app.monitoring.healthchecks_client - INFO - Check 'Kafka Broker' created with ID http://localhost:8000/ping/343149e1-ad71-4563-bd70-6b2d7aa95924
+2025-11-16 14:33:16,032 - app.monitoring.healthchecks_client - INFO - Check 'Kafka Consumer' created with ID http://localhost:8000/ping/7b3d99a1-b15a-4c58-94c0-93925b6f0230
+2025-11-16 14:33:16,555 - app.monitoring.healthchecks_client - INFO - Check 'MinIO S3 Storage' created with ID http://localhost:8000/ping/8018d3b4-5415-4704-a0f1-853339cc83b5
+2025-11-16 14:33:17,075 - app.monitoring.healthchecks_client - INFO - Check 'Vault Secrets' created with ID http://localhost:8000/ping/178e754a-deae-40fe-b4e0-d252bb78f697
+2025-11-16 14:33:17,595 - app.monitoring.healthchecks_client - INFO - Check 'SSO Token Refresh' created with ID http://localhost:8000/ping/fe3545e5-b1fb-4c49-b829-70072b5056b8
+2025-11-16 14:33:18,110 - app.monitoring.healthchecks_client - INFO - Check 'Health Check Task' created with ID http://localhost:8000/ping/3f8aae71-5258-417c-8bfc-3a85257427b9
+2025-11-16 14:33:18,633 - app.monitoring.healthchecks_client - INFO - Check 'Token Cleanup' created with ID http://localhost:8000/ping/db8286a0-9790-41e3-a906-ac78ff0dc950
+2025-11-16 14:33:19,147 - app.monitoring.healthchecks_client - INFO - Check 'Encryption Key Rotation' created with ID http://localhost:8000/ping/29342eb0-b0f8-47e1-8748-870f263cedbb
+2025-11-16 14:33:19,669 - app.monitoring.healthchecks_client - INFO - Check 'Comprehensive Health Check' created with ID http://localhost:8000/ping/c6c556c7-bd3a-402b-8398-1cf3fec53681
+2025-11-16 14:42:32,092 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-16 14:42:32,093 - app - INFO - Flask app created with config: development
+2025-11-16 14:42:32,093 - app - INFO - Debug mode: True
+2025-11-16 14:42:32,093 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-16 14:42:32,136 - app.monitoring.healthchecks_client - ERROR - Failed to create check: 400 - {"error": "json validation error: timeout is too small"}
+2025-11-16 14:42:32,648 - app.monitoring.healthchecks_client - ERROR - Failed to create check: 400 - {"error": "json validation error: timeout is too small"}
+2025-11-16 15:08:47,924 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-16 15:08:47,925 - app - INFO - Flask app created with config: development
+2025-11-16 15:08:47,925 - app - INFO - Debug mode: True
+2025-11-16 15:08:47,925 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-16 15:09:13,326 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-16 15:09:13,327 - app - INFO - Flask app created with config: development
+2025-11-16 15:09:13,328 - app - INFO - Debug mode: True
+2025-11-16 15:09:13,328 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...

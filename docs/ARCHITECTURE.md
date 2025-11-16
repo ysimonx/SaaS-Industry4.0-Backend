@@ -9,13 +9,14 @@
 5. [Authentication & Authorization](#authentication--authorization)
 6. [Redis Cache & Session Store](#redis-cache--session-store)
 7. [Celery Task Queue Architecture](#celery-task-queue-architecture)
-8. [TSA Timestamping Architecture (RFC 3161)](#tsa-timestamping-architecture-rfc-3161)
-9. [File Storage Architecture](#file-storage-architecture)
-10. [Kafka Message Processing](#kafka-message-processing)
-11. [API Design](#api-design)
-12. [Security Considerations](#security-considerations)
-13. [Scalability & Performance](#scalability--performance)
-14. [Deployment Architecture](#deployment-architecture)
+8. [Health Monitoring Architecture (Healthchecks.io)](#health-monitoring-architecture-healthchecksio)
+9. [TSA Timestamping Architecture (RFC 3161)](#tsa-timestamping-architecture-rfc-3161)
+10. [File Storage Architecture](#file-storage-architecture)
+11. [Kafka Message Processing](#kafka-message-processing)
+12. [API Design](#api-design)
+13. [Security Considerations](#security-considerations)
+14. [Scalability & Performance](#scalability--performance)
+15. [Deployment Architecture](#deployment-architecture)
 
 ---
 
@@ -31,6 +32,7 @@ The SaaS Multi-Tenant Backend Platform is a production-ready backend infrastruct
 - **Authentication & Authorization**: JWT-based authentication with role-based access control (RBAC)
 - **Document Management**: S3-based storage with MD5 deduplication within tenant boundaries
 - **TSA Timestamping**: RFC 3161 compliant timestamping for legal proof of document existence
+- **Health Monitoring**: Self-hosted Healthchecks.io for comprehensive service monitoring and alerting
 - **Asynchronous Processing**: Kafka-based message queue and Celery task queue for background tasks
 - **RESTful APIs**: Comprehensive REST APIs following OpenAPI 3.0 specification
 - **Horizontal Scalability**: Stateless design supporting multiple API instances
@@ -1326,6 +1328,255 @@ def refresh_expiring_tokens():
    - Task failure rates
    - Worker memory usage
    - Redis connection pool
+
+---
+
+## Health Monitoring Architecture (Healthchecks.io)
+
+### Overview
+
+The platform implements **comprehensive health monitoring** using a self-hosted Healthchecks.io instance to track service availability, performance, and reliability. This ensures proactive issue detection and minimizes downtime through automated alerting.
+
+### Architecture Components
+
+```
+┌────────────────────────────────────────────────────────────────┐
+│                Health Monitoring Architecture                    │
+└────────────────────────────────────────────────────────────────┘
+
+┌─────────────────┐     ┌──────────────────┐     ┌──────────────┐
+│ Celery Beat     │────▶│ Monitoring Tasks │────▶│ Healthchecks │
+│ Scheduler       │     │ (Every 2-5 min)  │     │ API Server   │
+└─────────────────┘     └──────────────────┘     └──────┬───────┘
+                               │                          │
+                               ▼                          ▼
+                    ┌─────────────────────┐     ┌──────────────┐
+                    │ celery-worker-      │     │ Dashboard    │
+                    │ monitoring          │     │ UI:8000      │
+                    └─────────────────────┘     └──────────────┘
+                               │                          │
+                               ▼                          ▼
+                    ┌─────────────────────┐     ┌──────────────┐
+                    │ Service Health      │     │ Alert        │
+                    │ Checks:             │     │ Channels:    │
+                    │ - PostgreSQL        │     │ - Email      │
+                    │ - Redis             │     │ - Slack      │
+                    │ - Flask API         │     │ - Webhooks   │
+                    │ - Celery Workers    │     │ - PagerDuty  │
+                    │ - Kafka/MinIO/Vault │     └──────────────┘
+                    └─────────────────────┘
+```
+
+### Monitoring Strategy
+
+#### Service Tiers
+
+The platform categorizes services into tiers based on criticality:
+
+**Tier 1 (Critical - 2-3 minute intervals)**
+- PostgreSQL Database (*/2 minutes, grace: 4 minutes)
+- Redis Cache/Broker (*/2 minutes, grace: 4 minutes)
+- Flask API (*/3 minutes, grace: 6 minutes)
+
+**Tier 2 (Essential - 5 minute intervals)**
+- Celery Worker SSO (*/5 minutes, grace: 10 minutes)
+- Celery Beat Scheduler (*/5 minutes, grace: 10 minutes)
+- Kafka Broker (*/5 minutes, grace: 10 minutes)
+
+**Tier 3 (Supporting - 10+ minute intervals)**
+- MinIO S3 Storage (*/10 minutes, grace: 20 minutes)
+- Vault Secrets (*/10 minutes, grace: 20 minutes)
+
+#### Timing Configuration
+
+Correct timing alignment is critical for avoiding false alerts:
+
+```python
+# Celery Beat Schedule (celery_app.py)
+CELERYBEAT_SCHEDULE = {
+    'monitor-postgres': {
+        'task': 'monitoring.check_postgres',
+        'schedule': crontab(minute='*/2'),  # Every 2 minutes
+        'options': {'queue': 'monitoring'}
+    },
+    # ... other monitoring tasks
+}
+
+# Healthchecks Configuration (setup_healthchecks.py)
+{
+    'name': 'PostgreSQL Database',
+    'schedule': '120',  # 2 minutes (matches Celery)
+    'grace': 240,       # 4 minutes (2x timeout)
+}
+```
+
+**Grace Period Formula**: `grace = timeout * 2`
+- Provides buffer for network delays
+- Accounts for task queue processing time
+- Prevents false positives during high load
+
+### Implementation Details
+
+#### Monitoring Worker
+
+A dedicated Celery worker handles all health check tasks:
+
+```yaml
+# docker-compose.yml
+celery-worker-monitoring:
+  command: celery -A celery_worker:celery worker -Q monitoring
+  environment:
+    - HC_CHECK_POSTGRES=${HC_CHECK_POSTGRES}
+    - HC_CHECK_REDIS=${HC_CHECK_REDIS}
+    - HC_CHECK_API=${HC_CHECK_API}
+```
+
+#### Health Check Tasks
+
+Each monitored service has a dedicated health check task:
+
+```python
+# backend/app/tasks/monitoring_tasks.py
+
+@celery.task(name='monitoring.check_postgres')
+def check_postgres_health():
+    """
+    PostgreSQL health verification:
+    - Connection test
+    - Active connections count
+    - Database size
+    - Slow query detection
+    - Tenant database accessibility
+    """
+    # Implementation with metrics collection
+    # Ping Healthchecks.io on success/failure
+
+@celery.task(name='monitoring.check_redis')
+def check_redis_health():
+    """
+    Redis health verification:
+    - Connection test
+    - Memory usage
+    - Key count by database
+    - Eviction statistics
+    """
+    # Implementation with metrics collection
+```
+
+#### Healthchecks Client
+
+The platform uses a dedicated client for Healthchecks.io API interaction:
+
+```python
+# backend/app/monitoring/healthchecks_client.py
+
+class HealthchecksClient:
+    def ping_success(self, check_id: str):
+        """Send success ping to Healthchecks"""
+        url = f"{self.api_url}/ping/{check_id}"
+        requests.get(url)
+
+    def ping_fail(self, check_id: str):
+        """Send failure ping to Healthchecks"""
+        url = f"{self.api_url}/ping/{check_id}/fail"
+        requests.get(url)
+```
+
+### Deployment Configuration
+
+#### Environment Setup
+
+The monitoring system uses a separate environment file for configuration:
+
+```bash
+# .env.healthchecks
+HEALTHCHECKS_ENABLED=True
+HEALTHCHECKS_API_URL=http://healthchecks:8000/api/v1
+HEALTHCHECKS_API_KEY=your-api-key
+HEALTHCHECKS_PING_URL=http://healthchecks:8000/ping
+
+# Check IDs (generated during setup)
+HC_CHECK_POSTGRES=uuid-here
+HC_CHECK_REDIS=uuid-here
+HC_CHECK_API=uuid-here
+# ... other check IDs
+```
+
+#### Initial Setup
+
+```bash
+# 1. Start Healthchecks.io service
+docker-compose up -d healthchecks
+
+# 2. Create admin account
+docker-compose exec healthchecks ./manage.py createsuperuser
+
+# 3. Generate and configure checks
+docker-compose exec api python scripts/setup_healthchecks.py
+
+# 4. Fix timing alignment if needed
+docker-compose exec api python scripts/fix_healthchecks_timing.py
+```
+
+### Alert Channels
+
+Healthchecks.io supports multiple alert channels:
+
+- **Email**: Immediate notifications for critical services
+- **Slack**: Team channel integration for collaborative response
+- **Webhooks**: Custom integrations with incident management systems
+- **PagerDuty**: On-call rotation for 24/7 coverage
+- **SMS/Voice**: Critical alerts requiring immediate attention
+
+### Dashboard Features
+
+The Healthchecks.io dashboard (http://localhost:8000) provides:
+
+- **Real-time Status**: Visual indicators for all monitored services
+- **Check History**: Timeline of pings and failures
+- **Grace Period Warnings**: Services approaching timeout
+- **Downtime Tracking**: Historical availability metrics
+- **Alert Configuration**: Channel management and testing
+
+### Production Considerations
+
+1. **High Availability**
+   - Deploy multiple monitoring workers for redundancy
+   - Use PostgreSQL replication for Healthchecks database
+   - Configure multiple alert channels for failover
+
+2. **Scaling**
+   ```bash
+   # Scale monitoring workers
+   docker-compose up -d --scale celery-worker-monitoring=3
+   ```
+
+3. **Performance Optimization**
+   - Batch health checks when possible
+   - Cache frequently accessed metrics
+   - Use connection pooling for database checks
+
+4. **Security**
+   - Secure API keys in environment variables
+   - Use HTTPS for all Healthchecks communication
+   - Implement rate limiting on ping endpoints
+
+### Monitoring Best Practices
+
+1. **Timing Alignment**: Always ensure Celery schedules match Healthchecks expectations
+2. **Grace Periods**: Use 2x timeout as grace period for optimal alerting
+3. **Check Granularity**: Monitor specific functionality, not just connectivity
+4. **Alert Fatigue**: Configure appropriate thresholds to avoid noise
+5. **Documentation**: Maintain runbooks for each alert scenario
+
+### Related Documentation
+
+For detailed implementation and configuration:
+- `/specs/6 - healthcheck/plan-healthcheck.md` - Complete implementation plan
+- `/specs/6 - healthcheck/DOCKER_HEALTHCHECK.md` - Docker setup guide
+- `/specs/6 - healthcheck/HEALTHCHECKS_TIMING_FIX.md` - Timing troubleshooting
+- `/backend/scripts/setup_healthchecks.py` - Automated setup script
+- `/backend/scripts/fix_healthchecks_timing.py` - Timing alignment tool
 
 ---
 

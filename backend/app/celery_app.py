@@ -35,7 +35,7 @@ def create_celery_app(app: Flask = None) -> Celery:
         'saas_platform',
         broker=broker_url,
         backend=result_backend,
-        include=['app.tasks.sso_tasks', 'app.tasks.maintenance_tasks', 'app.tasks.tsa_tasks']
+        include=['app.tasks.sso_tasks', 'app.tasks.maintenance_tasks', 'app.tasks.tsa_tasks', 'app.tasks.monitoring_tasks']
     )
 
     # Update configuration
@@ -53,6 +53,7 @@ def create_celery_app(app: Flask = None) -> Celery:
             'app.tasks.maintenance_tasks.*': {'queue': 'maintenance'},
             'app.tasks.email_tasks.*': {'queue': 'email'},
             'app.tasks.tsa_tasks.*': {'queue': 'tsa_timestamping'},
+            'app.tasks.monitoring_tasks.*': {'queue': 'monitoring'},
         },
 
         # Task-specific settings (rate limiting, timeouts)
@@ -119,6 +120,53 @@ def create_celery_app(app: Flask = None) -> Celery:
                 'options': {
                     'queue': 'maintenance',
                     'priority': 1,
+                }
+            },
+
+            # Comprehensive system health check - every 10 minutes
+            'comprehensive-health-check': {
+                'task': 'monitoring.comprehensive_health_check',
+                'schedule': crontab(minute='*/10'),
+                'options': {
+                    'queue': 'monitoring',
+                    'priority': 2,
+                }
+            },
+
+            # Individual service monitoring tasks
+            'monitor-postgres': {
+                'task': 'monitoring.check_postgres',
+                'schedule': crontab(minute='*/2'),  # Every 2 minutes
+                'options': {
+                    'queue': 'monitoring',
+                    'priority': 3,
+                }
+            },
+
+            'monitor-redis': {
+                'task': 'monitoring.check_redis',
+                'schedule': crontab(minute='*/2'),  # Every 2 minutes
+                'options': {
+                    'queue': 'monitoring',
+                    'priority': 3,
+                }
+            },
+
+            'monitor-api': {
+                'task': 'monitoring.check_api',
+                'schedule': crontab(minute='*/3'),  # Every 3 minutes
+                'options': {
+                    'queue': 'monitoring',
+                    'priority': 3,
+                }
+            },
+
+            'monitor-celery': {
+                'task': 'monitoring.check_celery',
+                'schedule': crontab(minute='*/5'),  # Every 5 minutes
+                'options': {
+                    'queue': 'monitoring',
+                    'priority': 3,
                 }
             },
         }
