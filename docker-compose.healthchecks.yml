@@ -1,0 +1,84 @@
+# Docker Compose configuration for Healthchecks.io monitoring
+#
+# Usage avec fichier .env.healthchecks séparé :
+#   docker-compose --env-file .env.healthchecks -f docker-compose.healthchecks.yml up -d
+#
+# Ou combiner avec le .env principal :
+#   docker-compose --env-file .env --env-file .env.healthchecks -f docker-compose.healthchecks.yml up -d
+
+version: '3.8'
+
+services:
+  healthchecks:
+    image: healthchecks/healthchecks:v2.10
+    container_name: saas-healthchecks
+    restart: unless-stopped
+    ports:
+      - "8000:8000"  # Web UI
+      - "8001:8001"  # SMTP (for email pings)
+    environment:
+      - SECRET_KEY=${HEALTHCHECKS_SECRET_KEY:-generate-50-char-secret-key-replace-me-in-production}
+      - DEBUG=False
+      - REGISTRATION_OPEN=${HEALTHCHECKS_REGISTRATION_OPEN:-False}
+      - SITE_NAME=${HEALTHCHECKS_SITE_NAME:-SaaS Backend Monitoring}
+      - DEFAULT_FROM_EMAIL=${HEALTHCHECKS_DEFAULT_FROM_EMAIL:-monitoring@example.com}
+      - EMAIL_HOST=${HEALTHCHECKS_EMAIL_HOST:-smtp.gmail.com}
+      - EMAIL_PORT=${HEALTHCHECKS_EMAIL_PORT:-587}
+      - EMAIL_HOST_USER=${HEALTHCHECKS_EMAIL_HOST_USER}
+      - EMAIL_HOST_PASSWORD=${HEALTHCHECKS_EMAIL_HOST_PASSWORD}
+      - EMAIL_USE_TLS=${HEALTHCHECKS_EMAIL_USE_TLS:-True}
+      - ALLOWED_HOSTS=${HEALTHCHECKS_ALLOWED_HOSTS:-healthchecks,localhost,monitoring.example.com}
+      - DB=postgres
+      - DB_HOST=${HEALTHCHECKS_DB_HOST:-healthchecks-db}
+      - DB_PORT=${HEALTHCHECKS_DB_PORT:-5432}
+      - DB_NAME=${HEALTHCHECKS_DB_NAME:-healthchecks}
+      - DB_USER=${HEALTHCHECKS_DB_USER:-healthchecks}
+      - DB_PASSWORD=${HEALTHCHECKS_DB_PASSWORD:-healthchecks_password}
+      - SLACK_ENABLED=${HEALTHCHECKS_SLACK_ENABLED:-False}
+      - SLACK_WEBHOOK_URL=${HEALTHCHECKS_SLACK_WEBHOOK}
+      - SITE_ROOT=${HEALTHCHECKS_SITE_ROOT:-http://localhost:8000}
+      - PING_EMAIL_DOMAIN=${HEALTHCHECKS_PING_EMAIL_DOMAIN:-localhost}
+      - PING_ENDPOINT=${HEALTHCHECKS_PING_ENDPOINT:-http://localhost:8000/ping/}
+    depends_on:
+      healthchecks-db:
+        condition: service_healthy
+    volumes:
+      - healthchecks-media:/opt/healthchecks/media
+    networks:
+      - saas-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/api/v1/status"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  healthchecks-db:
+    image: postgres:13-alpine
+    container_name: saas-healthchecks-db
+    restart: unless-stopped
+    environment:
+      - POSTGRES_DB=${HEALTHCHECKS_DB_NAME:-healthchecks}
+      - POSTGRES_USER=${HEALTHCHECKS_DB_USER:-healthchecks}
+      - POSTGRES_PASSWORD=${HEALTHCHECKS_DB_PASSWORD:-healthchecks_password}
+      - POSTGRES_INITDB_ARGS=--encoding=UTF-8
+    volumes:
+      - healthchecks-db-data:/var/lib/postgresql/data
+    networks:
+      - saas-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${HEALTHCHECKS_DB_USER:-healthchecks} -d ${HEALTHCHECKS_DB_NAME:-healthchecks}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  healthchecks-db-data:
+    driver: local
+  healthchecks-media:
+    driver: local
+
+networks:
+  saas-network:
+    external:
+      name: saasbackendwithclaude_saas-network

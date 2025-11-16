@@ -313,6 +313,14 @@ def register_blueprints(app):
     except ImportError as e:
         app.logger.warning(f"SSO auth blueprint not found: {e}")
 
+    # Register monitoring blueprint
+    try:
+        from app.routes.monitoring import monitoring_bp
+        app.register_blueprint(monitoring_bp, url_prefix='/api/monitoring')
+        app.logger.info("Registered blueprint: monitoring (/api/monitoring)")
+    except ImportError as e:
+        app.logger.warning(f"Monitoring blueprint not found: {e}")
+
     # Health check endpoint (no blueprint needed)
     @app.route('/health')
     def health_check():

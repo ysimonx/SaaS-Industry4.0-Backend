@@ -144,6 +144,15 @@ curl http://localhost:4999/health
 
 # Test SSO availability
 curl http://localhost:4999/api/auth/sso/check-availability/{tenant_id}
+
+# Access Healthchecks.io monitoring UI
+open http://localhost:8000
+
+# Fix Healthchecks timing mismatches (if Celery schedules changed)
+docker-compose exec api python scripts/fix_healthchecks_timing.py
+
+# Setup Healthchecks monitoring (first-time setup)
+docker-compose exec api python scripts/setup_healthchecks.py
 ```
 
 ### Flask CLI Commands
