@@ -23,6 +23,7 @@ docker/volumes/vault/data/*.bin
 .env
 .env.local
 .env.*.local
+.env.healthchecks
 
 root-token.txt
 unseal-keys.json
@@ -34,3 +35,4 @@ vault/data/sys
 backend/celerybeat-schedule
 logs/app.log
 backend/celerybeat-schedule
+.env.healthchecks
