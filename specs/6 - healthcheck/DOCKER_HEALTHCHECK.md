@@ -20,7 +20,7 @@ docker-compose --env-file .env --env-file .env.healthchecks \
 docker-compose -f docker-compose.healthchecks.yml ps
 
 # Créer le compte administrateur (OBLIGATOIRE - première fois uniquement)
-./scripts/create-healthchecks-admin.sh
+./scripts/healthcheck/create-healthchecks-admin.sh
 
 # Accéder à l'interface
 open http://localhost:8000
@@ -343,10 +343,10 @@ grep SLACK_ENABLED .env.healthchecks  # Doit être "True" ou "False", pas "true"
 
 ```bash
 # Méthode 1 : Utiliser le script helper (recommandé)
-./scripts/create-healthchecks-admin.sh
+./scripts/healthcheck/create-healthchecks-admin.sh
 
 # Méthode 2 : Créer avec des identifiants personnalisés
-./scripts/create-healthchecks-admin.sh myusername myemail@example.com mypassword
+./scripts/healthcheck/create-healthchecks-admin.sh myusername myemail@example.com mypassword
 
 # Méthode 3 : Créer manuellement via Django
 docker-compose -f docker-compose.healthchecks.yml exec healthchecks python -c "

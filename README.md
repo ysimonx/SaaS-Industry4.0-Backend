@@ -2,6 +2,26 @@
 
 **A Production-Ready Foundation for Industry 4.0 SaaS Applications**
 
+This Backend manages user accounts and supports integration with Azure SSO for large enterprises, adhering to strict DevOps requirements. The architecture is suitable for any web or mobile application and includes comprehensive Swagger documentation : 
+
+- Document Storage: Utilizes S3-compatible storage for high-availability document hosting.
+
+- Access Control: Manages Users and Roles for granular access and security.
+
+- Timestamping: Implements document timestamping using DigiCert (or any compatible TSA provider).
+
+- Multi-Tenancy: Features isolated data security with a dedicated PostgreSQL database for each tenant.
+
+- Security: Encrypts sensitive secret information using HashiCorp's Vault secrets engine.
+
+- Monitoring: Ensures system reliability via built-in health checks.
+
+- Deployment: Cloud-ready architecture, packaged with Docker.
+
+- Independence: Designed to be deployed without reliance on major hyperscalers (GAFAM/FAANG).
+
+**Quick Start**
+
 - [Quick Start avec Docker (Recommended)](#quick-start)
 - **Approach A: With Vault** - See [Quick Start - Option A](#option-a-with-hashicorp-vault-recommended-for-production-like-setup) for detailed setup
 - **Approach B: Without Vault** - See [Quick Start - Option B](#option-b-without-vault-simple-setup-for-development) for simple development setup
@@ -557,6 +577,12 @@ docker-compose ps
 **Default Admin Credentials** (change immediately!):
 - Email: `admin@example.com`
 - Password: `12345678`
+
+**Default Healthcheck Credentials** (change immediately!):
+- Email: `admin@example.com`
+- Password: `admin123`
+- **Health Monitoring**: See [specs/6 - healthcheck/](specs/6%20-%20healthcheck/README.md) for detailed monitoring documentation
+
 
 **Access Services:**
 - **API Server**: http://localhost:4999
@@ -2262,7 +2288,7 @@ SOFTWARE.
 - **Architecture**: See [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)
 - **Docker Deployment**: See [DOCKER.md](DOCKER.md)
 - **API Reference**: See [swagger.yaml](swagger.yaml)
-- **Health Monitoring**: See [specs/6 - healthcheck/](specs/6%20-%20healthcheck/) for detailed monitoring documentation
+- **Health Monitoring**: See [specs/6 - healthcheck/](specs/6%20-%20healthcheck/README.md) for detailed monitoring documentation
 
 ### Getting Help
 - **Issues**: [GitHub Issues](https://github.com/your-org/SaaSBackendWithClaude/issues)

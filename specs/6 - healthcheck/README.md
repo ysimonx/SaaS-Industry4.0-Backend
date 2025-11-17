@@ -93,7 +93,7 @@ curl -H "X-Api-Key: $HEALTHCHECKS_API_KEY" \
 ### Scripts
 - `/backend/scripts/setup_healthchecks.py` - Initial setup
 - `/backend/scripts/fix_healthchecks_timing.py` - Timing alignment
-- `/backend/scripts/restart-monitoring.sh` - Service restart helper
+- `/scripts/healthcheck/restart-monitoring.sh` - Service restart helper
 
 ### Source Code
 - `/backend/app/tasks/monitoring_tasks.py` - Health check tasks
