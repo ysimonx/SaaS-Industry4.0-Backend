@@ -45,6 +45,12 @@ class HealthchecksClient:
         if not self.enabled:
             return True
 
+        # IMPORTANT: Only ping if check_id is a valid UUID (not a slug)
+        # This prevents auto-creation of checks when using API keys with auto-provisioning
+        if not check_id or len(check_id) != 36 or check_id.count('-') != 4:
+            logger.warning(f"Invalid check_id format, skipping ping: {check_id}")
+            return False
+
         url = f"{self.ping_url}/{check_id}{status}"
 
         for attempt in range(self.retry_count):
@@ -82,53 +88,15 @@ class HealthchecksClient:
                      tz: str = 'UTC',
                      grace: int = 3600) -> Optional[Dict[str, Any]]:
         """
-        Crée un nouveau check via l'API
+        DEPRECATED: Check creation is disabled to prevent auto-creation issues.
+        All checks should be created via scripts/setup_healthchecks.py
 
-        Args:
-            name: Nom du check
-            tags: Tags séparés par des espaces
-            schedule: Expression cron ou intervalle en secondes
-            tz: Timezone
-            grace: Grace period en secondes
-
-        Returns:
-            Dict avec les infos du check créé ou None
+        This method now always returns None and logs a warning.
         """
-        if not self.enabled:
-            return None
-
-        url = f"{self.api_url}/checks/"
-        headers = {
-            'X-Api-Key': self.api_key,
-            'Content-Type': 'application/json'
-        }
-
-        data = {
-            'name': name,
-            'tags': tags,
-            'grace': grace,
-            'channels': '*',  # Utilise tous les canaux configurés
-        }
-
-        # Déterminer le type de schedule
-        if schedule.isdigit():
-            # Pour un check simple, on envoie juste timeout
-            data['timeout'] = int(schedule)
-        else:
-            # Pour un cron, on envoie schedule et tz
-            data['schedule'] = schedule
-            data['tz'] = tz
-
-        try:
-            response = requests.post(url, json=data, headers=headers, timeout=self.timeout)
-            if response.status_code == 201:
-                check_data = response.json()
-                logger.info(f"Check '{name}' created with ID {check_data.get('ping_url')}")
-                return check_data
-            logger.error(f"Failed to create check: {response.status_code} - {response.text}")
-        except requests.exceptions.RequestException as e:
-            logger.error(f"Error creating check: {str(e)}")
-
+        logger.error(
+            f"BLOCKED: Attempted to create check '{name}' with tags '{tags}'. "
+            f"Check creation is disabled. Use scripts/setup_healthchecks.py instead."
+        )
         return None
 
     def list_checks(self, tag: Optional[str] = None) -> list:

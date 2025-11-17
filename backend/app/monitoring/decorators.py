@@ -19,8 +19,8 @@ def monitor_task(check_id: Optional[str] = None,
     Décorateur pour monitorer l'exécution d'une tâche
 
     Args:
-        check_id: UUID du check Healthchecks
-        check_name: Nom pour créer automatiquement le check
+        check_id: UUID du check Healthchecks (requis)
+        check_name: DEPRECATED - utilisé uniquement pour la compatibilité
         auto_start: Envoyer un ping /start au début
         log_execution: Logger les détails d'exécution
 
@@ -29,33 +29,27 @@ def monitor_task(check_id: Optional[str] = None,
         def my_task():
             pass
 
-        @monitor_task(check_name='my-scheduled-task')
-        def my_scheduled_task():
-            pass
+    Note: Les checks doivent être créés via scripts/setup_healthchecks.py
     """
     def decorator(func: Callable) -> Callable:
         @functools.wraps(func)
         def wrapper(*args, **kwargs) -> Any:
-            # Résoudre le check_id
+            # Utiliser le check_id fourni directement
             actual_check_id = check_id
+
+            # Si check_name est fourni sans check_id, logger un warning
             if not actual_check_id and check_name:
-                # Tenter de récupérer le check existant
-                checks = healthchecks.list_checks(tag=check_name)
-                if checks:
-                    actual_check_id = checks[0].get('ping_url', '').split('/')[-1]
-                else:
-                    # Créer automatiquement le check s'il n'existe pas
-                    check = healthchecks.create_check(
-                        name=check_name,
-                        tags=f'auto-created {func.__name__}',
-                        schedule='* * * * *'  # Par défaut, à ajuster
-                    )
-                    if check:
-                        actual_check_id = check.get('ping_url', '').split('/')[-1]
+                logger.warning(
+                    f"Task {func.__name__} uses deprecated check_name='{check_name}'. "
+                    f"Please use check_id instead. Run scripts/setup_healthchecks.py to create checks."
+                )
+                # Ne PAS créer de check automatiquement
+                return func(*args, **kwargs)
 
             if not actual_check_id:
+                # Si monitoring activé mais pas de check_id, logger un warning
                 if healthchecks.enabled:
-                    logger.warning(f"No check_id for monitoring {func.__name__}")
+                    logger.debug("No check_id provided for monitoring %s", func.__name__)
                 return func(*args, **kwargs)
 
             # Signaler le début si demandé
@@ -72,7 +66,10 @@ def monitor_task(check_id: Optional[str] = None,
                 healthchecks.ping_success(actual_check_id)
 
                 if log_execution:
-                    logger.info(f"Task {func.__name__} completed successfully in {execution_time:.2f}s")
+                    logger.info(
+                        "Task %s completed successfully in %.2fs",
+                        func.__name__, execution_time
+                    )
 
                 return result
 
@@ -82,7 +79,10 @@ def monitor_task(check_id: Optional[str] = None,
                 healthchecks.ping_fail(actual_check_id)
 
                 if log_execution:
-                    logger.error(f"Task {func.__name__} failed after {execution_time:.2f}s: {str(e)}")
+                    logger.error(
+                        "Task %s failed after %.2fs: %s",
+                        func.__name__, execution_time, str(e)
+                    )
                 raise
 
         return wrapper
@@ -124,7 +124,10 @@ def monitor_endpoint(check_id: Optional[str] = None,
 
                     if log_execution:
                         execution_time = time.time() - start_time
-                        logger.info(f"Endpoint {func.__name__} served successfully in {execution_time:.2f}s")
+                        logger.info(
+                            "Endpoint %s served successfully in %.2fs",
+                            func.__name__, execution_time
+                        )
 
                     return result
                 except Exception as e:
@@ -132,7 +135,10 @@ def monitor_endpoint(check_id: Optional[str] = None,
 
                     if log_execution:
                         execution_time = time.time() - start_time
-                        logger.error(f"Endpoint {func.__name__} failed after {execution_time:.2f}s: {str(e)}")
+                        logger.error(
+                            "Endpoint %s failed after %.2fs: %s",
+                            func.__name__, execution_time, str(e)
+                        )
                     raise
 
             return func(*args, **kwargs)
@@ -148,15 +154,17 @@ def monitor_celery_task(check_id: Optional[str] = None,
     Décorateur spécifique pour les tâches Celery
 
     Args:
-        check_id: UUID du check Healthchecks
-        check_name: Nom pour identifier le check
+        check_id: UUID du check Healthchecks (requis)
+        check_name: DEPRECATED - utilisé uniquement pour la compatibilité
         auto_start: Envoyer un ping /start au début
 
     Usage:
         @celery.task
-        @monitor_celery_task(check_name='process-documents')
+        @monitor_celery_task(check_id='abc-123-def')
         def process_documents():
             pass
+
+    Note: Les checks doivent être créés via scripts/setup_healthchecks.py
     """
     def decorator(func: Callable) -> Callable:
         @functools.wraps(func)
@@ -164,31 +172,28 @@ def monitor_celery_task(check_id: Optional[str] = None,
             # Utiliser le contexte Celery si disponible
             task_name = getattr(func, 'name', func.__name__)
 
-            # Résoudre le check_id
+            # Utiliser le check_id fourni directement
             actual_check_id = check_id
+
+            # Si check_name est fourni sans check_id, logger un warning
             if not actual_check_id and check_name:
-                checks = healthchecks.list_checks(tag=check_name)
-                if checks:
-                    actual_check_id = checks[0].get('ping_url', '').split('/')[-1]
-                else:
-                    # Créer le check pour la tâche Celery
-                    check = healthchecks.create_check(
-                        name=f"Celery: {check_name}",
-                        tags=f'celery {task_name}',
-                        schedule='* * * * *'  # Par défaut, à ajuster
-                    )
-                    if check:
-                        actual_check_id = check.get('ping_url', '').split('/')[-1]
+                logger.warning(
+                    "Task %s uses deprecated check_name='%s'. "
+                    "Use check_id instead. Run scripts/setup_healthchecks.py",
+                    task_name, check_name
+                )
+                # Ne PAS créer de check automatiquement
+                return func(*args, **kwargs)
 
             if not actual_check_id:
                 if healthchecks.enabled:
-                    logger.warning(f"No check_id for monitoring Celery task {task_name}")
+                    logger.debug("No check_id for monitoring Celery task %s", task_name)
                 return func(*args, **kwargs)
 
             # Signaler le début
             if auto_start:
                 healthchecks.ping_start(actual_check_id)
-                logger.info(f"Celery task {task_name} started")
+                logger.info("Celery task %s started", task_name)
 
             start_time = time.time()
             try:
@@ -198,7 +203,7 @@ def monitor_celery_task(check_id: Optional[str] = None,
                 # Signaler le succès
                 execution_time = time.time() - start_time
                 healthchecks.ping_success(actual_check_id)
-                logger.info(f"Celery task {task_name} completed in {execution_time:.2f}s")
+                logger.info("Celery task %s completed in %.2fs", task_name, execution_time)
 
                 return result
 
@@ -206,51 +211,58 @@ def monitor_celery_task(check_id: Optional[str] = None,
                 # Signaler l'échec
                 execution_time = time.time() - start_time
                 healthchecks.ping_fail(actual_check_id)
-                logger.error(f"Celery task {task_name} failed after {execution_time:.2f}s: {str(e)}")
+                logger.error(
+                    "Celery task %s failed after %.2fs: %s",
+                    task_name, execution_time, str(e)
+                )
                 raise
 
         return wrapper
     return decorator
 
 
-def monitor_scheduled_task(schedule: str,
-                          check_name: str,
-                          grace: int = 3600):
+def monitor_scheduled_task(check_id: str,
+                          schedule: Optional[str] = None,
+                          check_name: Optional[str] = None,
+                          grace: Optional[int] = None):
     """
     Décorateur pour les tâches planifiées (cron-like)
 
     Args:
-        schedule: Expression cron (ex: "0 2 * * *" pour 2h du matin)
-        check_name: Nom du check
-        grace: Grace period en secondes
+        check_id: UUID du check Healthchecks (requis)
+        schedule: DEPRECATED - Expression cron (utilisé uniquement pour doc)
+        check_name: DEPRECATED - Nom du check (utilisé uniquement pour doc)
+        grace: DEPRECATED - Grace period (utilisé uniquement pour doc)
 
     Usage:
         @celery.task
-        @monitor_scheduled_task(schedule="0 2 * * *", check_name="daily-cleanup", grace=7200)
+        @monitor_scheduled_task(check_id='abc-123-def')
         def daily_cleanup():
             pass
+
+    Note: Les checks doivent être créés via scripts/setup_healthchecks.py
+          avec le schedule et grace period appropriés
     """
     def decorator(func: Callable) -> Callable:
-        # Créer ou récupérer le check avec le bon schedule
-        checks = healthchecks.list_checks(tag=check_name)
-
-        if not checks and healthchecks.enabled:
-            # Créer le check avec le schedule spécifié
-            check = healthchecks.create_check(
-                name=f"Scheduled: {check_name}",
-                tags=f'scheduled cron {func.__name__}',
-                schedule=schedule,
-                grace=grace
+        # Log deprecated parameters
+        if schedule or check_name or grace:
+            logger.warning(
+                "Task %s uses deprecated parameters in monitor_scheduled_task. "
+                "Only check_id is required. Configure schedule/grace in Healthchecks.io",
+                func.__name__
             )
-            if check:
-                check_id = check.get('ping_url', '').split('/')[-1]
-                logger.info(f"Created scheduled check for {func.__name__} with schedule {schedule}")
-            else:
-                check_id = None
-        else:
-            check_id = checks[0].get('ping_url', '').split('/')[-1] if checks else None
 
-        # Appliquer le monitoring standard avec le check_id résolu
+        # Vérifier que check_id est fourni
+        if not check_id:
+            logger.error(
+                "monitor_scheduled_task requires check_id for task %s. "
+                "Run scripts/setup_healthchecks.py to create checks.",
+                func.__name__
+            )
+            # Retourner la fonction sans monitoring
+            return func
+
+        # Appliquer le monitoring standard avec le check_id fourni
         return monitor_task(check_id=check_id, auto_start=False)(func)
 
     return decorator

@@ -510,24 +510,32 @@ def check_vault_health() -> Dict[str, Any]:
                 'timestamp': datetime.utcnow().isoformat()
             }
 
-        from app.services.vault_service import vault_service
-
-        # Vérifier la santé via le service
-        is_healthy = vault_service.is_healthy() if vault_service else False
-
-        if not is_healthy:
-            raise Exception("Vault health check failed")
+        # Vault est configuré mais nous devons vérifier sa disponibilité différemment
+        # car vault_service n'existe pas - check direct via HTTP
+        vault_url = os.getenv('VAULT_ADDR', 'http://vault:8200')
 
         # Essayer de récupérer le status
-        vault_url = os.getenv('VAULT_ADDR', 'http://vault:8200')
         try:
             response = requests.get(
                 f"{vault_url}/v1/sys/health",
                 timeout=10
             )
-            health_data = response.json() if response.status_code == 200 else {}
-        except:
+            # Status codes pour Vault health:
+            # 200 = initialized, unsealed, active
+            # 429 = unsealed, standby
+            # 472 = disaster recovery mode replication secondary, active
+            # 473 = performance standby
+            # 501 = not initialized
+            # 503 = sealed
+            is_healthy = response.status_code in [200, 429, 472, 473]
+            health_data = response.json() if response.status_code in [200, 429, 472, 473, 501, 503] else {}
+        except Exception as e:
+            logger.warning(f"Failed to get Vault health status: {e}")
+            is_healthy = False
             health_data = {}
+
+        if not is_healthy:
+            raise Exception(f"Vault is not healthy (URL: {vault_url})")
 
         metrics = {
             'status': 'healthy',
