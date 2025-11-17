@@ -2,6 +2,8 @@
 
 **A Production-Ready Foundation for Industry 4.0 SaaS Applications**
 
+This Backend manages user accounts and supports integration with Azure SSO for large enterprises, adhering to strict DevOps requirements. The architecture is suitable for any web or mobile application and includes comprehensive Swagger documentation.
+
 - [Quick Start avec Docker (Recommended)](#quick-start)
 - **Approach A: With Vault** - See [Quick Start - Option A](#option-a-with-hashicorp-vault-recommended-for-production-like-setup) for detailed setup
 - **Approach B: Without Vault** - See [Quick Start - Option B](#option-b-without-vault-simple-setup-for-development) for simple development setup
