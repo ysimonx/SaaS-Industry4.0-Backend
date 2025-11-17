@@ -136,7 +136,7 @@ def create_celery_app(app: Flask = None) -> Celery:
             # Individual service monitoring tasks
             'monitor-postgres': {
                 'task': 'monitoring.check_postgres',
-                'schedule': crontab(minute='*/2'),  # Every 2 minutes
+                'schedule': crontab(minute='*'),  # Every minute
                 'options': {
                     'queue': 'monitoring',
                     'priority': 3,
@@ -145,7 +145,7 @@ def create_celery_app(app: Flask = None) -> Celery:
 
             'monitor-redis': {
                 'task': 'monitoring.check_redis',
-                'schedule': crontab(minute='*/2'),  # Every 2 minutes
+                'schedule': crontab(minute='*'),  # Every minute
                 'options': {
                     'queue': 'monitoring',
                     'priority': 3,
@@ -154,7 +154,7 @@ def create_celery_app(app: Flask = None) -> Celery:
 
             'monitor-api': {
                 'task': 'monitoring.check_api',
-                'schedule': crontab(minute='*/3'),  # Every 3 minutes
+                'schedule': crontab(minute='*'),  # Every minute
                 'options': {
                     'queue': 'monitoring',
                     'priority': 3,
@@ -163,7 +163,43 @@ def create_celery_app(app: Flask = None) -> Celery:
 
             'monitor-celery': {
                 'task': 'monitoring.check_celery',
-                'schedule': crontab(minute='*/5'),  # Every 5 minutes
+                'schedule': crontab(minute='*/2'),  # Every 2 minutes
+                'options': {
+                    'queue': 'monitoring',
+                    'priority': 3,
+                }
+            },
+
+            'monitor-kafka': {
+                'task': 'monitoring.check_kafka',
+                'schedule': crontab(minute='*/2'),  # Every 2 minutes (matching Healthchecks config)
+                'options': {
+                    'queue': 'monitoring',
+                    'priority': 3,
+                }
+            },
+
+            'monitor-minio': {
+                'task': 'monitoring.check_minio',
+                'schedule': crontab(minute='*/2'),  # Every 2 minutes
+                'options': {
+                    'queue': 'monitoring',
+                    'priority': 3,
+                }
+            },
+
+            'monitor-vault': {
+                'task': 'monitoring.check_vault',
+                'schedule': crontab(minute='*/2'),  # Every 2 minutes
+                'options': {
+                    'queue': 'monitoring',
+                    'priority': 3,
+                }
+            },
+
+            'monitor-kafka-consumer': {
+                'task': 'monitoring.check_kafka_consumer',
+                'schedule': crontab(minute='*/3'),  # Every 3 minutes
                 'options': {
                     'queue': 'monitoring',
                     'priority': 3,

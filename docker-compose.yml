@@ -370,7 +370,7 @@ services:
       dockerfile: docker/Dockerfile.api
     container_name: saas-celery-worker-sso
     restart: unless-stopped
-    command: celery -A celery_worker:celery worker --loglevel=info -Q sso,maintenance,monitoring -n worker-sso@%h
+    command: celery -A celery_worker:celery worker --loglevel=info -Q sso -n worker-sso@%h
     depends_on:
       postgres:
         condition: service_healthy
@@ -487,6 +487,10 @@ services:
         condition: service_healthy
       celery-worker-sso:
         condition: service_started
+      celery-worker-maintenance:
+        condition: service_started
+      celery-worker-monitoring:
+        condition: service_started
       vault:
         condition: service_healthy
       vault-init:
@@ -525,6 +529,65 @@ services:
     networks:
       - saas-network
 
+  # Celery Worker for maintenance tasks
+  celery-worker-maintenance:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.api
+    container_name: saas-celery-worker-maintenance
+    restart: unless-stopped
+    command: celery -A celery_worker:celery worker --loglevel=info -Q maintenance -n worker-maintenance@%h --concurrency=2
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      vault:
+        condition: service_healthy
+      vault-init:
+        condition: service_completed_successfully
+    env_file:
+      - .env.healthchecks  # Load healthcheck variables from dedicated file
+    environment:
+      # Flask/Celery
+      FLASK_ENV: development
+      FLASK_APP: run.py
+
+      # Celery configuration
+      CELERY_BROKER_URL: redis://redis:6379/3
+      CELERY_RESULT_BACKEND: redis://redis:6379/4
+
+      # Vault Configuration
+      USE_VAULT: "true"
+      VAULT_ENVIRONMENT: "docker"
+
+      # Database
+      DATABASE_URL: postgresql://postgres:postgres@postgres:5432/saas_platform
+      TENANT_DATABASE_URL_TEMPLATE: postgresql://postgres:postgres@postgres:5432/{database_name}
+
+      # Redis
+      REDIS_URL: redis://redis:6379/0
+
+      # Logging
+      LOG_LEVEL: INFO
+
+      # Monitoring
+      HEALTHCHECKS_ENABLED: "${HEALTHCHECKS_ENABLED:-true}"
+      HEALTHCHECKS_API_URL: "${HEALTHCHECKS_API_URL:-http://healthchecks:8000/api/v1}"
+      HEALTHCHECKS_PING_URL: "${HEALTHCHECKS_PING_URL:-http://healthchecks:8000/ping}"
+      HEALTHCHECKS_API_KEY: "${HEALTHCHECKS_API_KEY:-}"
+    volumes:
+      - ./backend:/app
+      - ./logs:/app/logs
+      - ./.env.vault:/.env.vault:ro
+    networks:
+      - saas-network
+    healthcheck:
+      test: ["CMD", "celery", "-A", "celery_worker:celery", "inspect", "ping"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
   # Celery Worker for monitoring tasks
   celery-worker-monitoring:
     build:
@@ -542,6 +605,8 @@ services:
         condition: service_healthy
       vault-init:
         condition: service_completed_successfully
+    env_file:
+      - .env.healthchecks  # Load healthcheck variables from dedicated file
     environment:
       # Flask/Celery
       FLASK_ENV: development
@@ -585,16 +650,7 @@ services:
       HEALTHCHECKS_PING_URL: "${HEALTHCHECKS_PING_URL:-http://healthchecks:8000/ping}"
       HEALTHCHECKS_API_KEY: "${HEALTHCHECKS_API_KEY:-}"
 
-      # Check IDs from .env.healthchecks
-      HC_CHECK_POSTGRES: "${HC_CHECK_POSTGRES:-}"
-      HC_CHECK_REDIS: "${HC_CHECK_REDIS:-}"
-      HC_CHECK_API: "${HC_CHECK_API:-}"
-      HC_CHECK_KAFKA: "${HC_CHECK_KAFKA:-}"
-      HC_CHECK_MINIO: "${HC_CHECK_MINIO:-}"
-      HC_CHECK_VAULT: "${HC_CHECK_VAULT:-}"
-      HC_CHECK_CELERY_WORKER: "${HC_CHECK_CELERY_WORKER:-}"
-      HC_CHECK_CELERY_BEAT: "${HC_CHECK_CELERY_BEAT:-}"
-      HC_CHECK_KAFKA_CONSUMER: "${HC_CHECK_KAFKA_CONSUMER:-}"
+      # Check IDs are loaded from .env.healthchecks via env_file directive
     volumes:
       - ./backend:/app
       - ./logs:/app/logs
