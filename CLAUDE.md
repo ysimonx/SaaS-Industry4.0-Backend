@@ -149,7 +149,7 @@ curl http://localhost:4999/api/auth/sso/check-availability/{tenant_id}
 open http://localhost:8000
 
 # Create Healthchecks admin account (first-time setup - REQUIRED)
-./scripts/create-healthchecks-admin.sh
+./scripts/healthcheck/create-healthchecks-admin.sh
 # Default credentials: admin@example.com / admin123
 
 # Fix Healthchecks timing mismatches (if Celery schedules changed)

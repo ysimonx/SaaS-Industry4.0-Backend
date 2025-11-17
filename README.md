@@ -558,6 +558,12 @@ docker-compose ps
 - Email: `admin@example.com`
 - Password: `12345678`
 
+**Default Healthcheck Credentials** (change immediately!):
+- Email: `admin@example.com`
+- Password: `admin123`
+- **Health Monitoring**: See [specs/6 - healthcheck/](specs/6%20-%20healthcheck/README.md) for detailed monitoring documentation
+
+
 **Access Services:**
 - **API Server**: http://localhost:4999
 - **API Documentation (Swagger)**: http://localhost:4999/api/docs
@@ -2262,7 +2268,7 @@ SOFTWARE.
 - **Architecture**: See [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)
 - **Docker Deployment**: See [DOCKER.md](DOCKER.md)
 - **API Reference**: See [swagger.yaml](swagger.yaml)
-- **Health Monitoring**: See [specs/6 - healthcheck/](specs/6%20-%20healthcheck/) for detailed monitoring documentation
+- **Health Monitoring**: See [specs/6 - healthcheck/](specs/6%20-%20healthcheck/README.md) for detailed monitoring documentation
 
 ### Getting Help
 - **Issues**: [GitHub Issues](https://github.com/your-org/SaaSBackendWithClaude/issues)
