@@ -36,3 +36,4 @@ backend/celerybeat-schedule
 logs/app.log
 backend/celerybeat-schedule
 .env.healthchecks
+.env.healthchecks
