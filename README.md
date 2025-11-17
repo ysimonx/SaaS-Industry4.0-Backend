@@ -2,7 +2,23 @@
 
 **A Production-Ready Foundation for Industry 4.0 SaaS Applications**
 
-This Backend manages user accounts and supports integration with Azure SSO for large enterprises, adhering to strict DevOps requirements. The architecture is suitable for any web or mobile application and includes comprehensive Swagger documentation.
+This Backend manages user accounts and supports integration with Azure SSO for large enterprises, adhering to strict DevOps requirements. The architecture is suitable for any web or mobile application and includes comprehensive Swagger documentation : 
+
+- Document Storage: Utilizes S3-compatible storage for high-availability document hosting.
+
+- Access Control: Manages Users and Roles for granular access and security.
+
+- Timestamping: Implements document timestamping using DigiCert (or any compatible TSA provider).
+
+- Multi-Tenancy: Features isolated data security with a dedicated PostgreSQL database for each tenant.
+
+- Security: Encrypts sensitive secret information using HashiCorp's Vault secrets engine.
+
+- Monitoring: Ensures system reliability via built-in health checks.
+
+- Deployment: Cloud-ready architecture, packaged with Docker.
+
+- Independence: Designed to be deployed without reliance on major hyperscalers (GAFAM/FAANG).
 
 - [Quick Start avec Docker (Recommended)](#quick-start)
 - **Approach A: With Vault** - See [Quick Start - Option A](#option-a-with-hashicorp-vault-recommended-for-production-like-setup) for detailed setup
