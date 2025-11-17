@@ -208,6 +208,9 @@ services:
         condition: service_completed_successfully
     ports:
       - "4999:4999"
+    env_file:
+      - .env.healthchecks  # Load healthcheck variables from dedicated file
+      - .env  # Load other environment variables
     environment:
       # Flask
       FLASK_ENV: development
@@ -263,17 +266,7 @@ services:
       HEALTHCHECKS_API_URL: "${HEALTHCHECKS_API_URL:-http://healthchecks:8000/api/v1}"
       HEALTHCHECKS_PING_URL: "${HEALTHCHECKS_PING_URL:-http://healthchecks:8000/ping}"
       HEALTHCHECKS_API_KEY: "${HEALTHCHECKS_API_KEY:-}"
-
-      # Health Check IDs - CRITICAL: Must be provided to prevent auto-creation
-      HC_CHECK_POSTGRES: "${HC_CHECK_POSTGRES:-}"
-      HC_CHECK_REDIS: "${HC_CHECK_REDIS:-}"
-      HC_CHECK_API: "${HC_CHECK_API:-}"
-      HC_CHECK_KAFKA: "${HC_CHECK_KAFKA:-}"
-      HC_CHECK_MINIO: "${HC_CHECK_MINIO:-}"
-      HC_CHECK_VAULT: "${HC_CHECK_VAULT:-}"
-      HC_CHECK_CELERY_WORKER: "${HC_CHECK_CELERY_WORKER:-}"
-      HC_CHECK_CELERY_BEAT: "${HC_CHECK_CELERY_BEAT:-}"
-      HC_CHECK_KAFKA_CONSUMER: "${HC_CHECK_KAFKA_CONSUMER:-}"
+      # HC_CHECK_* variables are loaded from .env.healthchecks via env_file directive
     volumes:
       - ./backend:/app  # Hot reload for development
       - ./logs:/app/logs
