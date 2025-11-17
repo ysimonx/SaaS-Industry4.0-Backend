@@ -148,6 +148,10 @@ curl http://localhost:4999/api/auth/sso/check-availability/{tenant_id}
 # Access Healthchecks.io monitoring UI
 open http://localhost:8000
 
+# Create Healthchecks admin account (first-time setup - REQUIRED)
+./scripts/create-healthchecks-admin.sh
+# Default credentials: admin@example.com / admin123
+
 # Fix Healthchecks timing mismatches (if Celery schedules changed)
 docker-compose exec api python scripts/fix_healthchecks_timing.py
 

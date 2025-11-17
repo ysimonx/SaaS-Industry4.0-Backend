@@ -261,12 +261,7 @@ services:
       # Logging
       LOG_LEVEL: DEBUG
 
-      # Monitoring
-      HEALTHCHECKS_ENABLED: "${HEALTHCHECKS_ENABLED:-true}"
-      HEALTHCHECKS_API_URL: "${HEALTHCHECKS_API_URL:-http://healthchecks:8000/api/v1}"
-      HEALTHCHECKS_PING_URL: "${HEALTHCHECKS_PING_URL:-http://healthchecks:8000/ping}"
-      HEALTHCHECKS_API_KEY: "${HEALTHCHECKS_API_KEY:-}"
-      # HC_CHECK_* variables are loaded from .env.healthchecks via env_file directive
+      # Monitoring configuration loaded from .env.healthchecks via env_file
     volumes:
       - ./backend:/app  # Hot reload for development
       - ./logs:/app/logs
@@ -380,6 +375,8 @@ services:
         condition: service_healthy
       vault-init:
         condition: service_completed_successfully
+    env_file:
+      - .env.healthchecks  # Load healthcheck variables
     environment:
       # Flask/Celery
       FLASK_ENV: development
@@ -404,11 +401,7 @@ services:
       # Logging
       LOG_LEVEL: INFO
 
-      # Monitoring
-      HEALTHCHECKS_ENABLED: "${HEALTHCHECKS_ENABLED:-true}"
-      HEALTHCHECKS_API_URL: "${HEALTHCHECKS_API_URL:-http://healthchecks:8000/api/v1}"
-      HEALTHCHECKS_PING_URL: "${HEALTHCHECKS_PING_URL:-http://healthchecks:8000/ping}"
-      HEALTHCHECKS_API_KEY: "${HEALTHCHECKS_API_KEY:-}"
+      # Monitoring configuration loaded from .env.healthchecks via env_file
     volumes:
       - ./backend:/app
       - ./logs:/app/logs
@@ -495,6 +488,8 @@ services:
         condition: service_healthy
       vault-init:
         condition: service_completed_successfully
+    env_file:
+      - .env.healthchecks  # Load healthcheck variables
     environment:
       # Flask/Celery
       FLASK_ENV: development
@@ -517,11 +512,7 @@ services:
       # Logging
       LOG_LEVEL: INFO
 
-      # Monitoring
-      HEALTHCHECKS_ENABLED: "${HEALTHCHECKS_ENABLED:-true}"
-      HEALTHCHECKS_API_URL: "${HEALTHCHECKS_API_URL:-http://healthchecks:8000/api/v1}"
-      HEALTHCHECKS_PING_URL: "${HEALTHCHECKS_PING_URL:-http://healthchecks:8000/ping}"
-      HEALTHCHECKS_API_KEY: "${HEALTHCHECKS_API_KEY:-}"
+      # Monitoring configuration loaded from .env.healthchecks via env_file
     volumes:
       - ./backend:/app
       - celery_beat_schedule:/var/lib/celery
@@ -571,11 +562,7 @@ services:
       # Logging
       LOG_LEVEL: INFO
 
-      # Monitoring
-      HEALTHCHECKS_ENABLED: "${HEALTHCHECKS_ENABLED:-true}"
-      HEALTHCHECKS_API_URL: "${HEALTHCHECKS_API_URL:-http://healthchecks:8000/api/v1}"
-      HEALTHCHECKS_PING_URL: "${HEALTHCHECKS_PING_URL:-http://healthchecks:8000/ping}"
-      HEALTHCHECKS_API_KEY: "${HEALTHCHECKS_API_KEY:-}"
+      # Monitoring configuration loaded from .env.healthchecks via env_file
     volumes:
       - ./backend:/app
       - ./logs:/app/logs
@@ -644,13 +631,8 @@ services:
       # Logging
       LOG_LEVEL: INFO
 
-      # Monitoring configuration
-      HEALTHCHECKS_ENABLED: "${HEALTHCHECKS_ENABLED:-true}"
-      HEALTHCHECKS_API_URL: "${HEALTHCHECKS_API_URL:-http://healthchecks:8000/api/v1}"
-      HEALTHCHECKS_PING_URL: "${HEALTHCHECKS_PING_URL:-http://healthchecks:8000/ping}"
-      HEALTHCHECKS_API_KEY: "${HEALTHCHECKS_API_KEY:-}"
-
-      # Check IDs are loaded from .env.healthchecks via env_file directive
+      # Monitoring configuration loaded from .env.healthchecks via env_file
+      # (Do not override here - let env_file take precedence)
     volumes:
       - ./backend:/app
       - ./logs:/app/logs

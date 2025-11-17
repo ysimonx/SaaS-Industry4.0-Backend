@@ -19,35 +19,35 @@ CHECKS_CONFIG = [
     {
         'name': 'PostgreSQL Database',
         'tags': 'database infrastructure tier1',
-        'schedule': '120',  # 2 minutes (matches crontab(minute='*/2'))
+        'schedule': '*/2 * * * *',  # Every 2 minutes (matches crontab(minute='*/2'))
         'grace': 240,  # 4 minutes (2x timeout for buffer)
         'desc': 'Main PostgreSQL database health'
     },
     {
         'name': 'Redis Cache/Broker',
         'tags': 'cache redis infrastructure tier1',
-        'schedule': '120',  # 2 minutes (matches crontab(minute='*/2'))
+        'schedule': '*/2 * * * *',  # Every 2 minutes (matches crontab(minute='*/2'))
         'grace': 240,  # 4 minutes (2x timeout for buffer)
         'desc': 'Redis for caching and Celery broker'
     },
     {
         'name': 'Flask API',
         'tags': 'api application tier1',
-        'schedule': '180',  # 3 minutes (matches crontab(minute='*/3'))
+        'schedule': '*/3 * * * *',  # Every 3 minutes (matches crontab(minute='*/3'))
         'grace': 360,  # 6 minutes (2x timeout for buffer)
         'desc': 'Main Flask API endpoints'
     },
     {
         'name': 'Celery Worker SSO',
         'tags': 'celery worker sso tier1',
-        'schedule': '300',  # 5 minutes (checked by monitor-celery task)
+        'schedule': '*/5 * * * *',  # Every 5 minutes (checked by monitor-celery task)
         'grace': 600,  # 10 minutes (2x timeout for buffer)
         'desc': 'SSO background task worker'
     },
     {
         'name': 'Celery Beat Scheduler',
         'tags': 'celery beat scheduler tier1',
-        'schedule': '300',  # 5 minutes (checked by monitor-celery task)
+        'schedule': '*/5 * * * *',  # Every 5 minutes (checked by monitor-celery task)
         'grace': 600,  # 10 minutes (2x timeout for buffer)
         'desc': 'Task scheduler'
     },
@@ -56,28 +56,28 @@ CHECKS_CONFIG = [
     {
         'name': 'Kafka Broker',
         'tags': 'kafka messaging tier2',
-        'schedule': '120',  # 2 minutes
+        'schedule': '*/2 * * * *',  # Every 2 minutes
         'grace': 300,
         'desc': 'Apache Kafka message broker'
     },
     {
         'name': 'Kafka Consumer',
         'tags': 'kafka consumer worker tier2',
-        'schedule': '120',
+        'schedule': '*/2 * * * *',  # Every 2 minutes
         'grace': 300,
         'desc': 'Kafka message consumer worker'
     },
     {
         'name': 'MinIO S3 Storage',
         'tags': 'minio storage s3 tier2',
-        'schedule': '300',  # 5 minutes
+        'schedule': '*/5 * * * *',  # Every 5 minutes
         'grace': 600,
         'desc': 'S3-compatible object storage'
     },
     {
         'name': 'Vault Secrets',
         'tags': 'vault security secrets tier2',
-        'schedule': '300',
+        'schedule': '*/5 * * * *',  # Every 5 minutes
         'grace': 600,
         'desc': 'HashiCorp Vault secrets management'
     },
@@ -116,7 +116,7 @@ CHECKS_CONFIG = [
     {
         'name': 'Comprehensive Health Check',
         'tags': 'monitoring global all',
-        'schedule': '600',  # 10 minutes
+        'schedule': '*/10 * * * *',  # Every 10 minutes
         'grace': 600,
         'desc': 'Full system health check'
     }

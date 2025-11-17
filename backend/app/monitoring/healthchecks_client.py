@@ -88,16 +88,48 @@ class HealthchecksClient:
                      tz: str = 'UTC',
                      grace: int = 3600) -> Optional[Dict[str, Any]]:
         """
-        DEPRECATED: Check creation is disabled to prevent auto-creation issues.
-        All checks should be created via scripts/setup_healthchecks.py
+        Crée un nouveau check dans Healthchecks.io
 
-        This method now always returns None and logs a warning.
+        Args:
+            name: Nom du check
+            tags: Tags séparés par des espaces
+            schedule: Schedule (cron ou secondes)
+            tz: Timezone
+            grace: Période de grâce en secondes
+
+        Returns:
+            Dictionnaire avec les infos du check créé, ou None si échec
         """
-        logger.error(
-            f"BLOCKED: Attempted to create check '{name}' with tags '{tags}'. "
-            f"Check creation is disabled. Use scripts/setup_healthchecks.py instead."
-        )
-        return None
+        if not self.enabled:
+            logger.warning("Healthchecks is disabled, skipping check creation")
+            return None
+
+        url = f"{self.api_url}/checks/"
+        headers = {
+            'X-Api-Key': self.api_key,
+            'Content-Type': 'application/json'
+        }
+
+        data = {
+            'name': name,
+            'tags': tags,
+            'schedule': schedule,
+            'tz': tz,
+            'grace': grace
+        }
+
+        try:
+            response = requests.post(url, json=data, headers=headers, timeout=self.timeout)
+            if response.status_code == 201:
+                check = response.json()
+                logger.info(f"Check '{name}' created successfully with ID {check.get('ping_url', '').split('/')[-1]}")
+                return check
+            else:
+                logger.error(f"Failed to create check '{name}': HTTP {response.status_code} - {response.text}")
+                return None
+        except requests.exceptions.RequestException as e:
+            logger.error(f"Error creating check '{name}': {str(e)}")
+            return None
 
     def list_checks(self, tag: Optional[str] = None) -> list:
         """Liste tous les checks, optionnellement filtrés par tag"""

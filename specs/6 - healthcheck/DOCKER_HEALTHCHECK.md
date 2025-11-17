@@ -19,14 +19,43 @@ docker-compose --env-file .env --env-file .env.healthchecks \
 # Vérifier le statut
 docker-compose -f docker-compose.healthchecks.yml ps
 
+# Créer le compte administrateur (OBLIGATOIRE - première fois uniquement)
+./scripts/create-healthchecks-admin.sh
+
 # Accéder à l'interface
 open http://localhost:8000
 ```
 
 ### 2. Configuration Initiale
 
-1. **Compte administrateur par défaut** :
-   - Email : `admin@example.com`
+1. **Créer le compte administrateur** :
+
+   **⚠️ Important** : Le compte administrateur n'est PAS créé automatiquement. Vous devez le créer avec la commande suivante :
+
+   ```bash
+   docker-compose -f docker-compose.healthchecks.yml exec healthchecks python -c "
+   import os
+   import django
+   os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'hc.settings')
+   django.setup()
+
+   from django.contrib.auth import get_user_model
+   User = get_user_model()
+
+   if not User.objects.filter(email='admin@example.com').exists():
+       User.objects.create_superuser(
+           username='admin',
+           email='admin@example.com',
+           password='admin123'
+       )
+       print('✅ Superuser created!')
+   else:
+       print('⚠️ User already exists')
+   "
+   ```
+
+   **Identifiants de connexion** :
+   - Username : `admin` (ou Email : `admin@example.com`)
    - Password : `admin123`
    - URL de connexion : http://localhost:8000/accounts/login/
    - **Important** : Changez ce mot de passe en production !
@@ -302,6 +331,37 @@ grep SLACK_ENABLED .env.healthchecks  # Doit être "True" ou "False", pas "true"
 # Recréer les containers
 ./scripts/start-healthchecks.sh down
 ./scripts/start-healthchecks.sh up -d
+```
+
+### Impossible de se connecter (identifiants ne fonctionnent pas)
+
+**Problème** : Les identifiants `admin@example.com` / `admin123` ne fonctionnent pas.
+
+**Cause** : Le compte administrateur n'est pas créé automatiquement au démarrage de Healthchecks.
+
+**Solution** :
+
+```bash
+# Méthode 1 : Utiliser le script helper (recommandé)
+./scripts/create-healthchecks-admin.sh
+
+# Méthode 2 : Créer avec des identifiants personnalisés
+./scripts/create-healthchecks-admin.sh myusername myemail@example.com mypassword
+
+# Méthode 3 : Créer manuellement via Django
+docker-compose -f docker-compose.healthchecks.yml exec healthchecks python -c "
+import os, django
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'hc.settings')
+django.setup()
+from django.contrib.auth import get_user_model
+User = get_user_model()
+if not User.objects.filter(email='admin@example.com').exists():
+    User.objects.create_superuser(username='admin', email='admin@example.com', password='admin123')
+    print('✅ Superuser created!')
+"
+
+# Méthode 4 : Créer via l'interface web (si REGISTRATION_OPEN=True)
+# Aller sur http://localhost:8000/accounts/signup/
 ```
 
 ### Les checks ne reçoivent pas de pings

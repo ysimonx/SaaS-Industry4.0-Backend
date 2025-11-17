@@ -6848,3 +6848,195 @@ werkzeug.exceptions.UnsupportedMediaType: 415 Unsupported Media Type: Did not at
 2025-11-17 00:37:09,974 - app - INFO - Flask app created with config: development
 2025-11-17 00:37:09,974 - app - INFO - Debug mode: True
 2025-11-17 00:37:09,974 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-17 08:10:40,543 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-17 08:10:40,544 - app - INFO - Flask app created with config: development
+2025-11-17 08:10:40,544 - app - INFO - Debug mode: True
+2025-11-17 08:10:40,544 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-17 08:10:40,593 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-17 08:10:40,593 - app - INFO - Flask app created with config: development
+2025-11-17 08:10:40,593 - app - INFO - Debug mode: True
+2025-11-17 08:10:40,594 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-17 08:10:40,636 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-17 08:10:40,636 - app - INFO - Flask app created with config: development
+2025-11-17 08:10:40,636 - app - INFO - Debug mode: True
+2025-11-17 08:10:40,636 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-17 08:10:40,679 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-17 08:10:40,679 - app - INFO - Flask app created with config: development
+2025-11-17 08:10:40,679 - app - INFO - Debug mode: True
+2025-11-17 08:10:40,679 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-17 08:24:15,087 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-17 08:24:15,087 - app - INFO - Flask app created with config: development
+2025-11-17 08:24:15,087 - app - INFO - Debug mode: True
+2025-11-17 08:24:15,087 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-17 08:24:15,113 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-17 08:24:15,113 - app - INFO - Flask app created with config: development
+2025-11-17 08:24:15,113 - app - INFO - Debug mode: True
+2025-11-17 08:24:15,113 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-17 08:24:15,215 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-17 08:24:15,215 - app - INFO - Flask app created with config: development
+2025-11-17 08:24:15,215 - app - INFO - Debug mode: True
+2025-11-17 08:24:15,215 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-17 08:24:15,241 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-17 08:24:15,241 - app - INFO - Flask app created with config: development
+2025-11-17 08:24:15,241 - app - INFO - Debug mode: True
+2025-11-17 08:24:15,241 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-17 09:27:47,219 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-17 09:27:47,219 - app - INFO - Flask app created with config: development
+2025-11-17 09:27:47,219 - app - INFO - Debug mode: True
+2025-11-17 09:27:47,219 - app - INFO - Database URI: postgresql://postgres:postgres@localhost:5432/saas...
+2025-11-17 09:28:17,801 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-17 09:28:17,801 - app - INFO - Flask app created with config: development
+2025-11-17 09:28:17,802 - app - INFO - Debug mode: True
+2025-11-17 09:28:17,802 - app - INFO - Database URI: postgresql://postgres:postgres@localhost:5432/saas...
+2025-11-17 08:29:29,191 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-17 08:29:29,191 - app - INFO - Flask app created with config: development
+2025-11-17 08:29:29,192 - app - INFO - Debug mode: True
+2025-11-17 08:29:29,192 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-17 08:29:37,861 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-17 08:29:37,861 - app - INFO - Flask app created with config: development
+2025-11-17 08:29:37,861 - app - INFO - Debug mode: True
+2025-11-17 08:29:37,862 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-17 08:30:36,582 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-17 08:30:36,582 - app - INFO - Flask app created with config: development
+2025-11-17 08:30:36,582 - app - INFO - Debug mode: True
+2025-11-17 08:30:36,582 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-17 08:30:55,202 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-17 08:30:55,202 - app - INFO - Flask app created with config: development
+2025-11-17 08:30:55,202 - app - INFO - Debug mode: True
+2025-11-17 08:30:55,202 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-17 08:31:02,243 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-17 08:31:02,243 - app - INFO - Flask app created with config: development
+2025-11-17 08:31:02,243 - app - INFO - Debug mode: True
+2025-11-17 08:31:02,244 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-17 08:31:02,302 - app.tenant_db.tenant_migrations - INFO - Applying migration v3: add_sha256_hash_column
+2025-11-17 08:31:02,316 - app.tenant_db.tenant_migrations - INFO - ✓ Migration v3 applied successfully
+2025-11-17 08:32:23,797 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-17 08:32:23,798 - app - INFO - Flask app created with config: development
+2025-11-17 08:32:23,798 - app - INFO - Debug mode: True
+2025-11-17 08:32:23,798 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-17 08:32:23,866 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-17 08:32:23,866 - app - INFO - Flask app created with config: development
+2025-11-17 08:32:23,866 - app - INFO - Debug mode: True
+2025-11-17 08:32:23,867 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-17 08:32:23,881 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-17 08:32:23,882 - app - INFO - Flask app created with config: development
+2025-11-17 08:32:23,882 - app - INFO - Debug mode: True
+2025-11-17 08:32:23,882 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-17 08:32:23,926 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-17 08:32:23,927 - app - INFO - Flask app created with config: development
+2025-11-17 08:32:23,927 - app - INFO - Debug mode: True
+2025-11-17 08:32:23,927 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-17 08:35:58,554 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-17 08:35:58,554 - app - INFO - Flask app created with config: development
+2025-11-17 08:35:58,554 - app - INFO - Debug mode: True
+2025-11-17 08:35:58,554 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-17 08:35:58,560 - app.monitoring.healthchecks_client - ERROR - BLOCKED: Attempted to create check 'PostgreSQL Database' with tags 'database infrastructure tier1'. Check creation is disabled. Use scripts/setup_healthchecks.py instead.
+2025-11-17 08:35:59,062 - app.monitoring.healthchecks_client - ERROR - BLOCKED: Attempted to create check 'Redis Cache/Broker' with tags 'cache redis infrastructure tier1'. Check creation is disabled. Use scripts/setup_healthchecks.py instead.
+2025-11-17 08:35:59,564 - app.monitoring.healthchecks_client - ERROR - BLOCKED: Attempted to create check 'Flask API' with tags 'api application tier1'. Check creation is disabled. Use scripts/setup_healthchecks.py instead.
+2025-11-17 08:36:00,066 - app.monitoring.healthchecks_client - ERROR - BLOCKED: Attempted to create check 'Celery Worker SSO' with tags 'celery worker sso tier1'. Check creation is disabled. Use scripts/setup_healthchecks.py instead.
+2025-11-17 08:36:00,568 - app.monitoring.healthchecks_client - ERROR - BLOCKED: Attempted to create check 'Celery Beat Scheduler' with tags 'celery beat scheduler tier1'. Check creation is disabled. Use scripts/setup_healthchecks.py instead.
+2025-11-17 08:36:01,073 - app.monitoring.healthchecks_client - ERROR - BLOCKED: Attempted to create check 'Kafka Broker' with tags 'kafka messaging tier2'. Check creation is disabled. Use scripts/setup_healthchecks.py instead.
+2025-11-17 08:36:01,575 - app.monitoring.healthchecks_client - ERROR - BLOCKED: Attempted to create check 'Kafka Consumer' with tags 'kafka consumer worker tier2'. Check creation is disabled. Use scripts/setup_healthchecks.py instead.
+2025-11-17 08:36:02,076 - app.monitoring.healthchecks_client - ERROR - BLOCKED: Attempted to create check 'MinIO S3 Storage' with tags 'minio storage s3 tier2'. Check creation is disabled. Use scripts/setup_healthchecks.py instead.
+2025-11-17 08:36:02,577 - app.monitoring.healthchecks_client - ERROR - BLOCKED: Attempted to create check 'Vault Secrets' with tags 'vault security secrets tier2'. Check creation is disabled. Use scripts/setup_healthchecks.py instead.
+2025-11-17 08:36:03,082 - app.monitoring.healthchecks_client - ERROR - BLOCKED: Attempted to create check 'SSO Token Refresh' with tags 'task scheduled sso'. Check creation is disabled. Use scripts/setup_healthchecks.py instead.
+2025-11-17 08:36:03,584 - app.monitoring.healthchecks_client - ERROR - BLOCKED: Attempted to create check 'Health Check Task' with tags 'task scheduled monitoring'. Check creation is disabled. Use scripts/setup_healthchecks.py instead.
+2025-11-17 08:36:04,087 - app.monitoring.healthchecks_client - ERROR - BLOCKED: Attempted to create check 'Token Cleanup' with tags 'task scheduled maintenance'. Check creation is disabled. Use scripts/setup_healthchecks.py instead.
+2025-11-17 08:36:04,589 - app.monitoring.healthchecks_client - ERROR - BLOCKED: Attempted to create check 'Encryption Key Rotation' with tags 'task scheduled security'. Check creation is disabled. Use scripts/setup_healthchecks.py instead.
+2025-11-17 08:36:05,092 - app.monitoring.healthchecks_client - ERROR - BLOCKED: Attempted to create check 'Comprehensive Health Check' with tags 'monitoring global all'. Check creation is disabled. Use scripts/setup_healthchecks.py instead.
+2025-11-17 08:37:04,180 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-17 08:37:04,180 - app - INFO - Flask app created with config: development
+2025-11-17 08:37:04,180 - app - INFO - Debug mode: True
+2025-11-17 08:37:04,180 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-17 08:37:04,187 - app.monitoring.healthchecks_client - ERROR - Failed to create check 'PostgreSQL Database': HTTP 400 - {"error": "json validation error: schedule is not a valid cron expression"}
+2025-11-17 08:37:04,694 - app.monitoring.healthchecks_client - ERROR - Failed to create check 'Redis Cache/Broker': HTTP 400 - {"error": "json validation error: schedule is not a valid cron expression"}
+2025-11-17 08:37:05,197 - app.monitoring.healthchecks_client - ERROR - Failed to create check 'Flask API': HTTP 400 - {"error": "json validation error: schedule is not a valid cron expression"}
+2025-11-17 08:37:05,705 - app.monitoring.healthchecks_client - ERROR - Failed to create check 'Celery Worker SSO': HTTP 400 - {"error": "json validation error: schedule is not a valid cron expression"}
+2025-11-17 08:37:06,215 - app.monitoring.healthchecks_client - ERROR - Failed to create check 'Celery Beat Scheduler': HTTP 400 - {"error": "json validation error: schedule is not a valid cron expression"}
+2025-11-17 08:37:06,725 - app.monitoring.healthchecks_client - ERROR - Failed to create check 'Kafka Broker': HTTP 400 - {"error": "json validation error: schedule is not a valid cron expression"}
+2025-11-17 08:37:07,233 - app.monitoring.healthchecks_client - ERROR - Failed to create check 'Kafka Consumer': HTTP 400 - {"error": "json validation error: schedule is not a valid cron expression"}
+2025-11-17 08:37:07,743 - app.monitoring.healthchecks_client - ERROR - Failed to create check 'MinIO S3 Storage': HTTP 400 - {"error": "json validation error: schedule is not a valid cron expression"}
+2025-11-17 08:37:08,252 - app.monitoring.healthchecks_client - ERROR - Failed to create check 'Vault Secrets': HTTP 400 - {"error": "json validation error: schedule is not a valid cron expression"}
+2025-11-17 08:37:08,762 - app.monitoring.healthchecks_client - INFO - Check 'SSO Token Refresh' created successfully with ID d2877c0a-88e2-4155-afa2-403119c80af0
+2025-11-17 08:37:09,292 - app.monitoring.healthchecks_client - INFO - Check 'Health Check Task' created successfully with ID 9e0f75b6-0d5f-4675-9a11-4a53cbbdc6bd
+2025-11-17 08:37:09,823 - app.monitoring.healthchecks_client - INFO - Check 'Token Cleanup' created successfully with ID ee707316-50b2-4535-bb97-eea6f23966a0
+2025-11-17 08:37:10,353 - app.monitoring.healthchecks_client - INFO - Check 'Encryption Key Rotation' created successfully with ID 46cc758c-9e77-4dfe-9ecc-f89c71e16b50
+2025-11-17 08:37:10,858 - app.monitoring.healthchecks_client - ERROR - Failed to create check 'Comprehensive Health Check': HTTP 400 - {"error": "json validation error: schedule is not a valid cron expression"}
+2025-11-17 08:37:51,310 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-17 08:37:51,310 - app - INFO - Flask app created with config: development
+2025-11-17 08:37:51,310 - app - INFO - Debug mode: True
+2025-11-17 08:37:51,310 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-17 08:37:51,323 - app.monitoring.healthchecks_client - INFO - Check 'PostgreSQL Database' created successfully with ID 8d634561-7bb5-461c-84f3-596982e1f80e
+2025-11-17 08:37:51,845 - app.monitoring.healthchecks_client - INFO - Check 'Redis Cache/Broker' created successfully with ID 5f671802-21f2-4c94-91b6-0d4b1648f9c3
+2025-11-17 08:37:52,371 - app.monitoring.healthchecks_client - INFO - Check 'Flask API' created successfully with ID 0cab08fe-03f4-48c2-a927-90493fa0b2f2
+2025-11-17 08:37:52,899 - app.monitoring.healthchecks_client - INFO - Check 'Celery Worker SSO' created successfully with ID ed5560b3-ac29-4d5b-adf9-ef59d636dd4f
+2025-11-17 08:37:53,418 - app.monitoring.healthchecks_client - INFO - Check 'Celery Beat Scheduler' created successfully with ID 229acece-8847-4ed7-97f4-94c720651ed3
+2025-11-17 08:37:53,939 - app.monitoring.healthchecks_client - INFO - Check 'Kafka Broker' created successfully with ID 360a07e6-ec57-4bf2-98e8-eb66d59e49d8
+2025-11-17 08:37:54,462 - app.monitoring.healthchecks_client - INFO - Check 'Kafka Consumer' created successfully with ID 1e465c77-0d23-4e23-b4e3-75e35577bc2a
+2025-11-17 08:37:54,988 - app.monitoring.healthchecks_client - INFO - Check 'MinIO S3 Storage' created successfully with ID 1430fb9e-a21d-4e3b-a818-46d45eea212b
+2025-11-17 08:37:55,520 - app.monitoring.healthchecks_client - INFO - Check 'Vault Secrets' created successfully with ID 18c7f459-82c7-43f1-9270-4c9546f82041
+2025-11-17 08:37:56,045 - app.monitoring.healthchecks_client - INFO - Check 'Comprehensive Health Check' created successfully with ID e98007a5-6bad-4bc4-a6be-4376f7b9560f
+2025-11-17 08:40:09,909 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-17 08:40:09,910 - app - INFO - Flask app created with config: development
+2025-11-17 08:40:09,911 - app - INFO - Debug mode: True
+2025-11-17 08:40:09,912 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-17 08:40:09,913 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-17 08:40:09,913 - app - INFO - Flask app created with config: development
+2025-11-17 08:40:09,914 - app - INFO - Debug mode: True
+2025-11-17 08:40:09,914 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-17 08:40:09,948 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-17 08:40:09,948 - app - INFO - Flask app created with config: development
+2025-11-17 08:40:09,948 - app - INFO - Debug mode: True
+2025-11-17 08:40:09,949 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-17 08:40:10,011 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-17 08:40:10,011 - app - INFO - Flask app created with config: development
+2025-11-17 08:40:10,012 - app - INFO - Debug mode: True
+2025-11-17 08:40:10,012 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-17 08:43:42,655 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-17 08:43:42,655 - app - INFO - Flask app created with config: development
+2025-11-17 08:43:42,655 - app - INFO - Debug mode: True
+2025-11-17 08:43:42,655 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-17 08:43:42,672 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-17 08:43:42,672 - app - INFO - Flask app created with config: development
+2025-11-17 08:43:42,673 - app - INFO - Debug mode: True
+2025-11-17 08:43:42,673 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-17 08:43:42,710 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-17 08:43:42,710 - app - INFO - Flask app created with config: development
+2025-11-17 08:43:42,710 - app - INFO - Debug mode: True
+2025-11-17 08:43:42,710 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-17 08:43:42,767 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-17 08:43:42,767 - app - INFO - Flask app created with config: development
+2025-11-17 08:43:42,768 - app - INFO - Debug mode: True
+2025-11-17 08:43:42,768 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-17 08:50:31,316 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-17 08:50:31,321 - app - INFO - Flask app created with config: development
+2025-11-17 08:50:31,322 - app - INFO - Debug mode: True
+2025-11-17 08:50:31,322 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-17 08:50:31,428 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-17 08:50:31,428 - app - INFO - Flask app created with config: development
+2025-11-17 08:50:31,429 - app - INFO - Debug mode: True
+2025-11-17 08:50:31,429 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-17 08:50:31,433 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-17 08:50:31,433 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-17 08:50:31,433 - app - INFO - Flask app created with config: development
+2025-11-17 08:50:31,433 - app - INFO - Flask app created with config: development
+2025-11-17 08:50:31,433 - app - INFO - Debug mode: True
+2025-11-17 08:50:31,433 - app - INFO - Debug mode: True
+2025-11-17 08:50:31,433 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-17 08:50:31,433 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-17 09:02:08,704 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-17 09:02:08,704 - app - INFO - Flask app created with config: development
+2025-11-17 09:02:08,705 - app - INFO - Debug mode: True
+2025-11-17 09:02:08,706 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-17 09:02:08,765 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-17 09:02:08,765 - app - INFO - Flask app created with config: development
+2025-11-17 09:02:08,765 - app - INFO - Debug mode: True
+2025-11-17 09:02:08,766 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-17 09:02:08,835 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-17 09:02:08,835 - app - INFO - Flask app created with config: development
+2025-11-17 09:02:08,835 - app - INFO - Debug mode: True
+2025-11-17 09:02:08,835 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-17 09:02:08,852 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-17 09:02:08,853 - app - INFO - Flask app created with config: development
+2025-11-17 09:02:08,853 - app - INFO - Debug mode: True
+2025-11-17 09:02:08,853 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
