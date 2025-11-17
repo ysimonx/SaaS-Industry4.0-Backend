@@ -2,7 +2,7 @@
 
 **A Production-Ready Foundation for Industry 4.0 SaaS Applications**
 
-This Backend manages user accounts and supports integration with Azure SSO for large enterprises, adhering to strict DevOps requirements. The architecture is suitable for any web or mobile application and includes comprehensive Swagger documentation : 
+This Backend manages user accounts and supports integration with Azure SSO for large enterprises, adhering to strict DevOps requirements. The architecture is suitable for any web or mobile application and includes comprehensive Swagger documentation :
 
 - Document Storage: Utilizes S3-compatible storage for high-availability document hosting.
 
@@ -1840,7 +1840,7 @@ The Swagger UI provides:
 
 Complete API documentation is available in OpenAPI 3.0 format:
 
-- **File**: [`swagger.yaml`](swagger.yaml)
+- **File**: [`backend/swagger.yaml`](backend/swagger.yaml)
 - **Format**: OpenAPI 3.0.3
 - **Endpoints**: 40+ documented endpoints
 - **Schemas**: 20+ reusable components
@@ -1930,7 +1930,7 @@ curl -X POST http://localhost:4999/api/tenants/<tenant_id>/documents \
   -F "file=@/path/to/document.pdf"
 ```
 
-For complete API documentation, see [`swagger.yaml`](swagger.yaml) or use Swagger UI.
+For complete API documentation, see [`backend/swagger.yaml`](backend/swagger.yaml) or use Swagger UI.
 
 ---
 
@@ -2070,7 +2070,8 @@ SaaSBackendWithClaude/
 ├── .dockerignore                 # Docker ignore file
 ├── .gitignore                    # Git ignore file
 ├── docker-compose.yml            # Docker Compose configuration
-├── swagger.yaml                  # OpenAPI specification
+├── backend/
+│   ├── swagger.yaml              # OpenAPI specification
 ├── DOCKER.md                     # Docker deployment guide
 ├── README.md                     # This file
 └── plan.md                       # Implementation plan
@@ -2287,7 +2288,7 @@ SOFTWARE.
 ### Documentation
 - **Architecture**: See [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)
 - **Docker Deployment**: See [DOCKER.md](DOCKER.md)
-- **API Reference**: See [swagger.yaml](swagger.yaml)
+- **API Reference**: See [backend/swagger.yaml](backend/swagger.yaml)
 - **Health Monitoring**: See [specs/6 - healthcheck/](specs/6%20-%20healthcheck/README.md) for detailed monitoring documentation
 
 ### Getting Help
