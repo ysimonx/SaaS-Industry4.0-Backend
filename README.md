@@ -20,6 +20,8 @@ This Backend manages user accounts and supports integration with Azure SSO for l
 
 - Independence: Designed to be deployed without reliance on major hyperscalers (GAFAM/FAANG).
 
+**Quick Start**
+
 - [Quick Start avec Docker (Recommended)](#quick-start)
 - **Approach A: With Vault** - See [Quick Start - Option A](#option-a-with-hashicorp-vault-recommended-for-production-like-setup) for detailed setup
 - **Approach B: Without Vault** - See [Quick Start - Option B](#option-b-without-vault-simple-setup-for-development) for simple development setup
