@@ -143,6 +143,24 @@ This Backend manages user accounts and supports integration with Azure SSO for l
 - **Grace Periods**: Smart timeout configuration to avoid false alerts
 - **Dashboard**: Web UI at http://localhost:8000 for monitoring status
 
+###  ✅ IoT (ThingsBoard Integration)
+
+
+ **For all IoT functionalities, this platform integrates [ThingsBoard Community Edition](https://thingsboard.io)**, an open-source, enterprise-grade IoT platform that provides comprehensive device management, data collection, processing, and visualization capabilities.
+
+
+**Why ThingsBoard Community Edition?**
+- **Open Source & Free**: Community Edition is fully open-source (Apache 2.0 license) with no licensing costs
+- **Production-Ready**: Battle-tested platform used by thousands of companies worldwide
+- **Comprehensive IoT Stack**: Complete solution for device connectivity, data processing, and visualization
+- **Multi-Tenant Native**: Built-in multi-tenancy aligns perfectly with our SaaS architecture
+- **Scalable Architecture**: Supports millions of devices and messages per second
+- **Rich Ecosystem**: Extensive protocol support, widgets, rule engine, and integrations
+- **Protocol Support**: MQTT, CoAP, HTTP, LwM2M, SNMP, Modbus, OPC-UA, BLE, LoRaWAN, Sigfox, NB-IoT
+- **IoT Gateway**: Pre-built gateways for Modbus, OPC-UA, BACnet, CAN bus, BLE, MQTT
+- **Bi-directional Communication**: RPC (Remote Procedure Calls) for device control
+
+
 ## SaaS Backend for Industry 4.0
 
 This platform is specifically designed to support the development of backend systems for Industry 4.0 SaaS applications. As of today, it provides:
@@ -210,66 +228,10 @@ This platform provides a complete SaaS backend solution with the following capab
 
 ## Industry 4.0 Target Functionalities
 
-This platform is designed as a foundation to support advanced Industry 4.0 capabilities. **For all IoT functionalities, this platform integrates [ThingsBoard Community Edition](https://thingsboard.io)**, an open-source, enterprise-grade IoT platform that provides comprehensive device management, data collection, processing, and visualization capabilities.
+This platform is designed as a foundation to support advanced Industry 4.0 capabilities.
 
-### ThingsBoard Integration
 
-**Why ThingsBoard Community Edition?**
-- ✅ **Open Source & Free**: Community Edition is fully open-source (Apache 2.0 license) with no licensing costs
-- ✅ **Production-Ready**: Battle-tested platform used by thousands of companies worldwide
-- ✅ **Comprehensive IoT Stack**: Complete solution for device connectivity, data processing, and visualization
-- ✅ **Multi-Tenant Native**: Built-in multi-tenancy aligns perfectly with our SaaS architecture
-- ✅ **Scalable Architecture**: Supports millions of devices and messages per second
-- ✅ **Rich Ecosystem**: Extensive protocol support, widgets, rule engine, and integrations
-
-**Official Resources**:
-- Website: https://thingsboard.io
-- Documentation: https://thingsboard.io/docs/
-- GitHub: https://github.com/thingsboard/thingsboard
-- Community Edition Demo: https://demo.thingsboard.io
-
-### A) Connectivity and Massive Data Ingestion (Big Data)
-
-**ThingsBoard provides native support for:**
-
-**IoT Integration** (✅ Included in ThingsBoard CE):
-- **Protocol Support**: MQTT, CoAP, HTTP, LwM2M, SNMP, Modbus, OPC-UA, BLE, LoRaWAN, Sigfox, NB-IoT
-- **Device Management**: Device provisioning, credentials management, firmware updates (OTA)
-- **Real-Time Data Ingestion**: High-throughput telemetry processing (millions of messages/sec)
-- **Edge Computing**: ThingsBoard Edge for on-premise data preprocessing and protocol translation
-- **Integration APIs**: REST APIs, WebSockets, MQTT bridges for ERP, MES, CMMS integration
-
-**Robust Gateways/APIs** (✅ Included in ThingsBoard CE):
-- **IoT Gateway**: Pre-built gateways for Modbus, OPC-UA, BACnet, CAN bus, BLE, MQTT
-- **Bi-directional Communication**: RPC (Remote Procedure Calls) for device control
-- **Data Transformation**: Configurable converters and uplink/downlink processors
-- **ThingsBoard Edge**: Deployed on-premise for local data processing and offline operation
-
-**Scalable Storage** (✅ Included in ThingsBoard CE):
-- **Time-Series Database**: Native support for Cassandra, TimescaleDB, or PostgreSQL (time-series optimized)
-- **Hot/Cold Storage**: Automatic data retention policies and archiving strategies
-- **High Availability**: Clustered deployment with horizontal scaling
-- **Data Replication**: Multi-datacenter support for disaster recovery
-
-### B) Intelligence and Advanced Analytics (AI/ML)
-
-**Analytics Engine**:
-- Implement Artificial Intelligence and Machine Learning algorithms for data analysis
-- Real-time stream processing with Apache Kafka
-- Batch processing for historical data analysis
-
-**Predictive Maintenance**:
-- Detect and predict equipment anomalies and failures
-- Quality drift detection and alerting
-- Remaining Useful Life (RUL) estimation
-- Root cause analysis automation
-
-**Real-Time Optimization**:
-- Calculate and prescribe actions (e.g., energy efficiency optimization, production adjustments)
-- Closed-loop control integration to reinject decisions into operational systems
-- Digital twin synchronization for simulation and optimization
-
-### C) Security and Compliance
+### A) Security and Compliance
 
 **Industrial Security (OT)**:
 - Ensure security of critical data and operational technology systems
@@ -283,7 +245,7 @@ This platform is designed as a foundation to support advanced Industry 4.0 capab
 - ESG (Environmental, Social, Governance) reporting capabilities
 - GDPR, HIPAA, and sector-specific compliance support
 
-### D) Platform Management (SaaS)
+### B) Platform Management (SaaS)
 
 **Multi-Tenancy** (✅ Currently Implemented):
 - Complete data isolation for multiple clients on shared infrastructure
@@ -317,9 +279,9 @@ This platform is designed as a foundation to support advanced Industry 4.0 capab
 | **Monitoring** | Healthchecks.io integration | ✅ Production-ready |
 | | Service health checks | ✅ Production-ready |
 | | Automated alerting | ✅ Production-ready |
-| **IoT & Big Data** | High-throughput data ingestion | 🚧 Roadmap |
-| | Time-series database | 🚧 Roadmap |
-| | Industrial protocol support | 🚧 Roadmap |
+| **IoT & Big Data** | High-throughput data ingestion |  ✅ Production-ready |
+| | Time-series database | ✅ Production-ready |
+| | Industrial protocol support |✅ Production-ready |
 | **AI/ML** | Predictive maintenance | 🚧 Roadmap |
 | | Real-time analytics | 🚧 Roadmap |
 | | Digital twin integration | 🚧 Roadmap |
