@@ -9,6 +9,9 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_ROOT="$(dirname "$SCRIPT_DIR")"
 
 echo "🏥 Starting Healthchecks.io with UUID synchronization..."
+echo "SCRIPT_DIR=$SCRIPT_DIR"
+echo "PROJECT_ROOT=$PROJECT_ROOT"
+rm -f "$PROJECT_ROOT/.healthchecks-admin-created"
 
 # Charger les variables d'environnement
 ENV_FILE="$PROJECT_ROOT/../.env.healthchecks"
@@ -34,7 +37,7 @@ else
     echo "✓ Healthchecks containers are running"
 fi
 
-docker-compose up -d --force-recreate api && echo "✅ Monitoring worker recreated"
+docker-compose up -d --force-recreate api && echo "✅ api container recreated"
 
 docker-compose up -d --force-recreate celery-worker-monitoring && echo "✅ Monitoring worker recreated"
 
@@ -58,7 +61,7 @@ if [ $ATTEMPT -eq $MAX_ATTEMPTS ]; then
     exit 1
 fi
 
-# Créer un compte admin si nécessaire
+# Créer un compte admin et récupérer la clé API
 if [ ! -f "$PROJECT_ROOT/.healthchecks-admin-created" ]; then
     echo "👤 Creating Healthchecks admin account..."
 
@@ -73,37 +76,119 @@ else
     echo "✓ Admin account already exists"
 fi
 
+# Créer un projet par défaut et récupérer/générer la clé API
+echo "🔑 Getting or creating Healthchecks API key..."
+API_KEY=$(docker-compose -f "$PROJECT_ROOT/../docker-compose.healthchecks.yml" exec -T healthchecks python -c "
+import os
+import sys
+import django
+import secrets
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'hc.settings')
+django.setup()
+
+from hc.api.models import Project
+from django.contrib.auth import get_user_model
+
+User = get_user_model()
+
+def generate_api_key():
+    '''Generate a random API key similar to Healthchecks format'''
+    return secrets.token_urlsafe(24)
+
+try:
+    user = User.objects.get(email='admin@example.com')
+
+    # Récupérer ou créer le projet
+    project, created = Project.objects.get_or_create(
+        owner=user,
+        defaults={'name': 'SaaS Backend'}
+    )
+
+    # Si c'est le premier projet de l'utilisateur, utiliser le nom par défaut
+    if created:
+        project.name = 'SaaS Backend'
+        project.save()
+        print('INFO: Created new project', file=sys.stderr)
+
+    # Vérifier si l'API key existe et n'est pas vide
+    if not project.api_key or project.api_key.strip() == '':
+        # Générer une nouvelle API key
+        project.api_key = generate_api_key()
+        project.save()
+        print('INFO: Generated new API key', file=sys.stderr)
+    else:
+        print('INFO: Using existing API key', file=sys.stderr)
+
+    # Afficher l'API key
+    print(project.api_key)
+
+except Exception as e:
+    print(f'ERROR: {e}', file=sys.stderr)
+    import traceback
+    traceback.print_exc(file=sys.stderr)
+    print('')
+" 2>&1 | tee /dev/stderr | grep -v "^INFO:" | grep -v "^ERROR:" | grep -v "^Traceback" | grep -v "^  File" | grep -v "^    " | grep -v "^django\." | tail -n 1)
+
+if [ -n "$API_KEY" ]; then
+    echo "✓ API Key retrieved: ${API_KEY:0:10}..."
+
+    # Mettre à jour le fichier .env.healthchecks avec la vraie clé API
+    if grep -q "^HEALTHCHECKS_API_KEY=" "$ENV_FILE"; then
+        # Remplacer l'ancienne clé
+        if [[ "$OSTYPE" == "darwin"* ]]; then
+            # macOS
+            sed -i '' "s/^HEALTHCHECKS_API_KEY=.*/HEALTHCHECKS_API_KEY=$API_KEY/" "$ENV_FILE"
+        else
+            # Linux
+            sed -i "s/^HEALTHCHECKS_API_KEY=.*/HEALTHCHECKS_API_KEY=$API_KEY/" "$ENV_FILE"
+        fi
+        echo "✓ Updated HEALTHCHECKS_API_KEY in .env.healthchecks"
+    else
+        # Ajouter la clé si elle n'existe pas
+        echo "HEALTHCHECKS_API_KEY=$API_KEY" >> "$ENV_FILE"
+        echo "✓ Added HEALTHCHECKS_API_KEY to .env.healthchecks"
+    fi
+
+    # Également mettre à jour HEALTHCHECKS_READ_KEY
+    if grep -q "^HEALTHCHECKS_READ_KEY=" "$ENV_FILE"; then
+        if [[ "$OSTYPE" == "darwin"* ]]; then
+            sed -i '' "s/^HEALTHCHECKS_READ_KEY=.*/HEALTHCHECKS_READ_KEY=$API_KEY/" "$ENV_FILE"
+        else
+            sed -i "s/^HEALTHCHECKS_READ_KEY=.*/HEALTHCHECKS_READ_KEY=$API_KEY/" "$ENV_FILE"
+        fi
+        echo "✓ Updated HEALTHCHECKS_READ_KEY in .env.healthchecks"
+    fi
+
+    # Exporter la clé API pour la suite du script
+    export HEALTHCHECKS_API_KEY=$API_KEY
+else
+    echo "⚠️  Could not retrieve API key, using existing value from .env.healthchecks"
+fi
+
 # Synchroniser les checks avec les UUIDs fournis
 echo "🔄 Synchronizing Healthchecks with UUIDs from .env.healthchecks..."
 
-cd "$PROJECT_ROOT/../backend"
+# Utiliser le nouveau script qui garantit les UUIDs via Django ORM
+if [ -f "$SCRIPT_DIR/sync-healthchecks-uuids.sh" ]; then
+    echo "📊 Running sync-healthchecks-uuids.sh..."
+    bash "$SCRIPT_DIR/sync-healthchecks-uuids.sh"
 
-# Exécuter le script de synchronisation
-# TOUJOURS utiliser Docker car il a toutes les dépendances Python
-if [ -f "scripts/ensure_healthchecks.py" ]; then
-    echo "📊 Running ensure_healthchecks.py via Docker..."
+    # Copier le fichier UPDATÉ dans le backend pour Docker
+    echo "📝 Copying updated .env.healthchecks to backend..."
+    cp "$ENV_FILE" "$PROJECT_ROOT/../backend/.env.healthchecks"
 
-    # Créer une copie temporaire du fichier .env.healthchecks avec l'URL localhost pour l'accès depuis l'hôte
-    # (nécessaire car le script sera exécuté dans le conteneur API qui doit accéder au conteneur healthchecks)
-    echo "📝 Creating temporary .env.healthchecks.local with Docker network URLs..."
-
-    # Le conteneur API doit utiliser http://healthchecks:8000 (réseau Docker interne)
-    cp "$ENV_FILE" .env.healthchecks
-
-    # Exécuter dans le conteneur Docker
-    if docker-compose ps api | grep -q "Up"; then
-        docker-compose exec -T api python scripts/ensure_healthchecks.py --env-file .env.healthchecks
-    else
-        echo "⚠️  API container is not running. Starting it..."
-        docker-compose up -d api
-        sleep 5
-        docker-compose exec -T api python scripts/ensure_healthchecks.py --env-file .env.healthchecks
-    fi
-
-    # Pas besoin de nettoyer car on utilise le fichier original
+    # Recréer les conteneurs importants
+    cd "$PROJECT_ROOT/../backend"
+    docker-compose up -d --force-recreate celery-worker-monitoring && echo "✅ Monitoring worker recreated"
 else
-    echo "⚠️  ensure_healthchecks.py not found, skipping synchronization"
+    echo "⚠️  sync-healthchecks-uuids.sh not found, skipping synchronization"
 fi
+
+# Supprime eventuellement les anciens checks (ou doublons)
+echo "📊 Running cleanup-duplicate-checks..."
+bash "$SCRIPT_DIR/cleanup-duplicate-checks.sh"
+
+
 
 echo ""
 echo "✅ Healthchecks.io is ready!"
@@ -114,7 +199,7 @@ echo "   - API: http://localhost:8000/api/v1/"
 echo ""
 echo "🔑 Default credentials (if just created):"
 echo "   - Email: admin@example.com"
-echo "   - Password: admin123"
+echo "   - Password: 12345678"
 echo ""
 echo "📝 Check IDs from .env.healthchecks:"
 echo "   HC_CHECK_POSTGRES: ${HC_CHECK_POSTGRES:-not set}"

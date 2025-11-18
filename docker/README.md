@@ -187,7 +187,7 @@ See `docker-compose.yml` in project root for complete stack setup including:
 Make sure you're running the build script from the project root:
 
 ```bash
-cd /path/to/SaaSBackendWithClaude
+cd SaaS-Industry4.0-Backend
 ./docker/build-api.sh
 ```
 

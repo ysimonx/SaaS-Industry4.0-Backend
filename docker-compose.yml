@@ -488,6 +488,13 @@ services:
         condition: service_healthy
       vault-init:
         condition: service_completed_successfully
+    # Override healthcheck from Dockerfile (celery-beat doesn't expose HTTP port)
+    healthcheck:
+      test: ["CMD-SHELL", "test -f /tmp/celerybeat.pid || exit 1"]
+      interval: 30s
+      timeout: 10s
+      start_period: 40s
+      retries: 3
     env_file:
       - .env.healthchecks  # Load healthcheck variables
     environment:
@@ -680,8 +687,6 @@ volumes:
     driver: local
   zookeeper_logs:
     driver: local
-  # vault_data: Supprimé - utilisation de bind mount local ./vault/data
-  # minio_data: Supprimé - utilisation de bind mount local ./docker/volumes/minio/data
   redis_data:
     driver: local
   celery_beat_schedule:

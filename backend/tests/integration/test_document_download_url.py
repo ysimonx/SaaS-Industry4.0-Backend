@@ -48,7 +48,7 @@ class TestDocumentDownloadUrlEndpoint:
         """
         response = client.post('/api/auth/login', json={
             'email': 'admin@example.com',
-            'password': 'admin123'
+            'password': '12345678'
         })
 
         if response.status_code != 200:
@@ -441,7 +441,7 @@ class TestDocumentDownloadUrlAuditLogging:
         """Get authentication headers."""
         response = client.post('/api/auth/login', json={
             'email': 'admin@example.com',
-            'password': 'admin123'
+            'password': '12345678'
         })
 
         if response.status_code != 200:

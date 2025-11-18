@@ -630,7 +630,7 @@ TOKEN=$(curl -s -X POST http://localhost:4999/api/auth/login \
   -H "Content-Type: application/json" \
   -d '{
     "email": "admin@example.com",
-    "password": "admin123"
+    "password": "12345678"
   }' | jq -r '.data.access_token')
 
 echo "Token: $TOKEN"
@@ -789,7 +789,7 @@ login_response = requests.post(
     f"{API_BASE_URL}/api/auth/login",
     json={
         "email": "admin@example.com",
-        "password": "admin123"
+        "password": "12345678"
     }
 )
 token = login_response.json()["data"]["access_token"]
@@ -971,7 +971,7 @@ class TestDocumentDownloadUrl:
         """Get authentication headers with valid JWT token."""
         response = client.post('/api/auth/login', json={
             'email': 'admin@example.com',
-            'password': 'admin123'
+            'password': '12345678'
         })
         token = response.json['data']['access_token']
         return {'Authorization': f'Bearer {token}'}
@@ -1095,7 +1095,7 @@ TOKEN=$(curl -s -X POST "$API_BASE_URL/api/auth/login" \
   -H "Content-Type: application/json" \
   -d '{
     "email": "admin@example.com",
-    "password": "admin123"
+    "password": "12345678"
   }' | jq -r '.data.access_token')
 
 if [ -z "$TOKEN" ] || [ "$TOKEN" = "null" ]; then

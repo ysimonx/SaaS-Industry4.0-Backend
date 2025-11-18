@@ -46,7 +46,7 @@ open http://localhost:8000
        User.objects.create_superuser(
            username='admin',
            email='admin@example.com',
-           password='admin123'
+           password='12345678'
        )
        print('✅ Superuser created!')
    else:
@@ -56,7 +56,7 @@ open http://localhost:8000
 
    **Identifiants de connexion** :
    - Username : `admin` (ou Email : `admin@example.com`)
-   - Password : `admin123`
+   - Password : `12345678`
    - URL de connexion : http://localhost:8000/accounts/login/
    - **Important** : Changez ce mot de passe en production !
 
@@ -112,7 +112,7 @@ open http://localhost:8000
 ## 📁 Structure des Fichiers
 
 ```
-SaaSBackendWithClaude/
+SaaS-Industry4.0-Backend/
 ├── docker-compose.healthchecks.yml     # Configuration Docker pour Healthchecks
 ├── plan-healthcheck.md                 # Plan détaillé d'implémentation
 ├── .env                                 # Variables d'environnement principales
@@ -335,7 +335,7 @@ grep SLACK_ENABLED .env.healthchecks  # Doit être "True" ou "False", pas "true"
 
 ### Impossible de se connecter (identifiants ne fonctionnent pas)
 
-**Problème** : Les identifiants `admin@example.com` / `admin123` ne fonctionnent pas.
+**Problème** : Les identifiants `admin@example.com` / `12345678` ne fonctionnent pas.
 
 **Cause** : Le compte administrateur n'est pas créé automatiquement au démarrage de Healthchecks.
 
@@ -356,7 +356,7 @@ django.setup()
 from django.contrib.auth import get_user_model
 User = get_user_model()
 if not User.objects.filter(email='admin@example.com').exists():
-    User.objects.create_superuser(username='admin', email='admin@example.com', password='admin123')
+    User.objects.create_superuser(username='admin', email='admin@example.com', password='12345678')
     print('✅ Superuser created!')
 "
 

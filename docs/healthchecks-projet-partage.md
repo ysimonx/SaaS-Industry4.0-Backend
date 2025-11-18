@@ -150,7 +150,7 @@ PROJECT_CONFIG = {
 
 # Synchroniser sur toutes les instances
 INSTANCES = [
-    {'url': 'http://localhost:8000', 'email': 'admin@local.com', 'password': 'admin123'},
+    {'url': 'http://localhost:8000', 'email': 'admin@local.com', 'password': '12345678'},
     {'url': 'https://monitoring.prod.com', 'email': 'admin@prod.com', 'password': 'prodpass'}
 ]
 

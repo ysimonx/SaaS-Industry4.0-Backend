@@ -20,13 +20,19 @@ This directory contains comprehensive documentation for the Healthchecks.io moni
 
 ### Troubleshooting & Solutions
 
-3. **[HEALTHCHECKS_TIMING_FIX.md](HEALTHCHECKS_TIMING_FIX.md)**
+3. **[UUID_SYNC_FIX.md](UUID_SYNC_FIX.md)** ⭐ NEW
+   - Fix for checks recreated with new UUIDs
+   - Django ORM-based UUID synchronization
+   - Ensures checks keep UUIDs from .env.healthchecks
+   - Replaces API REST approach with direct database access
+
+4. **[HEALTHCHECKS_TIMING_FIX.md](HEALTHCHECKS_TIMING_FIX.md)**
    - Timing mismatch resolution
    - Grace period configuration
    - Celery Beat schedule alignment
    - Common issues and fixes
 
-4. **[HEALTHCHECKS_UNLIMITED.md](HEALTHCHECKS_UNLIMITED.md)**
+5. **[HEALTHCHECKS_UNLIMITED.md](HEALTHCHECKS_UNLIMITED.md)**
    - Self-hosted Healthchecks.io setup
    - Unlimited check configuration
    - Account limit solutions
@@ -53,7 +59,7 @@ docker-compose up -d healthchecks
 
 # 2. Create admin account (if first time)
 docker-compose exec healthchecks ./manage.py createsuperuser
-# Credentials: admin@example.com / admin123
+# Credentials: admin@example.com / 12345678
 
 # 3. Generate and configure checks
 docker-compose exec api python scripts/setup_healthchecks.py

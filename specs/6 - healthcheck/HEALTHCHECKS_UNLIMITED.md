@@ -62,7 +62,7 @@ Le seul paramètre configurable concerne l'historique :
 ```python
 # Accès Django Admin
 http://localhost:8000/admin/
-# Connexion : admin@example.com / admin123
+# Connexion : admin@example.com / 12345678
 
 # Navigation : Users → admin → Profile
 # Champ : "Ping log limit" (par défaut : 100)
@@ -74,7 +74,7 @@ http://localhost:8000/admin/
 ```bash
 # Accès à l'interface Healthchecks
 open http://localhost:8000
-# Login : admin@example.com / admin123
+# Login : admin@example.com / 12345678
 ```
 
 ### 2. API Healthchecks

@@ -4004,7 +4004,7 @@ echo "Secrets migrated to Vault successfully"
 ### Vault File Structure
 
 ```
-SaaSBackendWithClaude/
+SaaS-Industry4.0-Backend
 ├── vault/
 │   ├── config/
 │   │   └── vault.hcl                    # Vault server configuration
@@ -4421,7 +4421,7 @@ Post-Deployment:
 ## Appendix: File Organization
 
 ```
-SaaSBackendWithClaude/
+SaaS-Industry4.0-Backend/
 ├── backend/
 │   ├── app/
 │   │   ├── __init__.py                 # Application factory

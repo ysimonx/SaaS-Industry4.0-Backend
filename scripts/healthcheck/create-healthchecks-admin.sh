@@ -10,7 +10,7 @@ set -e
 # Default values
 DEFAULT_USERNAME="admin"
 DEFAULT_EMAIL="admin@example.com"
-DEFAULT_PASSWORD="admin123"
+DEFAULT_PASSWORD="12345678"
 
 # Get parameters or use defaults
 USERNAME="${1:-$DEFAULT_USERNAME}"

@@ -16,8 +16,7 @@ Complete guide for running the SaaS Platform with Docker and Docker Compose.
 ```bash
 # Clone repository
 git clone <repository-url>
-cd SaaSBackendWithClaude
-
+cd SaaS-Industry4.0-Backend
 # Copy environment file
 cp .env.docker .env
 

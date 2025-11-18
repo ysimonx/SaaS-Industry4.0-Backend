@@ -426,8 +426,8 @@ Get the platform running in 5 minutes with Docker. **Choose your setup:**
 # ============================================================================
 
 # 1.1. Clone the repository
-git clone https://github.com/your-org/SaaSBackendWithClaude.git
-cd SaaSBackendWithClaude
+git clone https://github.com/ysimonx/SaaS-Industry4.0-Backend.git
+cd SaaS-Industry4.0-Backend
 
 # 1.2. Copy minimal environment file (NO SECRETS - configuration only)
 cp .env.docker.minimal .env
@@ -457,7 +457,6 @@ EOF
 # Utilisez ceci uniquement si vous voulez recommencer à zéro
 rm -Rf docker/volumes/vault/data
 docker-compose down vault vault-unseal
-docker volume rm saasbackendwithclaude_vault_data 2>/dev/null || true
 
 # 2.1. Start Vault and auto-unseal services
 docker-compose up -d vault vault-unseal
@@ -548,9 +547,27 @@ docker-compose ps
 - Email: `admin@example.com`
 - Password: `12345678`
 
+```
+# ============================================================================
+# ÉTAPE 7: Healthcheck
+# ============================================================================
+
+# 7.1 creation du compte admin@example.com, des clés d'API et des checks dans healthcheck"
+
+if [ ! -f ".env.healthchecks" ]; then
+    echo "Le fichier n'existe pas, recopie de .env.healthchecks.example dans .env.healthchecks"
+    cp .env.healthchecks.example .env.healthchecks
+    touch "/path/to/file"
+fi
+
+bash scripts/healthcheck/start-healthchecks-enhanced.sh
+
+
+```
+
 **Default Healthcheck Credentials** (change immediately!):
 - Email: `admin@example.com`
-- Password: `admin123`
+- Password: `12345678`
 - **Health Monitoring**: See [specs/6 - healthcheck/](specs/6%20-%20healthcheck/README.md) for detailed monitoring documentation
 
 
@@ -603,8 +620,8 @@ docker-compose up -d
 # ============================================================================
 
 # 1.1. Clone the repository
-git clone https://github.com/your-org/SaaSBackendWithClaude.git
-cd SaaSBackendWithClaude
+git clone https://github.com/ysimonx/SaaS-Industry4.0-Backend.git
+cd SaaS-Industry4.0-Backend
 
 # 1.2. Copy environment file WITH secrets (for development only)
 cp .env.docker .env
@@ -685,8 +702,8 @@ For development without Docker:
 #### 1. Clone Repository
 
 ```bash
-git clone https://github.com/your-org/SaaSBackendWithClaude.git
-cd SaaSBackendWithClaude
+git clone https://github.com/ysimonx/SaaS-Industry4.0-Backend.git
+cd SaaS-Industry4.0-Backend
 ```
 
 #### 2. Set Up Python Environment
@@ -1981,7 +1998,7 @@ open htmlcov/index.html
 ## Project Structure
 
 ```
-SaaSBackendWithClaude/
+SaaS-Industry4.0-Backend/
 ├── backend/                      # Backend application
 │   ├── app/                      # Main application package
 │   │   ├── __init__.py           # App factory
@@ -2161,8 +2178,8 @@ We welcome contributions! Please follow these guidelines:
 
 1. **Fork the Repository**
    ```bash
-   git clone https://github.com/your-username/SaaSBackendWithClaude.git
-   cd SaaSBackendWithClaude
+  git clone https://github.com/ysimonx/SaaS-Industry4.0-Backend.git
+  cd SaaS-Industry4.0-Backend 
    ```
 
 2. **Create Feature Branch**
@@ -2262,9 +2279,8 @@ SOFTWARE.
 - **Health Monitoring**: See [specs/6 - healthcheck/](specs/6%20-%20healthcheck/README.md) for detailed monitoring documentation
 
 ### Getting Help
-- **Issues**: [GitHub Issues](https://github.com/your-org/SaaSBackendWithClaude/issues)
-- **Discussions**: [GitHub Discussions](https://github.com/your-org/SaaSBackendWithClaude/discussions)
-- **Email**: support@saas-platform.example.com
+- **Issues**: [GitHub Issues](https://github.com/ysimonx/SaaS-Industry4.0-Backend/issues)
+- **Email**: yannick.simon@kysoe.com
 
 ### Reporting Bugs
 

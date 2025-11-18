@@ -150,7 +150,7 @@ open http://localhost:8000
 
 # Create Healthchecks admin account (first-time setup - REQUIRED)
 ./scripts/healthcheck/create-healthchecks-admin.sh
-# Default credentials: admin@example.com / admin123
+# Default credentials: admin@example.com / 12345678
 
 # Fix Healthchecks timing mismatches (if Celery schedules changed)
 docker-compose exec api python scripts/fix_healthchecks_timing.py

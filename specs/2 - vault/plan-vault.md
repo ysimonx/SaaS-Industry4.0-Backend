@@ -2978,7 +2978,7 @@ vault token revoke <token>
 ### 7.2 Structure de Répertoires Complète
 
 ```
-SaaSBackendWithClaude/
+SaaS-Industry4.0-Backend/
 ├── backend/
 │   ├── app/
 │   │   ├── __init__.py
