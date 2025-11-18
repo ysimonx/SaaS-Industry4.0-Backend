@@ -203,24 +203,46 @@ This platform provides a complete SaaS backend solution with the following capab
 
 ## Industry 4.0 Target Functionalities
 
-This platform is designed as a foundation to support advanced Industry 4.0 capabilities. The following functionalities represent the strategic roadmap for industrial IoT and smart manufacturing applications:
+This platform is designed as a foundation to support advanced Industry 4.0 capabilities. **For all IoT functionalities, this platform integrates [ThingsBoard Community Edition](https://thingsboard.io)**, an open-source, enterprise-grade IoT platform that provides comprehensive device management, data collection, processing, and visualization capabilities.
+
+### ThingsBoard Integration
+
+**Why ThingsBoard Community Edition?**
+- ✅ **Open Source & Free**: Community Edition is fully open-source (Apache 2.0 license) with no licensing costs
+- ✅ **Production-Ready**: Battle-tested platform used by thousands of companies worldwide
+- ✅ **Comprehensive IoT Stack**: Complete solution for device connectivity, data processing, and visualization
+- ✅ **Multi-Tenant Native**: Built-in multi-tenancy aligns perfectly with our SaaS architecture
+- ✅ **Scalable Architecture**: Supports millions of devices and messages per second
+- ✅ **Rich Ecosystem**: Extensive protocol support, widgets, rule engine, and integrations
+
+**Official Resources**:
+- Website: https://thingsboard.io
+- Documentation: https://thingsboard.io/docs/
+- GitHub: https://github.com/thingsboard/thingsboard
+- Community Edition Demo: https://demo.thingsboard.io
 
 ### A) Connectivity and Massive Data Ingestion (Big Data)
 
-**IoT Integration**:
-- Receive and process high-throughput real-time data streams from thousands of sensors, equipment, and industrial systems
-- Support for industrial protocols: MQTT, OPC-UA, Modbus, SCADA systems
-- Integration with ERP, MES (Manufacturing Execution Systems), and CMMS (Computerized Maintenance Management Systems)
+**ThingsBoard provides native support for:**
 
-**Robust Gateways/APIs**:
-- Secure interfaces for bidirectional integration with on-premise client systems
-- Edge computing support for data preprocessing at the source
-- Protocol translation and data normalization layers
+**IoT Integration** (✅ Included in ThingsBoard CE):
+- **Protocol Support**: MQTT, CoAP, HTTP, LwM2M, SNMP, Modbus, OPC-UA, BLE, LoRaWAN, Sigfox, NB-IoT
+- **Device Management**: Device provisioning, credentials management, firmware updates (OTA)
+- **Real-Time Data Ingestion**: High-throughput telemetry processing (millions of messages/sec)
+- **Edge Computing**: ThingsBoard Edge for on-premise data preprocessing and protocol translation
+- **Integration APIs**: REST APIs, WebSockets, MQTT bridges for ERP, MES, CMMS integration
 
-**Scalable Storage**:
-- Manage exponentially growing data volumes with high availability
-- Time-series database optimization for sensor data
-- Hot/Cold storage strategies for cost optimization
+**Robust Gateways/APIs** (✅ Included in ThingsBoard CE):
+- **IoT Gateway**: Pre-built gateways for Modbus, OPC-UA, BACnet, CAN bus, BLE, MQTT
+- **Bi-directional Communication**: RPC (Remote Procedure Calls) for device control
+- **Data Transformation**: Configurable converters and uplink/downlink processors
+- **ThingsBoard Edge**: Deployed on-premise for local data processing and offline operation
+
+**Scalable Storage** (✅ Included in ThingsBoard CE):
+- **Time-Series Database**: Native support for Cassandra, TimescaleDB, or PostgreSQL (time-series optimized)
+- **Hot/Cold Storage**: Automatic data retention policies and archiving strategies
+- **High Availability**: Clustered deployment with horizontal scaling
+- **Data Replication**: Multi-datacenter support for disaster recovery
 
 ### B) Intelligence and Advanced Analytics (AI/ML)
 
