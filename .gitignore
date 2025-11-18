@@ -37,3 +37,4 @@ logs/app.log
 backend/celerybeat-schedule
 .env.healthchecks
 backend/celerybeat-schedule
+scripts/.healthchecks-admin-created

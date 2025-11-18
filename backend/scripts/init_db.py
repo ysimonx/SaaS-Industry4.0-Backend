@@ -233,7 +233,7 @@ def create_admin_user(app, interactive=True):
                 email = input("Email (default: admin@example.com): ").strip() or "admin@example.com"
                 first_name = input("First name (default: Admin): ").strip() or "Admin"
                 last_name = input("Last name (default: User): ").strip() or "User"
-                password = getpass.getpass("Password (min 8 chars): ").strip()
+                password = getpass.getpass("Password (min 8 chars, default: 12345678): ").strip() or "12345678"
 
                 if len(password) < 8:
                     print("ERROR: Password must be at least 8 characters")
@@ -242,7 +242,7 @@ def create_admin_user(app, interactive=True):
                 email = os.getenv('ADMIN_EMAIL', 'admin@example.com')
                 first_name = os.getenv('ADMIN_FIRST_NAME', 'Admin')
                 last_name = os.getenv('ADMIN_LAST_NAME', 'User')
-                password = os.getenv('ADMIN_PASSWORD')
+                password = os.getenv('ADMIN_PASSWORD','12345678')
 
                 if not password:
                     print("ERROR: ADMIN_PASSWORD environment variable is required in non-interactive mode")
