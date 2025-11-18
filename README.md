@@ -20,6 +20,10 @@ This Backend manages user accounts and supports integration with Azure SSO for l
 
 - Independence: Designed to be deployed without reliance on major hyperscalers (GAFAM/FAANG).
 
+<img width="1536" height="1024" alt="banniere" src="https://github.com/user-attachments/assets/7b5a52e7-bab2-423f-897f-f2582ab6fba3" />
+
+
+
 **Quick Start**
 
 - [Quick Start avec Docker (Recommended)](#quick-start)
