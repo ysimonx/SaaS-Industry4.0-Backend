@@ -1,5 +1,7 @@
 # SaaS Multi-Tenant Backend Industry 4.0 Platform
 
+<img width="1536" height="1024" alt="image" src="https://github.com/user-attachments/assets/547be314-5695-4e99-a25a-b56bec661338" />
+
 **A Production-Ready Foundation for Industry 4.0 SaaS Applications**
 
 This Backend manages user accounts and supports integration with Azure SSO for large enterprises, adhering to strict DevOps requirements. The architecture is suitable for any web or mobile application and includes comprehensive Swagger documentation :
@@ -20,7 +22,7 @@ This Backend manages user accounts and supports integration with Azure SSO for l
 
 - Independence: Designed to be deployed without reliance on major hyperscalers (GAFAM/FAANG).
 
-<img width="1536" height="1024" alt="banniere" src="https://github.com/user-attachments/assets/7b5a52e7-bab2-423f-897f-f2582ab6fba3" />
+<img width="768" height="512" alt="banniere" src="https://github.com/user-attachments/assets/7b5a52e7-bab2-423f-897f-f2582ab6fba3" />
 
 
 
