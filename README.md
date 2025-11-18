@@ -4,23 +4,22 @@
 
 **A Production-Ready Foundation for Industry 4.0 SaaS Applications**
 
-This Backend manages user accounts and supports integration with Azure SSO for large enterprises, adhering to strict DevOps requirements. The architecture is suitable for any web or mobile application and includes comprehensive Swagger documentation :
 
-- Document Storage: Utilizes S3-compatible storage for high-availability document hosting.
 
-- Access Control: Manages Users and Roles for granular access and security.
+## SaaS Backend for Industry 4.0
 
-- Timestamping: Implements document timestamping using DigiCert (or any compatible TSA provider).
+This platform is specifically designed to support the development of backend systems for Industry 4.0 SaaS applications. As of today, it provides:
 
-- Multi-Tenancy: Features isolated data security with a dedicated PostgreSQL database for each tenant.
+- **Mobile Application Foundation**: Serves as the backbone for modern mobile and web applications in industrial contexts
+- **Flexible Cloud Deployment**: Can be hosted on French sovereign cloud, European cloud providers, or GAFAM platforms (AWS, Azure, GCP)
+- **Multi-Tenant Architecture**: Complete data and file isolation between tenants for maximum security and compliance
+- **Enterprise Security Standards**: Uses HashiCorp Vault for secrets management and data encryption at rest and in transit
+- **Enterprise SSO Integration**: Seamlessly integrates with Microsoft Entra ID (Azure SSO) for enterprise authentication
+- **Comprehensive API Documentation**: Fully documented RESTful APIs with OpenAPI/Swagger specification
 
-- Security: Encrypts sensitive secret information using HashiCorp's Vault secrets engine.
+A production-ready, scalable multi-tenant SaaS backend platform built with Flask, PostgreSQL, Kafka, and S3 storage. Features isolated tenant databases, JWT authentication, asynchronous document processing, and RESTful APIs.
 
-- Monitoring: Ensures system reliability via built-in health checks.
 
-- Deployment: Cloud-ready architecture, packaged with Docker.
-
-- Independence: Designed to be deployed without reliance on major hyperscalers (GAFAM/FAANG).
 
 
 <img width="768" height="512" alt="banniere_20251118" src="https://github.com/user-attachments/assets/4816d3b5-2129-43f2-b94a-7d8b1920511c" />
@@ -160,26 +159,6 @@ This Backend manages user accounts and supports integration with Azure SSO for l
 - **IoT Gateway**: Pre-built gateways for Modbus, OPC-UA, BACnet, CAN bus, BLE, MQTT
 - **Bi-directional Communication**: RPC (Remote Procedure Calls) for device control
 
-
-## SaaS Backend for Industry 4.0
-
-This platform is specifically designed to support the development of backend systems for Industry 4.0 SaaS applications. As of today, it provides:
-
-- **Mobile Application Foundation**: Serves as the backbone for modern mobile and web applications in industrial contexts
-- **Flexible Cloud Deployment**: Can be hosted on French sovereign cloud, European cloud providers, or GAFAM platforms (AWS, Azure, GCP)
-- **Multi-Tenant Architecture**: Complete data and file isolation between tenants for maximum security and compliance
-- **Enterprise Security Standards**: Uses HashiCorp Vault for secrets management and data encryption at rest and in transit
-- **Enterprise SSO Integration**: Seamlessly integrates with Microsoft Entra ID (Azure SSO) for enterprise authentication
-- **Comprehensive API Documentation**: Fully documented RESTful APIs with OpenAPI/Swagger specification
-
-A production-ready, scalable multi-tenant SaaS backend platform built with Flask, PostgreSQL, Kafka, and S3 storage. Features isolated tenant databases, JWT authentication, asynchronous document processing, and RESTful APIs.
-
-[![Python 3.11+](https://img.shields.io/badge/python-3.11+-blue.svg)](https://www.python.org/downloads/)
-[![Flask 3.0](https://img.shields.io/badge/flask-3.0-green.svg)](https://flask.palletsprojects.com/)
-[![PostgreSQL 14+](https://img.shields.io/badge/postgresql-14+-blue.svg)](https://www.postgresql.org/)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-
----
 
 ## Table of Contents
 
