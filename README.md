@@ -497,8 +497,10 @@ docker exec -e VAULT_TOKEN=$VAULT_TOKEN saas-vault vault kv get secret/saas-proj
 # ============================================================================
 
 # 4.0. Create docker volumes info not exists
+rm -Rf docker/volumes/minio/data
+rm -Rf docker/volumes/postgres/data
 mkdir -p docker/volumes/minio/data
-mkdir -p docker/volumes/posgres/data
+mkdir -p docker/volumes/postgres/data
 
 # 4.1. Start all remaining services (API, Worker, PostgreSQL, Kafka, MinIO)
 docker-compose up -d
@@ -541,13 +543,13 @@ docker-compose logs -f api
 
 # 6.3. Check all services status
 docker-compose ps
-```
+
 
 **Default Admin Credentials** (change immediately!):
 - Email: `admin@example.com`
 - Password: `12345678`
 
-```
+
 # ============================================================================
 # ÉTAPE 7: Healthcheck
 # ============================================================================

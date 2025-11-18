@@ -1,8 +1,8 @@
 """Initial migration
 
-Revision ID: f11f82e2381e
+Revision ID: 280b79dd4836
 Revises: 
-Create Date: 2025-11-12 09:18:28.958494
+Create Date: 2025-11-18 18:00:45.544277
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 from sqlalchemy.dialects import postgresql
 
 # revision identifiers, used by Alembic.
-revision = 'f11f82e2381e'
+revision = '280b79dd4836'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -26,6 +26,8 @@ def upgrade():
     sa.Column('sso_domain_whitelist', postgresql.ARRAY(sa.String()), nullable=True),
     sa.Column('sso_auto_provisioning', sa.Boolean(), nullable=True),
     sa.Column('sso_default_role', sa.String(length=20), nullable=True),
+    sa.Column('tsa_enabled', sa.Boolean(), nullable=False),
+    sa.Column('tsa_provider', sa.String(length=50), nullable=True),
     sa.Column('id', sa.UUID(), nullable=False, comment='Unique identifier for the record'),
     sa.Column('created_at', sa.DateTime(timezone=True), nullable=False, comment='Timestamp when record was created (UTC)'),
     sa.Column('updated_at', sa.DateTime(timezone=True), nullable=False, comment='Timestamp when record was last updated (UTC)'),
