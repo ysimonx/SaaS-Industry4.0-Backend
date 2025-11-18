@@ -7596,3 +7596,52 @@ werkzeug.exceptions.UnsupportedMediaType: 415 Unsupported Media Type: Did not at
 2025-11-18 15:28:58,914 - app - INFO - Flask app created with config: development
 2025-11-18 15:28:58,914 - app - INFO - Debug mode: True
 2025-11-18 15:28:58,914 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-18 20:14:15,358 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-18 20:14:15,358 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-18 20:14:15,359 - app - INFO - Flask app created with config: development
+2025-11-18 20:14:15,359 - app - INFO - Flask app created with config: development
+2025-11-18 20:14:15,360 - app - INFO - Debug mode: True
+2025-11-18 20:14:15,361 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-18 20:14:15,361 - app - INFO - Debug mode: True
+2025-11-18 20:14:15,362 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-18 20:14:15,392 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-18 20:14:15,393 - app - INFO - Flask app created with config: development
+2025-11-18 20:14:15,393 - app - INFO - Debug mode: True
+2025-11-18 20:14:15,393 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-18 20:14:15,428 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-18 20:14:15,428 - app - INFO - Flask app created with config: development
+2025-11-18 20:14:15,428 - app - INFO - Debug mode: True
+2025-11-18 20:14:15,428 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-18 20:14:54,550 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-18 20:14:54,551 - app - INFO - Flask app created with config: development
+2025-11-18 20:14:54,551 - app - INFO - Debug mode: True
+2025-11-18 20:14:54,551 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-18 20:14:55,706 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-18 20:14:55,706 - app - INFO - Flask app created with config: development
+2025-11-18 20:14:55,706 - app - INFO - Debug mode: True
+2025-11-18 20:14:55,707 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-18 20:15:31,310 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-18 20:15:31,311 - app - INFO - Flask app created with config: development
+2025-11-18 20:15:31,311 - app - INFO - Debug mode: True
+2025-11-18 20:15:31,311 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-18 20:15:36,438 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-18 20:15:36,439 - app - INFO - Flask app created with config: development
+2025-11-18 20:15:36,439 - app - INFO - Debug mode: True
+2025-11-18 20:15:36,439 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-18 20:15:52,982 - app - INFO - Logging configured: level=10, file=logs/app.log
+2025-11-18 20:15:52,982 - app - INFO - Flask app created with config: development
+2025-11-18 20:15:52,982 - app - INFO - Debug mode: True
+2025-11-18 20:15:52,983 - app - INFO - Database URI: postgresql://postgres:postgres@postgres:5432/saas_...
+2025-11-18 20:15:53,021 - app.tenant_db.tenant_migrations - DEBUG - Schema version table doesn't exist yet: (psycopg2.errors.UndefinedTable) relation "tenant_schema_version" does not exist
+LINE 1: SELECT version FROM tenant_schema_version ORDER BY version D...
+                            ^
+
+[SQL: SELECT version FROM tenant_schema_version ORDER BY version DESC LIMIT 1]
+(Background on this error at: https://sqlalche.me/e/20/f405)
+2025-11-18 20:15:53,029 - app.tenant_db.tenant_migrations - INFO - Created tenant_schema_version table
+2025-11-18 20:15:53,031 - app.tenant_db.tenant_migrations - INFO - Applying migration v1: initial_schema
+2025-11-18 20:15:53,032 - app.tenant_db.tenant_migrations - INFO - ✓ Migration v1 applied successfully
+2025-11-18 20:15:53,032 - app.tenant_db.tenant_migrations - INFO - Applying migration v2: add_file_metadata_column
+2025-11-18 20:15:53,038 - app.tenant_db.tenant_migrations - INFO - ✓ Migration v2 applied successfully
+2025-11-18 20:15:53,038 - app.tenant_db.tenant_migrations - INFO - Applying migration v3: add_sha256_hash_column
+2025-11-18 20:15:53,041 - app.tenant_db.tenant_migrations - INFO - ✓ Migration v3 applied successfully

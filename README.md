@@ -28,7 +28,7 @@ A production-ready, scalable multi-tenant SaaS backend platform built with Flask
 
 **Quick Start**
 
-- [Quick Start avec Docker (Recommended)](#option-a-with-hashicorp-vault-recommended-for-production-like-setup) for detailed setup
+- [Quick Start avec Docker (Recommended)](#quick-start)) for detailed setup
 
 
 ## Features
@@ -408,7 +408,7 @@ This approach provides:
 
 ## Quick Start
 
-Get the platform running in 5 minutes with Docker. 
+Get the platform running in 5 minutes with Docker.
 
 ```bash
 # ============================================================================
@@ -1924,7 +1924,7 @@ We welcome contributions! Please follow these guidelines:
 1. **Fork the Repository**
    ```bash
   git clone https://github.com/ysimonx/SaaS-Industry4.0-Backend.git
-  cd SaaS-Industry4.0-Backend 
+  cd SaaS-Industry4.0-Backend
    ```
 
 2. **Create Feature Branch**
