@@ -40,6 +40,17 @@ This directory contains comprehensive documentation for the Healthchecks.io moni
 # 1. Start Healthchecks.io service
 docker-compose up -d healthchecks
 
+bash scripts/healthcheck/start-healthchecks-enhanced.sh
+# 2. Access dashboard
+open http://localhost:8000
+```
+
+or ...
+
+```bash
+# 1. Start Healthchecks.io service
+docker-compose up -d healthchecks
+
 # 2. Create admin account (if first time)
 docker-compose exec healthchecks ./manage.py createsuperuser
 # Credentials: admin@example.com / admin123

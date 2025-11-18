@@ -11,9 +11,10 @@ PROJECT_ROOT="$(dirname "$SCRIPT_DIR")"
 echo "🏥 Starting Healthchecks.io with UUID synchronization..."
 
 # Charger les variables d'environnement
-if [ -f "$PROJECT_ROOT/.env.healthchecks" ]; then
+ENV_FILE="$PROJECT_ROOT/../.env.healthchecks"
+if [ -f "$ENV_FILE" ]; then
     echo "📋 Loading configuration from .env.healthchecks..."
-    export $(cat "$PROJECT_ROOT/.env.healthchecks" | grep -v '^#' | xargs)
+    export $(cat "$ENV_FILE" | grep -v '^#' | xargs)
 else
     echo "❌ .env.healthchecks not found!"
     echo "   Please create it from .env.healthchecks.example"
@@ -24,14 +25,18 @@ fi
 echo "🐳 Checking Docker containers..."
 
 # Démarrer Healthchecks si nécessaire
-if ! docker-compose ps | grep -q "healthchecks.*Up"; then
+if ! docker-compose -f "$PROJECT_ROOT/../docker-compose.healthchecks.yml" ps | grep -q "healthchecks.*Up"; then
     echo "🚀 Starting Healthchecks containers..."
-    docker-compose up -d healthchecks healthchecks-db
+    docker-compose --env-file "$ENV_FILE" -f "$PROJECT_ROOT/../docker-compose.healthchecks.yml" up -d
     echo "⏳ Waiting for Healthchecks to be ready..."
     sleep 10
 else
     echo "✓ Healthchecks containers are running"
 fi
+
+docker-compose up -d --force-recreate api && echo "✅ Monitoring worker recreated"
+
+docker-compose up -d --force-recreate celery-worker-monitoring && echo "✅ Monitoring worker recreated"
 
 # Vérifier la connexion à Healthchecks
 echo "🔍 Checking Healthchecks connectivity..."
@@ -71,33 +76,31 @@ fi
 # Synchroniser les checks avec les UUIDs fournis
 echo "🔄 Synchronizing Healthchecks with UUIDs from .env.healthchecks..."
 
-cd "$PROJECT_ROOT/backend"
-
-# Vérifier si Python est disponible
-if command -v python3 &> /dev/null; then
-    PYTHON_CMD="python3"
-elif command -v python &> /dev/null; then
-    PYTHON_CMD="python"
-else
-    echo "❌ Python not found, trying Docker..."
-    PYTHON_CMD="docker-compose exec -T api python"
-fi
-
-PYTHON_CMD="python"
+cd "$PROJECT_ROOT/../backend"
 
 # Exécuter le script de synchronisation
+# TOUJOURS utiliser Docker car il a toutes les dépendances Python
 if [ -f "scripts/ensure_healthchecks.py" ]; then
-    echo "📊 Running ensure_healthchecks.py... with $PYTHON_CMD"
-    if [ "$PYTHON_CMD" = "docker-compose exec -T api python" ]; then
-        # Utiliser Docker
-        docker-compose exec -T api python scripts/ensure_healthchecks.py
+    echo "📊 Running ensure_healthchecks.py via Docker..."
+
+    # Créer une copie temporaire du fichier .env.healthchecks avec l'URL localhost pour l'accès depuis l'hôte
+    # (nécessaire car le script sera exécuté dans le conteneur API qui doit accéder au conteneur healthchecks)
+    echo "📝 Creating temporary .env.healthchecks.local with Docker network URLs..."
+
+    # Le conteneur API doit utiliser http://healthchecks:8000 (réseau Docker interne)
+    cp "$ENV_FILE" .env.healthchecks
+
+    # Exécuter dans le conteneur Docker
+    if docker-compose ps api | grep -q "Up"; then
+        docker-compose exec -T api python scripts/ensure_healthchecks.py --env-file .env.healthchecks
     else
-        # Utiliser Python local avec environnement virtuel si disponible
-        if [ -f "venv/bin/activate" ]; then
-            source venv/bin/activate
-        fi
-        $PYTHON_CMD scripts/ensure_healthchecks.py
+        echo "⚠️  API container is not running. Starting it..."
+        docker-compose up -d api
+        sleep 5
+        docker-compose exec -T api python scripts/ensure_healthchecks.py --env-file .env.healthchecks
     fi
+
+    # Pas besoin de nettoyer car on utilise le fichier original
 else
     echo "⚠️  ensure_healthchecks.py not found, skipping synchronization"
 fi
