@@ -30,6 +30,7 @@ echo "🐳 Checking Docker containers..."
 # Démarrer Healthchecks si nécessaire
 if ! docker-compose -f "$PROJECT_ROOT/../docker-compose.healthchecks.yml" ps | grep -q "healthchecks.*Up"; then
     echo "🚀 Starting Healthchecks containers..."
+    echo "docker-compose --env-file \"$ENV_FILE\" -f \"$PROJECT_ROOT/../docker-compose.healthchecks.yml\" up -d"
     docker-compose --env-file "$ENV_FILE" -f "$PROJECT_ROOT/../docker-compose.healthchecks.yml" up -d
     echo "⏳ Waiting for Healthchecks to be ready..."
     sleep 10

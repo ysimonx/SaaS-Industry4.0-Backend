@@ -81,4 +81,4 @@ volumes:
 networks:
   saas-network:
     external:
-      name: saasbackendwithclaude_saas-network
+      name: saasbackend_saas-network
