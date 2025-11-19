@@ -36,6 +36,12 @@ echo ""
 echo "🔍 Fetching all checks from Healthchecks..."
 ALL_CHECKS=$(curl -s -H "X-Api-Key: $API_KEY" http://localhost:8000/api/v1/checks/)
 
+pwd
+sleep 10
+python3 -m venv /tmp/venv
+source /tmp/venv/bin/activate
+pip install requests
+
 # Parser et supprimer les checks invalides
 echo "$ALL_CHECKS" | python3 -c "
 import sys
@@ -78,3 +84,5 @@ print('='*60)
 
 echo ""
 echo "✅ Cleanup complete!"
+
+rm -Rf /tmp/venv

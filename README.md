@@ -421,6 +421,7 @@ cd SaaS-Industry4.0-Backend
 
 # 1.2. Copy minimal environment file (NO SECRETS - configuration only)
 cp .env.docker.minimal .env
+cp .env.healthchecks.example .env.healthchecks
 # Note: Secrets will be managed by Vault, NOT by .env file
 
 # 1.3. Create secrets file for Vault (OBLIGATOIRE)
@@ -504,7 +505,7 @@ docker-compose ps
 # ============================================================================
 
 # 5.0. (IMPORTANT) Remove old migration files if any exist
-rm -f backend/migrations/versions/*
+rm -Rf backend/migrations/versions/*
 
 # 5.1. Create main database
 docker-compose exec postgres psql -U postgres -c "CREATE DATABASE saas_platform;"
