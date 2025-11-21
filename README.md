@@ -1,6 +1,6 @@
 # SaaS Multi-Tenant Backend Industry 4.0 Platform
 
-<img width="1536" height="1024" alt="image" src="https://github.com/user-attachments/assets/547be314-5695-4e99-a25a-b56bec661338" />
+![image](https://github.com/user-attachments/assets/547be314-5695-4e99-a25a-b56bec661338)
 
 **A Production-Ready Foundation for Industry 4.0 SaaS Applications**
 
@@ -22,7 +22,7 @@ A production-ready, scalable multi-tenant SaaS backend platform built with Flask
 
 
 
-<img width="768" height="512" alt="banniere_20251118" src="https://github.com/user-attachments/assets/4816d3b5-2129-43f2-b94a-7d8b1920511c" />
+![banniere_20251118](https://github.com/user-attachments/assets/4816d3b5-2129-43f2-b94a-7d8b1920511c)
 
 
 
